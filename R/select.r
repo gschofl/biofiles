@@ -1,106 +1,146 @@
 ## select features by key, location, qualifier values from
 ## gbData or gbFeatureList objects
-.select <- function (x, key, qualifier, location)
+.select <- function (x, which=c(""))
 {
+  #### restict location to the selected window
+  if (any(isLocation(which))) {
+    start <- as.numeric(which[["start"]])
+    end <- as.numeric(which[["end"]])
+    strand <- as.numeric(which[["strand"]])
+    loc <- lapply(x, getLocation, check=FALSE)
+    feature_idx <-
+      (vapply(loc, min.start, numeric(1L)) >= if (isEmpty(start)) 1L else start) &
+      (vapply(loc, max.end, numeric(1L)) <= if (isEmpty(end)) max(loc[,"end"]) else end) &
+      if (isEmpty(strand)) TRUE else vapply(loc, grep.strand, numeric(1L)) == strand
+    x <- x[feature_idx] 
+  } 
   
-  if (!is.character(key))
-    key <- as.character(key)
-  
-  if (!is.character(qualifier))
-    key <- as.character(qualifier)
-  
-  if (!is.character(location))
-    key <- as.character(location)
-  
-  is.any <- function(x) identical(x, "ANY")
-  
-  #### first => restict location to the selected window(s)
-  if (!grepl("\\d+", location)) location <- "ANY"
-  
-  if (!is.any(location)) {
-    ## parse location
-    m <- gregexpr("(?:\\[(?<start>\\d*),(?<end>\\d*)\\])+", location, perl=TRUE)
-    start <- as.numeric(mapply( function (str, start, len) {
-      substring(str, start, start + len - 1)
-    }, location, lapply(m, attr, "capture.start")[[1]][,"start"], 
-                                lapply(m, attr, "capture.length")[[1]][,"start"], USE.NAMES=FALSE))
-    end <- as.numeric(mapply( function (str, start, len) {
-      substring(str, start, start + len - 1)
-    }, location, lapply(m, attr, "capture.start")[[1]][,"end"], 
-                              lapply(m, attr, "capture.length")[[1]][,"end"], USE.NAMES=FALSE))
-    
-    if (length(start) != length(end))
-      stop("Unequal locations")
-    
-    ## restrict location
-    feature_start_pos <- lapply(x@.Data, .location, "start")
-    feature_end_pos <- lapply(x@.Data, .location, "end")
-    loc_idx <- rep(seq(length(feature_start_pos)), 
-                   vapply(feature_start_pos, length, FUN.VALUE=0))
-    loc <- cbind(start=unlist(feature_start_pos), 
-                 end=unlist(feature_end_pos), loc_idx)
-    feature_idx <- unique(unlist(
-      Map(function (start, end) {
-        loc[(loc[,"start"] >= if (is.na(start)) 1 else start) & 
-          (loc[,"end"] < if (is.na(end)) max(loc[,"end"]) else end),
-            "loc_idx"]
-      }, start, end))
-                          )
-    
-    x_features <- x[feature_idx] 
-  } else { 
-    x_features <- x
+  #### within the selected window restrict by key(s) 
+  if (any(isKey(which))) {
+    key <- paste(which[["key"]], collapse="|")
+    key_idx <- grepl(key, vapply(x, function(x_item) x_item@key, character(1L)),
+                     ignore.case=TRUE)
+    x <- x[key_idx]
   }
   
-  #### next => if not ANY restrict to key(s) within selected location
-  if (!is.any(key)) {
-    ## parse key
-    key_term <- gsub(",", "|", key)
+  #### within resticted window and for restricted key,
+  #### search pattern for specified qualifiers 
+  if (any(q_idx <- !(isLocation(which) | isKey(which)))) {
     
-    ## restrict
-    key_idx <- grepl(key_term, vapply(x_features, function(x) x@key, FUN.VALUE=""))
-    x_features <- x_features[key_idx]
+    idx <- 
+      lapply(names(which[q_idx]), function(tag, value=which[q_idx][[tag]]) {
+        if (is.logical(value)) {
+          ## test for the presence of a qualifier tag among the qualifiers
+          ## of each feature
+          idx <- vapply(x, function(x_item) {
+            any(grepl(tag, names(x_item@qualifiers)))
+          }, logical(1L))
+          if (isTRUE(value)) idx else !idx
+        }
+        else {
+          ## get indeces for matching tags for each feature
+          tag_idx_lst <- 
+            lapply(x, function(x_item) grep(tag, names(x_item@qualifiers)))
+          idx <- mapply( function(x_item, tag_idx) { 
+            any(grepl(value, x_item@qualifiers[tag_idx]))
+          }, x, tag_idx_lst, USE.NAMES=FALSE)
+        }   
+      })
+    
+    x <- x[Reduce("&", idx)]
   }
+  x
+}
+
+.retrieve <- function (x, what) {
   
-  #### next => search pattern for specified qualifiers within resticted
-  #### location and for restricted key
-  if (!is.any(qualifier)) {
-    ## get the qualifier search pattern by matching anything between
-    ## square brackets, remove whitespace join comma-separated items or
-    ## separate items by |
-    m <- strmatch("\\[([^][]*)\\]", qualifier, perl=TRUE)$capture[[1]]
-    qual_term <- paste(gsub(",", "|", gsub("[[:space:]]+", "", m)), collapse="|")
-    qual_term <- if (nchar(qual_term) == 0) "ANY" else qual_term
-    ## get the text value search pattern => anything not surounded by square
-    ## brackets
-    m <- strmatch("(?<!\\[)(\\b\\w[^][]+\\b)(?!\\])", qualifier, perl=TRUE)$capture[[1]]
-    qual_pat <- paste(gsub(",", "|", gsub("[[:space:]]+", " ", m)), collapse="|")
-    qual_pat <- if (nchar(qual_pat) == 0) "ANY" else qual_pat
+  if (missing(what))
+    return(x)
+  
+  col_names <- character(0)
+  
+  if (any(idx <- grepl("index", what, ignore.case=TRUE))) {
+    i <- .simplify(lapply(x, function (x) x@.ID))
+    col_names <- c(col_names, what[idx])
+    if (isEmpty(what <- what[!idx]))
+      return(.return(i, .Names=col_names))
   } else {
-    qual_term <- "ANY"
-    qual_pat <- "ANY"
+    i <- NULL
   }
   
-  ## show which search conditions we are useing
-  message(gettextf("Selecting pattern '%s' at qualifier(s) '%s' for key '%s' in location '%s'\n",
-                   qual_pat, qual_term, key, location))
-  
-  ## restrict the set of searched qualifiers
-  if (is.any(qual_term) && !is.any(qual_pat)) {
-    idx <- vapply(x_features, function(x) any(grepl(qual_pat, x@qualifiers)),
-                  FUN.VALUE=TRUE)
-    return(x_features[idx])
-  } else if (!is.any(qual_term) && !is.any(qual_pat)) {
-    qual_idx_lst <- 
-      lapply(x_features, function(x) grep(qual_term, names(x@qualifiers)))
-    idx <- mapply( function(x, qual_idx) { 
-      any(grepl(qual_pat, x@qualifiers[qual_idx])) }, x_features, qual_idx_lst,
-                   USE.NAMES=FALSE)
-    return(x_features[idx])
+  if (any(idx <- grepl("key", what, ignore.case=TRUE))) {
+    k <- .simplify(lapply(x, function (x) .access(x, where="key")))
+    col_names <- c(col_names, what[idx])
+    if (isEmpty(what <- what[!idx]))
+      return(.return(i, k, .Names=col_names))
   } else {
-    return(x_features)
+    k <- NULL
+  }
+
+  if (any(idx <- grepl("location|start|end|strand", what, ignore.case=TRUE))) {
+    
+    if (any(grepl("location", what, ignore.case=TRUE)))
+      col_names <- c(col_names, loc <- c("start", "end", "strand"))
+    else
+      col_names <- c(col_names, loc <- what[idx])
+    
+    l <- lapply(loc, function (which_loc) {
+      .simplify(lapply(x, function (x) .access(x, "location", which_loc)))
+    })
+    if (length(l) == 1L) l <- l[[1L]]
+    
+    if (isEmpty(what <- what[!idx]))
+      return(.return(i, k, l, .Names=col_names))
+  } else {
+    l <- NULL
+  }
+
+  col_names <- c(col_names, what)
+  q <- lapply(what, function (which_qual) {
+    .simplify(lapply(x, function (x) 
+      .access(x, "qualifiers", which_qual, fixed=TRUE)))
+  })
+  if (length(q) == 1L) q <- q[[1L]]
+  
+  .return(i, k, l, q, .Names=col_names)
+}
+
+
+.return <- function (..., .Names) {
+  args <- list(...)
+  zero <- vapply(args, is.null, logical(1L))
+  args[zero] <- NULL
+  if (!any(hasList(args)) && length(args) == 1L)
+    return(args[[1L]])
+  else if (!any(hasListOfLists(args))) {
+    args <- flatten(args)
+    structure(
+      data.frame(stringsAsFactors=FALSE, args),
+      names=.Names)
+  }
+  else {
+    args <- flatten(args, stop.at=2)
+    structure(args, names=.Names)
   }
 }
+
+
+isLocation <- function (x) !is.na(charmatch(names(x), c("start", "end", "strand")))
+
+isKey <- function (x) !is.na(charmatch(names(x), "key"))
+
+isEmpty <- function (x) length(x) == 0L
+
+min.start <- function (x) min(x[grep("start", names(x))])
+
+max.end <- function (x) max(x[grep("end", names(x))])
+
+grep.strand <- function (x) x[grep("strand", names(x))]
+
+hasList <- function (x) vapply(x, typeof, character(1L)) == "list"
+
+hasListOfLists <- function (x) unlist(lapply(x[hasList(x)], hasList))
+
 
 # --R-- vim:ft=r:sw=2:sts=2:ts=4:tw=76:
 #       vim:fdm=marker:fmr={{{,}}}:fdl=0

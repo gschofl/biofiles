@@ -1,20 +1,18 @@
-##' The main class for GenBank records
+##' A GenBank record
 ##'
-##' All data parsed from GenBank flat file records is stored in instances
-##' of the gbData class. It is implemented as an extension of a
-##' '\link[filehash]{filehashRDS-class}'. Thus, all data is stored as a
-##' file-based hash table.
+##' Data parsed from a GenBank flat file record are stored in instances
+##' of the gbRecord class. It is implemented as an extension of a
+##' '\link[filehash]{filehashRDS-class}' with no additional slots.
 ##'
-##' @name gbData-class
-##' @rdname gbData-class
-##' @exportClass gbData
+##' @name gbRecord-class
+##' @rdname gbRecord-class
+##' @exportClass gbRecord
 ##' 
 ##' @examples
-##' getSlots("gbData")
-setClass("gbData", contains="filehashRDS")
+##' getSlots("gbRecord")
+setClass("gbRecord", contains="filehashRDS")
 
-
-##' Create and/or initialise a \code{gbData} filehash database.
+##' Create and/or initialise a gbRecord filehash database
 ##'
 ##' @usage initGenBank(db_name, create=FALSE, ...)
 ##'
@@ -23,52 +21,92 @@ setClass("gbData", contains="filehashRDS")
 ##' else a database object is initialised from an existing database.
 ##' @param ... other arguments passed to methods
 ##'
-##' @return Returns a '\code{gbData}' object inheriting from class 
+##' @return Returns a '\code{gbRecord}' object inheriting from class 
 ##' \code{\link[filehash]{filehashRDS-class}} 
 ##'
-##' @name initGenBank
-##' @aliases initGenBank,gbData-method
+##' @export
 ##' @docType methods
 ##' @rdname initGenBank-methods
-##' @export
 ##'
 ##' @examples
 ##' ##
-setGeneric("initGenBank", function(db_name, ...) 
+setGeneric("initGenBank", function(db_dir, ...) 
   standardGeneric("initGenBank"))
 
-setMethod("initGenBank", "ANY",
-          function(db_name, create=FALSE, ...) {
-            db_name <- sub("/$", "", db_name, perl=TRUE)
+##' @aliases initGenBank,gbRecord,gbRecord-method
+##' @rdname initGenBank-methods
+setMethod("initGenBank",
+          signature(db_dir="ANY"),
+          function(db_dir, create=FALSE, ...)
+          {
+            db_dir <- sub("/$", "", db_dir, perl=TRUE)
             if (create) 
-              dbCreate(db_name, "RDS")
+              dbCreate(db_dir, "RDS")
             
-            new("gbData", 
-                dir=normalizePath(db_name),
-                name=basename(db_name))
+            if(!file.exists(db_dir))
+              stop(sprintf("database directory %s does not exist", sQuote(db_dir)))
+
+            new("gbRecord", 
+                dir=normalizePath(db_dir),
+                name=basename(db_dir))
           })
 
-## Accesssor methods
-setGeneric("features", function(object, ...) standardGeneric("features"))
-setGeneric("sequence", function(object, ...) standardGeneric("sequence"))
 
-setMethod("features", "gbData", 
-          function (object)  {
-            dbFetch(object, "features")
+setMethod("initialize",
+          signature(.Object="gbRecord"),
+          function (.Object, dir=character(0), name=character(0), verbose=TRUE)
+          {
+            if (missing(dir))
+              stop("No database directory provided")
+            if (missing(name))
+              stop("No database name provided")
+            
+            .Object@dir <- dir
+            .Object@name <- name
+            
+            if (isValidDb(.Object, verbose=FALSE)) {
+              if (verbose) message("Reintializing gbRecord")
+              
+              if (hasNewPath(.Object)) {
+                if (verbose) message("Updating db directory location ...")
+                updateDirectory(.Object)
+              }
+            }
+            
+            .Object
           })
 
-setMethod("sequence", "gbData", 
-          function (object) {
-            if (length(dbFetch(object, "sequence")) < 2L)
-              return(dbFetch(object, "sequence")[[1L]])
-            else
-              return(dbFetch(object, "sequence"))
+### Accessor methods
+##' Retrieve features of a GenBank record.
+##'
+##' @usage features(data)
+##'
+##' @param data An instance of \code{\link{gbRecord-class}}.
+##'
+##' @return The \code{gbFeatureList}-class object contained in a gbRecord
+##' database.
+##'
+##' @export
+##' @docType methods
+##' @rdname gbRecord-class
+##'
+##' @examples
+##' ##
+setGeneric("getFeatures", function(data, ...) standardGeneric("getFeatures"))
+
+##' @aliases features,gbRecord,gbRecord-method
+##' @rdname gbRecord-class
+setMethod("getFeatures",
+          signature(data="gbRecord"), 
+          function (data) {
+            dbFetch(data, "features")
           })
+
 
 #### Constructor
-gbData <- function (db_dir, header, features, sequence=NULL) {
+gbRecord <- function (db_dir, header, features, sequence=NULL) {
 
-  db <- initGB(db_dir, create=TRUE)
+  db <- initGenBank(db_dir, create=TRUE)
 
   if (is.null(header$accession))
     stop("No accession number available")
@@ -105,14 +143,17 @@ gbData <- function (db_dir, header, features, sequence=NULL) {
   dbInsert(db, "sequence", sequence)
 }
 
-
-#### show method
-setMethod("show", "gbData",
+### show method
+##' @export
+##' @aliases show,gbRecord,gbRecord-method
+##' @rdname gbRecord-class
+setMethod("show",
+          signature(object="gbRecord"),
           function(object) {
             if(length(object@name) == 0)
               stop("database does not have a name")
-            cat(sprintf("'%s' database '%s' with %i features\n", 
-                        as.character(class(object)), object@name,
+            cat(sprintf("%s database %s with %i features\n", 
+                        sQuote(class(object)), sQuote(object@name),
                         length(object$features)),
                 sprintf("LOCUS       %s\n", linebreak(paste(object$locus,
                                                             object$length, names(object$length),
@@ -143,39 +184,43 @@ setMethod("show", "gbData",
                           toString(subseq(object$sequence, 
                                           start=1, end=getOption("width")-14)),
                           toString(subseq(object$sequence,
-                                          start=length(object$sequence) - 
+                                          start=length(object$sequence[[1L]]) - 
                                             getOption("width")+15,
-                                          end=length(object$sequence))))
+                                          end=length(object$sequence[[1L]]))))
                 })
           })
 
-#### Subsetting
-setMethod("[[", signature(x = "gbData", i = "character", j = "missing"),
-          function(x, i, j) {
-            if (i == "features") {
-              return(features(x))
-            } else if (i == "sequence") {
-              return(sequence(x))
-            } else {
-              dbFetch(x, i) }
+
+##' Subsetting
+##'
+##' @export
+##' @aliases [[,gbRecord,gbRecord-method
+##' @rdname extract-methods
+setMethod("[[",
+          signature(x="gbRecord", i="character", j="missing"),
+          function(x, i) {
+            dbFetch(x, i)
           })
 
-setMethod("$", signature(x = "gbData"),
+##' @export
+##' @aliases $,gbRecord,gbRecord-method
+##' @rdname extract-methods
+setMethod("$",
+          signature(x="gbRecord"),
           function(x, name) {
-            if (name == "sequence") {
-              return(sequence(x)) }
-            else if (name == "features") {
-              return(features(x)) }
-            else {
-              dbFetch(x, name)
-            }
+            dbFetch(x, name)
           })
 
-## Select method
-setGeneric("select", function(db, key="ANY", qualifier="ANY", location="ANY")
-  standardGeneric("select"))
-
-setMethod("select", signature(db="gbData"), 
-          definition=function (db, key, qualifier, location)  {
-            .select(x=dbFetch(db, "features"), key, qualifier, location) 
+    
+### Select method ##########################################################
+##' @export
+##' @aliases select,gbRecord-method
+##' @rdname select-methods
+setMethod("select",
+          signature(x="gbRecord"),
+          function (x, what=c(""), which=list()) {
+            x <- dbFetch(db=x, key="features")
+            ans <- .select(x, which=which)
+            ans <- .retrieve(x=ans, what=what)
+            ans
           })

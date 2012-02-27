@@ -28,8 +28,8 @@ importGenBank <- function (gb_file,
 {
   # read genbank file into a character vector
   gb <- file(gb_file, open="rt")
-  on.exit(close(con=gb))
-  gb_data <- readLines(gb_file)
+  gb_data <- readLines(gb)
+  close(con=gb)
   
   # get a vector with the positions of the main fields
   gb_fields <- grep("^[A-Z//]+", gb_data)
@@ -68,11 +68,11 @@ importGenBank <- function (gb_file,
   }
   
   ## parse HEADER, FEATURES, and ORIGIN and construct 'gbData' object
-  header=.parseGbHeader(gb_header, gb_fields)
-  features=.parseGbFeatures(db_dir=db_path, accession=header$accession, 
-                            definition=header$definition, gb_features=gb_features)
-  sequence=.parseGbSequence(gb_sequence, header$accession, header$type)
-  gbData(db_dir=db_path, header=header, features=features, sequence=sequence)
+  header <- .parseGbHeader(gb_header, gb_fields)
+  features <- .parseGbFeatures(db_dir=db_path, accession=header$accession, 
+                               definition=header$definition, gb_features=gb_features)
+  sequence <- .parseGbSequence(gb_sequence, header$accession, header$type)
+  gbRecord(db_dir=db_path, header=header, features=features, sequence=sequence)
 
 }
   

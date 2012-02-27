@@ -1,6 +1,7 @@
 Package: biofiles
 Imports:
     methods,
+    parallel,
     filehash,
     Biostrings
 Type: Package
@@ -15,16 +16,17 @@ Description: biofiles allows parsing GenBank records into an R
     contained in GenBank records.
 License: MIT
 Depends:
-    R (>= 2.14)
-Suggests:
-    parallel
+    R (>= 2.15),
+    methods,
+    parallel,
+    filehash,
+    Biostrings
 Collate:
-    'all-classes.r'
-    'all-methods.r'
-    'readGenbank.r'
     'utils.r'
-    'gbData-class.r'
     'gbFeature-class.r'
     'gbFeatureList-class.r'
     'select.r'
     'importGenBank.r'
+    'gbRecord-class.r'
+    'validate.r'
+    'flatten.r'
