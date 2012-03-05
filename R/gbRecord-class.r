@@ -218,9 +218,9 @@ setMethod("$",
 ##' @rdname select-methods
 setMethod("select",
           signature(x="gbRecord"),
-          function (x, what=c(""), which=list()) {
-            x <- dbFetch(db=x, key="features")
-            ans <- .select(x, which=which)
-            ans <- .retrieve(x=ans, what=what)
+          function (x, keys=c(""), cols=c("")) {
+            ans <- dbFetch(db=x, key="features")
+            ans <- .select(x=ans, which=keys)
+            ans <- .retrieve(x=ans, what=cols)
             ans
           })

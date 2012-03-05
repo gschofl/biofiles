@@ -6,9 +6,10 @@
 ##' @usage importGenBank(gb_file, dir=getwd(), complete_record=TRUE,
 ##' force=FALSE)
 ##'
-##' @param gb_file Required. The path to a GenBank flat file.
-##' @param dir Optional. The directory where the filehash database will be
-##' created. Defaults to the current working directory.
+##' @param gb Required. The path to a GenBank flat file.
+##' @param root_dir Optional. The directory where the filehash database will
+##' be created. Defaults to the current working directory.
+##' @param db_dir Optional. Character string naming the filehash database
 ##' @param complete_record If \code{TRUE}, sequence information
 ##' will be included.
 ##' @param force If \code{TRUE} existing database directories are
@@ -21,15 +22,72 @@
 ##' 
 ##' @examples
 ##' ##
-importGenBank <- function (gb_file,
-                           dir=getwd(),
+importGenBank <- function (gb,
+                           root_dir=getwd(),
+                           db_dir=NULL,
                            complete_record=TRUE,
                            force=FALSE)
 {
-  # read genbank file into a character vector
-  gb <- file(gb_file, open="rt")
-  gb_data <- readLines(gb)
-  close(con=gb)
+  if (is(gb, "efetch")) {
+    split_gb <- strsplit(gb@data, split="\n\n")[[1L]]
+
+    if (is.null(db_dir))
+      db_path <- file.path(root_dir,
+                           paste0(regmatches(gb@url, regexpr("(?<=db=).[^\\&]+", gb@url, perl=TRUE)),
+                                  strsplit(regmatches(gb@url, regexpr("(?<=id=).[^\\&]+", gb@url, perl=TRUE)), ",")[[1L]],
+                                  ".db"))
+    else
+      db_path <- file.path(root_dir, db_dir)
+    
+    n <- length(split_gb)
+    
+    if (length(db_path) != n)
+      stop(gettextf("Provide %i names for the database directories", n))
+    
+    for (i in seq_len(n)) {
+      gb_data <- strsplit(split_gb[i], "\n")[[1L]]
+      cat(gettextf("Importing into %s\n", dQuote(basename(db_path[i]))))
+      .parseGB(gb_data, db_path[i],
+               complete_record=complete_record, force=force)
+    }
+  }
+  else if (!isS4(gb) && file.exists(gb)) {
+    con <- file(gb, open="rt")
+    on.exit(close(con))
+    
+    if (is.null(db_dir))
+      db_path <- file.path(dir, paste0(gb, ".db"))
+    else
+      db_path <- file.path(root_dir, db_dir)[1L]
+    
+    cat(gettextf("Importing into %s\n", dQuote(basename(db_path))))
+    .parseGB(readLines(con), db_path, 
+             complete_record=complete_record, force=force)
+  }
+  else {
+    split_gb <- strsplit(gb@data, split="\n\n")[[1L]]
+    
+    if (is.null(db_dir))
+      db_path <- file.path(dir, "gb_data.db")
+    else
+      db_path <- file.path(root_dir, db_dir)
+    
+    n <- length(split_gb)
+    
+    if (length(db_path) != n)
+      stop(gettextf("Provide %i names for the database directories"))
+    
+    for (i in seq_len(n)) {
+      gb_data <- strsplit(split_gb[i], "\n")[[1L]]
+      cat(gettextf("Importing into %s\n", dQuote(basename(db_path[i]))))
+      .parseGB(gb_data, db_path[i],
+               complete_record=complete_record, force=force)
+    }
+  }
+}
+  
+#### Helper functions
+.parseGB <- function (gb_data, db_path, complete_record=TRUE, force=FALSE) {
   
   # get a vector with the positions of the main fields
   gb_fields <- grep("^[A-Z//]+", gb_data)
@@ -59,7 +117,6 @@ importGenBank <- function (gb_file,
     gb_sequence <- gb_data[seq_idx]
   
   # prepare setting up a filehash db
-  db_path <- file.path(dir, paste0(gb_file, ".db"))
   if (file.exists(db_path)) {
     if (!force && readline("Target directory exists. Do you want to overwrite (y/n): ") != "y")
       stop(gettextf("Aborted creation of db directory '%s'", db_path))
@@ -73,10 +130,9 @@ importGenBank <- function (gb_file,
                                definition=header$definition, gb_features=gb_features)
   sequence <- .parseGbSequence(gb_sequence, header$accession, header$type)
   gbRecord(db_dir=db_path, header=header, features=features, sequence=sequence)
-
 }
+
   
-#### Helper functions
 .parseGbHeader <- function (gb_header, gb_fields) {
   #### LOCUS
   locus_line <- strsplit(gb_header[gb_fields[names(gb_fields) == "LOCUS"]], split=" +")[[1]]
@@ -131,11 +187,12 @@ importGenBank <- function (gb_file,
     dblink <- NULL
   #### DBSOURCE (only in GenPept files)
   # sometimes more than one line, but always followed by "KEYWORDS"?
-  if (length(gb_fields[names(gb_fields) == "DBSOURCE"]) > 0) {
+  if (length(gb_fields[names(gb_fields) == "DBSOURCE"]) > 0L) {
     dbs_lines <- 
       gb_header[seq.int(gb_fields[names(gb_fields) == "DBSOURCE"],
-                        gb_fields[names(gb_fields) == "KEYWORDS"] - 1)]
-    dbsource <- paste(gsub("^ +", "", sub("DBSOURCE", "", dbs_lines)), collapse="\n") }
+                        gb_fields[names(gb_fields) == "KEYWORDS"] - 1L)]
+    dbsource <- paste(gsub("^ +", "", sub("DBSOURCE", "", dbs_lines)), collapse="\n")
+  }
   else
     dbsource <- NULL
   #### KEYWORDS
@@ -144,15 +201,17 @@ importGenBank <- function (gb_file,
   #### SOURCE with ORGANISM and the complete lineage
   source_lines <- 
     gb_header[seq.int(gb_fields[names(gb_fields) == "SOURCE"], 
-                      gb_fields[names(gb_fields) == "REFERENCE"] - 1)]
-  source <- sub("SOURCE      ", "", source_lines[1])
-  organism <- sub("  ORGANISM  ", "", source_lines[2])
-  lineage <- paste(gsub("^ +", "", source_lines[-c(1,2)]), collapse=" ")
+                      gb_fields[names(gb_fields) == "REFERENCE"] - 1L)]
+  source <- sub("SOURCE      ", "", source_lines[1L])
+  organism <- sub("  ORGANISM  ", "", source_lines[2L])
+  lineage <- paste(gsub("^ +", "", source_lines[-c(1L,2L)]), collapse=" ")
   #### COMMENT (not always there)
-  if (length(com_lines <- 
-    gb_header[seq.int(gb_fields[names(gb_fields) == "COMMENT"], 
-                      length(gb_header))]) > 0)
+  if (length(gb_fields[names(gb_fields) == "COMMENT"]) > 0L) {
+    com_lines <- 
+      gb_header[seq.int(gb_fields[names(gb_fields) == "COMMENT"],
+                        length(gb_header))]
     comment <- paste(gsub("^ +", "", sub("COMMENT", "", com_lines)), collapse="\n")
+  }
   else
     comment <- NULL
   #### REFERENCE parsing references isn't implemented yet

@@ -82,7 +82,7 @@ setMethod("getIndex",
 setMethod("getKey",
           signature(x="gbFeatureList"),
           function (x, attributes=FALSE, simplify=TRUE) {
-            ans <- lapply(x, function (x) getKey)
+            ans <- lapply(x, getKey)
             if (simplify)
               ans <- .simplify(ans)
             if (attributes)
@@ -253,7 +253,7 @@ setMethod("[", signature(x="gbFeatureList", i="missing", j="missing", drop="miss
 ##' @docType methods
 ##' @rdname select-methods
 setGeneric("select",
-           function(x, what=c(""), which=c(""))
+           function(x, keys=c(""), cols=c(""))
              standardGeneric("select")
            )
 
@@ -263,9 +263,9 @@ setGeneric("select",
 ##' @rdname select-methods
 setMethod("select",
           signature(x="gbFeatureList"), 
-          definition=function (x, what=c(""), which=c("")) {
-            ans <- .select(x, which=which)
-            ans <- .retrieve(x=ans, what=what)
+          definition=function (x, keys=c(""), cols=c("")) {
+            ans <- .select(x=x, which=keys)
+            ans <- .retrieve(x=ans, what=cols)
             ans
           })
 

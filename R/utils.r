@@ -58,6 +58,9 @@ linebreak <- function (s, width=getOption("width") - 2, indent=0, offset=0,
   if (!is.character(s)) 
     s <- as.character(s)
   
+  if (length(s) == 0L)
+    return("")
+  
   # set indent string to "" if a negative value is given
   # this lets us shrink the available width for the first line by that value
   indent_string <- blanks(ifelse(indent < 0, 0, indent))

@@ -52,9 +52,9 @@
   x
 }
 
-.retrieve <- function (x, what) {
+.retrieve <- function (x, what=c("")) {
   
-  if (missing(what))
+  if (nchar(what) == 0L)
     return(x)
   
   col_names <- character(0)
