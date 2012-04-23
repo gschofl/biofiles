@@ -3,6 +3,7 @@ Imports:
     methods,
     parallel,
     filehash,
+    rentrez,
     Biostrings
 Type: Package
 Title: Provide classes and methods for GenBank flat file records
@@ -20,13 +21,14 @@ Depends:
     methods,
     parallel,
     filehash,
+    rentrez,
     Biostrings
 Collate:
     'utils.r'
     'gbFeature-class.r'
     'gbFeatureList-class.r'
     'select.r'
-    'importGenBank.r'
     'gbRecord-class.r'
     'validate.r'
-    'flatten.r'
+    'readGB.r'
+    'gbLocation-class.r'

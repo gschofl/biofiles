@@ -12,7 +12,8 @@
 ##' @return A list with two elements. The first contains the joined
 ##' character vector, the second the number of lines joined
 ##' @keywords internal
-joinLines <- function (lines, extract_pat=".*", break_pat=NULL, sep=TRUE) {
+joinLines <- function (lines, extract_pat=".*", break_pat=NULL, sep=TRUE)
+{
   i  <-  0
   list(eval(function (lines, extract_pat, break_pat) {
     l <- regmatches(lines[1], regexpr(extract_pat, lines[1], perl=T))
@@ -48,13 +49,15 @@ joinLines <- function (lines, extract_pat=".*", break_pat=NULL, sep=TRUE) {
 ##' but the first line
 ##' @param split regular expression used for splitting. Defaults to
 ##' a whitespace character.
-##' @param FORCE if \code{TRUE} words are force split if the available with
-##' is too small
+##' @param FORCE if \code{TRUE} words are force split if the available width
+##' is too small.
+##' @param FULL_FORCE Always split at the specified position.
 ##' 
 ##' @return a character vector
 ##' @keywords internal
 linebreak <- function (s, width=getOption("width") - 2, indent=0, offset=0,
-                       split=" ", FORCE=FALSE) {
+                       split=" ", FORCE=FALSE, FULL_FORCE=FALSE)
+{
   if (!is.character(s)) 
     s <- as.character(s)
   
@@ -65,16 +68,19 @@ linebreak <- function (s, width=getOption("width") - 2, indent=0, offset=0,
   # this lets us shrink the available width for the first line by that value
   indent_string <- blanks(ifelse(indent < 0, 0, indent))
   offset_string <- paste0("\n", blanks(offset))
-
-  s <- mapply(function (s, width, offset, indent, indent_string, split, FORCE) {
+  
+  s <- mapply(function (s, width, offset, indent, indent_string, split, FORCE, FULL_FORCE) {
     # remove leading and trailing blanks
     # convert newlines, tabs, spaces to " "
     # find first position where 'split' applies
-    s <- gsub("[[:space:]]+", " ", gsub("^[[:blank:]]+|[[:blank:]]+$", "", s), perl=TRUE)
+    if (!FULL_FORCE) {
+      s <- gsub("[[:space:]]+", " ", gsub("^[[:blank:]]+|[[:blank:]]+$", "", s), perl=TRUE)
+    }
     fws <- regexpr(split, s, perl=TRUE)
     if (offset + indent + nchar(s) > width) {
       # if not everything fits on one line
-      if ((fws == -1 || fws >= (width - offset - indent)) && FORCE) {
+      if (FULL_FORCE ||
+        (fws == -1 || fws >= (width - offset - indent)) && FORCE) {
         # if no whitespace or first word too long and force break
         # cut through the middle of a word
         pat1 <- paste0("^.{", width - offset - indent, "}(?=.+)")
@@ -82,8 +88,9 @@ linebreak <- function (s, width=getOption("width") - 2, indent=0, offset=0,
         leading_string <- regmatches(s, regexpr(pat1, s, perl=TRUE))
         trailing_string <- regmatches(s, regexpr(pat2, s, perl=TRUE)) 
         s <- paste0(indent_string, leading_string, offset_string,
-                   linebreak(s=trailing_string, width=width, indent=0,
-                             offset=offset, split=split, FORCE=FORCE))
+                    linebreak(s=trailing_string, width=width, indent=0,
+                              offset=offset, split=split, FORCE=FORCE,
+                              FULL_FORCE=FULL_FORCE))
       } 
       else if ((fws == -1 || fws >= (width - offset + indent)) && !FORCE) {
         # if no whitespace or first word too long and NO force break
@@ -100,16 +107,16 @@ linebreak <- function (s, width=getOption("width") - 2, indent=0, offset=0,
         trailing_string <- 
           paste0(s_split[s_cum >= width - offset - indent], collapse=split)
         s <- paste0(indent_string, leading_string, offset_string,
-                   linebreak(s=trailing_string, width=width, indent=0,
-                             offset=offset, split=split, FORCE=FORCE))
+                    linebreak(s=trailing_string, width=width, indent=0,
+                              offset=offset, split=split, FORCE=FORCE, FULL_FORCE=FULL_FORCE))
       }
     }
     else
       # if everything fits on one line go with the string
       s
-  }, s, width, offset, abs(indent), indent_string, split, FORCE, 
-                SIMPLIFY=FALSE, USE.NAMES=FALSE)
-    unlist(s)
+  }, s, width, offset, abs(indent), indent_string, split, FORCE, FULL_FORCE,
+              SIMPLIFY=FALSE, USE.NAMES=FALSE)
+  unlist(s)
 }
 
 ##' create blank strings with a given number of characters
@@ -135,7 +142,12 @@ blanks <- function(n) {
 ##' @keywords internal
 ##' @examples
 ##' ##
-strmatch <- function (pattern, str, capture=TRUE, perl=TRUE, global=TRUE, ignore.case=FALSE) {
+strmatch <- function (pattern, str, 
+                      capture=TRUE, 
+                      perl=TRUE, 
+                      global=TRUE, 
+                      ignore.case=FALSE)
+{
   
   if (!is.atomic(str))
     stop("String must be an atomic vector", call. = FALSE)
@@ -216,10 +228,11 @@ strmatch <- function (pattern, str, capture=TRUE, perl=TRUE, global=TRUE, ignore
   s
 }
 
-.cleanQualifiers <- function (q, v) {
-  # introduce line breaks after 80 cols
-  # the negative indent accounts for the length of the qualifier tag
-  # and the following "="
+## introduce line breaks after 80 cols
+## the negative indent accounts for the length of the qualifier tag
+## and the following "="
+.cleanQualifiers <- function (q, v) 
+{
   v <- linebreak(s=.unescape(v), width=79, offset=21,
                  indent=-(nchar(q)+1), FORCE=TRUE)
   l_pos <- which(pmatch(q, "/locus_tag", dup=TRUE, nomatch=0) == 1)
@@ -251,6 +264,203 @@ strmatch <- function (pattern, str, capture=TRUE, perl=TRUE, global=TRUE, ignore
     return(list(q=q, v=v))
   else
     invisible(NULL)
+}
+
+#' Flatten (Nested) Lists.
+#'
+#' Flatten \code{lists} according to specifications made via
+#' \code{start_after} and/or \code{stop_at}. When keeping 
+#' the defaults, the function will traverse \code{src} to retrieve the
+#' values at the respective bottom layers/bottom elements. These values are
+#' arranged in a named \code{list} where the respective names can be
+#' interpreted as the the paths to the retrieved values.   
+#'
+#' @param x An arbitrarily deeply nested \code{list}
+#' @param start_after An \code{integer} specifying the layer after which to 
+#' start the flattening. \code{NULL} means to start at the very top.
+#' @param stop_at An \code{integer} specifying the layer at which to stop
+#' the flattening. \code{NULL} means there is not stop criterion.
+#' @param delim_path A \code{character} specifying how the names
+#' of the resulting flattened list should be pasted.
+#' @param ... Further args.
+#' @return A named \code{list} that features the desired degree of flattening.
+#' @keywords internal
+#' @author Janko Thyson \email{janko.thyson.rstuff@@googlemail.com}
+flatten <- function (x, 
+                     start_after=NULL, 
+                     stop_at=NULL, 
+                     delim_path=".",
+                     do_warn=TRUE,
+                     ... )
+{
+  # VALIDATE
+  if (!is.list(x)) {
+    stop("'src' must be a list.")
+  }
+  if (!is.null(start_after) && !is.null(stop_at)) {
+    if (start_after == 1 && stop_at == 1)
+      stop(sprintf("Invalid specification:\nstart_after: %s\nstop_at: %s\n",
+                   start_after, stop_at))
+  }
+  
+  # INNER FUNCTIONS
+  .startAfterInner <- function(envir, nms, out.1, ...)
+  {
+    idx_diff <- diff(c(envir$start_after, length(envir$counter)))
+    
+    # UPDATE IF DEGREE OF NESTEDNESS EXCEEDS START CRITERION
+    if (idx_diff > 0) {
+      idx_cutoff <-
+        seq(from=(length(envir$counter) - idx_diff + 1), to=length(envir$counter))
+      
+      idx_left        <- envir$counter[-idx_cutoff]
+      nms.1           <- nms[idx_cutoff]
+      names(out.1)    <- paste(nms.1, collapse=envir$delim_path)
+      # UPDATE SRC
+      idx_append <- sapply(envir$history, function (x_hist) {
+        all(idx_left == x_hist)        
+      })
+      
+      if (any(idx_append)) {                                          
+        envir$src[[idx_left]] <- append(envir$src[[idx_left]], values=out.1)                    
+      }
+      else {
+        envir$src[[idx_left]] <- out.1
+        # UPDATE HISTORY
+        envir$history <- c(envir$history, list(idx_left))
+      }
+      envir$out <- envir$src          
+    } 
+    else if (idx_diff < 0) {
+      envir$out <- envir$src
+    }
+    
+    # RESET
+    envir$nms <- envir$nms[-length(envir$nms)]
+    envir$counter <- envir$counter[-length(envir$counter)]
+    
+    return(TRUE)
+  }
+  
+  .updateOutInner <- function (envir, out.1, ...)
+  {
+    
+    # UPDATE OUT
+    envir$out <- c(get("out", envir = envir), out.1)
+    
+    # RESET
+    envir$nms       <- envir$nms[-length(envir$nms)]
+    envir$counter   <- envir$counter[-length(envir$counter)]
+    
+    return(TRUE)
+  }
+  
+  .flattenInner <- function(x, envir, ...)
+  {
+    if ( is(x, "list") && length(x) != 0 ) {
+      
+      # UPDATE
+      envir$counter_history <- c(envir$counter_history, list(envir$counter))
+      
+      # EXIT IF DEGREE EXCEEDS CUTOFF
+      if (!is.null(envir$stop_at)) {
+        if (length(envir$counter) > envir$stop_at) { 
+          nms <- get("nms", envir=envir)
+          out.1 <- list(x)
+          names(out.1) <- paste(nms, collapse=envir$delim_path)
+          
+          # DECISION ON FLATTENING
+          if (!is.null(envir$start_after)) {
+            .startAfterInner(envir=envir, nms=nms, out.1=out.1)
+            return(NULL)
+          }
+          else {
+            .updateOutInner(envir=envir, out.1=out.1)
+            return(NULL)
+          }
+        }
+      }
+      
+      # LOOP OVER ELEMENTS
+      for (i in seq_along(x)) {
+        # UPDATE COUNTER
+        envir$counter <- c(envir$counter, i)
+        # UPDATE NAMES
+        list_names <- if (is.null(names(x[i]))) paste0("X", i) else names(x[i])
+        assign("nms", c(get("nms", envir=envir), list_names), envir=envir)
+        # RECURSIVE FLATTENING
+        .flattenInner(x=x[[i]], envir) # call  recursively
+        # RESET COUNTER
+        if (i == length(x)) {
+          envir$nms <- envir$nms[-length(envir$nms)]
+          envir$counter <- envir$counter[-length(envir$counter)]
+        }
+      }
+    } 
+    else {
+      
+      nms <- get("nms", envir=envir)
+      out.1 <- list(x)
+      names(out.1) <- paste(nms, collapse=envir$delim_path)
+      
+      # DECISION ON FLATTENING
+      if (!is.null(envir$start_after))
+        .startAfterInner(envir=envir, nms=nms, out.1=out.1)
+      else
+        .updateOutInner(envir=envir, out.1=out.1)
+    }
+    
+    return(TRUE)
+  }
+  
+  out                     <- list()
+  # ENVIR
+  envir                   <- new.env()
+  envir$counter           <- NULL
+  envir$counter_history   <- NULL
+  envir$delim_path        <- delim_path
+  envir$do_warn           <- do_warn
+  envir$do_block_warning  <- FALSE
+  envir$history           <- NULL
+  envir$nms               <- NULL
+  envir$out               <- list()
+  envir$src               <- x
+  envir$start_after       <- start_after
+  
+  if (!is.null(stop_at)) {
+    stop_at_0 <- stop_at
+    if (stop_at == 1) {
+      return(src)
+    } else {
+      stop_at <- stop_at - 1
+    }
+  }
+  
+  envir$stop_at           <- stop_at
+  
+  .flattenInner(x, envir)
+  
+  if (envir$do_warn) {
+    max_length <- max(sapply(envir$counter_history, length))
+    
+    if (!is.null(start_after)) {            
+      if (start_after > max_length) {                        
+        warning(paste("Argument 'start_after=", start_after, 
+                      "' exceeds maximum degree of sublayer nestedness (=", 
+                      max_length, ").", sep=""))
+      }
+    }
+    if (!is.null(stop_at)) {
+      if (stop_at_0 > max_length){
+        warning(paste("Argument 'stop_at=", stop_at_0, 
+                      "' exceeds maximum degree of sublayer nestedness (=", 
+                      max_length, ").", sep=""))    
+      }
+    }
+  }
+  
+  out <- envir$out
+  return(out)    
 }
 
 # --R-- vim:ft=r:sw=2:sts=2:ts=4:tw=76:

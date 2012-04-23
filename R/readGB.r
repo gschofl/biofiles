@@ -3,91 +3,57 @@
 ##' For a description of the GenBank format see
 ##' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
 ##'
-##' @usage importGenBank(gb_file, dir=getwd(), complete_record=TRUE,
-##' force=FALSE)
+##' @usage readGB(gb, with_sequence=TRUE, force=FALSE)
 ##'
-##' @param gb Required. The path to a GenBank flat file.
-##' @param root_dir Optional. The directory where the filehash database will
-##' be created. Defaults to the current working directory.
-##' @param db_dir Optional. Character string naming the filehash database
-##' @param complete_record If \code{TRUE}, sequence information
+##' @param gb Path to a GenBank flat file or an 
+##' \code{\link[rentrez]{efetch-class}} object containing GenBank record(s).
+##' @param with_sequence If \code{TRUE}, sequence information
 ##' will be included.
 ##' @param force If \code{TRUE} existing database directories are
 ##' overwritten without prompting.
 ##' 
-##' @return An object of class \code{gbData}. As a side effect,
-##' a database directory named '\code{gb_file}'.db is created in \code{dir}.
+##' @return A (list of) \code{\link{gbRecord-class}} object(s).
 ##' 
 ##' @export
-##' 
-##' @examples
-##' ##
-importGenBank <- function (gb,
-                           root_dir=getwd(),
-                           db_dir=NULL,
-                           complete_record=TRUE,
-                           force=FALSE)
+readGB <- function (gb,
+                    with_sequence=TRUE,
+                    force=FALSE)
 {
+  # we store efetch data in temporary files
   if (is(gb, "efetch")) {
+    ## we can parse rettype = gbwithparts, gb, gp and retmode =  text
+    if (!grepl("^gb|^gp", gb@type) || gb@mode != "text")
+      stop("Must use efetch with rettype='gbwithparts','gb', or 'gp' and retmode='text'")
+    
     split_gb <- strsplit(gb@data, split="\n\n")[[1L]]
-
-    if (is.null(db_dir))
-      db_path <- file.path(root_dir,
-                           paste0(regmatches(gb@url, regexpr("(?<=db=).[^\\&]+", gb@url, perl=TRUE)),
-                                  strsplit(regmatches(gb@url, regexpr("(?<=id=).[^\\&]+", gb@url, perl=TRUE)), ",")[[1L]],
-                                  ".db"))
-    else
-      db_path <- file.path(root_dir, db_dir)
-    
     n <- length(split_gb)
-    
-    if (length(db_path) != n)
-      stop(gettextf("Provide %i names for the database directories", n))
+    db_path <- replicate(n, tempfile(fileext=".db"))
     
     for (i in seq_len(n)) {
       gb_data <- strsplit(split_gb[i], "\n")[[1L]]
       cat(gettextf("Importing into %s\n", dQuote(basename(db_path[i]))))
-      .parseGB(gb_data, db_path[i],
-               complete_record=complete_record, force=force)
+      .parseGB(gb_data, db_path[i], with_sequence=with_sequence, force=force)
     }
   }
   else if (!isS4(gb) && file.exists(gb)) {
     con <- file(gb, open="rt")
     on.exit(close(con))
-    
-    if (is.null(db_dir))
-      db_path <- file.path(dir, paste0(gb, ".db"))
-    else
-      db_path <- file.path(root_dir, db_dir)[1L]
+    db_path <- paste0(gb, ".db")
     
     cat(gettextf("Importing into %s\n", dQuote(basename(db_path))))
-    .parseGB(readLines(con), db_path, 
-             complete_record=complete_record, force=force)
+    .parseGB(readLines(con), db_path, with_sequence=with_sequence, force=force)
   }
   else {
-    split_gb <- strsplit(gb@data, split="\n\n")[[1L]]
-    
-    if (is.null(db_dir))
-      db_path <- file.path(dir, "gb_data.db")
-    else
-      db_path <- file.path(root_dir, db_dir)
-    
-    n <- length(split_gb)
-    
-    if (length(db_path) != n)
-      stop(gettextf("Provide %i names for the database directories"))
-    
-    for (i in seq_len(n)) {
-      gb_data <- strsplit(split_gb[i], "\n")[[1L]]
-      cat(gettextf("Importing into %s\n", dQuote(basename(db_path[i]))))
-      .parseGB(gb_data, db_path[i],
-               complete_record=complete_record, force=force)
-    }
+    stop("'gb' must be a valid GenBank flat file or an 'efetch' object containing GenBank records")
   }
+  return(invisible(db_path))
 }
-  
-#### Helper functions
-.parseGB <- function (gb_data, db_path, complete_record=TRUE, force=FALSE) {
+
+
+# Helper functions ----------------------------------------------------
+
+
+.parseGB <- function (gb_data, db_path, with_sequence=TRUE, force=FALSE) {
   
   # get a vector with the positions of the main fields
   gb_fields <- grep("^[A-Z//]+", gb_data)
@@ -101,21 +67,23 @@ importGenBank <- function (gb,
   # Split the GenBank file into HEADER, FEATURES, ORIGIN
   gb_header <- gb_data[seq(gb_fields["FEATURES"])-1]
   
-  if (which(names(gb_fields) == "FEATURES") == length(gb_fields))
+  if (which(names(gb_fields) == "FEATURES") == length(gb_fields)) {
     gb_features <- gb_data[seq(gb_fields["FEATURES"]+1, length(gb_data)-1)]
-  else
+  } else {
     gb_features <- gb_data[seq(gb_fields["FEATURES"]+1, gb_fields[which(names(gb_fields) == "FEATURES")+1]-1)]
-  
+  }
+    
   if (length(gb_features) < 2) 
     stop("No features in the GenBank file")
   
   seq_idx <- seq(gb_fields["ORIGIN"]+1, gb_fields["//"]-1)
-  if (seq_idx[2] < seq_idx[1])
+  if (seq_idx[2] < seq_idx[1]) {
     # happens if "//" is next after "ORIGIN", i.e. no  sequence is present
     gb_sequence <- NULL
-  else
+  } else {
     gb_sequence <- gb_data[seq_idx]
-  
+  }
+    
   # prepare setting up a filehash db
   if (file.exists(db_path)) {
     if (!force && readline("Target directory exists. Do you want to overwrite (y/n): ") != "y")
@@ -132,7 +100,6 @@ importGenBank <- function (gb,
   gbRecord(db_dir=db_path, header=header, features=features, sequence=sequence)
 }
 
-  
 .parseGbHeader <- function (gb_header, gb_fields) {
   #### LOCUS
   locus_line <- strsplit(gb_header[gb_fields[names(gb_fields) == "LOCUS"]], split=" +")[[1]]
@@ -150,12 +117,12 @@ importGenBank <- function (gb,
       type <- "AA"
       topology <- locus_line[5]
       division <- locus_line[6]
-      date <- locus_line[7] }
-    else {
+      date <- locus_line[7]
+    } else {
       type <- locus_line[5]
       topology <- locus_line[6]
       division <- locus_line[7]
-      date <- locus_line[8]
+      date <- as.POSIXlt(locus_line[8], format="%d-%b-%Y")
     }
   }
   else {
@@ -171,7 +138,7 @@ importGenBank <- function (gb,
   }
   #### DEFINITION
   def_line <- gb_header[seq.int(gb_fields[names(gb_fields) == "DEFINITION"],
-                                gb_fields[names(gb_fields) == "ACCESSION"] - 1)]
+                                gb_fields[names(gb_fields) == "ACCESSION"] - 1L)]
   definition <- paste(gsub(" +", " ", sub("DEFINITION  ", "", def_line)), collapse=" ")
   #### ACCESSION
   acc_line <- gb_header[gb_fields[names(gb_fields) == "ACCESSION"]]
@@ -181,7 +148,7 @@ importGenBank <- function (gb,
   version <- strsplit(ver_line, split=" +")[[1]][2]
   GI <- strsplit(ver_line, split="GI:")[[1]][2]
   #### DBLINK (not seen everywhere)
-  if (length(db_line <- gb_header[gb_fields[names(gb_fields) == "DBLINK"]]) > 0)
+  if (length(db_line <- gb_header[gb_fields[names(gb_fields) == "DBLINK"]]) > 0L)
     dblink <- strsplit(db_line, "Project: ")[[1]][2]
   else
     dblink <- NULL
@@ -201,7 +168,7 @@ importGenBank <- function (gb,
   #### SOURCE with ORGANISM and the complete lineage
   source_lines <- 
     gb_header[seq.int(gb_fields[names(gb_fields) == "SOURCE"], 
-                      gb_fields[names(gb_fields) == "REFERENCE"] - 1L)]
+                      gb_fields[names(gb_fields) == "REFERENCE"][1L] - 1L)]
   source <- sub("SOURCE      ", "", source_lines[1L])
   organism <- sub("  ORGANISM  ", "", source_lines[2L])
   lineage <- paste(gsub("^ +", "", source_lines[-c(1L,2L)]), collapse=" ")

@@ -1,8 +1,15 @@
-#### gbFeatureList objects
+#### gbFeatureList-class ####
+
 setOldClass("list")
 
-##' A list of GenBank features
+##' gbFeatureList class
 ##' 
+##' gbFeatureList is an S4 class that extends the
+##' \code{\link{gbRecord-class}}. This class provides a container for
+##' feature data retrived from GenBank flat files.
+##'
+##' gbFeatureList objects have four slots in addition to the slots provided
+##' by \code{\link{gbRecord-class}} objects:
 ##' \describe{
 ##'    \item{.Dir}{The path to the database file containing the GenBank
 ##'    record the feature list is part of.}
@@ -16,16 +23,48 @@ setOldClass("list")
 ##' @name gbFeatureList-class
 ##' @rdname gbFeatureList-class
 ##' @exportClass gbFeatureList
-##' 
-##' @examples
-##' getSlots("gbFeatureList")
-setClass("gbFeatureList", 
-         representation(.Dir="character",
-                        .ACCN="character",
-                        .DEF="character"),
-         contains="list")
+##' @aliases show,gbFeatureList-method
+##' @aliases getIndex,gbFeatureList-method
+##' @aliases getKey,gbFeatureList-method
+##' @aliases getLocation,gbFeatureList-method
+##' @aliases getQualifier,gbFeatureList-method
+##' @aliases getSequence,gbFeatureList-method
+##' @aliases hasKey,gbFeatureList-method
+##' @aliases hasQualifier,gbFeatureList-method
+##' @aliases [,gbFeatureList-method
+##' @aliases [[,gbFeatureList-method
+##' @aliases select,select-method,gbFeatureList-method
+##' @aliases view,view-method,gbFeatureList-method
+.gbFeatureList <- 
+  setClass("gbFeatureList", 
+           representation(.Dir="character",
+                          .ACCN="character",
+                          .DEF="character"),
+           contains="list")
 
-#### Constructor
+##' @export
+setMethod("show",
+          #### show-method ####
+          signature="gbFeatureList", 
+          function (object) {
+            n_f <- length(object)
+            cat(sprintf("'%s' with %i features:\n\n", 
+                        class(object), n_f))
+            if (n_f > 0L) {
+              biofiles::show(object[[1L]])
+              if (n_f > 1L) {
+                cat("\n...\n")
+                biofiles::show(object[[n_f]])
+              }
+            }
+            return(invisible(object))
+          })
+
+
+# Constructor ---------------------------------------------------------
+
+
+#' @keywords internal
 gbFeatureList <- function(db_dir, accession, definition, features)
 {
   if (!is.list(features))
@@ -37,32 +76,42 @@ gbFeatureList <- function(db_dir, accession, definition, features)
   if (!all(vapply(features, function(f) f@.ACCN, FUN.VALUE="") == accession))
     stop("all elements in 'features' must be from the same gbData object")
   
-  fl <- new("gbFeatureList", .Data=features, .Dir=as.character(db_dir),
-            .ACCN=as.character(accession), .DEF=as.character(definition))
-  fl
+  .gbFeatureList(.Data=features, .Dir=as.character(db_dir),
+                 .ACCN=as.character(accession), .DEF=as.character(definition)) 
 }
 
-### Accessors ##############################################################
 
-.simplify <- function (x) {
-  if (length(len <- unique(unlist(lapply(x, length)))) > 1L)
+# Accessors -----------------------------------------------------------
+
+
+#' @keywords internal
+.simplify <- function (x)
+{
+  if (length(len <- unique(unlist(lapply(x, length)))) > 1L) {
     return(x)
-  if (len == 1L)
+  }
+  if (len == 1L) {
     unlist(x, recursive=FALSE)
-  else if (len > 1L) {
+  } else if (len > 1L) {
     n <- length(x)
     r <- as.vector(unlist(x, recursive=FALSE))
-    if (prod(d <- c(len, n)) == length(r))
-      data.frame(stringsAsFactors=FALSE, matrix(r, nrow=n, byrow=TRUE,
-        dimnames=if (!(is.null(nm <- names(x[[1L]])))) list(NULL, nm)))
-    else x
+    if (prod(d <- c(len, n)) == length(r)) {
+      data.frame(stringsAsFactors=FALSE,
+                 matrix(r, nrow=n, byrow=TRUE,
+                        dimnames=if (!(is.null(nm <- names(x[[1L]]))))
+                          list(NULL, nm)))
+    } else {
+      x
+    }
   }
-  else x
+  else {
+    x
+  }
 }
 
-##' @aliases index,gbFeatureList,gbFeatureList-method
-##' @rdname gbFeatureList-class
+##' @export
 setMethod("getIndex",
+          #### getIndex-method ####
           signature(x="gbFeatureList"),
           function (x, attributes=FALSE, simplify=TRUE) {
             ans <- lapply(x, getIndex)
@@ -76,10 +125,9 @@ setMethod("getIndex",
             ans
           })
 
-### getKey #################################################################
-##' @aliases getKey,gbFeatureList,gbFeatureList-method
-##' @rdname accessor-methods
+##' @export
 setMethod("getKey",
+          #### getKey-method ####
           signature(x="gbFeatureList"),
           function (x, attributes=FALSE, simplify=TRUE) {
             ans <- lapply(x, getKey)
@@ -94,11 +142,9 @@ setMethod("getKey",
             ans
           })
 
-
-### getLocation ############################################################
-##' @aliases getLocation,gbFeatureList,gbFeatureList-method
-##' @rdname accessor-methods
+##' @export
 setMethod("getLocation", 
+          #### getLocation-method ####
           signature(x="gbFeatureList"),
           function (x, which=c("start", "end", "strand"), 
                     attributes=FALSE, simplify=TRUE, check=TRUE) {
@@ -131,10 +177,9 @@ setMethod("getLocation",
             ans
           })
 
-### getQualifier ###########################################################
-##' @aliases getQualifier,gbFeatureList,gbFeatureList-method
-##' @rdname accessor-methods
+##' @export
 setMethod("getQualifier",
+          #### getQualifier-method ####
           signature(x="gbFeatureList"),
           function (x, which=c(""), attributes=FALSE,
                     simplify=TRUE, fixed=FALSE) {
@@ -164,127 +209,122 @@ setMethod("getQualifier",
             ans
           })
 
-### getSequence ############################################################
-##' @aliases getSequence,gbFeatureList,gbFeatureList-method
-##' @rdname accessor-methods
-##' @aliases getSequence,gbFeature,gbFeature-method
-##' @rdname accessor-methods
-setMethod("getSequence", "gbFeatureList",
+##' @export
+setMethod("getSequence",
+          #### getSequence-method ####
+          signature("gbFeatureList"),
           function (x) {
             stopifnot(hasValidDb(x))
             db <- initGenBank(x@.Dir, verbose=FALSE)
             .seqAccess(dbFetch(db, "sequence"), x, dbFetch(db, "type"))
           })
           
-
-##' @aliases hasKey,gbFeatureList,gbFeatureList-method
-##' @rdname accessor-methods
-setMethod("hasKey", "gbFeatureList", 
+##' @export
+setMethod("hasKey",
+          #### hasKey-method ####
+          signature("gbFeatureList"), 
           function (x, key) {
             vapply(x, hasKey, key, FUN.VALUE=logical(1L))
           })
 
-
-##' @aliases hasQualifier,gbFeatureList,gbFeatureList-method
-##' @rdname accessor-methods
-setMethod("hasQualifier", "gbFeatureList", 
+##' @export
+setMethod("hasQualifier",
+          #### hasQualifier-method ####
+          signature("gbFeatureList"), 
           function (x, qualifier) {
             vapply(x, hasQualifier, qualifier, FUN.VALUE=logical(1L))
           })
 
 
-### show method ############################################################
-##' @export
-##' @aliases show,gbFeatureList,gbFeatureList-method
-##' @rdname gbFeatureList-class
-setMethod("show", signature="gbFeatureList", 
-          function (object)  {
-            n_f <- length(object)
-            cat(sprintf("'%s' with %i features:\n\n", 
-                        class(object), n_f))
-            if (n_f > 0L) {
-              biofiles::show(object[[1L]])
-              if (n_f > 1L) {
-                cat("\n...\n")
-                biofiles::show(object[[n_f]])
-              }
-            }
-            return(invisible(object))
-          })
+# Subsetting ----------------------------------------------------------
 
 
-### Subsetting
 ##' @export
-##' @aliases [,gbFeatureList,gbFeatureList-method
-##' @rdname extract-methods
-setMethod("[", signature(x="gbFeatureList", i="character", j="missing", drop="missing"),
+setMethod("[", 
+          #### [-method ####
+          signature(x="gbFeatureList", i="character", j="missing", drop="missing"),
           function(x, i) {
             idx <- vapply(x@.Data, function(f) f@key, character(1L)) == i
             gbFeatureList(x@.Dir, x@.ACCN, x@.DEF, x@.Data[idx])
           })
 
 ##' @export
-##' @aliases [,gbFeatureList,gbFeatureList-method
-##' @rdname extract-methods
-setMethod("[", signature(x="gbFeatureList", i="numeric", j="missing", drop="missing"),
+setMethod("[", 
+          signature(x="gbFeatureList", i="numeric", j="missing", drop="missing"),
           function(x, i) {
             gbFeatureList(x@.Dir, x@.ACCN, x@.DEF, x@.Data[i])
           })
 
 ##' @export
-##' @aliases [,gbFeatureList,gbFeatureList-method
-##' @rdname extract-methods
-setMethod("[", signature(x="gbFeatureList", i="logical", j="missing", drop="missing"),
+setMethod("[",
+          signature(x="gbFeatureList", i="logical", j="missing", drop="missing"),
           function(x, i) {
             gbFeatureList(x@.Dir, x@.ACCN, x@.DEF, x@.Data[i])
           })
 
 ##' @export
-##' @aliases [,gbFeatureList,gbFeatureList-method
-##' @rdname extract-methods
-setMethod("[", signature(x="gbFeatureList", i="missing", j="missing", drop="missing"),
+setMethod("[",
+          signature(x="gbFeatureList", i="missing", j="missing", drop="missing"),
           function(x, i) {
             return(x)
           })
 
-### Selecting ##############################################################
+
+# Select --------------------------------------------------------------
+
+
 ##' Select method
+##' 
+##' Select features from a GenBank Record
+##' 
+##' @usage select(x, keys=c(""), cols=c(""))
+##' 
+##' @param x A \sQuote{\code{gbRecord}} or \sQuote{\code{gbFeatureList}}
+##' object
+##' @param keys keys
+##' @param cols cols
+##' 
 ##' @export
 ##' @docType methods
-##' @rdname select-methods
+##' @rdname select-method
 setGeneric("select",
-           function(x, keys=c(""), cols=c(""))
+           function(x, keys=c(""), cols=c("")) {
              standardGeneric("select")
-           )
+           })
 
-### select method ##########################################################
 ##' @export
-##' @aliases select,gbFeatureList-method
-##' @rdname select-methods
 setMethod("select",
+          #### select-method ####
           signature(x="gbFeatureList"), 
-          definition=function (x, keys=c(""), cols=c("")) {
+          function (x, keys=c(""), cols=c("")) {
             ans <- .select(x=x, which=keys)
             ans <- .retrieve(x=ans, what=cols)
             ans
           })
 
     
-### viewing ################################################################
+# View ----------------------------------------------------------------
+
+
 ##' View method
+##' 
+##' @usage view(x, n, ...)
+##' 
+##' @param x x
+##' @param n n
+##' @param ... Additional parameters.
+##' 
 ##' @export
 ##' @docType methods
-##' @rdname view-methods
+##' @rdname view-method
 setGeneric("view",
-           function(x, n, ...)
+           function(x, n, ...) {
              standardGeneric("view")
-           )
+           })
 
-### view method ############################################################
 ##' @export
-##' @aliases view,gbFeatureList,gbFeatureList-method
-##' @rdname gbFeatureList-class
 setMethod("view",
+          #### view-method ####
           signature(x="gbFeatureList"), 
           function (x, n)  {
             for (i in x[seq(if (missing(n)) length(x) else n)]){
