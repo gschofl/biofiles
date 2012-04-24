@@ -198,12 +198,16 @@ readGB <- function (gb,
   feature_end <- c(feature_start[-1] - 1, length(gb_features))
   # indeces for all features
   feature_idx <- Map(seq.int, feature_start, feature_end)
+  
+#   f_list <- mapply( function (idx, n) {
   f_list <- mcmapply( function (idx, n) {
     .parseFeatureField(db_dir=db_dir, accession=accession,
                        definition=definition, id=n,
                        lines=gb_features[idx])
-  }, feature_idx, seq_along(feature_start), SIMPLIFY=FALSE,
-     USE.NAMES=FALSE, mc.cores=detectCores())
+  }, feature_idx, seq_along(feature_start),
+                      SIMPLIFY=FALSE,
+                      USE.NAMES=FALSE,
+                      mc.cores=detectCores())
     
   ans <- gbFeatureList(db_dir=db_dir, accession=accession,
                        definition=definition, features=f_list)

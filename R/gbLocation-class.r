@@ -19,8 +19,9 @@
 ##' \href{ftp://ftp.ncbi.nih.gov/genbank/gbrel.txt}{GenBank Release Note}
 ##'
 ##' @importClassesFrom intervals Intervals_full
+##' @importClassesFrom intervals Intervals_virtual
 ##'
-##' @keywords internal
+##' @exportClass gbLocation
 ##' @name gbLocation-class
 ##' @rdname gbLocation-class
 ##' @aliases show,gbLocation-method
@@ -94,68 +95,64 @@ setMethod("initialize",
             }
           })
 
-##' @keywords internal
-setMethod("coerce",
-          #### coerce-method, character ####
-          signature( from = "gbLocation", to = "character" ),
-          function( from, to, strict ) {
-            if (nrow(from) == 0)
-              return(character())
-            else {
-              
-              cl <- closed(from)
-              par <- partial(from)
-              str <- from@strand
-              cmp <- from@compound
-              acc <- from@accession
-              rem <- from@remote
-              
-              span <- ifelse(cl[,1],
-                             "..", 
-                             ifelse(from[,2] == from[,1] + 1,
-                                    "^",
-                                    ".")
+setAs("gbLocation", "character",
+      function(from) {
+        if (nrow(from) == 0)
+          return(character())
+        else {
+          clo <- closed(from)
+          par <- partial(from)
+          str <- from@strand
+          cmp <- from@compound
+          acc <- from@accession
+          rem <- from@remote
+          
+          span <- ifelse(clo[,1],
+                         "..", 
+                         ifelse(from[,2] == from[,1] + 1,
+                                "^",
+                                ".")
+          )
+          
+          pos <- ifelse(from[,1] == from[,2],
+                        from[,1], 
+                        paste0(
+                          ifelse( par[,1], "<", "" ),
+                          from[,1],
+                          span,
+                          ifelse( par[,2], ">", "" ),
+                          from[,2]
+                        )
+          )
+          
+          pos <- ifelse( rem,
+                         paste0(acc, ":", pos),
+                         pos)
+          
+          res <- 
+            if (length(str) == 1) {
+              paste0(
+                ifelse( identical(str, -1L), "complement(", ""),
+                ifelse( !is.na(cmp), paste0(cmp, "("), ""),
+                paste0(pos, collapse=","),
+                ifelse( !is.na(cmp), ")", ""),
+                ifelse( identical(str, -1L), ")", "")
               )
-              
-              pos <- ifelse(from[,1] == from[,2],
-                            from[,1], 
-                            paste0(
-                              ifelse( par[,1], "", "<" ),
-                              from[,1],
-                              span,
-                              from[,2],
-                              ifelse( par[,2], "", ">" ),
-                            )
-              )
-              
-              pos <- ifelse( rem,
-                             paste0(acc, ":", pos),
-                             pos)
-              
-              res <- 
-                if (length(str) == 1) {
-                  paste0(
-                    ifelse( identical(str, -1L), "complement(", ""),
-                    ifelse( !is.na(cmp), paste0(cmp, "("), ""),
-                    paste0(pos, collapse=","),
-                    ifelse( !is.na(cmp), ")", ""),
-                    ifelse( identical(str, -1L), ")", "")
-                  )
-                } else if (length(str) == nrow(from)) {
-                  paste0(
-                    ifelse( !is.na(cmp), paste0(cmp, "("), ""),
-                    paste0(
-                      ifelse( str == -1L,
-                              paste0("complement(", pos, ")"),
-                              pos),
-                      collapse = ","),
-                    ifelse( !is.na(cmp), ")", "")
-                  )  
-                }
-              
-              return(res)
+            } else if (length(str) == nrow(from)) {
+              paste0(
+                ifelse( !is.na(cmp), paste0(cmp, "("), ""),
+                paste0(
+                  ifelse( str == -1L,
+                          paste0("complement(", pos, ")"),
+                          pos),
+                  collapse = ","),
+                ifelse( !is.na(cmp), ")", "")
+              )  
             }
-          })
+          
+          return(res)
+        }
+      })
 
 ##' @keywords internal
 setGeneric("partial",
@@ -204,7 +201,6 @@ setMethod("show",
           #### show-method ####
           signature("gbLocation"),
           function( object ) {
-            cat("Feature location:\n")
-            loc <- as(object, "character")
-            cat(linebreak(loc, FORCE=TRUE), "\n" )
+            res <- as(object, "character")
+            cat(linebreak(res, FORCE=TRUE), "\n" )
           })

@@ -3,6 +3,7 @@ Imports:
     methods,
     parallel,
     filehash,
+    intervals,
     rentrez,
     Biostrings
 Type: Package

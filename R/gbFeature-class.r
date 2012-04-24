@@ -44,7 +44,7 @@ setClassUnion("charOrNull", c("character", "NULL"))
                           .DEF="character",
                           .ID="integer",
                           key="character",
-                          location="numeric",
+                          location="gbLocation",
                           qualifiers="charOrNull"))
 
 ##' @export
@@ -59,33 +59,10 @@ setMethod("show",
             len_feat <- nchar(object@key)
             pad_feat <- blanks(indent - len_feat)
             
-            loc <- paste(ifelse(.start(object) == .end(object), 
-                                sprintf("%i", .start(object)),
-                                sprintf("%i..%i", .start(object), .end(object))),
-                         collapse=",")
-            
-            # if there are more than one start postions use the join(i..i)
-            # or order(i..i) syntax
-            has_loc_op <- FALSE
-            if (object@location["order"] == 1) {
-              loc_op <- "order"
-              has_loc_op <- TRUE
-            } else if (object@location["join"] == 1) {
-              loc_op <- "join"
-              has_loc_op <- TRUE
-            }
-            
-            if (has_loc_op)
-              loc <- sprintf("%s(%s)", loc_op, loc)
-            
-            # if on the minus strand use the complement(i..i) syntax
-            if (object@location["strand"] == -1)
-              loc <- sprintf("complement(%s)", loc)
-            
             # if necessary wrap the lines
             qua <- names(object@qualifiers)
-            loc <- linebreak(loc, offset=indent+1, indent=0,
-                             split=",", FORCE=TRUE)
+            loc <- linebreak(as(object@location, "character"),
+                             offset=indent+1, indent=0, split=",", FORCE=TRUE)
             val <- linebreak(dQuote(object@qualifiers), offset=indent+1, 
                              indent=-(nchar(qua) + 2), FORCE=TRUE)
             
@@ -107,7 +84,7 @@ gbFeature <- function (db_dir, accession, definition, id, key, location, qualifi
              .DEF=as.character(definition),
              .ID=as.integer(id),
              key=as.character(key),
-             location=.getLocation(location),
+             location=.getLocationS4(location),
              qualifiers=qualifiers)
 }
 
@@ -129,6 +106,98 @@ gbFeature <- function (db_dir, accession, definition, id, key, location, qualifi
   loc
 }
 
+# test cases
+# gb_base_span <- "340..565"
+# gb_base_span <- "<340..565"
+# gb_base_span <- "566..>567"
+# gb_base_span <- "102.110"
+# gb_base_span <- "123^124"
+# gb_base_span <- "J00194.1:100..202"
+# gb_base_span <- "complement(565..>567)"
+# gb_base_span <- "join(345..543,567..>590)"
+# gb_base_span <- "order(<345..543,<567..>569,666..7000)"
+# gb_base_span <- "join(complement(4918..5163),complement(2691..4571),7665..7899)"
+# gb_base_span <- "complement(join(345..543,AL121804.2:567..>569,AL121804.2:<600..603))"
+
+.getLocationS4 <- function(gb_base_span)
+{                       
+  # single location
+  sil <- "^\\d+$"
+  
+  # between location
+  bl <- "\\d+\\^\\d+"
+  # within location
+  wl <- "[<]?\\d+\\.[>]?\\d+"
+  # paired location
+  pl <- "[<]?\\d+\\.\\.[>]?\\d+"
+  
+  # simple location
+  sl <- sprintf("([a-zA-z][a-zA-Z0-9]*(\\.[a-zA-Z0-9]+)?\\:)?(%s|%s|%s)", bl, wl, pl)
+  # complemented simple location
+  csl <- sprintf("complement\\(%s\\)", sl)
+  # possibly complemented simplex location
+  pcsl <- sprintf("(%s|%s)", sl, csl)
+  
+  
+  # remote accession
+  ra <- "([a-zA-Z][a-zA-Z0-9]*(\\.[a-zA-Z0-9]+)?)" 
+  # compound location
+  cl <- sprintf("(join|order)\\(%s(,%s)*\\)", pcsl, pcsl)
+  # complemented compound location
+  ccl <- sprintf("complement\\(%s\\)", cl)
+  
+  .parseSimpleSpan <- function (base_span) {  ## test for strand
+    strand <- ifelse(grepl(csl, base_span), -1L, 1L)
+    ## get span string
+    span_str <- str_extract(base_span,  sl)
+    ## get remote accession number
+    accn <- str_extract(span_str, ra)
+    remote <- ifelse(!is.na(accn), TRUE, FALSE)
+    ## get closed and span
+    span <- gsub(paste0(ra, "\\:"), "", span_str)
+    closed <- ifelse(grepl(wl, span), FALSE, TRUE)
+    span <- do.call(rbind, strsplit(span, "\\.\\.|\\.|\\^"))
+    ## get partial
+    partial <- matrix(grepl("^(<|>)", span), ncol=2)
+    span <- matrix(as.integer(gsub("^(<|>)", "", span)), ncol=2)
+    return(list(span=span, strand=strand, partial=partial, accn=accn,
+                remote=remote, closed=closed))
+  }
+  
+  # test for possibly complemented simple location first
+  if (str_detect(gb_base_span, sprintf("^%s$", pcsl))) {
+    l <- .parseSimpleSpan(gb_base_span)
+    return(.gbLocation(.Data=l$span, strand=l$strand,
+                       compound=NA_character_, partial=l$partial,
+                       accession=l$accn, remote=l$remote,
+                       closed=l$closed))
+  }
+  # test for possibly complemented compound
+  else if (str_detect(gb_base_span, cl)) {
+    ## test for complementary strand
+    strand <- ifelse(grepl(ccl, gb_base_span), -1L, 1L)
+    ## get compound
+    cmpnd_str <- str_extract(gb_base_span, cl)
+    compound <- str_extract(cmpnd_str, "(join|order)")
+    ## get span strings
+    span_str <- strsplit(str_extract(cmpnd_str, sprintf("%s(,%s)*", pcsl, pcsl)), ",")[[1L]]
+    l <- lapply(span_str, .parseSimpleSpan)
+    
+    if (any(vapply(l, "[[", "strand", FUN.VALUE=integer(1)) < 1L)) {
+      strand <- vapply(l, "[[", "strand", FUN.VALUE=integer(1))
+    }
+    
+    return(.gbLocation(.Data=do.call(rbind, lapply(l, "[[", "span")), 
+                       strand=strand, compound=compound,
+                       partial=do.call(rbind, lapply(l, "[[", "partial")),
+                       accession=vapply(l, "[[", "accn", FUN.VALUE=character(1)),
+                       remote=vapply(l, "[[", "remote", FUN.VALUE=logical(1))))
+  }
+  else {
+    return(.gbLocation())
+  }
+}
+
 
 # Accessors -----------------------------------------------------------
 
@@ -137,11 +206,7 @@ gbFeature <- function (db_dir, accession, definition, id, key, location, qualifi
   if (identical(where, "key"))
     return(structure(data@key, names=NULL))
   
-  if (identical(where, "location")) {
-    .data <- data@location
-    NA_ <- NA_integer_
-  } 
-  else if (identical(where, "qualifiers")) {
+  if (identical(where, "qualifiers")) {
     .data <- data@qualifiers
     NA_ <- NA_character_
   }
@@ -174,16 +239,16 @@ gbFeature <- function (db_dir, accession, definition, id, key, location, qualifi
 }
 
 ## some internal shortcuts
-.start <- function (data, where="location", what="start") {
-  .access(data, where, what)
+.start <- function (x, drop=FALSE) {
+  x@location@.Data[, 1, drop=drop]
 }
 
-.end <- function (data, where="location", what="end") {
-  .access(data, where, what)
+.end <- function (x, drop=FALSE) {
+  x@location@.Data[, 2, drop=drop]
 }
 
-.strand <- function (data, where="location", what="strand") {
-  .access(data, where, what)
+.strand <- function (x) {
+  x@location@strand
 }
 
 ## access sequence
@@ -196,16 +261,16 @@ gbFeature <- function (db_dir, accession, definition, id, key, location, qualifi
     i <- 1
     for (item in x) {
       template <- append(template, subseq(s,
-        .access(item, "location", "start"),
-        .access(item, "location", "end")))
+                                          .start(item, drop=TRUE),
+                                          .end(item, drop=TRUE)))
       template[i]@ranges@NAMES <- paste0(item@.ACCN, ".", item@.ID)
       i <- i + 1
     }
   }
   else if (is(x, "gbFeature")) {
     template <- append(template, subseq(s,
-      .access(x, "location", "start"),
-      .access(x, "location", "end")))
+                                        .start(item, drop=TRUE),
+                                        .end(item, drop=TRUE)))
     template@ranges@NAMES <- paste0(x@.ACCN, ".", x@.ID)
   }
   
@@ -284,18 +349,17 @@ setGeneric("getLocation",
 setMethod("getLocation",
           #### getLocation-method ####
           signature(x="gbFeature"),
-          function (x, which=c("start", "end", "strand"),
-                    attributes=FALSE, check=TRUE) {
-            if (check && !all(grepl("start|end|strand", which, ignore.case=TRUE)))
-              stop("Invalid location identifier. Use 'start', 'end', or 'strand'")
-            
-            ans <- .access(x, "location", which)
-            if (attributes)
+          function (x, attributes=FALSE) {  
+            ans <- cbind(x@location@.Data, x@location@strand)
+            colnames(ans) <- c("start", "end", "strand")
+            if (attributes) {
               structure(ans, key=x@key, id=x@.ID,
                         accession=x@.ACCN,
                         definition=x@.DEF,
                         database=x@.Dir)
-            else ans
+            } else {
+              ans
+            }
           })
 
 ##' @docType methods

@@ -98,7 +98,7 @@ gbFeatureList <- function(db_dir, accession, definition, features)
     if (prod(d <- c(len, n)) == length(r)) {
       data.frame(stringsAsFactors=FALSE,
                  matrix(r, nrow=n, byrow=TRUE,
-                        dimnames=if (!(is.null(nm <- names(x[[1L]]))))
+                        dimnames=if (!(is.null(nm <- colnames(x[[1L]]))))
                           list(NULL, nm)))
     } else {
       x
@@ -146,17 +146,12 @@ setMethod("getKey",
 setMethod("getLocation", 
           #### getLocation-method ####
           signature(x="gbFeatureList"),
-          function (x, which=c("start", "end", "strand"), 
-                    attributes=FALSE, simplify=TRUE, check=TRUE) {
+          function (x, attributes=FALSE, simplify=TRUE) {
             
-            if (check && !all(grepl("start|end|strand", which, ignore.case=TRUE)))
-              stop("Invalid location identifier. Use 'start', 'end', or 'strand'")
-            
-            ans <- lapply(x, getLocation, which=which, attributes=FALSE,
-                          check=FALSE)
+            ans <- lapply(x, getLocation, attributes=FALSE)
             
             if (simplify) 
-              ans <- .simplify(ans)
+              ans <- .simplify(x=ans)
             
             if (attributes && simplify)
               ans <- structure(
