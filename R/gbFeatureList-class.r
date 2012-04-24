@@ -1,4 +1,7 @@
 #### gbFeatureList-class ####
+##' @include gbFeature-class.r
+NULL
+
 
 setOldClass("list")
 

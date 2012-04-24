@@ -41,7 +41,9 @@ readGB <- function (gb,
     db_path <- paste0(gb, ".db")
     
     cat(gettextf("Importing into %s\n", dQuote(basename(db_path))))
-    .parseGB(readLines(con), db_path, with_sequence=with_sequence, force=force)
+    .parseGB(readLines(con), db_path,
+             with_sequence=with_sequence,
+             force=force)
   }
   else {
     stop("'gb' must be a valid GenBank flat file or an 'efetch' object containing GenBank records")
@@ -49,12 +51,13 @@ readGB <- function (gb,
   return(invisible(db_path))
 }
 
-
 # Helper functions ----------------------------------------------------
 
-
-.parseGB <- function (gb_data, db_path, with_sequence=TRUE, force=FALSE) {
-  
+.parseGB <- function (gb_data,
+                      db_path,
+                      with_sequence=TRUE,
+                      force=FALSE)
+{
   # get a vector with the positions of the main fields
   gb_fields <- grep("^[A-Z//]+", gb_data)
   names(gb_fields) <- regmatches(gb_data[gb_fields], regexpr("^.[^ ]+", gb_data[gb_fields]))
@@ -72,7 +75,7 @@ readGB <- function (gb,
   } else {
     gb_features <- gb_data[seq(gb_fields["FEATURES"]+1, gb_fields[which(names(gb_fields) == "FEATURES")+1]-1)]
   }
-    
+  
   if (length(gb_features) < 2) 
     stop("No features in the GenBank file")
   
@@ -83,7 +86,7 @@ readGB <- function (gb,
   } else {
     gb_sequence <- gb_data[seq_idx]
   }
-    
+  
   # prepare setting up a filehash db
   if (file.exists(db_path)) {
     if (!force && readline("Target directory exists. Do you want to overwrite (y/n): ") != "y")
@@ -95,12 +98,14 @@ readGB <- function (gb,
   ## parse HEADER, FEATURES, and ORIGIN and construct 'gbData' object
   header <- .parseGbHeader(gb_header, gb_fields)
   features <- .parseGbFeatures(db_dir=db_path, accession=header$accession, 
-                               definition=header$definition, gb_features=gb_features)
+                               definition=header$definition, 
+                               gb_features=gb_features)
   sequence <- .parseGbSequence(gb_sequence, header$accession, header$type)
   gbRecord(db_dir=db_path, header=header, features=features, sequence=sequence)
 }
 
-.parseGbHeader <- function (gb_header, gb_fields) {
+.parseGbHeader <- function (gb_header, gb_fields)
+{
   #### LOCUS
   locus_line <- strsplit(gb_header[gb_fields[names(gb_fields) == "LOCUS"]], split=" +")[[1]]
   # if split by whitespace the LOCUS field seems to be made up of up to 8
@@ -191,7 +196,8 @@ readGB <- function (gb,
               comment=comment))
 } 
 
-.parseGbFeatures <- function (db_dir, accession, definition, gb_features) {
+.parseGbFeatures <- function (db_dir, accession, definition, gb_features)
+{
   # where do all the features start
   feature_start <- grep("^\\s{5}[[:alpha:]]+", gb_features)
   # where do all the features end

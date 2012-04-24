@@ -1,6 +1,9 @@
 
 # gbRecord-Class ------------------------------------------------------
 
+##' @include gbFeatureList-class.r
+NULL
+
 ##' gbRecord class
 ##' 
 ##' gbRecord is an S4 class that provides a container for data parsed from

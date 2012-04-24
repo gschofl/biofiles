@@ -5,3 +5,6 @@ dev/
 man/
 data/
 inst/
+.db
+.gb
+.gbk

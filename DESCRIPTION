@@ -1,35 +1,29 @@
 Package: biofiles
-Imports:
-    methods,
-    parallel,
-    filehash,
-    intervals,
-    rentrez,
-    Biostrings
-Type: Package
-Title: Provide classes and methods for GenBank flat file records
-Version: 0.0.1
-Date: 2012-02-15
-Author: Gerhard Schoefl <gschofl@yahoo.de>
-Maintainer: Gerhard Schoefl <gschofl@yahoo.de>
-Description: biofiles allows parsing GenBank records into an R
-    object and stores the information as an external hash table.
-    It provides access to the sequence and annotation information
-    contained in GenBank records.
+Version: 0.1-0
+Title: Working with GenBank flat file records
+Authors@R: person("Gerhard", "Schöfl", role=c("aut","cre"),
+    email="gschofl@yahoo.de")
+Description: Parse GenBank records into R object and store the
+    as an external hash table. Easy access to the sequence and
+    annotation information contained in GenBank records.
 License: MIT
+Encoding: latin1
 Depends:
     R (>= 2.15),
     methods,
     parallel,
-    filehash,
+    filehash
+Imports:
+    Biostrings,
+    intervals,
     rentrez,
-    Biostrings
+    stringr
 Collate:
     'utils.r'
+    'gbLocation-class.r'
     'gbFeature-class.r'
     'gbFeatureList-class.r'
     'select.r'
     'gbRecord-class.r'
     'validate.r'
     'readGB.r'
-    'gbLocation-class.r'
