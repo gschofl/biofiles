@@ -3,6 +3,7 @@
 
 ##' @importClassesFrom intervals Intervals_full
 ##' @importClassesFrom intervals Intervals_virtual
+##' @importFrom intervals closed
 ##' @import stringr
 NULL
 
@@ -27,6 +28,13 @@ NULL
 ##' @name gbLocation-class
 ##' @rdname gbLocation-class
 ##' @aliases show,gbLocation-method
+##' @aliases start,gbLocation-method
+##' @aliases end,gbLocation-method
+##' @aliases strand,gbLocation-method
+##' @aliases width,gbLocation-method
+##' @aliases range,gbLocation-method
+##' @aliases partial,gbLocation-method
+##' @aliases partial<-,gbLocation-method
 .gbLocation <- 
   #### gbLocation ####
   setClass("gbLocation",
@@ -98,8 +106,89 @@ setMethod("initialize",
           })
 
 
+# Accessor methods ----------------------------------------------------
+
+##' @export
+setMethod("start",
+          signature(x = "gbLocation"),
+          function (x, ...) {
+            x@.Data[, 1, drop=TRUE]
+          })
+
+##' @export
+setMethod("end",
+          signature(x = "gbLocation"),
+          function (x, ...) {
+            x@.Data[, 2, drop=TRUE]
+          })
+
+##' @export
+setMethod("width",
+          signature(x = "gbLocation"),
+          function (x) {
+            end(x) - start(x) + 1
+          })
+
+##' @export
+setMethod("strand",
+          signature(x = "gbLocation"),
+          function (x, ...) {
+            if (length(x@strand) == 1)
+              rep(x@strand, nrow(x))
+          })
+
+##' @export
+setMethod("range",
+          signature(x = "gbLocation"),
+          function (x, ..., na.rm = FALSE){
+            r <- data.frame(cbind(x@.Data, width(x), x@strand))
+            names(r) <- c("start", "end", "width", "strand")
+            r
+          })
+
+##' @export
+setGeneric("partial",
+           function(x) {
+             standardGeneric("partial")
+           })
+
+##' @export
+setMethod("partial",
+          signature("gbLocation"),
+          function(x) {
+            x@partial
+          })
+
+##' @export
+setGeneric("partial<-",
+           function(x, value) {
+             standardGeneric("partial<-")
+           })
+
+##' @export
+setReplaceMethod("partial",
+                 signature("gbLocation"),
+                 function(x, value) {                   
+                   error_msg <- "The 'value' argument should be a matrix, or a vector of length 1 or 2." 
+                   if (is.vector(value)) {
+                     if (length(value) > 2 )
+                       stop(error_msg)
+                     value <- matrix(
+                       if (nrow(x) == 0) logical() else value,
+                       nrow=nrow(x),
+                       ncol=2, byrow = TRUE)
+                   }
+                   if ( !is.matrix( value ) || nrow(value) != nrow(x) || ncol(value) != 2 )
+                     stop( error_msg )
+                   x@partial <- value
+                   return(x)
+                 })
+
+
+# Coerce-methods ------------------------------------------------------
+
+
 setAs("gbLocation", "character",
-      #### as.character-method ####
       function(from) {
         if (nrow(from) == 0)
           return(character())
@@ -158,56 +247,21 @@ setAs("gbLocation", "character",
         }
       })
 
-##' @keywords internal
-setGeneric("partial",
-           #### partial-generic ####
-           function(x) {
-             standardGeneric("partial")
-           })
 
-##' @keywords internal
-setMethod("partial",
-          #### partial-method ####
-          signature("gbLocation"),
-          function(x) {
-            x@partial
-          })
+# Show-method ---------------------------------------------------------
 
-##' @keywords internal
-setGeneric("partial<-",
-           #### 'partial<-'-generic #### 
-           function(x, value) {
-             standardGeneric("partial<-")
-           })
-
-##' @keywords internal
-setReplaceMethod("partial",
-                 #### 'partial<-'-method ####
-                 signature("gbLocation"),
-                 function(x, value) {                   
-                   error_msg <- "The 'value' argument should be a matrix, or a vector of length 1 or 2." 
-                   if (is.vector(value)) {
-                     if (length(value) > 2 )
-                       stop(error_msg)
-                     value <- matrix(
-                       if (nrow(x) == 0) logical() else value,
-                       nrow=nrow(x),
-                       ncol=2, byrow = TRUE)
-                   }
-                   if ( !is.matrix( value ) || nrow(value) != nrow(x) || ncol(value) != 2 )
-                     stop( error_msg )
-                   x@partial <- value
-                   return(x)
-                 })
 
 ##' @export 
 setMethod("show",
-          #### show-method ####
           signature("gbLocation"),
           function( object ) {
             res <- as(object, "character")
             cat(linebreak(res, FORCE=TRUE), "\n" )
           })
+
+
+# parser --------------------------------------------------------------
+
 
 ## Extract location information from a genBank base span line
 .getLocation <- function(gb_base_span)
@@ -240,6 +294,8 @@ setMethod("show",
 # gb_base_span <- "order(<345..543,<567..>569,666..7000)"
 # gb_base_span <- "join(complement(4918..5163),complement(2691..4571),7665..7899)"
 # gb_base_span <- "complement(join(345..543,AL121804.2:567..>569,AL121804.2:<600..603))"
+
+# x <- biofiles:::.getLocationS4(gb_base_span="complement(join(345..543,AL121804.2:567..>569,AL121804.2:<600..603))")
 
 .getLocationS4 <- function(gb_base_span)
 {                       

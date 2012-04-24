@@ -1,6 +1,13 @@
 \name{gbLocation-class}
+\alias{end,gbLocation-method}
 \alias{gbLocation-class}
+\alias{partial,gbLocation-method}
+\alias{partial<-,gbLocation-method}
+\alias{range,gbLocation-method}
 \alias{show,gbLocation-method}
+\alias{start,gbLocation-method}
+\alias{strand,gbLocation-method}
+\alias{width,gbLocation-method}
 \title{gbLocation class}
 \usage{
   .gbLocation(...)
