@@ -1,6 +1,11 @@
 
 # gbLocation-class ----------------------------------------------------
 
+##' @importClassesFrom intervals Intervals_full
+##' @importClassesFrom intervals Intervals_virtual
+##' @import stringr
+NULL
+
 ##' gbLocation class
 ##' 
 ##' gbLocation is a container for GenBank Feature Locations. It extends
@@ -17,10 +22,6 @@
 ##' 
 ##' For more information see the 
 ##' \href{ftp://ftp.ncbi.nih.gov/genbank/gbrel.txt}{GenBank Release Note}
-##'
-##' @importClassesFrom intervals Intervals_full
-##' @importClassesFrom intervals Intervals_virtual
-##' @import stringr
 ##'
 ##' @exportClass gbLocation
 ##' @name gbLocation-class

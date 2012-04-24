@@ -6,6 +6,7 @@
 \alias{initGB,gbRecord-method}
 \alias{select,select-method,gbRecord-method}
 \alias{show,gbRecord-method}
+\alias{write,gbRecord-method}
 \title{gbRecord class}
 \usage{
   .gbRecord(...)

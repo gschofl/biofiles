@@ -2,6 +2,8 @@
 # gbRecord-Class ------------------------------------------------------
 
 ##' @include gbFeatureList-class.r
+##' @importFrom Biostrings subseq
+##' @importFrom Biostrings toString
 NULL
 
 ##' gbRecord class
@@ -19,6 +21,7 @@ NULL
 ##' @aliases [[,gbRecord-method
 ##' @aliases $,gbRecord-method
 ##' @aliases select,select-method,gbRecord-method
+##' @aliases write,gbRecord-method
 .gbRecord <-
   setClass("gbRecord", contains="filehashRDS")
 
@@ -234,3 +237,30 @@ setMethod("select",
             ans <- .retrieve(x=ans, what=cols)
             ans
           })
+
+##' @export
+setMethod("write",
+          #### write-method ####
+          signature(x = "gbRecord"),
+          function (x, file = "data") {
+            if (file.exists(x@dir)) {
+              if (file == "data") {
+                file <- file.path(getwd(), paste0(dbFetch(x, "accession"), ".db"))
+              }
+              dir.create(path=file)
+              right <- file.copy(from=Sys.glob(file.path(x@dir, "*")),
+                                 to=file, recursive=TRUE)
+              
+              if (all(right)) {
+                cat(paste("Record written to", sQuote(file)))
+              }
+              
+              return(invisible(file))
+              
+            } else {
+              stop(paste("Database file", sQuote(x@dir), "does not exist"))
+            }
+          })
+
+
+

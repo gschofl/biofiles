@@ -12,6 +12,10 @@
 ##' @param force If \code{TRUE} existing database directories are
 ##' overwritten without prompting.
 ##' 
+##' @importFrom Biostrings read.DNAStringSet
+##' @importFrom Biostrings read.RNAStringSet
+##' @importFrom Biostrings read.AAStringSet
+##' 
 ##' @return A (list of) \code{\link{gbRecord-class}} object(s).
 ##' 
 ##' @export
@@ -205,7 +209,8 @@ readGB <- function (gb,
   # indeces for all features
   feature_idx <- Map(seq.int, feature_start, feature_end)
   
-#   f_list <- mapply( function (idx, n) {
+  cat("Parsing features\n")
+  #   f_list <- mapply( function (idx, n) {
   f_list <- mcmapply( function (idx, n) {
     .parseFeatureField(db_dir=db_dir, accession=accession,
                        definition=definition, id=n,
@@ -214,26 +219,26 @@ readGB <- function (gb,
                       SIMPLIFY=FALSE,
                       USE.NAMES=FALSE,
                       mc.cores=detectCores())
-    
-  ans <- gbFeatureList(db_dir=db_dir, accession=accession,
-                       definition=definition, features=f_list)
-  ans
+  
+  gbFeatureList(db_dir=db_dir, accession=accession,
+                definition=definition, features=f_list)
 }
 
 .parseFeatureField <- function (db_dir, accession, definition, id, lines,
-                                key_pat="(?<=^\\s{5})\\S+") {
+                                key_pat="(?<=^\\s{5})\\S+")
+{
   key <- regmatches(lines[1], regexpr(key_pat, lines[1], perl=TRUE))
   ## concatenate feature locations if they span multiple lines
   ## loc[[2]] contains the number of lines concatenated (mostly 1 anyways)
   ## loc[[1]] contains the feature's actual base span
   loc <- .joinLocation(lines)
   qual <- .joinQualifiers(lines[-seq.int(loc[[2L]])])
-  ans <- gbFeature(db_dir=db_dir, accession=accession, definition=definition,
-                   id=id, key=key, location=loc[[1L]], qualifiers=qual)
-  ans
+  gbFeature(db_dir=db_dir, accession=accession, definition=definition,
+            id=id, key=key, location=loc[[1L]], qualifiers=qual)
 }
 
-.parseGbSequence <- function(gb_sequence, accession_no, seq_type) {
+.parseGbSequence <- function(gb_sequence, accession_no, seq_type)
+{
   # read.BStringSet() does not support connections and
   # currently only accepts fasta format. So we write out gb_sequence as
   # a temporary fasta file and read it back in as a DNAStringSet,
@@ -242,6 +247,7 @@ readGB <- function (gb,
   if (is.null(gb_sequence)) {
     return(NULL)
   } else {
+    cat("Parsing sequence\n")
     tmp <- tempfile()
     on.exit(unlink(tmp))
     writeLines(text=.joinSeq(gb_sequence, accession_no), con=tmp)
@@ -253,7 +259,8 @@ readGB <- function (gb,
   }
 }
 
-.joinLocation <- function (lines, loc_pat="\\b\\S+$") {
+.joinLocation <- function (lines, loc_pat="\\b\\S+$")
+{
   if (grepl("\\b\\S+[^,]$", lines[1]))
     return(list(regmatches(lines[1],
                            regexpr(loc_pat, lines[1], perl=TRUE)), 1))
@@ -295,7 +302,8 @@ readGB <- function (gb,
 ##   /citation=[number] e.g. /citation=[3]
 ##   /compare=[accession-number.sequence-version] e.g. /compare=AJ634337.1
 ##
-.joinQualifiers <- function (lines) {
+.joinQualifiers <- function (lines)
+{
   i <- 0
   Q <- c()
   Q <- eval(function (lines, 
@@ -337,7 +345,8 @@ readGB <- function (gb,
   }) (lines)
 }
 
-.joinSeq <- function (seq, accession_no) {
+.joinSeq <- function (seq, accession_no)
+{
   mc_cores <- detectCores()
   s <- unlist(mclapply(strsplit(substring(text=seq, first=11, last=75), " "), 
                      function (x) { 
@@ -348,6 +357,5 @@ readGB <- function (gb,
   s
 }
 
-####
 # --R-- vim:ft=r:sw=2:sts=2:ts=4:tw=76:
 #       vim:fdm=marker:fmr={{{,}}}:fdl=0
