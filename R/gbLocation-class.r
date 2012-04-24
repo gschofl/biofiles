@@ -106,7 +106,14 @@ setMethod("initialize",
           })
 
 
+
+
 # Accessor methods ----------------------------------------------------
+
+setGeneric( "width", function(x) standardGeneric("width") )
+setGeneric( "strand", function(x) standardGeneric("strand") )
+setGeneric( "partial", function(x)  standardGeneric("partial") )
+setGeneric( "partial<-", function(x, value) standardGeneric("partial<-") )
 
 ##' @export
 setMethod("start",
@@ -132,9 +139,11 @@ setMethod("width",
 ##' @export
 setMethod("strand",
           signature(x = "gbLocation"),
-          function (x, ...) {
+          function (x) {
             if (length(x@strand) == 1)
-              rep(x@strand, nrow(x))
+              return(rep(x@strand, nrow(x)))
+            else
+              return(x@strand)
           })
 
 ##' @export
@@ -147,23 +156,11 @@ setMethod("range",
           })
 
 ##' @export
-setGeneric("partial",
-           function(x) {
-             standardGeneric("partial")
-           })
-
-##' @export
 setMethod("partial",
           signature("gbLocation"),
           function(x) {
             x@partial
           })
-
-##' @export
-setGeneric("partial<-",
-           function(x, value) {
-             standardGeneric("partial<-")
-           })
 
 ##' @export
 setReplaceMethod("partial",
