@@ -2,7 +2,6 @@
 .Rhistory
 .RData
 dev/
-man/
 data/
 inst/
 .db
