@@ -14,6 +14,8 @@
 
   \item{force}{If \code{TRUE} existing database directories
   are overwritten without prompting.}
+
+  \item{parallel}{Use parallel cores.}
 }
 \value{
   A (list of) \code{\link{gbRecord-class}} object(s).

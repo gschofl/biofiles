@@ -29,12 +29,14 @@ NULL
 ##' @rdname gbLocation-class
 ##' @aliases show,gbLocation-method
 ##' @aliases start,gbLocation-method
+##' @aliases start<-,gbLocation-method
 ##' @aliases end,gbLocation-method
-##' @aliases strand,gbLocation-method
+##' @aliases end<-,gbLocation-method
 ##' @aliases width,gbLocation-method
+##' @aliases strand,gbLocation-method
+##' @aliases strand<-,gbLocation-method
 ##' @aliases range,gbLocation-method
 ##' @aliases partial,gbLocation-method
-##' @aliases partial<-,gbLocation-method
 .gbLocation <- 
   #### gbLocation ####
   setClass("gbLocation",
@@ -107,38 +109,37 @@ setMethod("initialize",
 
 
 
-
 # Accessor methods ----------------------------------------------------
 
-setGeneric( "width", function(x) standardGeneric("width") )
-setGeneric( "strand", function(x) standardGeneric("strand") )
-setGeneric( "partial", function(x)  standardGeneric("partial") )
-setGeneric( "partial<-", function(x, value) standardGeneric("partial<-") )
+setGeneric( "start", function(x, ...) standardGeneric("start") )
+setGeneric( "start<-", function(x, ...) standardGeneric("start<-") )
+setGeneric( "end", function(x, ...) standardGeneric("end") )
+setGeneric( "end<-", function(x, ...) standardGeneric("end<-") )
+setGeneric( "width", function(x, ...) standardGeneric("width") )
+setGeneric( "strand", function(x, ...) standardGeneric("strand") )
+setGeneric( "strand<-", function(x, ...) standardGeneric("strand<-") )
+setGeneric( "partial", function(x, ...)  standardGeneric("partial") )
 
-##' @export
-setMethod("start",
-          signature(x = "gbLocation"),
-          function (x, ...) {
-            x@.Data[, 1, drop=TRUE]
+#' @export
+setMethod("start", "gbLocation",
+          function (x, drop=TRUE) {
+            x@.Data[, 1, drop=drop]
           })
 
-##' @export
-setMethod("end",
-          signature(x = "gbLocation"),
-          function (x, ...) {
-            x@.Data[, 2, drop=TRUE]
+#' @export
+setMethod("end", "gbLocation",
+          function (x, drop=TRUE) {
+            x@.Data[, 2, drop=drop]
           })
 
-##' @export
-setMethod("width",
-          signature(x = "gbLocation"),
+#' @export
+setMethod("width", "gbLocation",
           function (x) {
-            end(x) - start(x) + 1
+            x@.Data[, 2] - x@.Data[, 1] + 1
           })
 
-##' @export
-setMethod("strand",
-          signature(x = "gbLocation"),
+#' @export
+setMethod("strand", "gbLocation",
           function (x) {
             if (length(x@strand) == 1)
               return(rep(x@strand, nrow(x)))
@@ -146,41 +147,88 @@ setMethod("strand",
               return(x@strand)
           })
 
-##' @export
-setMethod("range",
-          signature(x = "gbLocation"),
+#' @export
+setMethod("range", "gbLocation",
           function (x, ..., na.rm = FALSE){
             r <- data.frame(cbind(x@.Data, width(x), x@strand))
             names(r) <- c("start", "end", "width", "strand")
             r
           })
 
-##' @export
-setMethod("partial",
-          signature("gbLocation"),
+#' @export
+setMethod("partial", "gbLocation",
           function(x) {
             x@partial
           })
 
-##' @export
-setReplaceMethod("partial",
-                 signature("gbLocation"),
-                 function(x, value) {                   
-                   error_msg <- "The 'value' argument should be a matrix, or a vector of length 1 or 2." 
-                   if (is.vector(value)) {
-                     if (length(value) > 2 )
-                       stop(error_msg)
-                     value <- matrix(
-                       if (nrow(x) == 0) logical() else value,
-                       nrow=nrow(x),
-                       ncol=2, byrow = TRUE)
-                   }
-                   if ( !is.matrix( value ) || nrow(value) != nrow(x) || ncol(value) != 2 )
-                     stop( error_msg )
-                   x@partial <- value
-                   return(x)
-                 })
 
+# Replace methods -----------------------------------------------------
+
+#' @export
+setMethod("start<-", "gbLocation",
+          function(x, value) {
+            if (!is.numeric(value))
+              stop("replacement 'value' must be numeric")
+            if (length(value) != nrow(x)) {
+              stop(sprintf("This gbLocation contains %s start values", nrow(x)))
+            }
+            if (x@.Data[,1] == x@.Data[,2]) {
+              x@.Data[,1] <- value
+              x@.Data[,2] <- value
+            } else {
+              x@.Data[,1] <- value
+            }
+            x
+          })
+
+#' @export
+setMethod("end<-", "gbLocation",
+          function(x, value) {
+            if (!is.numeric(value))
+              stop("replacement 'value' must be numeric")
+            if (length(value) != nrow(x)) {
+              stop(sprintf("This gbLocation contains %s end values", nrow(x)))
+            }
+            if (x@.Data[,2] == x@.Data[,1]) {
+              x@.Data[,2] <- value
+              x@.Data[,1] <- value
+            } else {
+              x@.Data[,2] <- value
+            }
+            x
+          })
+
+#' @export
+setMethod("strand<-", "gbLocation",
+          function(x, value) {
+            if (is.character(value) && value %in% c("+","-",NA_character_)) {
+              value <- switch(value, "+" = 1L, "-" = -1L, "NA" = NA_integer_)
+            } else if (is.numeric(value) && value %in% c(1,-1,NA)) {
+              value <- as.integer(value)
+            } else if (is.logical(value) && is.na(value)) {
+              value <- as.integer(value)
+            }
+            x@strand <- rep(value[1L], nrow(x))
+            x
+          })
+
+# @export
+# setReplaceMethod("partial", "gbLocation",
+#                  function(x, value) {                   
+#                    error_msg <- "The 'value' argument should be a matrix, or a vector of length 1 or 2." 
+#                    if (is.vector(value)) {
+#                      if (length(value) > 2 )
+#                        stop(error_msg)
+#                      value <- matrix(
+#                        if (nrow(x) == 0) logical() else value,
+#                        nrow=nrow(x),
+#                        ncol=2, byrow = TRUE)
+#                    }
+#                    if ( !is.matrix( value ) || nrow(value) != nrow(x) || ncol(value) != 2 )
+#                      stop( error_msg )
+#                    x@partial <- value
+#                    return( x )
+#                  })
 
 # Coerce-methods ------------------------------------------------------
 
@@ -278,7 +326,7 @@ setMethod("show",
   loc
 }
 
-# test cases
+# test cases simple
 # gb_base_span  <- "340"
 # gb_base_span <- "340..565"
 # gb_base_span <- "<340..565"
@@ -286,9 +334,13 @@ setMethod("show",
 # gb_base_span <- "102.110"
 # gb_base_span <- "123^124"
 # gb_base_span <- "J00194.1:100..202"
+
+# test cases complex
 # gb_base_span <- "complement(565..>567)"
 # gb_base_span <- "join(345..543,567..>590)"
 # gb_base_span <- "order(<345..543,<567..>569,666..7000)"
+# gb_base_span <- "order(9,14,34,58,76,88)"
+# gb_base_span <- "order(52,121..126)"
 # gb_base_span <- "join(complement(4918..5163),complement(2691..4571),7665..7899)"
 # gb_base_span <- "complement(join(345..543,AL121804.2:567..>569,AL121804.2:<600..603))"
 
@@ -297,8 +349,7 @@ setMethod("show",
 .getLocationS4 <- function(gb_base_span)
 {                       
   # single location
-  sil <- "^\\d+$"
-  
+  sil <- "\\d+"
   # between location
   bl <- "\\d+\\^\\d+"
   # within location
@@ -307,7 +358,8 @@ setMethod("show",
   pl <- "[<]?\\d+\\.\\.[>]?\\d+"
   
   # simple location
-  sl <- sprintf("([a-zA-z][a-zA-Z0-9]*(\\.[a-zA-Z0-9]+)?\\:)?(%s|%s|%s)", bl, wl, pl)
+  sl <- sprintf("([a-zA-z][a-zA-Z0-9]*(\\.[a-zA-Z0-9]+)?\\:)?(%s|%s|%s|%s)",
+                sil, bl, wl, pl)
   # complemented simple location
   csl <- sprintf("complement\\(%s\\)", sl)
   # possibly complemented simplex location
@@ -339,15 +391,16 @@ setMethod("show",
                 remote=remote, closed=closed))
   }
   
-  # test for possibly complemented simple location first
-  if (str_detect(gb_base_span, sprintf("^%s$", pcsl))) {
+  # test for possibly complemented simple location
+  if ( str_detect(gb_base_span, sprintf("^%s$", pcsl)) ) {
     l <- .parseSimpleSpan(gb_base_span)
     return(.gbLocation(.Data=l$span, strand=l$strand,
                        compound=NA_character_, partial=l$partial,
                        accession=l$accn, remote=l$remote,
                        closed=l$closed))
   }
-  # test for possibly complemented compound
+  
+  # test for possibly complemented compound location
   else if ( str_detect(gb_base_span, cl) ) {
     ## test for complementary strand
     strand <- ifelse(grepl(ccl, gb_base_span), -1L, 1L)
@@ -367,8 +420,5 @@ setMethod("show",
                        partial=do.call(rbind, lapply(l, "[[", "partial")),
                        accession=vapply(l, "[[", "accn", FUN.VALUE=character(1)),
                        remote=vapply(l, "[[", "remote", FUN.VALUE=logical(1))))
-  }
-  else if ( str_detect(gb_base_span, sil) ) {
-    return( .gbLocation(.Data=as.integer(str_extract( gb_base_span, sil ))) )
   }
 }

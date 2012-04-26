@@ -11,6 +11,7 @@
 ##' will be included.
 ##' @param force If \code{TRUE} existing database directories are
 ##' overwritten without prompting.
+##' @param parallel Use parallel cores.
 ##' 
 ##' @importFrom Biostrings read.DNAStringSet
 ##' @importFrom Biostrings read.RNAStringSet
@@ -21,7 +22,8 @@
 ##' @export
 readGB <- function (gb,
                     with_sequence=TRUE,
-                    force=FALSE)
+                    force=FALSE,
+                    parallel=TRUE)
 {
   # we store efetch data in temporary files
   if (is(gb, "efetch")) {
@@ -36,7 +38,9 @@ readGB <- function (gb,
     for (i in seq_len(n)) {
       gb_data <- strsplit(split_gb[i], "\n")[[1L]]
       cat(gettextf("Importing into %s\n", dQuote(basename(db_path[i]))))
-      .parseGB(gb_data, db_path[i], with_sequence=with_sequence, force=force)
+      .parseGB(gb_data, db_path[i],
+               with_sequence=with_sequence,
+               force=force, parallel=parallel)
     }
   }
   else if (!isS4(gb) && file.exists(gb)) {
@@ -47,7 +51,7 @@ readGB <- function (gb,
     cat(gettextf("Importing into %s\n", dQuote(basename(db_path))))
     .parseGB(readLines(con), db_path,
              with_sequence=with_sequence,
-             force=force)
+             force=force, parallel=parallel)
   }
   else {
     stop("'gb' must be a valid GenBank flat file or an 'efetch' object containing GenBank records")
@@ -60,7 +64,8 @@ readGB <- function (gb,
 .parseGB <- function (gb_data,
                       db_path,
                       with_sequence=TRUE,
-                      force=FALSE)
+                      force=FALSE,
+                      parallel=TRUE)
 {
   # get a vector with the positions of the main fields
   gb_fields <- grep("^[A-Z//]+", gb_data)
@@ -103,7 +108,7 @@ readGB <- function (gb,
   header <- .parseGbHeader(gb_header, gb_fields)
   features <- .parseGbFeatures(db_dir=db_path, accession=header$accession, 
                                definition=header$definition, 
-                               gb_features=gb_features)
+                               gb_features=gb_features, parallel=parallel)
   sequence <- .parseGbSequence(gb_sequence, header$accession, header$type)
   gbRecord(db_dir=db_path, header=header, features=features, sequence=sequence)
 }
@@ -139,7 +144,7 @@ readGB <- function (gb,
     warning("Sequence topology might be missing from the locus definition.\nBetter check the result.")
     locus <- locus_line[2]
     length <- as.numeric(locus_line[3])
-    name(length) <- locus_line[4]
+    names(length) <- locus_line[4]
     type <- locus_line[5]
     topology <- NULL
     division <- locus_line[6]
@@ -200,7 +205,9 @@ readGB <- function (gb,
               comment=comment))
 } 
 
-.parseGbFeatures <- function (db_dir, accession, definition, gb_features)
+.parseGbFeatures <- function (db_dir, accession,
+                              definition, gb_features,
+                              parallel=TRUE)
 {
   # where do all the features start
   feature_start <- grep("^\\s{5}[[:alpha:]]+", gb_features)
@@ -210,15 +217,19 @@ readGB <- function (gb,
   feature_idx <- Map(seq.int, feature_start, feature_end)
   
   cat("Parsing features\n")
-  #   f_list <- mapply( function (idx, n) {
-  f_list <- mcmapply( function (idx, n) {
-    .parseFeatureField(db_dir=db_dir, accession=accession,
-                       definition=definition, id=n,
-                       lines=gb_features[idx])
-  }, feature_idx, seq_along(feature_start),
-                      SIMPLIFY=FALSE,
-                      USE.NAMES=FALSE,
-                      mc.cores=detectCores())
+  if (parallel) {
+    f_list <- mcmapply(function (idx, n) {
+      .parseFeatureField(db_dir=db_dir, accession=accession,
+                         definition=definition, id=n,
+                         lines=gb_features[idx])
+    }, feature_idx, seq_along(feature_start), SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
+  } else {
+    f_list <- mapply( function (idx, n) {
+      .parseFeatureField(db_dir=db_dir, accession=accession,
+                         definition=definition, id=n,
+                         lines=gb_features[idx])
+    }, feature_idx, seq_along(feature_start), SIMPLIFY=FALSE, USE.NAMES=FALSE)
+  }
   
   gbFeatureList(db_dir=db_dir, accession=accession,
                 definition=definition, features=f_list)
@@ -252,9 +263,9 @@ readGB <- function (gb,
     on.exit(unlink(tmp))
     writeLines(text=.joinSeq(gb_sequence, accession_no), con=tmp)
     origin <- switch(seq_type,
-              DNA=read.DNAStringSet(tmp, format="fasta"),
-              AA=read.AAStringSet(tmp, format="fasta"),
-              read.RNAStringSet(tmp, format="fasta"))
+              DNA=readDNAStringSet(tmp, format="fasta"),
+              AA=readAAStringSet(tmp, format="fasta"),
+              readRNAStringSet(tmp, format="fasta"))
     origin
   }
 }
@@ -290,6 +301,7 @@ readGB <- function (gb,
 ##   /codon_start=1, 2, or 3
 ##   /direction=left, right, or both
 ##   /estimated_length=unknown or <integer>
+##   /calculated_mol_wt=<integer>
 ##   /mod_base=name of modified base
 ##   /number=unquoted text
 ##   /rpt_type=<repeat_type>
@@ -310,7 +322,7 @@ readGB <- function (gb,
                       qual_pat="(?<=^\\s{21}/).[^=]+\\b", # everything between (/) and (=)
                       text_pat="(?<=\\=\")(.+)(?=\"$)", # everything between ("") after (=) before EOL
                       ctrl_voc="^ {21}/(anticodon|codon_start|direction|estimated_length|
-                      mod_base|number|rpt_type|rpt_unit_range|tag_peptide|
+                      mod_base|number|rpt_type|rpt_unit_range|tag_peptide|calculated_mol_wt|
                       transl_except|transl_table|citation|compare)\\=.+") {
 
     if (!grepl("^ {21}/", lines[1])) return(Q)

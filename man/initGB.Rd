@@ -12,8 +12,8 @@
   \item{...}{other arguments passed to methods}
 }
 \value{
-  Returns a \sQuote{\code{gbRecord}} object inheriting from
-  \code{\link[filehash]{filehashRDS-class}}
+  Returns a \sQuote{\code{gbRecord-class}} object
+  inheriting from \code{\link[filehash]{filehashRDS-class}}
 }
 \description{
   Create and/or initialise a gbRecord filehash database

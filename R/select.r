@@ -69,7 +69,7 @@
   }
   
   if (any(idx <- grepl("key", what, ignore.case=TRUE))) {
-    k <- .simplify(lapply(x, function (x) .access(x, where="key")))
+    k <- .simplify(lapply(x, function (x) getKey(x)))
     col_names <- c(col_names, what[idx])
     if (isEmpty(what <- what[!idx]))
       return(.return(i, k, .Names=col_names))

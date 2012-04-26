@@ -1,4 +1,6 @@
-#### gbFeature-class ####
+
+# gbFeature-class -----------------------------------------------------
+
 ##' @include gbLocation-class.r
 NULL
 
@@ -30,16 +32,24 @@ setClassUnion("charOrNull", c("character", "NULL"))
 ##' @rdname gbFeature-class
 ##' @exportClass gbFeature
 ##' @aliases show,gbFeature-method
+##' @aliases start,gbFeature-method
+##' @aliases end,gbFeature-method
+##' @aliases strand,gbFeature-method
+##' @aliases width,gbFeature-method
+##' @aliases range,gbFeature-method
+##' @aliases partial,gbFeature-method
 ##' @aliases getIndex,gbFeature-method
 ##' @aliases getKey,gbFeature-method
 ##' @aliases getLocation,gbFeature-method
 ##' @aliases getQualifier,gbFeature-method
+##' @aliases dbXref,gbFeature-method
 ##' @aliases getSequence,gbFeature-method
 ##' @aliases hasKey,gbFeature-method
 ##' @aliases hasQualifier,gbFeature-method
 ##' @aliases [[,gbFeature-method
 ##' @aliases $,gbFeature-method
-.gbFeature <- 
+.gbFeature <-
+  #### gbFeature ####
   setClass("gbFeature",
            representation(.Dir="character",
                           .ACCN="character",
@@ -49,9 +59,12 @@ setClassUnion("charOrNull", c("character", "NULL"))
                           location="gbLocation",
                           qualifiers="charOrNull"))
 
+
+# show-method ---------------------------------------------------------
+
+
 ##' @export
 setMethod("show", 
-          #### show-method ####
           signature("gbFeature"),
           function (object) {
             op <- options("useFancyQuotes")
@@ -90,254 +103,307 @@ gbFeature <- function (db_dir, accession, definition, id, key, location, qualifi
              qualifiers=qualifiers)
 }
 
-# Accessors -----------------------------------------------------------
 
-.access <- function (data, where, which, fixed=FALSE)
+# Accessor generics ---------------------------------------------------
+
+##' get genomic location of a GenBank feature
+##'
+##' @usage getLocation(x, attributes=TRUE)
+##'
+##' @param x A gbFeature or gbFeatureList object
+##'
+##' @family accessors
+##' @return A data frame
+##'
+##' @docType methods
+##' @export
+setGeneric( "getLocation", function(x, attributes=FALSE, ...) 
+  standardGeneric("getLocation") )
+
+##' get index of a GenBank feature.
+##'
+##' @usage getIndex(x)
+##'
+##' @param x A gbFeature or gbFeatureList object
+##'
+##' @family accessors
+##' @return A numeric vector of feature indeces
+##'
+##' @docType methods
+##' @export
+setGeneric( "getIndex", function(x, attributes=FALSE, ...) 
+  standardGeneric("getIndex") )
+
+##' @family accessors
+##' @docType methods
+##' @export
+setGeneric( "getKey", function(x, attributes=FALSE, ...) 
+  standardGeneric("getKey") )
+
+##' @family accessors
+##' @docType methods
+##' @export
+setGeneric( "getQualifier", function(x, which="", attributes=FALSE, ...)
+  standardGeneric("getQualifier") )
+
+##' @family accessors
+##' @docType methods
+##' @export
+setGeneric( "dbXref", function(x, db=NULL, ...) 
+  standardGeneric("dbXref") )
+
+##' @family accessors
+##' @docType methods
+##' @export
+setGeneric( "getSequence", function(x, ...) 
+  standardGeneric("getSequence") )
+
+##' @family accessors
+##' @docType methods
+##' @export
+setGeneric( "hasKey", function(x, key, ...)
+  standardGeneric("hasKey") )
+
+##' @family accessors
+##' @docType methods
+##' @export
+setGeneric( "hasQualifier",  function(x, qualifier, ...)
+  standardGeneric("hasQualifier") )
+
+
+# Accessor methods ----------------------------------------------------
+
+##' @export
+setMethod("start", "gbFeature",
+          function(x, drop=TRUE) start(x@location, drop=drop) )
+
+##' @export
+setMethod("end", "gbFeature",
+          function(x, drop=TRUE) end(x@location, drop=drop) )
+
+##' @export
+setMethod("strand", "gbFeature",
+          function(x, ...) strand(x@location) )
+
+##' @export
+setMethod("width", "gbFeature",
+          function(x, ...) width(x@location) )
+
+##' @export
+setMethod("partial", "gbFeature",
+          function(x) partial(x@location) )
+
+##' @export
+setMethod("range", "gbFeature",
+          function(x) range(x@location) )
+
+##' @export
+setMethod("getLocation",
+          signature(x="gbFeature"),
+          function (x, attributes=FALSE) {     
+            ans <- range(x@location) 
+            if (attributes) {
+              return( structure(ans, key=x@key, id=x@.ID,
+                                accession=x@.ACCN,
+                                definition=x@.DEF,
+                                database=x@.Dir) )
+            } else {
+              return( ans )
+            }
+          })
+
+##' @export
+setMethod("getIndex",
+          signature(x="gbFeature"),
+          function (x, attributes=FALSE) {
+            ans <- x@.ID
+            if (attributes) {
+              return(structure(ans,
+                               accession=x@.ACCN,
+                               definition=x@.DEF,
+                               database=x@.Dir) )
+            } else {
+              return( ans )
+            }
+          })
+
+##' @export
+setMethod("getKey",
+          signature(x="gbFeature"), 
+          function (x, attributes=FALSE) {
+            ans <- structure(x@key, names=NULL)
+            if (attributes) {
+              return(structure(ans, id=x@.ID,
+                               accession=x@.ACCN,
+                               definition=x@.DEF,
+                               database=x@.Dir) )
+            }
+            else {
+              return( ans )
+            }
+          })
+
+.access <- function (x, which="", fixed=FALSE)
 {
-  if (identical(where, "key"))
-    return(structure(data@key, names=NULL))
+  .x <- x@qualifiers
+
+  if (fixed) which <- paste0("\\b", which, "\\b")
   
-  if (identical(where, "qualifiers")) {
-    .data <- data@qualifiers
-    NA_ <- NA_character_
-  }
-  
-  if (fixed) which <- paste0("\\<", which, "\\>")
-  
-  n_row <- length(.data)
+  n_row <- length(.x)
   idx <- matrix(
-    vapply(which, grepl, x=names(.data),
+    vapply(which, grepl, x=names(.x),
            USE.NAMES=FALSE, FUN.VALUE=logical(n_row)),
     nrow=n_row)
 
   if (ncol(idx) == 1L) {
-    ans <- structure(.data[idx], names=NULL)
-    
-    if (length(ans) > 0L) 
-      return(ans)
-    else
-      return(structure(NA_, names=NULL))
+    ans <- .x[idx]
+    if (length(ans) > 0L) {
+      return( ans )
+    } else {
+      return( structure(NA_character_, names=which) )
+    }
   } 
   else if (ncol(idx) > 1L) {
-    ans <- lapply(seq.int(ncol(idx)), function (i) .data[idx[,i]])
+    ans <- lapply(seq.int(ncol(idx)), function (i) .x[idx[,i]])
     
-    if (any(na_idx <- vapply(ans, length, FUN.VALUE=integer(1L)) == 0L))
-      for (na in which(na_idx))
-        ans[[na]] <- structure(NA_, names=which[na])
-    
-    return(unlist(ans))
+    if (any(na_idx <- vapply(ans, length, FUN.VALUE=integer(1L)) == 0L)) {
+      for (na in which(na_idx)) {
+        ans[[na]] <- structure(NA_character_, names=which[na])
+      }
+    }
+    return( unlist(ans) )
   }
 }
 
-## some internal shortcuts
-.start <- function (x, drop=FALSE) {
-  x@location@.Data[, 1, drop=drop]
-}
+##' @export
+setMethod("getQualifier",
+          signature(x="gbFeature"), 
+          function (x, which="", attributes=FALSE, fixed=FALSE) {
+            
+            if (!any(nzchar(which))) {
+              ans <- x@qualifiers
+            } else {
+              ans <- .access(x, which, fixed)
+            }
+        
+            if (attributes) {
+              return( structure(ans, key=x@key, id=x@.ID,
+                        accession=x@.ACCN,
+                        definition=x@.DEF,
+                        database=x@.Dir) )
+            } else {
+              return( ans )
+            }
+            
+          })
 
-.end <- function (x, drop=FALSE) {
-  x@location@.Data[, 2, drop=drop]
-}
 
-.strand <- function (x) {
-  x@location@strand
-}
-
-## access sequence
-.seqAccess <- function(s, x, type)
+.seq_access <- function(s, x, type)
 {
   ## initiate empty XStringSet
-  template <- switch(type, DNA=DNAStringSet(), AA=AAStringSet(), RNA=RNAStringSet())
+  template <- switch(type, 
+                     DNA=DNAStringSet(),
+                     AA=AAStringSet(),
+                     RNA=RNAStringSet())
   
   if (is(x, "gbFeatureList")) {
     i <- 1
     for (item in x) {
-      template <- append(template, subseq(s,
-                                          .start(item, drop=TRUE),
-                                          .end(item, drop=TRUE)))
+      template <- append(template, subseq(s, start(item), end(item)))
       template[i]@ranges@NAMES <- paste0(item@.ACCN, ".", item@.ID)
       i <- i + 1
     }
   }
   else if (is(x, "gbFeature")) {
-    template <- append(template, subseq(s,
-                                        .start(item, drop=TRUE),
-                                        .end(item, drop=TRUE)))
-    template@ranges@NAMES <- paste0(x@.ACCN, ".", x@.ID)
+    template <- append(template, subseq(s, start(x), end(x)))
+    template@ranges@NAMES <- sprintf("%s.%s.%s", x@.ACCN, x@key, x@.ID)
   }
   
   template@metadata <- list(definition=x@.DEF, database=x@.Dir)
   template
 }
 
-##' Retrieve index of a GenBank feature.
-##'
-##' @usage index(data)
-##'
-##' @param data An instance of \code{\link{gbFeature-class}} or
-##' \code{\link{gbFeatureList-class}}
-##'
-##'@family accessors
-##' @return A numeric vector of feature indeces
-##'
-##' @docType methods
-##' @rdname gbFeature-class
-##' @export
-setGeneric("getIndex",
-           #### getIndex-generic ####
-           function(x, ...) {
-             standardGeneric("getIndex")
-           })
-
 
 ##' @export
-setMethod("getIndex",
-          #### getIndex-method ####
+setMethod("dbXref",
           signature(x="gbFeature"),
-          function (x, attributes=FALSE) {
-            ans <- x@.ID
-            if (attributes)
-                structure(ans,
-                          accession=x@.ACCN,
-                          definition=x@.DEF,
-                          database=x@.Dir)
-            else ans
-          })
-
-##' @docType methods
-##' @rdname gbFeature-class
-##' @export
-setGeneric("getKey", 
-           #### getKey-generic ####
-           function(x, ...) {
-             standardGeneric("getKey")
-             })
-
-
-##' @export
-setMethod("getKey",
-          #### getKey-method ####
-          signature(x="gbFeature"), 
-          function (x, attributes=FALSE) {
-            ans <- .access(x, where="key")
-            if (attributes)
-              structure(ans, id=x@.ID,
-                        accession=x@.ACCN,
-                        definition=x@.DEF,
-                        database=x@.Dir)
-            else ans
-          })
-
-##' @docType methods
-##' @rdname gbFeature-class
-##' @export
-setGeneric("getLocation",
-           #### getLocation-generic ####
-           function(x, which=c("start", "end", "strand"), ...) {
-             standardGeneric("getLocation")
-           })
-
-##' @export
-setMethod("getLocation",
-          #### getLocation-method ####
-          signature(x="gbFeature"),
-          function (x, attributes=FALSE) {  
-            ans <- cbind(x@location@.Data, x@location@strand)
-            colnames(ans) <- c("start", "end", "strand")
-            if (attributes) {
-              structure(ans, key=x@key, id=x@.ID,
-                        accession=x@.ACCN,
-                        definition=x@.DEF,
-                        database=x@.Dir)
+          function (x, db=NULL, ...) {     
+            ans <- .access(x, "db_xref")
+            if (all(is.na(ans))) {
+              return( NA_character_ )
             } else {
-              ans
+              dbs <- vapply(ans, function (x) strsplit(x, ":")[[1]][1], 
+                            character(1), USE.NAMES=FALSE)
+              ids <- vapply(ans, function (x) strsplit(x, ":")[[1]][2], 
+                            character(1), USE.NAMES=FALSE)
+              if (is.null(db)) {
+                names(ids) <- dbs
+                return( ids )
+              } else {
+                db_pattern <- paste(sprintf("\\b%s\\b", db), collapse="|")
+                db_pos <- grep(db_pattern, dbs, ignore.case=TRUE)
+                if (length(db_pos) == 0L) {
+                  return( NA_character_ )
+                } else {
+                  ids <- ids[db_pos]
+                  names(ids) <- dbs[db_pos]
+                  return( ids )
+                }
+              }
             }
           })
 
-##' @docType methods
-##' @rdname gbFeature-class
-##' @export
-setGeneric("getQualifier",
-           #### getQualifier-generic ####
-           function(x, which=c(""), ...) {
-             standardGeneric("getQualifier")
-           })
-
-##' @export
-setMethod("getQualifier",
-          #### getQualifier-method ####
-          signature(x="gbFeature"), 
-          function (x, which=c(""), attributes=FALSE, fixed=FALSE) {
-            ans <- .access(x, "qualifiers", which, fixed)
-            if (attributes)
-              structure(ans, key=x@key, id=x@.ID,
-                accession=x@.ACCN,
-                definition=x@.DEF,
-                database=x@.Dir)
-            else ans
-          })
-
-##' @docType methods
-##' @rdname gbFeature-class
-##' @export
-setGeneric("getSequence",
-           #### getSequence-generic ####
-           function(x, ...) {
-             standardGeneric("getSequence")
-             })
-
 ##' @export
 setMethod("getSequence",
-          #### getSequence-method ####
           signature(x="gbFeature"),
           function (x) {
             stopifnot(hasValidDb(x))
-            db <- initGenBank(x@.Dir, verbose=FALSE)
-            ans <- .seqAccess(dbFetch(db, "sequence"), x, dbFetch(db, "type"))
+            db <- initGB(x@.Dir, verbose=FALSE)
+            ans <- .seq_access(s=dbFetch(db, "sequence"),
+                               x, type=dbFetch(db, "type"))
             ans
           })
 
-##' @docType methods
-##' @rdname gbFeature-class
-##' @export
-setGeneric("hasKey",
-           #### hasKey-generic ####
-           function(x, key, ...) {
-             standardGeneric("hasKey")
-           })
-
 ##' @export
 setMethod("hasKey", 
-          #### hasKey-method ####
           signature(x="gbFeature"), 
           function (x, key) {
             !is.na(charmatch(key, x@key))
           })
 
-##' @docType methods
-##' @rdname gbFeature-class
-##' @export
-setGeneric("hasQualifier", 
-           #### hasQualifier-generic ####
-           function(x, qualifier, ...) {
-             standardGeneric("hasQualifier")
-           })
-
 ##' @export
 setMethod("hasQualifier",
-          #### hasQualifier-method ####
           signature("gbFeature"),
           function (x, qualifier) {
-            !is.na(charmatch(qualifier,
-                             names(.access(x, "qualifiers", what=""))))
+            !is.na(charmatch(qualifier, names(x@qualifiers)))
           })
 
+
+# Replacement methods -------------------------------------------------
+
+##' @export
+setMethod("start<-", "gbFeature",
+          function(x, value) {
+            start(x@location) <- value
+            x })
+
+##' @export
+setMethod("end<-", "gbFeature",
+          function(x, value) {
+            end(x@location)  <- value
+            x })
+
+##' @export
+setMethod("strand<-", "gbFeature",
+          function(x, value) { 
+            strand(x@location) <- value 
+            x})
 
 # Subsetting ----------------------------------------------------------
 
 
 ##' @export
 setMethod("[[",
-          #### [[-method ####
           signature(x = "gbFeature", i = "character", j = "missing"),
           function(x, i, j) {
             return(slot(object, i))
@@ -345,8 +411,10 @@ setMethod("[[",
 
 ##' @export
 setMethod("$",
-          #### $-method ####
           signature(x = "gbFeature"),
           function(x, name) {
             return(slot(x, name))
           })
+
+
+

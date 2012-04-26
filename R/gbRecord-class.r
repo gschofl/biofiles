@@ -15,20 +15,23 @@ NULL
 ##' @name gbRecord-class
 ##' @rdname gbRecord-class
 ##' @exportClass gbRecord
-##' @aliases initGB,gbRecord-method
+##' @aliases initGB,initGB-method,gbRecord-method
 ##' @aliases show,gbRecord-method
 ##' @aliases getFeatures,gbRecord-method
 ##' @aliases [[,gbRecord-method
 ##' @aliases $,gbRecord-method
 ##' @aliases select,select-method,gbRecord-method
 ##' @aliases write,gbRecord-method
+##' @aliases shiftFeatures,gbFeature-method
 .gbRecord <-
   setClass("gbRecord", contains="filehashRDS")
 
 
+# show-method ---------------------------------------------------------
+
+
 ##' @export
 setMethod("show",
-          #### show-method ####
           signature(object="gbRecord"),
           function(object) {
             if(length(object@name) == 0)
@@ -82,12 +85,11 @@ setMethod("show",
 ##' else a database object is initialised from an existing database.
 ##' @param ... other arguments passed to methods
 ##'
-##' @return Returns a \sQuote{\code{gbRecord}} object inheriting from 
+##' @return Returns a \sQuote{\code{gbRecord-class}} object inheriting from 
 ##' \code{\link[filehash]{filehashRDS-class}} 
 ##'
 ##' @export
 ##' @docType methods
-##' @rdname initGB-method
 setGeneric("initGB",
            #### initGB-generic ####
            function(db_dir, ...) {
@@ -184,29 +186,25 @@ gbRecord <- function (db_dir, header, features, sequence=NULL)
 
 ##' Retrieve features of a GenBank record.
 ##'
-##' @usage getFeatures(data)
+##' @usage getFeatures(x, ...)
 ##'
 ##' @param data An instance of \code{\link{gbRecord-class}}.
 ##'
 ##' @family accessors
-##' @return The \code{gbFeatureList-class} object contained in a gbRecord
-##' database.
+##' @return The \code{\link{gbFeatureList-class}} object contained in a
+##' gbRecord database.
 ##'
 ##' @docType methods
-##' @rdname gbReccord-class
 ##' @export
-setGeneric("getFeatures",
-           #### getFeatures-generic ####
-           function(data, ...) {
-             standardGeneric("getFeatures")
-           })
+setGeneric( "getFeatures", function(x, ...)
+  standardGeneric("getFeatures") )
 
 ##' @export
 setMethod("getFeatures",
           #### getFeatures-method ####
-          signature(data="gbRecord"), 
-          function (data) {
-            dbFetch(data, "features")
+          signature(x = "gbRecord"), 
+          function (x) {
+            dbFetch(x, "features")
           })
 
 # Subsetting ----------------------------------------------------------
@@ -264,3 +262,19 @@ setMethod("write",
 
 
 
+# Shift features ------------------------------------------------------
+
+
+#' @export
+setMethod("shiftFeatures", "gbRecord",
+          function(x, shift, update_db=TRUE) {
+            .shift_features(x=x, shift=shift, update_db=update_db)
+          })
+
+#' @export
+setMethod("revcompFeatures", 
+          #### shiftFeature-method
+          signature(x = "gbFeatureList"),
+          function(x, update_db=TRUE) {
+            .revcomp_features(x=x, update_db=update_db)
+          })
