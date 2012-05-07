@@ -152,7 +152,11 @@ setGeneric( "select",function(x, keys=c(""), cols=c(""))
 setMethod("start", "gbFeatureList",
           function(x, drop=TRUE) {
             if (drop) {
-              as.integer(vapply(x, start, numeric(1)))
+              if (max(unlist(lapply(ans <- lapply(x, start), length))) > 1L) {
+                ans
+              } else {
+                unlist(ans)
+              }
             } else {
               ans <- data.frame(do.call(rbind, lapply(x, start, drop=FALSE)))
               names(ans) <- "start"
@@ -160,10 +164,11 @@ setMethod("start", "gbFeatureList",
             }
           })
 
+
 ##' @export
 setMethod("start<-", "gbFeatureList",
           function(x, value){
-            if (length(value) != length(x)) {
+            if (length(value) < length(x)) {
               value <- c(rep(value, length(x)%/%length(value)),
                          value[seq_len(length(x)%%length(value))])
             }
@@ -180,7 +185,11 @@ setMethod("start<-", "gbFeatureList",
 setMethod("end", "gbFeatureList",
           function(x, drop=TRUE)  {
             if (drop) {
-              as.integer(vapply(x, end, numeric(1)))
+              if (max(unlist(lapply(ans <- lapply(x, end), length))) > 1L) {
+                ans
+              } else {
+                unlist(ans)
+              }
             } else {
               ans <- data.frame(do.call(rbind, lapply(x, end, drop=FALSE)))
               names(ans) <- "end"
@@ -207,7 +216,11 @@ setMethod("end<-", "gbFeatureList",
 setMethod("strand", "gbFeatureList",
           function(x, drop=TRUE)  {
             if (drop) {
-              as.integer(vapply(x, strand, numeric(1)))
+              if (max(unlist(lapply(ans <- lapply(x, strand), length))) > 1L) {
+                ans
+              } else {
+                unlist(ans)
+              }
             } else {
               ans <- data.frame(do.call(rbind, lapply(x, strand)))
               names(ans) <- "strand"
@@ -234,7 +247,11 @@ setMethod("strand<-", "gbFeatureList",
 setMethod("width", "gbFeatureList",
           function(x, drop=TRUE)  {
             if (drop) {
-              as.integer(vapply(x, width, numeric(1)))
+              if (max(unlist(lapply(ans <- lapply(x, width), length))) > 1L) {
+                ans
+              } else {
+                unlist(ans)
+              }
             } else {
               ans <- data.frame(do.call(rbind, lapply(x, width)))
               names(ans) <- "width"
@@ -486,14 +503,34 @@ setMethod("view",
 # shift features ------------------------------------------------------
 
 
-.shift_features <- function (x, shift, update_db=TRUE) {
+.shift_features <- function (x,
+                             shift=0L,
+                             split=FALSE,
+                             order=FALSE,
+                             update_db=FALSE) {
   
   if (is(x, "gbRecord")) {
-    max_len <- x$length
+    len <- x$length
     features <-x$features
   } else if (is(x, "gbFeatureList")) {
-    max_len <- end(x["source"])
+    if (!any(hasKey(x, "source"))) {
+      stop("No source key in this gbFeatureList")
+    }
+    len <- end(x["source"])
     features <- x
+  }
+  
+  update_split <- function(x, split_matrix) {
+    if (!is.na(x@location@compound)) {
+      stop("Cannot split a compound location")
+    }
+    x@location@.Data <- split_matrix
+    x@location@compound <- "join"
+    x@location@partial <- matrix(c(FALSE, TRUE, TRUE, FALSE), ncol=2)
+    x@location@accession <- rep(x@location@accession, 2)
+    x@location@remote <- rep(x@location@remote, 2)
+    x@location@closed <- matrix(rep(x@location@closed, 2), ncol=2)
+    x
   }
   
   src <- features[1]
@@ -501,48 +538,84 @@ setMethod("view",
   
   start_pos <- start(f)
   end_pos <- end(f)
-  new_start <- start_pos + shift
-  new_end <- end_pos + shift
   
-  exceed_max_start <- which(new_start > max_len)
-  exceed_max_end <- which(new_end > max_len)
+  new_start <- Map("+", start_pos, shift)
+  new_end <- Map("+", end_pos, shift)
   
-  if (!all(exceed_max_end %in% exceed_max_start)) {
-    stop("This shiftwidth would split a feature")
+  exceeds_len_start <- which(mapply(function (x) any(x > len), new_start) |
+                             mapply(function (x) any(x < 0L), new_start)) 
+  exceeds_len_end <-  which(mapply(function (x) any(x > len), new_end) |
+                            mapply(function (x) any(x < 0L), new_end))
+  
+  if (length(exceeds_len_start) > 0L || length(exceeds_len_end) > 0L) {
+    
+    start_end <- intersect(exceeds_len_start, exceeds_len_end)
+    
+    get_len <- function (x, len) ifelse(x > len, x - len, ifelse(x < 0L, len + x, x))
+    new_start[start_end] <- Map(get_len, new_start[start_end], len)
+    new_end[start_end] <- Map(get_len, new_end[start_end], len)
+    
+    end_only <- setdiff(exceeds_len_end, exceeds_len_start)
+    
+    if (length(end_only) > 0L) {
+      if (split) {
+        ss <- mapply("-", new_start[end_only], len)
+        se <- mapply("-", new_end[end_only], len)
+        ## Split Matrix
+        sm <- Map(function(ss, se) matrix(c(len + ss, 1, len, se), ncol=2), ss, se)
+        f[end_only] <- Map(update_split, x=f[end_only], split_matrix=sm)
+        new_start[end_only] <- Map(function(x) x[,1], sm)
+        new_end[end_only] <- Map(function(x) x[,2], sm)
+      } else {
+        stop("This shiftwidth would split feature(s) ", paste(end_only, collapse=", "))
+      }
+    }
+    
   }
-  
-  new_start <- c(new_start[-exceed_max_start],
-                 new_start[exceed_max_start] - max_len)
-  new_end <- c(new_end[-exceed_max_end],
-               new_end[exceed_max_end] - max_len)
   
   start(f) <- new_start
   end(f) <- new_end
   
-  f <- .gbFeatureList(.Data=c(src, f[order(new_start)]),
-                      .Dir=src@.Dir, .ACCN=src@.ACCN,
-                      .DEF=src@.DEF)
+  if (order) {
+    f <- f[order(mapply("[", new_start, 1))]
+  }
+  
+  f <- .gbFeatureList(.Data=c(src, f), .Dir=src@.Dir,
+                      .ACCN=src@.ACCN, .DEF=src@.DEF)
   
   if (update_db) {
-    db <- initGB(src@.Dir)
+    db <- initGB(src@.Dir, verbose=FALSE)
     dbInsert(db, key="features", value=f)
     
     seq <- dbFetch(db, "sequence")
-    new_seq <- xscat(subseq(seq, start=shift), 
-                     subseq(seq, start=1, end=shift))
+    
+    if (shift > 0) {
+      shift_point <- seq@ranges@width - shift + 1L
+    } else {
+      shift_point <- 0L - shift + 1L
+    }
+      
+    new_seq <- xscat(subseq(seq, start = shift_point), 
+                     subseq(seq, start = 1L, end = shift_point - 1L))
     names(new_seq) <- names(seq)
     dbInsert(db, key="sequence", value=new_seq)
   }
-
+  
   return( f )
 }
 
-.revcomp_features <- function (x, shift, update_db=TRUE) {
+
+.revcomp_features <- function (x, order=FALSE, update_db=FALSE) {
   
   if (is(x, "gbRecord")) {
     max_len <- x$length
     f <-x$features
   } else if (is(x, "gbFeatureList")) {
+    
+    if (length(x["source"]) == 0) {
+      stop("No source field in gbFeatureList")
+    }
+    
     max_len <- end(x["source"])
     f <- x
   }
@@ -555,9 +628,11 @@ setMethod("view",
   end(f) <- new_end
   strand(f) <- new_strand
   
-  f <- .gbFeatureList(.Data=f[order(new_start)],
-                      .Dir=f@.Dir, .ACCN=f@.ACCN,
-                      .DEF=f@.DEF)
+  if (order) {
+    f <- f[order(new_start)]
+  }
+  
+  f <- .gbFeatureList(.Data=f, .Dir=f@.Dir, .ACCN=f@.ACCN, .DEF=f@.DEF)
   
   if (update_db) {
     db <- initGB(f@.Dir)
@@ -572,51 +647,34 @@ setMethod("view",
 }
 
 
-
-
-##' shift genomic location of features in a GenBank record
-##'
-##' @usage shiftFeatures(x, shift, update_db=TRUE)
-##'
-##' @param x A gbRecord or complete gbFeatureList object (including the
-##' 'source' field)
-##' @param shift Number of basepairs (or aa residues) to shift
-##' @param update_db Update filehas database with new feature locations.
-##'
-##' @return A gbFeatureList object
-##'
-##' @docType methods
-##' @export
-setGeneric("shiftFeatures", function(x, shift, update_db=TRUE, ...) 
-  standardGeneric("shiftFeatures") )
-
 #' @export
-setMethod("shiftFeatures", 
-          #### shiftFeature-method
-          signature(x = "gbFeatureList"),
-          function(x, shift, update_db=TRUE) {
-            .shift_features(x=x, shift=shift, update_db=update_db, ...)
+setMethod("shift", "gbFeatureList",
+          function(x, shift=0L, split=FALSE, order=FALSE, update_db=FALSE) {
+            .shift_features(x=x, shift=shift, split=split, order=order,
+                            update_db=update_db)
           })
+
 
 ##' reverse complement features in a GenBank record
 ##'
-##' @usage revcompFeatures(x, update_db=TRUE)
+##' @usage revcomp(x, update_db=TRUE)
 ##'
-##' @param x A gbRecord or complete gbFeatureList object (including the
-##' 'source' field)
-##' @param update_db Update filehas database with new feature locations.
-##'
+##' @param x A gbFeatureList or gbRecord object
+##' (gbFeatureLists must include a 'source' field).
+##' @param order Should the resulting gbFeatureList be reordered.
+##' @param update_db Should the sequence and the new feature locations be
+##' updated in the underlying filehash database?
+##' 
 ##' @return A gbFeatureList object
 ##'
 ##' @docType methods
 ##' @export
-setGeneric("revcompFeatures", function(x, update_db=TRUE, ...) 
-  standardGeneric("revcompFeatures") )
+setGeneric("revcomp", function(x, order=FALSE, update_db=FALSE, ...) 
+  standardGeneric("revcomp") )
+
 
 #' @export
-setMethod("revcompFeatures", 
-          #### shiftFeature-method
-          signature(x = "gbFeatureList"),
-          function(x, update_db=TRUE) {
-            .revcomp_features(x=x, update_db=update_db)
+setMethod("revcomp", "gbFeatureList",
+          function(x, order=FALSE, update_db=FALSE) {
+            .revcomp_features(x=x, order=order, update_db=update_db)
           })

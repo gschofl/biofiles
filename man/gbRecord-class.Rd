@@ -1,7 +1,7 @@
 \name{gbRecord-class}
+\alias{gbRecord-class}
 \alias{[[,gbRecord-method}
 \alias{$,gbRecord-method}
-\alias{gbRecord-class}
 \alias{getFeatures,gbRecord-method}
 \alias{initGB,initGB-method,gbRecord-method}
 \alias{select,select-method,gbRecord-method}

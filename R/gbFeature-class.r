@@ -300,27 +300,37 @@ setMethod("getQualifier",
 
 .seq_access <- function(s, x, type)
 {
-  ## initiate empty XStringSet
-  template <- switch(type, 
-                     DNA=DNAStringSet(),
-                     AA=AAStringSet(),
-                     RNA=RNAStringSet())
+  ## merge Sequences
+  merge_seq <- function(s, x, type) {
+    if (length(start(x)) == 1L) {
+      seq <- subseq(s, start=start(x), end=end(x))
+    } else {
+      seq <- do.call(xscat, Map(subseq, s, start=start(x), end=end(x)))
+    }
+    seq <- switch(type,
+                  DNA=DNAStringSet(seq),
+                  AA=AAStringSet(seq),
+                  RNA=RNAStringSet(seq))
+    seq@ranges@NAMES <- sprintf("%s.%s.%s", x@.ACCN, x@key, x@.ID)
+    seq
+  }
   
   if (is(x, "gbFeatureList")) {
-    i <- 1
-    for (item in x) {
-      template <- append(template, subseq(s, start(item), end(item)))
-      template[i]@ranges@NAMES <- paste0(item@.ACCN, ".", item@.ID)
-      i <- i + 1
+    ## initiate empty XStringSet
+    seq <- switch(type, 
+                   DNA=DNAStringSet(),
+                   AA=AAStringSet(),
+                   RNA=RNAStringSet())
+    for (i in seq_along(x)) {
+      seq[i] <- merge_seq(s, x[[i]], type)             
     }
   }
   else if (is(x, "gbFeature")) {
-    template <- append(template, subseq(s, start(x), end(x)))
-    template@ranges@NAMES <- sprintf("%s.%s.%s", x@.ACCN, x@key, x@.ID)
+    seq <- merge_seq(s, x, type)
   }
   
-  template@metadata <- list(definition=x@.DEF, database=x@.Dir)
-  template
+  seq@metadata <- list(definition=x@.DEF, database=x@.Dir)
+  seq
 }
 
 
@@ -398,6 +408,17 @@ setMethod("strand<-", "gbFeature",
           function(x, value) { 
             strand(x@location) <- value 
             x})
+
+
+
+# Shift ---------------------------------------------------------------
+
+setMethod("shift", "gbFeature",
+          function(x, shift=0L, ...) {
+            x@location <- shift(x@location, shift)
+            x
+          })
+
 
 # Subsetting ----------------------------------------------------------
 

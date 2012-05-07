@@ -109,7 +109,8 @@ setMethod("initialize",
 
 
 
-# Accessor methods ----------------------------------------------------
+# Generics ------------------------------------------------------------
+
 
 setGeneric( "start", function(x, ...) standardGeneric("start") )
 setGeneric( "start<-", function(x, ...) standardGeneric("start<-") )
@@ -119,6 +120,30 @@ setGeneric( "width", function(x, ...) standardGeneric("width") )
 setGeneric( "strand", function(x, ...) standardGeneric("strand") )
 setGeneric( "strand<-", function(x, ...) standardGeneric("strand<-") )
 setGeneric( "partial", function(x, ...)  standardGeneric("partial") )
+
+##' shift location of features in a GenBank record
+##'
+##' @usage shift(x, shift=0L, split=FALSE, order=FALSE, update_db=FALSE)
+##'
+##' @param x A gbLocation, gbFeature, gbFeatureList, or gbRecord object
+##' (gbFeatureLists must include a 'source' field).
+##' @param shift Number of basepairs (or aa residues) to shift.
+##' @param split (For gbFeatureList and gbRecord objects) Should a feature
+##' that spans across the end of the sequence be split.
+##' @param order (For gbFeatureList and gbRecord objects) Should the
+##' resulting gbFeatureList be reordered.
+##' @param update_db Should filehash database be updated with new feature
+##' locations.
+##'
+##' @return A gbLocation, gbFeature, or gbFeatureList object
+##'
+##' @docType methods
+##' @export
+setGeneric( "shift", function(x, shift=0L, ...) standardGeneric("shift") )
+
+
+# Accessor methods ----------------------------------------------------
+
 
 #' @export
 setMethod("start", "gbLocation",
@@ -142,14 +167,14 @@ setMethod("width", "gbLocation",
 setMethod("strand", "gbLocation",
           function (x) {
             if (length(x@strand) == 1)
-              return(rep(x@strand, nrow(x)))
+              return( rep(x@strand, nrow(x)) )
             else
-              return(x@strand)
+              return( x@strand )
           })
 
 #' @export
 setMethod("range", "gbLocation",
-          function (x, ..., na.rm = FALSE){
+          function (x, ...) {
             r <- data.frame(cbind(x@.Data, width(x), x@strand))
             names(r) <- c("start", "end", "width", "strand")
             r
@@ -172,7 +197,7 @@ setMethod("start<-", "gbLocation",
             if (length(value) != nrow(x)) {
               stop(sprintf("This gbLocation contains %s start values", nrow(x)))
             }
-            if (x@.Data[,1] == x@.Data[,2]) {
+            if (all(x@.Data[,1] == x@.Data[,2])) {
               x@.Data[,1] <- value
               x@.Data[,2] <- value
             } else {
@@ -189,7 +214,7 @@ setMethod("end<-", "gbLocation",
             if (length(value) != nrow(x)) {
               stop(sprintf("This gbLocation contains %s end values", nrow(x)))
             }
-            if (x@.Data[,2] == x@.Data[,1]) {
+            if (all(x@.Data[,2] == x@.Data[,1])) {
               x@.Data[,2] <- value
               x@.Data[,1] <- value
             } else {
@@ -288,9 +313,28 @@ setAs("gbLocation", "character",
               )  
             }
           
-          return(res)
+          res
         }
       })
+
+
+# shift ---------------------------------------------------------------
+
+
+setMethod("shift", "gbLocation",
+          function(x, shift=0L, ...) {
+            if (!is.numeric(shift))
+              stop("'shift' must be an integer")
+            if (!is.integer(shift))
+              shift <- as.integer(shift)
+            if (length(shift) > 1L) {
+              warning("'shift' must be a single integer. Only the first element is used")
+              shift <- shift[[1L]]
+            }
+            
+            x@.Data <- x@.Data + shift
+            x
+          })
 
 
 # Show-method ---------------------------------------------------------
@@ -345,6 +389,7 @@ setMethod("show",
 # gb_base_span <- "complement(join(345..543,AL121804.2:567..>569,AL121804.2:<600..603))"
 
 # x <- biofiles:::.getLocationS4(gb_base_span="complement(join(345..543,AL121804.2:567..>569,AL121804.2:<600..603))")
+# x <- biofiles:::.getLocationS4("join(345..543,567..590)")
 
 .getLocationS4 <- function(gb_base_span)
 {                       

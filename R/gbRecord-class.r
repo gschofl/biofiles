@@ -108,8 +108,7 @@ setMethod("initGB",
             if(!file.exists(db_dir))
               stop(sprintf("database directory %s does not exist", sQuote(db_dir)))
             
-            .gbRecord(dir=normalizePath(db_dir),
-                      name=basename(db_dir))
+            .gbRecord(dir=normalizePath(db_dir), name=basename(db_dir), ...)
           })
 
 #' @keywords internal
@@ -266,15 +265,15 @@ setMethod("write",
 
 
 #' @export
-setMethod("shiftFeatures", "gbRecord",
-          function(x, shift, update_db=TRUE) {
-            .shift_features(x=x, shift=shift, update_db=update_db)
+setMethod("shift", "gbRecord",
+          function(x, shift, split=FALSE, order=FALSE, update_db=FALSE) {
+            .shift_features(x=x, shift=shift, split=split, order=order, 
+                            update_db=update_db)
           })
 
 #' @export
-setMethod("revcompFeatures", 
-          #### shiftFeature-method
-          signature(x = "gbFeatureList"),
-          function(x, update_db=TRUE) {
-            .revcomp_features(x=x, update_db=update_db)
+setMethod("revcomp", "gbRecord",
+          function(x, order=FALSE, update_db=FALSE) {
+            .revcomp_features(x=x, order=order,
+                              update_db=update_db)
           })
