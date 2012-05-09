@@ -228,10 +228,10 @@ setMethod("$",
 setMethod("select",
           #### select-method ####
           signature(x="gbRecord"),
-          function (x, keys=c(""), cols=c("")) {
+          function (x, subset = "", select = "") {
             ans <- dbFetch(db=x, key="features")
-            ans <- .select(x=ans, which=keys)
-            ans <- .retrieve(x=ans, what=cols)
+            ans <- .select(x=x, which=subset)
+            ans <- .retrieve(x=ans, which=select)
             ans
           })
 

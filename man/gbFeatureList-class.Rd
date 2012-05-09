@@ -1,9 +1,9 @@
 \name{gbFeatureList-class}
-\alias{dbXref,gbFeatureList-method}
-\alias{end<-,gbFeatureList-method}
-\alias{end,gbFeatureList-method}
-\alias{gbFeatureList-class}
 \alias{[,gbFeatureList-method}
+\alias{dbXref,gbFeatureList-method}
+\alias{end,gbFeatureList-method}
+\alias{end<-,gbFeatureList-method}
+\alias{gbFeatureList-class}
 \alias{getIndex,gbFeatureList-method}
 \alias{getKey,gbFeatureList-method}
 \alias{getLocation,gbFeatureList-method}
@@ -14,10 +14,10 @@
 \alias{range,gbFeatureList-method}
 \alias{select,select-method,gbFeatureList-method}
 \alias{show,gbFeatureList-method}
-\alias{start<-,gbFeatureList-method}
 \alias{start,gbFeatureList-method}
-\alias{strand<-,gbFeatureList-method}
+\alias{start<-,gbFeatureList-method}
 \alias{strand,gbFeatureList-method}
+\alias{strand<-,gbFeatureList-method}
 \alias{view,view-method,gbFeatureList-method}
 \alias{width,gbFeatureList-method}
 \title{gbFeatureList class}

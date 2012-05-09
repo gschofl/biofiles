@@ -103,21 +103,20 @@ gbFeatureList <- function(db_dir, accession, definition, features)
 # Accessor-generics ---------------------------------------------------
 
 
-##' Select method
+##' Select elements from a GenBank Record
 ##' 
-##' Select features from a GenBank Record
-##' 
-##' @usage select(x, keys=c(""), cols=c(""))
+##' @usage select(x, subset = c(""), select =c(""))
 ##' 
 ##' @param x A \sQuote{\code{gbRecord}} or \sQuote{\code{gbFeatureList}}
 ##' object
-##' @param keys keys
-##' @param cols cols
+##' @param subset Which elements to select from indicated by index, key,
+##' location, or qualifier value.
+##' @param select Which information to be retrieved from the subsetted
+##' elements.
 ##' 
 ##' @export
 ##' @docType methods
-setGeneric( "select",function(x, keys=c(""), cols=c(""))
-  standardGeneric("select") )
+setGeneric( "select", function(x, subset = "", select = "") standardGeneric("select") )
 
 
 # Accessor-methods ----------------------------------------------------
@@ -464,9 +463,9 @@ setMethod("[",
 setMethod("select",
           #### select-method ####
           signature(x="gbFeatureList"), 
-          function (x, keys=c(""), cols=c("")) {
-            ans <- .select(x=x, which=keys)
-            ans <- .retrieve(x=ans, what=cols)
+          function (x, subset = "", select = "") {
+            ans <- .select(x=x, which=subset)
+            ans <- .retrieve(x=ans, which=select)
             ans
           })
 
