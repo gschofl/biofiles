@@ -89,7 +89,7 @@
           tag_idx_lst <- 
             lapply(x, function(x_item) grep(tag, names(x_item@qualifiers)))
           idx <- mapply( function(x_item, tag_idx) { 
-            any(grepl(value, x_item@qualifiers[tag_idx]))
+            any(grepl(val, x_item@qualifiers[tag_idx]))
           }, x, tag_idx_lst, USE.NAMES=FALSE)
         }   
       })    
@@ -171,11 +171,11 @@
   }
 }
 
-isLocation <- function (x) grepl("^loc|^location", x)
+isLocation <- function (x) grepl("^loc=|^location=", x)
 
-isKey <- function (x) grepl("^key", x)
+isKey <- function (x) grepl("^key=", x)
 
-isIndex <- function (x) grepl("^idx|^index", x)
+isIndex <- function (x) grepl("^idx=|^index=", x)
 
 isEmpty <- function (x) length(x) == 0L || !nzchar(x)
 
