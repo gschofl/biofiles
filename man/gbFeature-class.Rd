@@ -1,9 +1,9 @@
 \name{gbFeature-class}
-\alias{[[,gbFeature-method}
-\alias{$,gbFeature-method}
 \alias{dbXref,gbFeature-method}
 \alias{end,gbFeature-method}
 \alias{gbFeature-class}
+\alias{[[,gbFeature-method}
+\alias{$,gbFeature-method}
 \alias{getIndex,gbFeature-method}
 \alias{getKey,gbFeature-method}
 \alias{getLocation,gbFeature-method}

@@ -352,24 +352,6 @@ setMethod("show",
 # parser --------------------------------------------------------------
 
 
-## Extract location information from a genBank base span line
-.getLocation <- function(gb_base_span)
-{
-  # transforms location information in the GenBank format (e.g. 1..23,
-  # or complement(join(345..543,567..567)) into a named vector
-  # start(1, start2), end(1, end2), length(1, length2), strand (1,-1), length
-  strand <- ifelse(grepl("complement", gb_base_span), -1, 1)
-  join <- ifelse(grepl("join", gb_base_span), 1, 0)
-  order <- ifelse(grepl("order", gb_base_span), 1, 0)
-  split_loc <- strsplit(unlist(strsplit(gsub("[^0-9\\.,]+", "", gb_base_span), ",")), "\\.\\.")
-  start <- as.numeric(lapply(split_loc, "[", 1))
-  end <- as.numeric(lapply(split_loc, "[", 2))
-  end[is.na(end)] <- start[is.na(end)]
-  length <- end - start + 1
-  loc <- c(start=start, end=end, length=length, strand=strand, join=join, order=order)
-  loc
-}
-
 # test cases simple
 # gb_base_span  <- "340"
 # gb_base_span <- "340..565"
@@ -388,10 +370,13 @@ setMethod("show",
 # gb_base_span <- "join(complement(4918..5163),complement(2691..4571),7665..7899)"
 # gb_base_span <- "complement(join(345..543,AL121804.2:567..>569,AL121804.2:<600..603))"
 
-# x <- biofiles:::.getLocationS4(gb_base_span="complement(join(345..543,AL121804.2:567..>569,AL121804.2:<600..603))")
-# x <- biofiles:::.getLocationS4("join(345..543,567..590)")
+# gb_base_span <- "order(31..34,36..37,39,52,54,70,84,105..108,111,113..114,149,151,153..154,156,166..167,170,185,187..190,192,230)"
 
-.getLocationS4 <- function(gb_base_span)
+# .getLocation(gb_base_span="complement(join(345..543,AL121804.2:567..>569,AL121804.2:<600..603))")
+# .getLocation("join(345..543,567..590)")
+# .getLocation(gb_base_span)
+
+.getLocation <- function(gb_base_span)
 {                       
   # single location
   sil <- "\\d+"

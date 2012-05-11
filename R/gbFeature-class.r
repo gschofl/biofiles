@@ -99,7 +99,7 @@ gbFeature <- function (db_dir, accession, definition, id, key, location, qualifi
              .DEF=as.character(definition),
              .ID=as.integer(id),
              key=as.character(key),
-             location=.getLocationS4(location),
+             location=.getLocation(location),
              qualifiers=qualifiers)
 }
 

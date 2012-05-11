@@ -102,8 +102,8 @@ linebreak <- function (s, width=getOption("width") - 2, indent=0, offset=0,
         s_split <- unlist(strsplit(s, split))
         s_cum <- cumsum(nchar(s_split) + 1)
         leading_string <- 
-          paste0(s_split[s_cum < width - offset - indent],
-                 ifelse(split == " ", "", split), collapse=split)
+          paste0(paste0(s_split[s_cum < width - offset - indent], collapse=split),
+                 ifelse(split == " ", "", split))
         trailing_string <- 
           paste0(s_split[s_cum >= width - offset - indent], collapse=split)
         s <- paste0(indent_string, leading_string, offset_string,

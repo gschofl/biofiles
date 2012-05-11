@@ -49,7 +49,7 @@ readGB <- function (gb,
     db_path <- paste0(gb, ".db")
     
     cat(gettextf("Importing into %s\n", dQuote(basename(db_path))))
-    .parseGB(readLines(con), db_path,
+    .parseGB(gb_data=readLines(con), db_path,
              with_sequence=with_sequence,
              force=force, parallel=parallel)
   }
@@ -106,10 +106,17 @@ readGB <- function (gb,
   
   ## parse HEADER, FEATURES, and ORIGIN and construct 'gbData' object
   header <- .parseGbHeader(gb_header, gb_fields)
-  features <- .parseGbFeatures(db_dir=db_path, accession=header$accession, 
+  
+  features <- .parseGbFeatures(db_dir=db_path,
+                               accession=header$accession, 
                                definition=header$definition, 
-                               gb_features=gb_features, parallel=parallel)
-  sequence <- .parseGbSequence(gb_sequence, header$accession, header$type)
+                               gb_features=gb_features,
+                               parallel=parallel)
+  
+  sequence <- .parseGbSequence(gb_sequence=gb_sequence,
+                               accession_no=header$accession,
+                               seq_type=header$type)
+  
   gbRecord(db_dir=db_path, header=header, features=features, sequence=sequence)
 }
 
@@ -216,6 +223,13 @@ readGB <- function (gb,
   # indeces for all features
   feature_idx <- Map(seq.int, feature_start, feature_end)
   
+  #### for debugging
+  n <- 8
+  idx <- feature_idx[[n]]
+  gb_features[idx]
+  .parseFeatureField(id=n, lines=gb_features[idx], db_dir=db_dir, accession=accession, definition=definition)
+  ####
+  
   cat("Parsing features\n")
   if (parallel) {
     f_list <- mcmapply(function (idx, n) {
@@ -271,12 +285,11 @@ readGB <- function (gb,
 
 .joinLocation <- function (lines, loc_pat="\\b\\S+$")
 {
-  if (grepl("\\b\\S+[^,]$", lines[1]))
-    return(list(regmatches(lines[1],
-                           regexpr(loc_pat, lines[1], perl=TRUE)), 1))
-  else
-    return(joinLines(lines, extract_pat=loc_pat,
-                     break_pat="\\b\\S+[^,]$", sep=FALSE))
+  if (grepl("\\b\\S{0,}[^,]$", lines[1])) {
+    list(regmatches(lines[1], regexpr(loc_pat, lines[1], perl=TRUE)), 1)
+  } else {
+    joinLines(lines, extract_pat=loc_pat, break_pat="\\b\\S{0,}[^,]$", sep=FALSE)
+  }
 }
 
 ## characters permitted to occur in feature table component names:
