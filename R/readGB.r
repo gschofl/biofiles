@@ -264,7 +264,7 @@ readGB <- function (gb,
     writeLines(text=.joinSeq(gb_sequence, accession_no), con=tmp)
     origin <- switch(seq_type,
               AA=readAAStringSet(tmp, format="fasta"),
-              readNAStringSet(tmp, format="fasta"))
+              readDNAStringSet(tmp, format="fasta"))
     origin
   }
 }
