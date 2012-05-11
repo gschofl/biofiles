@@ -252,9 +252,9 @@ readGB <- function (gb,
 {
   # readBStringSet() does not support connections and
   # currently only accepts fasta format. So we write out gb_sequence as
-  # a temporary fasta file and read it back in as a DNAStringSet,
-  # RNAStringSet, AAStringSet depending on seq_type (DNA, AA, and
-  # everyting else is RNA)
+  # a temporary fasta file and read it back in as an AAStringSet or
+  # DNAStringSet (mRNA etc seems to be encoded with Ts rather then Us,
+  # so we use DNAStringSets for RNA)
   if (is.null(gb_sequence)) {
     return(NULL)
   } else {
@@ -263,9 +263,8 @@ readGB <- function (gb,
     on.exit(unlink(tmp))
     writeLines(text=.joinSeq(gb_sequence, accession_no), con=tmp)
     origin <- switch(seq_type,
-              DNA=readDNAStringSet(tmp, format="fasta"),
               AA=readAAStringSet(tmp, format="fasta"),
-              readRNAStringSet(tmp, format="fasta"))
+              readNAStringSet(tmp, format="fasta"))
     origin
   }
 }
