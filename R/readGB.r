@@ -13,9 +13,9 @@
 ##' overwritten without prompting.
 ##' @param parallel Use parallel cores.
 ##' 
-##' @importFrom Biostrings read.DNAStringSet
-##' @importFrom Biostrings read.RNAStringSet
-##' @importFrom Biostrings read.AAStringSet
+##' @importFrom Biostrings readDNAStringSet
+##' @importFrom Biostrings readRNAStringSet
+##' @importFrom Biostrings readAAStringSet
 ##' 
 ##' @return A (list of) \code{\link{gbRecord-class}} object(s).
 ##' 
@@ -250,7 +250,7 @@ readGB <- function (gb,
 
 .parseGbSequence <- function(gb_sequence, accession_no, seq_type)
 {
-  # read.BStringSet() does not support connections and
+  # readBStringSet() does not support connections and
   # currently only accepts fasta format. So we write out gb_sequence as
   # a temporary fasta file and read it back in as a DNAStringSet,
   # RNAStringSet, AAStringSet depending on seq_type (DNA, AA, and
