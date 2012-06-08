@@ -13,9 +13,9 @@
 ##' overwritten without prompting.
 ##' @param parallel Use parallel cores.
 ##' 
-##' @importFrom Biostrings readDNAStringSet
-##' @importFrom Biostrings readRNAStringSet
-##' @importFrom Biostrings readAAStringSet
+##' @importFrom Biostrings read.DNAStringSet
+##' @importFrom Biostrings read.RNAStringSet
+##' @importFrom Biostrings read.AAStringSet
 ##' 
 ##' @return A (list of) \code{\link{gbRecord-class}} object(s).
 ##' 
@@ -223,12 +223,14 @@ readGB <- function (gb,
   # indeces for all features
   feature_idx <- Map(seq.int, feature_start, feature_end)
   
-  #### for debugging
-  n <- 8
-  idx <- feature_idx[[n]]
-  gb_features[idx]
-  .parseFeatureField(id=n, lines=gb_features[idx], db_dir=db_dir, accession=accession, definition=definition)
-  ####
+#   ### for debugging
+#   for (n in seq_along(feature_idx)) {
+#     idx <- feature_idx[[n]]
+#     gb_features[idx]
+#     .parseFeatureField(id=n, lines=gb_features[idx], db_dir=db_dir, accession=accession, definition=definition)
+#     print(n)
+#   }
+#   ###
   
   cat("Parsing features\n")
   if (parallel) {
@@ -264,7 +266,7 @@ readGB <- function (gb,
 
 .parseGbSequence <- function(gb_sequence, accession_no, seq_type)
 {
-  # readBStringSet() does not support connections and
+  # read.BStringSet() does not support connections and
   # currently only accepts fasta format. So we write out gb_sequence as
   # a temporary fasta file and read it back in as an AAStringSet or
   # DNAStringSet (mRNA etc seems to be encoded with Ts rather then Us,
@@ -277,8 +279,8 @@ readGB <- function (gb,
     on.exit(unlink(tmp))
     writeLines(text=.joinSeq(gb_sequence, accession_no), con=tmp)
     origin <- switch(seq_type,
-              AA=readAAStringSet(tmp, format="fasta"),
-              readDNAStringSet(tmp, format="fasta"))
+              AA=read.AAStringSet(tmp, format="fasta"),
+              read.DNAStringSet(tmp, format="fasta"))
     origin
   }
 }
