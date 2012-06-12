@@ -230,7 +230,7 @@ setMethod("select",
           signature(x="gbRecord"),
           function (x, subset = "", select = "") {
             ans <- dbFetch(db=x, key="features")
-            ans <- .select(x=x, which=subset)
+            ans <- .select(x=ans, which=subset)
             ans <- .retrieve(x=ans, which=select)
             ans
           })

@@ -75,6 +75,7 @@
     tag_value <- strsplit(which_list[q], "=")
     tags <- vapply(tag_value, "[", 1, FUN.VALUE=character(1))
     vals <- vapply(tag_value, "[", 2, FUN.VALUE=character(1))
+    vals <- gsub(",","|",vals)
     idx <- 
       lapply(tags, function (tag, val=vals[charmatch(tag, tags)]) {
         if (is.na(val)) {
