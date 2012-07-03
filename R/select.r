@@ -44,15 +44,12 @@
       end <- c(end, as.numeric(unlist(lapply(loc, "[", 2))))
     }
     
-    start_pos <- start(x)
-    end_pos <- end(x)
-    feature_idx <- list()
-    for (i in seq_along(start)) {
-      feature_idx[[i]] <- 
-        (start_pos >= if (is.na(start[i])) 1 else start[i]) &
-        (end_pos <= if (is.na(end[i])) max(end_pos) else end[i])
-    }
-    x <- x[ Reduce("|", feature_idx) ]
+    subject_range <- IntervalTree(range(x, join=TRUE))
+    start[is.na(start)] <- min(start(subject_range))
+    end[is.na(end)] <- max(end(subject_range))
+    query_range <- IntervalTree(IRanges(start, end))
+    overlaps <- findOverlaps(query_range, subject_range)
+    x <- x[overlaps@subjectHits]
   }
   
   #### within the selected window restrict by key(s) 

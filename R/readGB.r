@@ -13,10 +13,6 @@
 ##' overwritten without prompting.
 ##' @param parallel Use parallel cores.
 ##' 
-##' @importFrom Biostrings read.DNAStringSet
-##' @importFrom Biostrings read.RNAStringSet
-##' @importFrom Biostrings read.AAStringSet
-##' 
 ##' @return A (list of) \code{\link{gbRecord-class}} object(s).
 ##' 
 ##' @export

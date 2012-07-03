@@ -12,8 +12,4 @@
 \description{
   Retrieve features of a GenBank record.
 }
-\seealso{
-  Other accessors: \code{\link{getIndex}},
-  \code{\link{getLocation}}
-}
 

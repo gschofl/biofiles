@@ -1,5 +1,5 @@
 Package: biofiles
-Version: 0.1-0
+Version: 0.1-1
 Title: Working with GenBank flat file records
 Authors@R: person("Gerhard", "Schöfl", role=c("aut","cre"),
     email="gschofl@yahoo.de")
@@ -12,18 +12,16 @@ Depends:
     R (>= 2.15),
     methods,
     parallel,
-    filehash
-Imports:
-    Biostrings,
+    filehash,
     intervals,
-    rentrez,
+    IRanges,
     stringr
 Collate:
     'utils.r'
+    'validate.r'
     'gbLocation-class.r'
     'gbFeature-class.r'
     'gbFeatureList-class.r'
     'select.r'
     'gbRecord-class.r'
-    'validate.r'
     'readGB.r'

@@ -11,8 +11,4 @@
 \description{
   get index of a GenBank feature.
 }
-\seealso{
-  Other accessors: \code{\link{getFeatures}},
-  \code{\link{getLocation}}
-}
 

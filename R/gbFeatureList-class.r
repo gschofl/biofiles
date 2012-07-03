@@ -24,9 +24,6 @@ setOldClass("list")
 ##'    \item{.Data}{A list of gbFeature objects}
 ##' }
 ##' 
-##' @importFrom Biostrings xscat
-##' @importFrom Biostrings reverseComplement
-##' 
 ##' @name gbFeatureList-class
 ##' @rdname gbFeatureList-class
 ##' @exportClass gbFeatureList
@@ -63,8 +60,7 @@ setOldClass("list")
 
 
 ##' @export
-setMethod("show",
-          signature="gbFeatureList", 
+setMethod("show", "gbFeatureList", 
           function (object) {
             n_f <- length(object)
             cat(sprintf("'%s' with %i features:\n\n", 
@@ -100,7 +96,7 @@ gbFeatureList <- function(db_dir, accession, definition, features)
 }
 
 
-# Accessor-generics ---------------------------------------------------
+# Getter-generics --------------------------------------------------------
 
 
 ##' Select elements from a GenBank Record
@@ -116,50 +112,25 @@ gbFeatureList <- function(db_dir, accession, definition, features)
 ##' 
 ##' @export
 ##' @docType methods
-setGeneric( "select", function(x, subset = "", select = "") standardGeneric("select") )
+setGeneric("select", function(x, subset = "", select = "")
+  standardGeneric("select"))
 
 
-# Accessor-methods ----------------------------------------------------
+# Getter-methods ---------------------------------------------------------
 
-
-#' @keywords internal
-.simplify <- function (x, unlist=TRUE)
-{
-  if (length(len <- unique(unlist(lapply(x, length)))) > 1L) {
-    return(x)
-  }
-  if (len == 1L && unlist) {
-    unlist(x, recursive=FALSE)
-  } else if (len >= 1L) {
-    n <- length(x)
-    r <- as.vector(unlist(x, recursive=FALSE))
-    if (prod(d <- c(len, n)) == length(r)) {
-      return( data.frame(stringsAsFactors=FALSE,
-                         matrix(r, nrow=n, byrow=TRUE,
-                                dimnames=if (!(is.null(nm <- names(x[[1L]]))))
-                                  list(NULL, nm))) )
-    } else {
-      x
-    }
-  }
-  else {
-    x
-  }
-}
 
 ##' @export
 setMethod("start", "gbFeatureList",
-          function(x, drop=TRUE) {
+          function(x, join = FALSE, drop = TRUE) {
+            ans <- lapply(x, start, join = join, drop = drop)
             if (drop) {
-              if (max(unlist(lapply(ans <- lapply(x, start), length))) > 1L) {
-                ans
-              } else {
+              if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
                 unlist(ans)
+              } else {
+                ans
               }
             } else {
-              ans <- data.frame(do.call(rbind, lapply(x, start, drop=FALSE)))
-              names(ans) <- "start"
-              ans   
+              setNames(data.frame(do.call(rbind, ans)), "start")
             }
           })
 
@@ -182,17 +153,16 @@ setMethod("start<-", "gbFeatureList",
 
 ##' @export
 setMethod("end", "gbFeatureList",
-          function(x, drop=TRUE)  {
+          function(x, join = FALSE, drop = TRUE) {
+            ans <- lapply(x, end, join = join, drop = drop)
             if (drop) {
-              if (max(unlist(lapply(ans <- lapply(x, end), length))) > 1L) {
-                ans
-              } else {
+              if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
                 unlist(ans)
+              } else {
+                ans
               }
             } else {
-              ans <- data.frame(do.call(rbind, lapply(x, end, drop=FALSE)))
-              names(ans) <- "end"
-              ans   
+              setNames(data.frame(do.call(rbind, ans)), "end")
             }
           })
 
@@ -213,18 +183,14 @@ setMethod("end<-", "gbFeatureList",
 
 ##' @export
 setMethod("strand", "gbFeatureList",
-          function(x, drop=TRUE)  {
-            if (drop) {
-              if (max(unlist(lapply(ans <- lapply(x, strand), length))) > 1L) {
-                ans
-              } else {
-                unlist(ans)
-              }
+          function(x, join = FALSE) {
+            ans <- lapply(x, strand, join = join)        
+            if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
+              unlist(ans)
             } else {
-              ans <- data.frame(do.call(rbind, lapply(x, strand)))
-              names(ans) <- "strand"
-              ans   
+              ans
             }
+            
           })
 
 ##' @export
@@ -244,88 +210,65 @@ setMethod("strand<-", "gbFeatureList",
 
 ##' @export
 setMethod("width", "gbFeatureList",
-          function(x, drop=TRUE)  {
-            if (drop) {
-              if (max(unlist(lapply(ans <- lapply(x, width), length))) > 1L) {
-                ans
-              } else {
-                unlist(ans)
-              }
+          function(x, join = FALSE) {
+            ans <- lapply(x, width, join = join)
+            if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
+              unlist(ans)
             } else {
-              ans <- data.frame(do.call(rbind, lapply(x, width)))
-              names(ans) <- "width"
-              ans   
+              ans
             }
-          } )
-
-##' @export
-setMethod("range", "gbFeatureList",
-          function(x) do.call( rbind, lapply(x, range) ))
-
-##' @export
-setMethod("getLocation", 
-          #### getLocation-method ####
-          signature(x="gbFeatureList"),
-          function (x, attributes=TRUE, simplify=TRUE) {
-            
-            ans <- lapply(x, function(f) 
-              cbind(index=f@.ID, key=f@key, range(f@location)))
-            
-            if (simplify) {
-              ans <- do.call(rbind, ans)
-              if (attributes) {
-                return( structure(ans, accession=x@.ACCN,
-                                  definition=x@.DEF,
-                                  database=x@.Dir) )
-              }
-              else {
-                return( ans )
-              }
-            } 
-            else {
-              if (attributes) {
-                return( structure(ans, accession=x@.ACCN,
-                                  definition=x@.DEF, 
-                                  database=x@.Dir) )
-              }
-              else {
-                return( ans )
-              }
-            } 
           })
 
 ##' @export
-setMethod("getIndex",
-          #### getIndex-method ####
-          signature(x="gbFeatureList"),
-          function (x, attributes=TRUE, simplify=TRUE) {
-            
-            ans <- lapply(x, function(f) f@.ID)
-            
-            if (simplify) {
-              ans <- unlist(ans)
+setMethod("range", "gbFeatureList",
+          function(x, join = FALSE) {
+            start <- unlist(start(x, join = join))
+            end <- unlist(end(x, join = join))
+            strand <- unlist(strand(x, join = join))
+            r <- IRanges(start, end)
+            r@elementMetadata <- DataFrame(strand=strand)
+            .gbRange(r)
+          })
+
+##' @export
+setMethod("getLocation", "gbFeatureList",
+          function (x, attributes = TRUE, join = FALSE) {
+            ans <- range(x, join = join)
+            keys <- getKey(x, attributes=FALSE)
+            ids <- getIndex(x, attributes=FALSE)
+            if (join || length(ans) == length(keys)) {
+              ans@elementMetadata$key <- keys
+              ans@elementMetadata$id <- ids
+            } else {
+              stop("Use 'join = TRUE' at the moment")
             }
-            
+            if (attributes) {
+              structure(ans,
+                        accession=x@.ACCN,
+                        definition=x@.DEF, 
+                        database=x@.Dir)
+            }
+            else {
+              ans
+            }
+          })
+
+##' @export
+setMethod("getIndex", "gbFeatureList",
+          function (x, attributes=TRUE) { 
+            ans <- vapply(x, function(f) f@.ID, numeric(1))
             if (attributes) {
               ans <- structure(ans, accession=x@.ACCN,
                                definition=x@.DEF,
                                database=x@.Dir)
             }
-            return( ans )
+            ans
           })
 
 ##' @export
-setMethod("getKey",
-          #### getKey-method ####
-          signature(x="gbFeatureList"),
-          function (x, attributes=TRUE, simplify=TRUE) {
-            
-            ans <- lapply(x, function(f) f@key)
-            
-            if (simplify) {
-              ans <- unlist(ans)
-            }
-            
+setMethod("getKey", "gbFeatureList",
+          function (x, attributes=TRUE) {
+            ans <- vapply(x, function(f) f@key, character(1))
             if (attributes) {
               ans <- structure(ans,
                                id=vapply(x, function(f) f@.ID, numeric(1)),
@@ -333,36 +276,25 @@ setMethod("getKey",
                                definition=x@.DEF,
                                database=x@.Dir)
             }
-            
-            return( ans )
+            ans
           })
 
-
 ##' @export
-setMethod("getQualifier",
-          #### getQualifier-method ####
-          signature(x="gbFeatureList"),
-          function (x, which="", attributes=TRUE,
-                    simplify=TRUE, fixed=FALSE) {
-            
-            ans <- lapply(x, getQualifier, which=which,
-                          attributes=FALSE, fixed=fixed)
-            
-            if (simplify) {
-              ans <- .simplify(x=ans, unlist=FALSE)
-            }
-            
+setMethod("getQualifier", "gbFeatureList",
+          function (x, which = "", attributes = TRUE, fixed = FALSE) {          
+            ans <- .simplify(lapply(x, getQualifier, which=which,
+                                    attributes=FALSE, fixed=fixed),
+                             unlist=FALSE)
             if (is.data.frame(ans) && attributes) {
               ans <- structure(
                 data.frame(stringsAsFactors=FALSE,
                            cbind(getIndex(x, attributes=FALSE),
-                               getKey(x, attributes=FALSE),
+                                 getKey(x, attributes=FALSE),
                                  structure(ans, names=NULL))),
                 names=c("index", "key", names(ans)),
                 accession=x@.ACCN,
                 definition=x@.DEF,
                 database=x@.Dir)
-              
             } else if (is.list(ans) && attributes) {
               ans <- structure(
                 ans,
@@ -372,56 +304,65 @@ setMethod("getQualifier",
                 database=x@.Dir)
             }
             
-            return( ans )
+            ans
           })
+
+#' @keywords internal
+.simplify <- function (x, unlist = TRUE) {
+  if (length(len <- unique(unlist(lapply(x, length)))) > 1L) {
+    return( x )
+  }
+  if (len == 1L && unlist) {
+    unlist(x, recursive=FALSE)
+  } else if (len >= 1L) {
+    n <- length(x)
+    r <- as.vector(unlist(x, recursive=FALSE))
+    if (prod(d <- c(len, n)) == length(r)) {
+      return( data.frame(stringsAsFactors=FALSE,
+                         matrix(r, nrow=n, byrow=TRUE,
+                                dimnames=if (!(is.null(nm <- names(x[[1L]]))))
+                                  list(NULL, nm))) )
+    } else {
+      x
+    }
+  }
+  else {
+    x
+  }
+}
 
 
 ##' @export
-setMethod("dbXref",
-          signature(x="gbFeatureList"),
-          #### dbXref-method ####
-          function (x, db=NULL, na.rm=TRUE, simplify=TRUE, ...) {     
+setMethod("dbXref", "gbFeatureList",
+          function (x, db=NULL, na.rm=TRUE, ...) {     
             ans <- lapply(x, dbXref, db=db)
             names(ans) <- lapply(x, function(f) paste0(f@key, ".", f@.ID))
-            
-            if (simplify)
-              ans <- unlist(ans)
-            
             if (na.rm)
               ans <- ans[!is.na(ans)]
-            
             if (length(ans) == 0) {
               return( NA_character_ )
             }
-
-            return( ans )
+            
+            ans
           })
 
 ##' @export
-setMethod("getSequence",
-          #### getSequence-method ####
-          signature("gbFeatureList"),
-          function (x, db=NULL, na.) {
+setMethod("getSequence", "gbFeatureList",
+          function (x, db = NULL) {
             stopifnot(hasValidDb(x))
             db <- initGB(x@.Dir, verbose=FALSE)
             .seq_access(s=dbFetch(db, "sequence"), x, type=dbFetch(db, "type"))
           })
-          
-##' @export
-setMethod("hasKey",
-          #### hasKey-method ####
-          signature("gbFeatureList"), 
-          function (x, key) {
-            vapply(x, hasKey, key, FUN.VALUE=logical(1))
-          })
 
 ##' @export
-setMethod("hasQualifier",
-          #### hasQualifier-method ####
-          signature("gbFeatureList"), 
-          function (x, qualifier) {
-            vapply(x, hasQualifier, qualifier, FUN.VALUE=logical(1))
-          })
+setMethod("hasKey", "gbFeatureList", 
+          function (x, key)
+            vapply(x, hasKey, key, FUN.VALUE=logical(1)))
+
+##' @export
+setMethod("hasQualifier", "gbFeatureList", 
+          function (x, qualifier)
+            vapply(x, hasQualifier, qualifier, FUN.VALUE=logical(1)))
 
 
 # Subsetting ----------------------------------------------------------
@@ -674,6 +615,5 @@ setGeneric("revcomp", function(x, order=FALSE, update_db=FALSE, ...)
 
 #' @export
 setMethod("revcomp", "gbFeatureList",
-          function(x, order=FALSE, update_db=FALSE) {
-            .revcomp_features(x=x, order=order, update_db=update_db)
-          })
+          function(x, order=FALSE, update_db=FALSE)
+            .revcomp_features(x=x, order=order, update_db=update_db))

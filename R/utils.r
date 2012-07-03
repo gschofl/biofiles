@@ -1,3 +1,19 @@
+##' @importFrom Biostrings read.DNAStringSet
+##' @importFrom Biostrings read.RNAStringSet
+##' @importFrom Biostrings read.AAStringSet
+##' @importFrom Biostrings DNAStringSet
+##' @importFrom Biostrings RNAStringSet
+##' @importFrom Biostrings AAStringSet
+##' @importFrom Biostrings reverseComplement
+##' @importFrom Biostrings xscat
+##' @importFrom Biostrings subseq
+##' @importFrom Biostrings toString 
+##' @import intervals
+##' @import IRanges
+##' @import stringr
+NULL
+
+
 ##' Join lines of text recursively
 ##' 
 ##' @param lines A character vector

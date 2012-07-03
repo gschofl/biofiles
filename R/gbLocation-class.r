@@ -1,10 +1,8 @@
 
 # gbLocation-class ----------------------------------------------------
 
-##' @importClassesFrom intervals Intervals_full
-##' @importClassesFrom intervals Intervals_virtual
-##' @importFrom intervals closed
-##' @import stringr
+##' @include utils.r
+##' @include validate.r
 NULL
 
 ##' gbLocation class
@@ -108,6 +106,49 @@ setMethod("initialize",
           })
 
 
+# gbRange-class ----------------------------------------------------------
+
+##' gbRange class
+##' 
+##' @exportClass gbRange
+##' @name gbRange-class
+##' @rdname gbRange-class
+.gbRange <- setClass("gbRange", contains="IRanges")
+
+
+##' @keywords internal
+gbRange <- function(start, end, strand, ...) {
+  if (missing(start) || missing(end) || missing(strand)) {
+    stop("Missing arguments")
+  }
+  anno=list(...)
+  z <- vapply(c(list(start, end, strand), anno), length, numeric(1))
+  if (length(unique(z)) != 1L) {
+    stop("Arguments have unequal length")
+  }
+  r <- IRanges(start=start, end=end)
+  r@elementMetadata <- if (length(anno) > 0) {
+    DataFrame(strand, anno)
+  } else {
+    DataFrame(strand)
+  }
+  .gbRange(r)
+}
+
+
+##' @keywords internal
+setMethod("show", "gbRange", function(object) {
+  lo <- length(object)
+  cat(class(object), " of length ", lo, "\n", sep = "")
+  if (lo == 0L) 
+    return(NULL)
+  else {
+    showme <- as.data.frame(cbind(as.data.frame(object), as.data.frame(object@elementMetadata)),
+                            row.names = paste("[", seq_len(lo), "]", sep = ""))
+    show(showme)
+  }  
+})
+
 
 # Generics ------------------------------------------------------------
 
@@ -144,50 +185,60 @@ setGeneric( "shift", function(x, shift=0L, ...) standardGeneric("shift") )
 
 # Accessor methods ----------------------------------------------------
 
-
 #' @export
 setMethod("start", "gbLocation",
-          function (x, drop=TRUE) {
-            x@.Data[, 1, drop=drop]
+          function (x, join = FALSE, drop = TRUE) {
+            if (join)
+              min(x@.Data[, 1, drop = drop])
+            else
+              x@.Data[, 1, drop = drop]
           })
 
 #' @export
 setMethod("end", "gbLocation",
-          function (x, drop=TRUE) {
-            x@.Data[, 2, drop=drop]
+          function (x, join = FALSE, drop = TRUE) {
+            if (join)
+              max(x@.Data[, 2, drop = drop])
+            else
+              x@.Data[, 2, drop = drop]
           })
 
 #' @export
 setMethod("width", "gbLocation",
-          function (x) {
-            x@.Data[, 2] - x@.Data[, 1] + 1
+          function (x, join = FALSE) {
+            if (join) 
+              max(x@.Data[, 2]) - min(x@.Data[, 1]) + 1
+            else
+              x@.Data[, 2] - x@.Data[, 1] + 1
           })
 
 #' @export
 setMethod("strand", "gbLocation",
-          function (x) {
-            if (length(x@strand) == 1)
-              return( rep(x@strand, nrow(x)) )
+          function (x, join = FALSE) {
+            if (join || nrow(x) == 1L)
+              x@strand
             else
-              return( x@strand )
+              rep(x@strand, nrow(x))       
           })
 
 #' @export
 setMethod("range", "gbLocation",
-          function (x, ...) {
-            r <- data.frame(cbind(x@.Data, width(x), x@strand))
-            names(r) <- c("start", "end", "width", "strand")
-            r
+          function (x, join = FALSE) {
+            start <- start(x, join = join)
+            end <- end(x, join = join)
+            strand <- strand(x, join = join)
+            r <- IRanges(start, end)
+            r@elementMetadata <- DataFrame(strand)
+            .gbRange(r)
           })
 
 #' @export
 setMethod("partial", "gbLocation",
-          function(x) {
-            x@partial
-          })
+          function(x) x@partial)
 
 
 # Replace methods -----------------------------------------------------
+
 
 #' @export
 setMethod("start<-", "gbLocation",
@@ -237,23 +288,6 @@ setMethod("strand<-", "gbLocation",
             x
           })
 
-# @export
-# setReplaceMethod("partial", "gbLocation",
-#                  function(x, value) {                   
-#                    error_msg <- "The 'value' argument should be a matrix, or a vector of length 1 or 2." 
-#                    if (is.vector(value)) {
-#                      if (length(value) > 2 )
-#                        stop(error_msg)
-#                      value <- matrix(
-#                        if (nrow(x) == 0) logical() else value,
-#                        nrow=nrow(x),
-#                        ncol=2, byrow = TRUE)
-#                    }
-#                    if ( !is.matrix( value ) || nrow(value) != nrow(x) || ncol(value) != 2 )
-#                      stop( error_msg )
-#                    x@partial <- value
-#                    return( x )
-#                  })
 
 # Coerce-methods ------------------------------------------------------
 
@@ -341,8 +375,7 @@ setMethod("shift", "gbLocation",
 
 
 ##' @export 
-setMethod("show",
-          signature("gbLocation"),
+setMethod("show", "gbLocation",
           function( object ) {
             res <- as(object, "character")
             cat(linebreak(res, FORCE=TRUE), "\n" )

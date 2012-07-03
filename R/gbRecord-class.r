@@ -2,8 +2,6 @@
 # gbRecord-Class ------------------------------------------------------
 
 ##' @include gbFeatureList-class.r
-##' @importFrom Biostrings subseq
-##' @importFrom Biostrings toString
 NULL
 
 ##' gbRecord class
@@ -195,39 +193,30 @@ gbRecord <- function (db_dir, header, features, sequence=NULL)
 ##'
 ##' @docType methods
 ##' @export
-setGeneric( "getFeatures", function(x, ...)
-  standardGeneric("getFeatures") )
+setGeneric("getFeatures", function(x, ...) standardGeneric("getFeatures"))
 
 ##' @export
-setMethod("getFeatures",
-          #### getFeatures-method ####
-          signature(x = "gbRecord"), 
-          function (x) {
-            dbFetch(x, "features")
-          })
+setMethod("getFeatures", "gbRecord", 
+          function (x) dbFetch(x, "features")
+          )
+
 
 # Subsetting ----------------------------------------------------------
 
+
 ##' @export
 setMethod("[[",
-          #### [[-method ####
           signature(x="gbRecord", i="character", j="missing"),
-          function(x, i) {
-            dbFetch(x, i)
-          })
+          function(x, i) dbFetch(x, i)
+          )
 
 ##' @export
-setMethod("$",
-          #### $-method ####
-          signature(x="gbRecord"),
-          function(x, name) {
-            dbFetch(x, name)
-          })
+setMethod("$", "gbRecord",
+          function(x, name) dbFetch(x, name)
+          )
 
 ##' @export
-setMethod("select",
-          #### select-method ####
-          signature(x="gbRecord"),
+setMethod("select", "gbRecord",
           function (x, subset = "", select = "") {
             ans <- dbFetch(db=x, key="features")
             ans <- .select(x=ans, which=subset)
@@ -236,9 +225,7 @@ setMethod("select",
           })
 
 ##' @export
-setMethod("write",
-          #### write-method ####
-          signature(x = "gbRecord"),
+setMethod("write", "gbRecord",
           function (x, file = "data") {
             if (file.exists(x@dir)) {
               if (file == "data") {

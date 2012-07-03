@@ -64,8 +64,7 @@ setClassUnion("charOrNull", c("character", "NULL"))
 
 
 ##' @export
-setMethod("show", 
-          signature("gbFeature"),
+setMethod("show", "gbFeature",
           function (object) {
             op <- options("useFancyQuotes")
             options(useFancyQuotes=FALSE)
@@ -104,21 +103,25 @@ gbFeature <- function (db_dir, accession, definition, id, key, location, qualifi
 }
 
 
-# Accessor generics ---------------------------------------------------
+# Getter-generics --------------------------------------------------------
+
 
 ##' get genomic location of a GenBank feature
 ##'
-##' @usage getLocation(x, attributes=TRUE)
+##' @usage getLocation(x, attributes=TRUE, join=FALSE)
 ##'
-##' @param x A gbFeature or gbFeatureList object
+##' @param x A \code{\link{gbFeature}} or \code{\link{gbFeatureList}} object
+##' @param attributes set the \code{accession}, \code{definition},
+##' \code{database} attributes.
+##' @param join combine compound locations
 ##'
-##' @family accessors
 ##' @return A data frame
 ##'
 ##' @docType methods
 ##' @export
-setGeneric( "getLocation", function(x, attributes=FALSE, ...) 
-  standardGeneric("getLocation") )
+setGeneric("getLocation", function(x, attributes = FALSE, join = FALSE, ...) 
+  standardGeneric("getLocation"))
+
 
 ##' get index of a GenBank feature.
 ##'
@@ -126,135 +129,136 @@ setGeneric( "getLocation", function(x, attributes=FALSE, ...)
 ##'
 ##' @param x A gbFeature or gbFeatureList object
 ##'
-##' @family accessors
 ##' @return A numeric vector of feature indeces
 ##'
 ##' @docType methods
 ##' @export
-setGeneric( "getIndex", function(x, attributes=FALSE, ...) 
-  standardGeneric("getIndex") )
+setGeneric("getIndex", function(x, attributes = FALSE, ...) 
+  standardGeneric("getIndex"))
 
-##' @family accessors
+
 ##' @docType methods
 ##' @export
-setGeneric( "getKey", function(x, attributes=FALSE, ...) 
-  standardGeneric("getKey") )
+setGeneric("getKey", function(x, attributes = FALSE, ...) 
+  standardGeneric("getKey"))
 
-##' @family accessors
+
 ##' @docType methods
 ##' @export
-setGeneric( "getQualifier", function(x, which="", attributes=FALSE, ...)
-  standardGeneric("getQualifier") )
+setGeneric("getQualifier", function(x, which = "", attributes = FALSE, ...)
+  standardGeneric("getQualifier"))
 
-##' @family accessors
+
 ##' @docType methods
 ##' @export
-setGeneric( "dbXref", function(x, db=NULL, ...) 
-  standardGeneric("dbXref") )
+setGeneric("dbXref", function(x, db = NULL, ...) 
+  standardGeneric("dbXref"))
 
-##' @family accessors
+
 ##' @docType methods
 ##' @export
-setGeneric( "getSequence", function(x, ...) 
-  standardGeneric("getSequence") )
+setGeneric("getSequence", function(x, ...) 
+  standardGeneric("getSequence"))
 
-##' @family accessors
+
 ##' @docType methods
 ##' @export
-setGeneric( "hasKey", function(x, key, ...)
-  standardGeneric("hasKey") )
+setGeneric("hasKey", function(x, key, ...)
+  standardGeneric("hasKey"))
 
-##' @family accessors
+
 ##' @docType methods
 ##' @export
-setGeneric( "hasQualifier",  function(x, qualifier, ...)
+setGeneric("hasQualifier",  function(x, qualifier, ...)
   standardGeneric("hasQualifier") )
 
 
-# Accessor methods ----------------------------------------------------
+# Getter-methods ---------------------------------------------------------
+
 
 ##' @export
 setMethod("start", "gbFeature",
-          function(x, drop=TRUE) start(x@location, drop=drop) )
+          function(x, join = FALSE, drop = TRUE) 
+            start(x@location, join = join, drop = drop))
 
 ##' @export
 setMethod("end", "gbFeature",
-          function(x, drop=TRUE) end(x@location, drop=drop) )
+          function(x, join = FALSE, drop = TRUE) 
+            end(x@location, join = join, drop = drop))
 
 ##' @export
 setMethod("strand", "gbFeature",
-          function(x, ...) strand(x@location) )
+          function(x, join = FALSE)
+            strand(x@location, join = join))
 
 ##' @export
 setMethod("width", "gbFeature",
-          function(x, ...) width(x@location) )
+          function(x, join = FALSE)
+            width(x@location, join = join))
 
 ##' @export
 setMethod("partial", "gbFeature",
-          function(x) partial(x@location) )
+          function(x) partial(x@location))
 
 ##' @export
 setMethod("range", "gbFeature",
-          function(x) range(x@location) )
+          function(x, join = FALSE)
+            range(x@location, join = join))
 
 ##' @export
-setMethod("getLocation",
-          signature(x="gbFeature"),
-          function (x, attributes=FALSE) {     
-            ans <- range(x@location) 
+setMethod("getLocation", "gbFeature",
+          function (x, attributes = FALSE, join = FALSE) {     
+            ans <- range(x@location, join=join)
+            ans@elementMetadata$key <- x@key
+            ans@elementMetadata$id <- x@.ID
             if (attributes) {
-              return( structure(ans, key=x@key, id=x@.ID,
-                                accession=x@.ACCN,
-                                definition=x@.DEF,
-                                database=x@.Dir) )
+              structure(ans,
+                        accession=x@.ACCN,
+                        definition=x@.DEF,
+                        database=x@.Dir)
             } else {
-              return( ans )
+              ans
             }
           })
 
 ##' @export
-setMethod("getIndex",
-          signature(x="gbFeature"),
-          function (x, attributes=FALSE) {
+setMethod("getIndex", "gbFeature",
+          function (x, attributes = FALSE) {
             ans <- x@.ID
             if (attributes) {
-              return(structure(ans,
-                               accession=x@.ACCN,
-                               definition=x@.DEF,
-                               database=x@.Dir) )
+              structure(ans,
+                        accession=x@.ACCN,
+                        definition=x@.DEF,
+                        database=x@.Dir)
             } else {
-              return( ans )
+              ans
             }
           })
 
 ##' @export
-setMethod("getKey",
-          signature(x="gbFeature"), 
+setMethod("getKey", "gbFeature", 
           function (x, attributes=FALSE) {
             ans <- structure(x@key, names=NULL)
             if (attributes) {
-              return(structure(ans, id=x@.ID,
-                               accession=x@.ACCN,
-                               definition=x@.DEF,
-                               database=x@.Dir) )
+              structure(ans, id=x@.ID,
+                        accession=x@.ACCN,
+                        definition=x@.DEF,
+                        database=x@.Dir)
             }
             else {
-              return( ans )
+              ans
             }
           })
 
-.access <- function (x, which="", fixed=FALSE)
+.access <- function (x, which = "", fixed = FALSE)
 {
   .x <- x@qualifiers
-
-  if (fixed) which <- paste0("\\b", which, "\\b")
-  
+  if (fixed) which <- paste0("\\b", which, "\\b") 
   n_row <- length(.x)
   idx <- matrix(
     vapply(which, grepl, x=names(.x),
            USE.NAMES=FALSE, FUN.VALUE=logical(n_row)),
     nrow=n_row)
-
   if (ncol(idx) == 1L) {
     ans <- .x[idx]
     if (length(ans) > 0L) {
@@ -264,8 +268,7 @@ setMethod("getKey",
     }
   } 
   else if (ncol(idx) > 1L) {
-    ans <- lapply(seq.int(ncol(idx)), function (i) .x[idx[,i]])
-    
+    ans <- lapply(seq.int(ncol(idx)), function (i) .x[idx[,i]])   
     if (any(na_idx <- vapply(ans, length, FUN.VALUE=integer(1L)) == 0L)) {
       for (na in which(na_idx)) {
         ans[[na]] <- structure(NA_character_, names=which[na])
@@ -276,25 +279,21 @@ setMethod("getKey",
 }
 
 ##' @export
-setMethod("getQualifier",
-          signature(x="gbFeature"), 
-          function (x, which="", attributes=FALSE, fixed=FALSE) {
-            
+setMethod("getQualifier", "gbFeature", 
+          function (x, which = "", attributes = FALSE, fixed = FALSE) {
             if (!any(nzchar(which))) {
               ans <- x@qualifiers
             } else {
               ans <- .access(x, which, fixed)
             }
-        
             if (attributes) {
-              return( structure(ans, key=x@key, id=x@.ID,
+              structure(ans, key=x@key, id=x@.ID,
                         accession=x@.ACCN,
                         definition=x@.DEF,
-                        database=x@.Dir) )
+                        database=x@.Dir)
             } else {
-              return( ans )
+              ans
             }
-            
           })
 
 
@@ -335,9 +334,8 @@ setMethod("getQualifier",
 
 
 ##' @export
-setMethod("dbXref",
-          signature(x="gbFeature"),
-          function (x, db=NULL, ...) {     
+setMethod("dbXref", "gbFeature",
+          function (x, db = NULL, ...) {     
             ans <- .access(x, "db_xref")
             if (all(is.na(ans))) {
               return( NA_character_ )
@@ -364,8 +362,7 @@ setMethod("dbXref",
           })
 
 ##' @export
-setMethod("getSequence",
-          signature(x="gbFeature"),
+setMethod("getSequence", "gbFeature",
           function (x) {
             stopifnot(hasValidDb(x))
             db <- initGB(x@.Dir, verbose=FALSE)
@@ -375,21 +372,20 @@ setMethod("getSequence",
           })
 
 ##' @export
-setMethod("hasKey", 
-          signature(x="gbFeature"), 
-          function (x, key) {
+setMethod("hasKey", "gbFeature", 
+          function (x, key) 
             !is.na(charmatch(key, x@key))
-          })
+          )
 
 ##' @export
-setMethod("hasQualifier",
-          signature("gbFeature"),
-          function (x, qualifier) {
+setMethod("hasQualifier", "gbFeature",
+          function (x, qualifier)
             !is.na(charmatch(qualifier, names(x@qualifiers)))
-          })
+          )
 
 
 # Replacement methods -------------------------------------------------
+
 
 ##' @export
 setMethod("start<-", "gbFeature",
@@ -410,8 +406,8 @@ setMethod("strand<-", "gbFeature",
             x})
 
 
-
 # Shift ---------------------------------------------------------------
+
 
 setMethod("shift", "gbFeature",
           function(x, shift=0L, ...) {
@@ -426,16 +422,11 @@ setMethod("shift", "gbFeature",
 ##' @export
 setMethod("[[",
           signature(x = "gbFeature", i = "character", j = "missing"),
-          function(x, i, j) {
-            return(slot(object, i))
-          })
+          function(x, i, j) slot(object, i)
+          )
 
 ##' @export
-setMethod("$",
-          signature(x = "gbFeature"),
-          function(x, name) {
-            return(slot(x, name))
-          })
-
-
+setMethod("$", "gbFeature",
+          function(x, name) slot(x, name)
+          )
 
