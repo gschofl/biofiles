@@ -143,7 +143,7 @@
   col_names <- c(col_names, which_list)
   q <- lapply(which_list, function (which_qual) {
     .simplify(lapply(x, function (x) 
-      .access(x, which_qual, fixed=TRUE)))
+      .qualAccess(x, which_qual, fixed=TRUE)))
   })
   if (length(q) == 1L) q <- q[[1L]]
   
