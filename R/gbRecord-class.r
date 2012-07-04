@@ -21,17 +21,15 @@ NULL
 ##' @aliases select,select-method,gbRecord-method
 ##' @aliases write,gbRecord-method
 ##' @aliases shiftFeatures,gbFeature-method
-.gbRecord <-
-  setClass("gbRecord", contains="filehashRDS")
+.gbRecord <- setClass("gbRecord", contains="filehashRDS")
 
 
 # show-method ---------------------------------------------------------
 
 
 ##' @export
-setMethod("show",
-          signature(object="gbRecord"),
-          function(object) {
+setMethod("show", "gbRecord",
+          function (object) {
             if(length(object@name) == 0)
               stop("database does not have a name")
             cat(sprintf("%s database %s with %i features\n", 
@@ -72,27 +70,9 @@ setMethod("show",
                 })
           })
 
+
 # Constructor ---------------------------------------------------------
 
-##' Create and/or initialise a gbRecord filehash database
-##'
-##' @usage initGB(db_name, create=FALSE, ...)
-##'
-##' @param db_name name of the database or database object.
-##' @param create if \code{TRUE} a new database is created and initialised,
-##' else a database object is initialised from an existing database.
-##' @param ... other arguments passed to methods
-##'
-##' @return Returns a \sQuote{\code{gbRecord-class}} object inheriting from 
-##' \code{\link[filehash]{filehashRDS-class}} 
-##'
-##' @export
-##' @docType methods
-setGeneric("initGB",
-           #### initGB-generic ####
-           function(db_dir, ...) {
-             standardGeneric("initGB")
-           })
 
 ##' @export
 setMethod("initGB",
@@ -109,9 +89,9 @@ setMethod("initGB",
             .gbRecord(dir=normalizePath(db_dir), name=basename(db_dir), ...)
           })
 
+
 #' @keywords internal
 setMethod("initialize",
-          #### initialize-method ####
           signature(.Object="gbRecord"),
           function (.Object, dir=character(0), name=character(0), verbose=TRUE)
           {
@@ -135,10 +115,10 @@ setMethod("initialize",
             .Object
           })
 
+
 #' @keywords internal
 gbRecord <- function (db_dir, header, features, sequence=NULL)
 {
-  
   db <- initGB(db_dir, create=TRUE)
   
   if (is.null(header$accession))
@@ -152,6 +132,7 @@ gbRecord <- function (db_dir, header, features, sequence=NULL)
   
   db
 }
+
 
 #' @keywords internal
 .insertData <- function (db, header, features, sequence)
@@ -179,21 +160,8 @@ gbRecord <- function (db_dir, header, features, sequence=NULL)
 }
 
 
-# Accessors -----------------------------------------------------------
+# Getter-methods ---------------------------------------------------------
 
-##' Retrieve features of a GenBank record.
-##'
-##' @usage getFeatures(x, ...)
-##'
-##' @param data An instance of \code{\link{gbRecord-class}}.
-##'
-##' @family accessors
-##' @return The \code{\link{gbFeatureList-class}} object contained in a
-##' gbRecord database.
-##'
-##' @docType methods
-##' @export
-setGeneric("getFeatures", function(x, ...) standardGeneric("getFeatures"))
 
 ##' @export
 setMethod("getFeatures", "gbRecord", 
@@ -253,14 +221,14 @@ setMethod("write", "gbRecord",
 
 #' @export
 setMethod("shift", "gbRecord",
-          function(x, shift, split=FALSE, order=FALSE, update_db=FALSE) {
+          function(x, shift, split=FALSE, order=FALSE, update_db=FALSE)
             .shift_features(x=x, shift=shift, split=split, order=order, 
                             update_db=update_db)
-          })
+          )
 
 #' @export
 setMethod("revcomp", "gbRecord",
-          function(x, order=FALSE, update_db=FALSE) {
+          function(x, order=FALSE, update_db=FALSE)
             .revcomp_features(x=x, order=order,
                               update_db=update_db)
-          })
+          )

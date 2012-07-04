@@ -67,4 +67,13 @@ updateDirectory <- function (db) {
 }
 
 
+is.compound <- function (x) {
+  if (is(x, "gbFeatureList")) {
+    return(vapply(x, function (f) !is.na(f@location@compound), logical(1)))
+  } else if (is(x, "gbFeature")) {
+    return(!is.na(x@location@compound))
+  } else if (is(x, "gbLocation")) {
+    return(!is.na(x@compound))
+  }
+}
 

@@ -3,6 +3,7 @@
 
 ##' @include utils.r
 ##' @include validate.r
+##' @include all-generics.r
 NULL
 
 ##' gbLocation class
@@ -36,46 +37,44 @@ NULL
 ##' @aliases range,gbLocation-method
 ##' @aliases partial,gbLocation-method
 .gbLocation <- 
-  #### gbLocation ####
   setClass("gbLocation",
-           representation( strand = "integer",
-                           compound =  "character",
-                           partial = "matrix",
-                           accession = "character",
-                           remote = "logical"),
-           prototype( type = "Z",
-                      strand = NA_integer_,
-                      compound = NA_character_,
-                      partial = matrix( FALSE, 0, 2 ),
-                      accession = NA_character_,
-                      remote = FALSE ),
+           representation(strand = "integer",
+                          compound =  "character",
+                          partial = "matrix",
+                          accession = "character",
+                          remote = "logical"),
+           prototype(type = "Z",
+                     strand = NA_integer_,
+                     compound = NA_character_,
+                     partial = matrix( FALSE, 0, 2 ),
+                     accession = NA_character_,
+                     remote = FALSE ),
            contains = "Intervals_full",
-           validity = function( object ) {
+           validity = function (object) {
              if ( !all(object@strand %in% c(1L, -1L, NA_integer_)) )
-               return( "The 'strand' slot should contain -1, 1, or NA" )
+               return("The 'strand' slot should contain -1, 1, or NA")
              if ( !all(object@compound %in% c("join","order",NA_character_)) )
-               return( "The 'compound' slot should contain 'join', 'order', or NA" )
+               return("The 'compound' slot should contain 'join', 'order', or NA")
              
-             return( TRUE )
+             return(TRUE)
            })
 
 ##' @keywords internal
-setMethod("initialize",
-          #### initialize-method ####
+setMethod("initialize", 
           signature(.Object = "gbLocation"),
           function (.Object, .Data, strand, compound, partial, remote, ...) 
           {
-            if ( missing(.Data)) {
+            if (missing(.Data)) {
               callNextMethod(.Object, ...)
             } else {
-              if ( !is.matrix( .Data ) )
+              if (!is.matrix(.Data))
                 .Data <- matrix( .Data, ncol = 2 )
               
-              if ( missing(strand) )
+              if (missing(strand))
                 strand <- NA_integer_
-              if ( all(strand %in% c("+","-")) ) {
-                strand <- if ( strand == "+") 1L else -1L
-              } else if ( all(strand %in% c(1,-1)) ) {
+              if (all(strand %in% c("+","-"))) {
+                strand <- if (strand == "+") 1L else -1L
+              } else if (all(strand %in% c(1,-1)) ) {
                 strand <- as.integer(strand)
               }
               
@@ -106,88 +105,13 @@ setMethod("initialize",
           })
 
 
-# gbRange-class ----------------------------------------------------------
+# Getter-methods ---------------------------------------------------------
 
-##' gbRange class
-##' 
-##' @exportClass gbRange
-##' @name gbRange-class
-##' @rdname gbRange-class
-.gbRange <- setClass("gbRange", contains="IRanges")
-
-
-##' @keywords internal
-gbRange <- function(start, end, strand, ...) {
-  if (missing(start) || missing(end) || missing(strand)) {
-    stop("Missing arguments")
-  }
-  anno=list(...)
-  z <- vapply(c(list(start, end, strand), anno), length, numeric(1))
-  if (length(unique(z)) != 1L) {
-    stop("Arguments have unequal length")
-  }
-  r <- IRanges(start=start, end=end)
-  r@elementMetadata <- if (length(anno) > 0) {
-    DataFrame(strand, anno)
-  } else {
-    DataFrame(strand)
-  }
-  .gbRange(r)
-}
-
-
-##' @keywords internal
-setMethod("show", "gbRange", function(object) {
-  lo <- length(object)
-  cat(class(object), " of length ", lo, "\n", sep = "")
-  if (lo == 0L) 
-    return(NULL)
-  else {
-    showme <- as.data.frame(cbind(as.data.frame(object), as.data.frame(object@elementMetadata)),
-                            row.names = paste("[", seq_len(lo), "]", sep = ""))
-    show(showme)
-  }  
-})
-
-
-# Generics ------------------------------------------------------------
-
-
-setGeneric( "start", function(x, ...) standardGeneric("start") )
-setGeneric( "start<-", function(x, ...) standardGeneric("start<-") )
-setGeneric( "end", function(x, ...) standardGeneric("end") )
-setGeneric( "end<-", function(x, ...) standardGeneric("end<-") )
-setGeneric( "width", function(x, ...) standardGeneric("width") )
-setGeneric( "strand", function(x, ...) standardGeneric("strand") )
-setGeneric( "strand<-", function(x, ...) standardGeneric("strand<-") )
-setGeneric( "partial", function(x, ...)  standardGeneric("partial") )
-
-##' shift location of features in a GenBank record
-##'
-##' @usage shift(x, shift=0L, split=FALSE, order=FALSE, update_db=FALSE)
-##'
-##' @param x A gbLocation, gbFeature, gbFeatureList, or gbRecord object
-##' (gbFeatureLists must include a 'source' field).
-##' @param shift Number of basepairs (or aa residues) to shift.
-##' @param split (For gbFeatureList and gbRecord objects) Should a feature
-##' that spans across the end of the sequence be split.
-##' @param order (For gbFeatureList and gbRecord objects) Should the
-##' resulting gbFeatureList be reordered.
-##' @param update_db Should filehash database be updated with new feature
-##' locations.
-##'
-##' @return A gbLocation, gbFeature, or gbFeatureList object
-##'
-##' @docType methods
-##' @export
-setGeneric( "shift", function(x, shift=0L, ...) standardGeneric("shift") )
-
-
-# Accessor methods ----------------------------------------------------
 
 #' @export
 setMethod("start", "gbLocation",
-          function (x, join = FALSE, drop = TRUE) {
+          function (x, join = FALSE, drop = TRUE)
+          {
             if (join)
               min(x@.Data[, 1, drop = drop])
             else
@@ -196,7 +120,8 @@ setMethod("start", "gbLocation",
 
 #' @export
 setMethod("end", "gbLocation",
-          function (x, join = FALSE, drop = TRUE) {
+          function (x, join = FALSE, drop = TRUE)
+          {
             if (join)
               max(x@.Data[, 2, drop = drop])
             else
@@ -205,7 +130,8 @@ setMethod("end", "gbLocation",
 
 #' @export
 setMethod("width", "gbLocation",
-          function (x, join = FALSE) {
+          function (x, join = FALSE)
+          {
             if (join) 
               max(x@.Data[, 2]) - min(x@.Data[, 1]) + 1
             else
@@ -214,7 +140,8 @@ setMethod("width", "gbLocation",
 
 #' @export
 setMethod("strand", "gbLocation",
-          function (x, join = FALSE) {
+          function (x, join = FALSE)
+          {
             if (join || nrow(x) == 1L)
               x@strand
             else
@@ -223,18 +150,17 @@ setMethod("strand", "gbLocation",
 
 #' @export
 setMethod("range", "gbLocation",
-          function (x, join = FALSE) {
-            start <- start(x, join = join)
-            end <- end(x, join = join)
+          function (x, join = FALSE)
+          {
+            start <- as.integer(start(x, join = join))
+            width <- as.integer(end(x, join = join)) - start + 1L
             strand <- strand(x, join = join)
-            r <- IRanges(start, end)
-            r@elementMetadata <- DataFrame(strand)
-            .gbRange(r)
+            .gbRange(start, width, strand)
           })
 
 #' @export
 setMethod("partial", "gbLocation",
-          function(x) x@partial)
+          function (x) x@partial)
 
 
 # Replace methods -----------------------------------------------------
@@ -242,7 +168,7 @@ setMethod("partial", "gbLocation",
 
 #' @export
 setMethod("start<-", "gbLocation",
-          function(x, value) {
+          function (x, value) {
             if (!is.numeric(value))
               stop("replacement 'value' must be numeric")
             if (length(value) != nrow(x)) {
@@ -259,7 +185,7 @@ setMethod("start<-", "gbLocation",
 
 #' @export
 setMethod("end<-", "gbLocation",
-          function(x, value) {
+          function (x, value) {
             if (!is.numeric(value))
               stop("replacement 'value' must be numeric")
             if (length(value) != nrow(x)) {
@@ -276,7 +202,7 @@ setMethod("end<-", "gbLocation",
 
 #' @export
 setMethod("strand<-", "gbLocation",
-          function(x, value) {
+          function (x, value) {
             if (is.character(value) && value %in% c("+","-",NA_character_)) {
               value <- switch(value, "+" = 1L, "-" = -1L, "NA" = NA_integer_)
             } else if (is.numeric(value) && value %in% c(1,-1,NA)) {
@@ -293,7 +219,7 @@ setMethod("strand<-", "gbLocation",
 
 
 setAs("gbLocation", "character",
-      function(from) {
+      function (from) {
         if (nrow(from) == 0)
           return(character())
         else {
@@ -356,7 +282,7 @@ setAs("gbLocation", "character",
 
 
 setMethod("shift", "gbLocation",
-          function(x, shift=0L, ...) {
+          function (x, shift=0L, ...) {
             if (!is.numeric(shift))
               stop("'shift' must be an integer")
             if (!is.integer(shift))
@@ -376,7 +302,7 @@ setMethod("shift", "gbLocation",
 
 ##' @export 
 setMethod("show", "gbLocation",
-          function( object ) {
+          function (object) {
             res <- as(object, "character")
             cat(linebreak(res, FORCE=TRUE), "\n" )
           })

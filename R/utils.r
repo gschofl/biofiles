@@ -479,6 +479,34 @@ flatten <- function (x,
   return(out)    
 }
 
+getCompounds <- function (x) {
+  x <- x[which(is.compound(x))]
+  if (length(x) == 0) return(NA_real_) 
+  cL <- vapply(x, function (f) nrow(f@location@.Data), numeric(1))
+  cL
+}
+
+expandIds <- function (x) {
+  cmp_pos <- Position(is.compound, x)
+  if (is.na(cmp_pos)) {
+    return(list(ids=getIndex(x, FALSE), keys=getKey(x, FALSE)))
+  }
+  xHead <- x[1:(cmp_pos - 1)]
+  xCmp <- x[cmp_pos]
+  L <- length(x)
+  xTail <- if (cmp_pos + 1 <= L) {
+    x[(cmp_pos +  1):L]
+  } else {
+    .gbFeatureList()
+  }
+  id1 <- list(ids=getIndex(xHead, FALSE), keys=getKey(xHead, FALSE))
+  nC <- getCompounds(xCmp)
+  id2 <- list(ids=rep(getIndex(xCmp, FALSE), nC),
+              keys=rep(getKey(xCmp, FALSE), nC))
+  id3 <- list(ids=getIndex(xTail, FALSE), keys=getKey(xTail, FALSE))
+  Map(function(a, b, c) c(a, b, c), a=id1, b=id2, c=Recall(xTail))
+}
+
 # --R-- vim:ft=r:sw=2:sts=2:ts=4:tw=76:
 #       vim:fdm=marker:fmr={{{,}}}:fdl=0
 

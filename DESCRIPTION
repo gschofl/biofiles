@@ -17,9 +17,11 @@ Depends:
     IRanges,
     stringr
 Collate:
+    'all-generics.r'
     'utils.r'
     'validate.r'
     'gbLocation-class.r'
+    'gbRange-class.r'
     'gbFeature-class.r'
     'gbFeatureList-class.r'
     'select.r'

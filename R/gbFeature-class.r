@@ -1,7 +1,7 @@
 
 # gbFeature-class -----------------------------------------------------
 
-##' @include gbLocation-class.r
+##' @include gbRange-class.r
 NULL
 
 setClassUnion("charOrNull", c("character", "NULL"))
@@ -49,7 +49,6 @@ setClassUnion("charOrNull", c("character", "NULL"))
 ##' @aliases [[,gbFeature-method
 ##' @aliases $,gbFeature-method
 .gbFeature <-
-  #### gbFeature ####
   setClass("gbFeature",
            representation(.Dir="character",
                           .ACCN="character",
@@ -91,6 +90,7 @@ setMethod("show", "gbFeature",
 
 # Constructor ---------------------------------------------------------
 
+
 gbFeature <- function (db_dir, accession, definition, id, key, location, qualifiers) 
 {
   .gbFeature(.Dir=as.character(db_dir),
@@ -103,112 +103,49 @@ gbFeature <- function (db_dir, accession, definition, id, key, location, qualifi
 }
 
 
-# Getter-generics --------------------------------------------------------
-
-
-##' get genomic location of a GenBank feature
-##'
-##' @usage getLocation(x, attributes=TRUE, join=FALSE)
-##'
-##' @param x A \code{\link{gbFeature}} or \code{\link{gbFeatureList}} object
-##' @param attributes set the \code{accession}, \code{definition},
-##' \code{database} attributes.
-##' @param join combine compound locations
-##'
-##' @return A data frame
-##'
-##' @docType methods
-##' @export
-setGeneric("getLocation", function(x, attributes = FALSE, join = FALSE, ...) 
-  standardGeneric("getLocation"))
-
-
-##' get index of a GenBank feature.
-##'
-##' @usage getIndex(x)
-##'
-##' @param x A gbFeature or gbFeatureList object
-##'
-##' @return A numeric vector of feature indeces
-##'
-##' @docType methods
-##' @export
-setGeneric("getIndex", function(x, attributes = FALSE, ...) 
-  standardGeneric("getIndex"))
-
-
-##' @docType methods
-##' @export
-setGeneric("getKey", function(x, attributes = FALSE, ...) 
-  standardGeneric("getKey"))
-
-
-##' @docType methods
-##' @export
-setGeneric("getQualifier", function(x, which = "", attributes = FALSE, ...)
-  standardGeneric("getQualifier"))
-
-
-##' @docType methods
-##' @export
-setGeneric("dbXref", function(x, db = NULL, ...) 
-  standardGeneric("dbXref"))
-
-
-##' @docType methods
-##' @export
-setGeneric("getSequence", function(x, ...) 
-  standardGeneric("getSequence"))
-
-
-##' @docType methods
-##' @export
-setGeneric("hasKey", function(x, key, ...)
-  standardGeneric("hasKey"))
-
-
-##' @docType methods
-##' @export
-setGeneric("hasQualifier",  function(x, qualifier, ...)
-  standardGeneric("hasQualifier") )
-
-
 # Getter-methods ---------------------------------------------------------
 
 
 ##' @export
 setMethod("start", "gbFeature",
-          function(x, join = FALSE, drop = TRUE) 
-            start(x@location, join = join, drop = drop))
+          function (x, join = FALSE, drop = TRUE) 
+            start(x@location, join = join, drop = drop)
+          )
 
 ##' @export
 setMethod("end", "gbFeature",
-          function(x, join = FALSE, drop = TRUE) 
-            end(x@location, join = join, drop = drop))
+          function (x, join = FALSE, drop = TRUE) 
+            end(x@location, join = join, drop = drop)
+          )
 
 ##' @export
 setMethod("strand", "gbFeature",
-          function(x, join = FALSE)
-            strand(x@location, join = join))
+          function (x, join = FALSE)
+            strand(x@location, join = join)
+          )
 
 ##' @export
 setMethod("width", "gbFeature",
-          function(x, join = FALSE)
-            width(x@location, join = join))
+          function (x, join = FALSE)
+            width(x@location, join = join)
+          )
 
 ##' @export
 setMethod("partial", "gbFeature",
-          function(x) partial(x@location))
+          function (x)
+            partial(x@location)
+          )
 
 ##' @export
 setMethod("range", "gbFeature",
-          function(x, join = FALSE)
-            range(x@location, join = join))
+          function (x, join = FALSE)
+            range(x@location, join = join)
+          )
 
 ##' @export
 setMethod("getLocation", "gbFeature",
           function (x, attributes = FALSE, join = FALSE) {     
-            ans <- range(x@location, join=join)
+            ans <- range(x@location, join = join)
             ans@elementMetadata$key <- x@key
             ans@elementMetadata$id <- x@.ID
             if (attributes) {
@@ -250,7 +187,8 @@ setMethod("getKey", "gbFeature",
             }
           })
 
-.access <- function (x, which = "", fixed = FALSE)
+
+.qualAccess <- function (x, which = "", fixed = FALSE)
 {
   .x <- x@qualifiers
   if (fixed) which <- paste0("\\b", which, "\\b") 
@@ -262,9 +200,9 @@ setMethod("getKey", "gbFeature",
   if (ncol(idx) == 1L) {
     ans <- .x[idx]
     if (length(ans) > 0L) {
-      return( ans )
+      return(ans)
     } else {
-      return( structure(NA_character_, names=which) )
+      return(structure(NA_character_, names=which))
     }
   } 
   else if (ncol(idx) > 1L) {
@@ -274,69 +212,15 @@ setMethod("getKey", "gbFeature",
         ans[[na]] <- structure(NA_character_, names=which[na])
       }
     }
-    return( unlist(ans) )
+    return(unlist(ans))
   }
-}
-
-##' @export
-setMethod("getQualifier", "gbFeature", 
-          function (x, which = "", attributes = FALSE, fixed = FALSE) {
-            if (!any(nzchar(which))) {
-              ans <- x@qualifiers
-            } else {
-              ans <- .access(x, which, fixed)
-            }
-            if (attributes) {
-              structure(ans, key=x@key, id=x@.ID,
-                        accession=x@.ACCN,
-                        definition=x@.DEF,
-                        database=x@.Dir)
-            } else {
-              ans
-            }
-          })
-
-
-.seq_access <- function(s, x, type)
-{
-  ## merge Sequences
-  merge_seq <- function(s, x, type) {
-    if (length(start(x)) == 1L) {
-      seq <- subseq(s, start=start(x), end=end(x))
-    } else {
-      seq <- do.call(xscat, Map(subseq, s, start=start(x), end=end(x)))
-    }
-    seq <- switch(type,
-                  DNA=DNAStringSet(seq),
-                  AA=AAStringSet(seq),
-                  RNA=RNAStringSet(seq))
-    seq@ranges@NAMES <- sprintf("%s.%s.%s", x@.ACCN, x@key, x@.ID)
-    seq
-  }
-  
-  if (is(x, "gbFeatureList")) {
-    ## initiate empty XStringSet
-    seq <- switch(type, 
-                   DNA=DNAStringSet(),
-                   AA=AAStringSet(),
-                   RNA=RNAStringSet())
-    for (i in seq_along(x)) {
-      seq[i] <- merge_seq(s, x[[i]], type)             
-    }
-  }
-  else if (is(x, "gbFeature")) {
-    seq <- merge_seq(s, x, type)
-  }
-  
-  seq@metadata <- list(definition=x@.DEF, database=x@.Dir)
-  seq
 }
 
 
 ##' @export
 setMethod("dbXref", "gbFeature",
           function (x, db = NULL, ...) {     
-            ans <- .access(x, "db_xref")
+            ans <- .qualAccess(x, "db_xref")
             if (all(is.na(ans))) {
               return( NA_character_ )
             } else {
@@ -361,13 +245,68 @@ setMethod("dbXref", "gbFeature",
             }
           })
 
+
+##' @export
+setMethod("getQualifier", "gbFeature", 
+          function (x, which = "", attributes = FALSE, fixed = FALSE) {
+            if (!any(nzchar(which))) {
+              ans <- x@qualifiers
+            } else {
+              ans <- .qualAccess(x, which, fixed)
+            }
+            if (attributes) {
+              structure(ans, key=x@key, id=x@.ID,
+                        accession=x@.ACCN,
+                        definition=x@.DEF,
+                        database=x@.Dir)
+            } else {
+              ans
+            }
+          })
+
+
+.seqAccess <- function(s, x, type)
+{
+  ## merge Sequences
+  mergeSeq <- function (s, x, type) {
+    if (length(start(x)) == 1L) {
+      seq <- subseq(s, start=start(x), end=end(x))
+    } else {
+      seq <- do.call(xscat, Map(subseq, s, start=start(x), end=end(x)))
+    }
+    seq <- switch(type,
+                  DNA=DNAStringSet(seq),
+                  AA=AAStringSet(seq),
+                  RNA=RNAStringSet(seq))
+    seq@ranges@NAMES <- sprintf("%s.%s.%s", x@.ACCN, x@key, x@.ID)
+    seq
+  }
+  
+  if (is(x, "gbFeatureList")) {
+    ## initiate empty XStringSet
+    seq <- switch(type, 
+                  DNA=DNAStringSet(),
+                  AA=AAStringSet(),
+                  RNA=RNAStringSet())
+    for (i in seq_along(x)) {
+      seq[i] <- mergeSeq(s, x[[i]], type)             
+    }
+  }
+  else if (is(x, "gbFeature")) {
+    seq <- mergeSeq(s, x, type)
+  }
+  
+  seq@metadata <- list(definition=x@.DEF, database=x@.Dir)
+  seq
+}
+
 ##' @export
 setMethod("getSequence", "gbFeature",
           function (x) {
             stopifnot(hasValidDb(x))
             db <- initGB(x@.Dir, verbose=FALSE)
-            ans <- .seq_access(s=dbFetch(db, "sequence"),
-                               x, type=dbFetch(db, "type"))
+            ans <- .seqAccess(s=dbFetch(db, "sequence"),
+                              x, type=dbFetch(db, "type"))
             ans
           })
 

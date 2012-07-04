@@ -47,13 +47,11 @@ setOldClass("list")
 ##' @aliases [,gbFeatureList-method
 ##' @aliases select,select-method,gbFeatureList-method
 ##' @aliases view,view-method,gbFeatureList-method
-.gbFeatureList <- 
-  #### gbFeatureList ####
-  setClass("gbFeatureList", 
-           representation(.Dir="character",
-                          .ACCN="character",
-                          .DEF="character"),
-           contains="list")
+.gbFeatureList <- setClass("gbFeatureList", 
+                           representation(.Dir="character",
+                                          .ACCN="character",
+                                          .DEF="character"),
+                           contains="list")
 
 
 # show-method ---------------------------------------------------------
@@ -96,32 +94,12 @@ gbFeatureList <- function(db_dir, accession, definition, features)
 }
 
 
-# Getter-generics --------------------------------------------------------
-
-
-##' Select elements from a GenBank Record
-##' 
-##' @usage select(x, subset = c(""), select =c(""))
-##' 
-##' @param x A \sQuote{\code{gbRecord}} or \sQuote{\code{gbFeatureList}}
-##' object
-##' @param subset Which elements to select from indicated by index, key,
-##' location, or qualifier value.
-##' @param select Which information to be retrieved from the subsetted
-##' elements.
-##' 
-##' @export
-##' @docType methods
-setGeneric("select", function(x, subset = "", select = "")
-  standardGeneric("select"))
-
-
 # Getter-methods ---------------------------------------------------------
 
 
 ##' @export
 setMethod("start", "gbFeatureList",
-          function(x, join = FALSE, drop = TRUE) {
+          function (x, join = FALSE, drop = TRUE) {
             ans <- lapply(x, start, join = join, drop = drop)
             if (drop) {
               if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
@@ -137,7 +115,7 @@ setMethod("start", "gbFeatureList",
 
 ##' @export
 setMethod("start<-", "gbFeatureList",
-          function(x, value){
+          function (x, value) {
             if (length(value) < length(x)) {
               value <- c(rep(value, length(x)%/%length(value)),
                          value[seq_len(length(x)%%length(value))])
@@ -153,7 +131,7 @@ setMethod("start<-", "gbFeatureList",
 
 ##' @export
 setMethod("end", "gbFeatureList",
-          function(x, join = FALSE, drop = TRUE) {
+          function (x, join = FALSE, drop = TRUE) {
             ans <- lapply(x, end, join = join, drop = drop)
             if (drop) {
               if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
@@ -183,19 +161,18 @@ setMethod("end<-", "gbFeatureList",
 
 ##' @export
 setMethod("strand", "gbFeatureList",
-          function(x, join = FALSE) {
+          function (x, join = FALSE) {
             ans <- lapply(x, strand, join = join)        
             if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
               unlist(ans)
             } else {
               ans
             }
-            
           })
 
 ##' @export
 setMethod("strand<-", "gbFeatureList",
-          function(x, value){
+          function (x, value) {
             if (length(value) != length(x)) {
               value <- c(rep(value, length(x)%/%length(value)),
                          value[seq_len(length(x)%%length(value))])
@@ -210,7 +187,7 @@ setMethod("strand<-", "gbFeatureList",
 
 ##' @export
 setMethod("width", "gbFeatureList",
-          function(x, join = FALSE) {
+          function (x, join = FALSE) {
             ans <- lapply(x, width, join = join)
             if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
               unlist(ans)
@@ -221,13 +198,11 @@ setMethod("width", "gbFeatureList",
 
 ##' @export
 setMethod("range", "gbFeatureList",
-          function(x, join = FALSE) {
-            start <- unlist(start(x, join = join))
-            end <- unlist(end(x, join = join))
+          function (x, join = FALSE) {
+            start <- as.integer(unlist(start(x, join = join)))
+            width <- as.integer(unlist(end(x, join = join))) - start + 1L
             strand <- unlist(strand(x, join = join))
-            r <- IRanges(start, end)
-            r@elementMetadata <- DataFrame(strand=strand)
-            .gbRange(r)
+            .gbRange(start, width, strand)
           })
 
 ##' @export
@@ -240,7 +215,9 @@ setMethod("getLocation", "gbFeatureList",
               ans@elementMetadata$key <- keys
               ans@elementMetadata$id <- ids
             } else {
-              stop("Use 'join = TRUE' at the moment")
+              exp <- expandIds(x)
+              ans@elementMetadata$key <- exp$keys
+              ans@elementMetadata$id <- exp$ids
             }
             if (attributes) {
               structure(ans,
@@ -351,7 +328,7 @@ setMethod("getSequence", "gbFeatureList",
           function (x, db = NULL) {
             stopifnot(hasValidDb(x))
             db <- initGB(x@.Dir, verbose=FALSE)
-            .seq_access(s=dbFetch(db, "sequence"), x, type=dbFetch(db, "type"))
+            .seqAccess(s=dbFetch(db, "sequence"), x, type=dbFetch(db, "type"))
           })
 
 ##' @export
@@ -399,6 +376,9 @@ setMethod("[",
           function (x, i, j, ..., drop = TRUE) {
             return(x)
           })
+
+
+# Select-method ----------------------------------------------------------
 
 ##' @export
 setMethod("select",
