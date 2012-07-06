@@ -34,6 +34,9 @@
   named \code{list} where the respective names can be
   interpreted as the the paths to the retrieved values.
 }
+\examples{
+##
+}
 \author{
   Janko Thyson \email{janko.thyson.rstuff@googlemail.com}
 }

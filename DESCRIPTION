@@ -14,8 +14,11 @@ Depends:
     parallel,
     filehash,
     intervals,
+    Biostrings,
     IRanges,
     stringr
+Imports:
+    plyr
 Collate:
     'all-generics.r'
     'utils.r'

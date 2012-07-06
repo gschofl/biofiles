@@ -21,12 +21,12 @@ setGeneric("partial", function (x, ...)  standardGeneric("partial"))
 ## getter-generics ========================================================== 
 
 
-##' get genomic location of a GenBank feature
+##' Retrieve feature locations from a GenBank record
 ##'
-##' @usage getLocation(x, attributes=TRUE, join=FALSE)
+##' @usage getLocation(x, attributes = TRUE, join = FALSE)
 ##'
 ##' @param x A \code{\link{gbFeature}} or \code{\link{gbFeatureList}} object
-##' @param attributes set the \code{accession}, \code{definition},
+##' @param attributes Set the \code{accession}, \code{definition},
 ##' \code{database} attributes.
 ##' @param join combine compound locations
 ##'
@@ -39,12 +39,13 @@ setGeneric("getLocation",
              standardGeneric("getLocation")
            )
 
-
-##' get index of a GenBank feature.
+##' Retrieve feature indices from a GenBank record
 ##'
-##' @usage getIndex(x)
+##' @usage getIndex(x, attributes = FALSE)
 ##'
-##' @param x A gbFeature or gbFeatureList object
+##' @param x A \code{gbFeature} or \code{gbFeatureList} object.
+##' @param attributes Set the \code{accession}, \code{definition},
+##' \code{database} attributes.
 ##'
 ##' @return A numeric vector of feature indeces
 ##'
@@ -55,7 +56,14 @@ setGeneric("getIndex",
              standardGeneric("getIndex")
            )
 
-
+##' Retrieve feature keys from a GenBank record
+##'
+##' @usage getKey(x, attributes = FALSE)
+##' 
+##' @param x A \code{gbFeature} or \code{gbFeatureList} object.
+##' @param attributes Set the \code{accession}, \code{definition},
+##' \code{database} attributes.
+##'
 ##' @docType methods
 ##' @export
 setGeneric("getKey",
@@ -63,7 +71,16 @@ setGeneric("getKey",
              standardGeneric("getKey")
            )
 
-
+##' Retrieve feature keys from a GenBank record
+##'
+##' @usage getKey(x, attributes = FALSE)
+##' 
+##' @param x A \code{gbFeature} or \code{gbFeatureList} object.
+##' @param which Character vector giving the name(s) of the qualifiers
+##' to retrieve.
+##' @param attributes Set the \code{accession}, \code{definition},
+##' \code{database} attributes.
+##'
 ##' @docType methods
 ##' @export
 setGeneric("getQualifier",
@@ -137,7 +154,8 @@ setGeneric("getFeatures",
 ##' @param update_db Should filehash database be updated with new feature
 ##' locations.
 ##'
-##' @return A gbLocation, gbFeature, or gbFeatureList object
+##' @return A \code{\link{gbLocation-class}}, \code{\link{gbFeature-class}},
+##' or\code{\link{gbFeatureList-class}} object
 ##'
 ##' @docType methods
 ##' @export
@@ -148,14 +166,46 @@ setGeneric("shift", function (x, shift = 0L, ...) standardGeneric("shift"))
 ##
 ##' Select elements from a GenBank Record
 ##' 
+##' This function extracts features or information contained in features
+##' from \code{gbRecord}s or \code{gbFeatureList}s.
+##' 
+##' \sQuote{subset} specifications are given in a character string separated
+##' by semicolons.
+##' 
+##' \describe{
+##'    \item{by index}{
+##'    For example: \code{"idx=1,3,4"}, \code{"idx=1:4"},
+##'    \code{"index=1,3,5:8"}, \code{"idx=1;idx=3;idx=4"}
+##'    }
+##'    \item{by location}{
+##'    For example: \code{"loc=10000:20000"}, \code{"loc=:20000"}, 
+##'    \code{"location=:20000,40000:60000"}
+##'    }
+##'    \item{by key}{
+##'    For example: \code{"key=CDS"}, \code{"key=CDS,gene"}
+##'    }
+##'    \item{by qualifier values}{
+##'    For example: \code{"product=replication"}, \code{"pseudo"}
+##'    }
+##'    \item{by any combination of the above}{
+##'    For example: \code{"location=:10000;key=CDS,gene"}
+##'    }
+##' }
+##' 
 ##' @usage select(x, subset = c(""), select =c(""))
 ##' 
 ##' @param x A \sQuote{\code{gbRecord}} or \sQuote{\code{gbFeatureList}}
 ##' object
-##' @param subset Which elements to select from indicated by index, key,
-##' location, or qualifier value.
-##' @param select Which information to be retrieved from the subsetted
-##' elements.
+##' @param subset A character string specifying the elements to select
+##' indicated by index, key, location, or qualifier value. See Details.
+##' @param select A character string specifying the information to be
+##' returned from the subsetted elements. Supported values are \dQuote{idx}
+##' or \dQuote{index}, \dQuote{location} or \dQuote{range}, \dQuote{start},
+##' \dQuote{end}, \dQuote{strand}, \dQuote{key}, or any qualifier tag (e.g.,
+##' \dQuote{locus_tag}, \dQuote{product}). The default will return a
+##' \code{\link{gbFeature-class}} or \code{\link{gbFeatureList-class}} object
+##' 
+##' @return Depending on the value of \code{select}.
 ##' 
 ##' @export
 ##' @docType methods

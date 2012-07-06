@@ -6,9 +6,12 @@ NULL
 
 ##' gbRange class
 ##' 
+##' @param ... Slots of gbRange
+##' 
 ##' @exportClass gbRange
 ##' @name gbRange-class
 ##' @rdname gbRange-class
+##' @aliases $,gbRange-method
 .gbRange <- setClass("gbRange", contains="IRanges")
 
 
@@ -37,7 +40,7 @@ setMethod("initialize",
 
 ##' @keywords internal
 setMethod("show", "gbRange",
-          function(object)
+          function (object)
           {
             lo <- length(object)
             cat(class(object), " of length ", lo, "\n", sep = "")
@@ -50,3 +53,14 @@ setMethod("show", "gbRange",
             }  
           })
 
+
+#' @export
+setMethod("$", "gbRange",
+          function (x, name) {
+            switch(name,
+                   start=start(x),
+                   end=end(x),
+                   width=end(x) - start(x) + 1,
+                   as.data.frame(stringsAsFactors=FALSE,
+                                 elementMetadata(x))[[name]])
+          })

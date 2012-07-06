@@ -24,6 +24,9 @@
 \usage{
   .gbFeatureList(...)
 }
+\arguments{
+  \item{...}{Slots of gbFeature}
+}
 \description{
   gbFeatureList is an S4 class that extends the
   \code{\link{gbRecord-class}}. This class provides a

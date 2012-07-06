@@ -10,6 +10,8 @@ NULL
 ##' a GenBank flat file record. It is implemented as an extension of a
 ##' '\link[filehash]{filehashRDS-class}' with no additional slots.
 ##'
+##' @param ... Slots of gbRecord
+##'
 ##' @name gbRecord-class
 ##' @rdname gbRecord-class
 ##' @exportClass gbRecord
@@ -76,7 +78,6 @@ setMethod("show", "gbRecord",
 
 ##' @export
 setMethod("initGB",
-          #### initGB-method ####
           signature(db_dir="ANY"),
           function(db_dir, create=FALSE, ...) {
             db_dir <- sub("/$", "", db_dir, perl=TRUE)
@@ -117,8 +118,7 @@ setMethod("initialize",
 
 
 #' @keywords internal
-gbRecord <- function (db_dir, header, features, sequence=NULL)
-{
+gbRecord <- function (db_dir, header, features, sequence=NULL) {
   db <- initGB(db_dir, create=TRUE)
   
   if (is.null(header$accession))
@@ -135,8 +135,7 @@ gbRecord <- function (db_dir, header, features, sequence=NULL)
 
 
 #' @keywords internal
-.insertData <- function (db, header, features, sequence)
-{
+.insertData <- function (db, header, features, sequence) {
   dbInsert(db, "locus", header$locus)
   dbInsert(db, "length", header$length)
   dbInsert(db, "type", header$type)
@@ -173,8 +172,7 @@ setMethod("getFeatures", "gbRecord",
 
 
 ##' @export
-setMethod("[[",
-          signature(x="gbRecord", i="character", j="missing"),
+setMethod("[[", c("gbRecord", "character", "missing"),
           function(x, i) dbFetch(x, i)
           )
 

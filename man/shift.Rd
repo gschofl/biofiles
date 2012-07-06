@@ -21,7 +21,9 @@
   new feature locations.}
 }
 \value{
-  A gbLocation, gbFeature, or gbFeatureList object
+  A \code{\link{gbLocation-class}},
+  \code{\link{gbFeature-class}},
+  or\code{\link{gbFeatureList-class}} object
 }
 \description{
   shift location of features in a GenBank record

@@ -12,6 +12,8 @@ setClassUnion("charOrNull", c("character", "NULL"))
 ##' \code{\link{gbFeatureList-class}}. This class provides a container
 ##' for feature data retrived from GenBank flat files.
 ##' 
+##' \code{gbFeature} provide the following slots:
+##' 
 ##' \describe{
 ##'    \item{.Dir}{The path to the database file containing the GenBank
 ##'    record the feature is part of.}
@@ -22,12 +24,13 @@ setClassUnion("charOrNull", c("character", "NULL"))
 ##'    \item{.ID}{Identifier (sequential index) of the feature in the
 ##'    GenBank record the feature is part of.}
 ##'    \item{key}{Feature key (e.g. Source, CDS, gene, etc.)}
-##'    \item{location}{Named numeric vector. Name attributes: 'start<N>',
-##'    'end<N>', 'length<N>', 'strand', 'join', 'order'.}
+##'    \item{location}{An object of \code{\link{gbLocation-class}}}
 ##'    \item{qualifiers}{Named character vector. Name attributes
 ##'    correspond to GenBank qualifier tags.}       
 ##' }
 ##' 
+##' @param ... Slots of gbFeature
+##'
 ##' @name gbFeature-class
 ##' @rdname gbFeature-class
 ##' @exportClass gbFeature
@@ -48,7 +51,7 @@ setClassUnion("charOrNull", c("character", "NULL"))
 ##' @aliases hasQualifier,gbFeature-method
 ##' @aliases [[,gbFeature-method
 ##' @aliases $,gbFeature-method
-.gbFeature <-
+.gbFeature <- 
   setClass("gbFeature",
            representation(.Dir="character",
                           .ACCN="character",
@@ -194,7 +197,7 @@ setMethod("getKey", "gbFeature",
   if (fixed) which <- paste0("\\b", which, "\\b") 
   n_row <- length(.x)
   idx <- matrix(
-    vapply(which, grepl, x=names(.x),
+    vapply(which, grepl, names(.x),
            USE.NAMES=FALSE, FUN.VALUE=logical(n_row)),
     nrow=n_row)
   if (ncol(idx) == 1L) {
@@ -202,14 +205,16 @@ setMethod("getKey", "gbFeature",
     if (length(ans) > 0L) {
       return(ans)
     } else {
-      return(structure(NA_character_, names=which))
+      return(structure(NA_character_,
+                       names=gsub("\\b", "", which, fixed=TRUE)))
     }
   } 
   else if (ncol(idx) > 1L) {
     ans <- lapply(seq.int(ncol(idx)), function (i) .x[idx[,i]])   
     if (any(na_idx <- vapply(ans, length, FUN.VALUE=integer(1L)) == 0L)) {
       for (na in which(na_idx)) {
-        ans[[na]] <- structure(NA_character_, names=which[na])
+        ans[[na]] <- structure(NA_character_,
+                               names=gsub("\\b", "", which, fixed=TRUE)[na])
       }
     }
     return(unlist(ans))
@@ -359,8 +364,7 @@ setMethod("shift", "gbFeature",
 
 
 ##' @export
-setMethod("[[",
-          signature(x = "gbFeature", i = "character", j = "missing"),
+setMethod("[[", c("gbFeature", "character", "missing"),
           function(x, i, j) slot(object, i)
           )
 

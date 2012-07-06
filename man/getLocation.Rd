@@ -1,12 +1,12 @@
 \docType{methods}
 \name{getLocation}
 \alias{getLocation}
-\title{get genomic location of a GenBank feature}
+\title{Retrieve feature locations from a GenBank record}
 \arguments{
   \item{x}{A \code{\link{gbFeature}} or
   \code{\link{gbFeatureList}} object}
 
-  \item{attributes}{set the \code{accession},
+  \item{attributes}{Set the \code{accession},
   \code{definition}, \code{database} attributes.}
 
   \item{join}{combine compound locations}
@@ -15,6 +15,6 @@
   A data frame
 }
 \description{
-  get genomic location of a GenBank feature
+  Retrieve feature locations from a GenBank record
 }
 

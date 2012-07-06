@@ -21,6 +21,9 @@
 \usage{
   .gbFeature(...)
 }
+\arguments{
+  \item{...}{Slots of gbFeature}
+}
 \description{
   \sQuote{gbFeature} is an S4 class that extends the
   \code{\link{gbFeatureList-class}}. This class provides a
@@ -28,6 +31,8 @@
   files.
 }
 \details{
+  \code{gbFeature} provide the following slots:
+
   \describe{ \item{.Dir}{The path to the database file
   containing the GenBank record the feature is part of.}
   \item{.ACCN}{Accession number of the GenBank record that
@@ -36,10 +41,9 @@
   the feature is part of.} \item{.ID}{Identifier
   (sequential index) of the feature in the GenBank record
   the feature is part of.} \item{key}{Feature key (e.g.
-  Source, CDS, gene, etc.)} \item{location}{Named numeric
-  vector. Name attributes: 'start<N>', 'end<N>',
-  'length<N>', 'strand', 'join', 'order'.}
-  \item{qualifiers}{Named character vector. Name attributes
-  correspond to GenBank qualifier tags.} }
+  Source, CDS, gene, etc.)} \item{location}{An object of
+  \code{\link{gbLocation-class}}} \item{qualifiers}{Named
+  character vector. Name attributes correspond to GenBank
+  qualifier tags.} }
 }
 

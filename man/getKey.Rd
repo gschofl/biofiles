@@ -1,7 +1,7 @@
 \docType{methods}
-\name{getIndex}
-\alias{getIndex}
-\title{Retrieve feature indices from a GenBank record}
+\name{getKey}
+\alias{getKey}
+\title{Retrieve feature keys from a GenBank record}
 \arguments{
   \item{x}{A \code{gbFeature} or \code{gbFeatureList}
   object.}
@@ -9,10 +9,7 @@
   \item{attributes}{Set the \code{accession},
   \code{definition}, \code{database} attributes.}
 }
-\value{
-  A numeric vector of feature indeces
-}
 \description{
-  Retrieve feature indices from a GenBank record
+  Retrieve feature keys from a GenBank record
 }
 

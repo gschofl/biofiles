@@ -24,6 +24,8 @@ setOldClass("list")
 ##'    \item{.Data}{A list of gbFeature objects}
 ##' }
 ##' 
+##' @param ... Slots of gbFeature
+##' 
 ##' @name gbFeatureList-class
 ##' @rdname gbFeatureList-class
 ##' @exportClass gbFeatureList
@@ -317,7 +319,7 @@ setMethod("dbXref", "gbFeatureList",
             if (na.rm)
               ans <- ans[!is.na(ans)]
             if (length(ans) == 0) {
-              return( NA_character_ )
+              return(NA_character_)
             }
             
             ans
@@ -346,47 +348,40 @@ setMethod("hasQualifier", "gbFeatureList",
 
 
 ##' @export
-setMethod("[",
-          signature(x = "gbFeatureList", i = "character", j = "missing", drop = "missing"),
+setMethod("[", c("gbFeatureList", "character", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
-            idx <- vapply(x@.Data, function(f) f@key, character(1L)) == i
-            gbFeatureList(db_dir=x@.Dir, accession=x@.ACCN,
-                          definition=x@.DEF, features=x@.Data[idx])
+            idx <- vapply(x@.Data, function(f) f@key, character(1L)) == i       
+            .gbFeatureList(.Data=x@.Data[idx], .Dir=x@.Dir, .ACCN=x@.ACCN,
+                           .DEF=x@.DEF)
           })
 
 ##' @export
-setMethod("[",
-          signature(x = "gbFeatureList", i = "numeric", j = "missing", drop = "missing"),
+setMethod("[", c("gbFeatureList", "numeric", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
-            gbFeatureList(db_dir=x@.Dir, accession=x@.ACCN,
-                          definition=x@.DEF, features=x@.Data[i])
+            .gbFeatureList(.Data=x@.Data[i], .Dir=x@.Dir, .ACCN=x@.ACCN,
+                           .DEF=x@.DEF)
           })
 
 ##' @export
-setMethod("[",
-          signature(x = "gbFeatureList", i = "logical", j = "missing", drop = "missing"),
+setMethod("[", c("gbFeatureList", "logical", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
-            gbFeatureList(db_dir=x@.Dir, accession=x@.ACCN,
-                          definition=x@.DEF, features=x@.Data[i])
+            .gbFeatureList(.Data=x@.Data[i], .Dir=x@.Dir, .ACCN=x@.ACCN,
+                           .DEF=x@.DEF)
           })
 
 ##' @export
-setMethod("[",
-          signature(x = "gbFeatureList", i = "missing", j = "missing", drop = "missing"),
-          function (x, i, j, ..., drop = TRUE) {
-            return(x)
-          })
+setMethod("[", c("gbFeatureList", "missing", "missing", "ANY"),
+          function (x, i, j, ..., drop = TRUE) x
+          )
 
 
 # Select-method ----------------------------------------------------------
 
 ##' @export
-setMethod("select",
-          #### select-method ####
-          signature(x="gbFeatureList"), 
+setMethod("select", "gbFeatureList", 
           function (x, subset = "", select = "") {
-            ans <- .select(x=x, which=subset)
-            ans <- .retrieve(x=ans, which=select)
+            ans <- .select(x, subset)
+            ans <- .retrieve(ans, select)
             ans
           })
 

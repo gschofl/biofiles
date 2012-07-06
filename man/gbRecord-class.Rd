@@ -12,6 +12,9 @@
 \usage{
   .gbRecord(...)
 }
+\arguments{
+  \item{...}{Slots of gbRecord}
+}
 \description{
   gbRecord is an S4 class that provides a container for
   data parsed from a GenBank flat file record. It is

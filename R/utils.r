@@ -8,6 +8,7 @@
 ##' @importFrom Biostrings xscat
 ##' @importFrom Biostrings subseq
 ##' @importFrom Biostrings toString 
+##' @importFrom plyr rbind.fill
 ##' @import intervals
 ##' @import IRanges
 ##' @import stringr
@@ -302,6 +303,8 @@ strmatch <- function (pattern, str,
 #' @return A named \code{list} that features the desired degree of flattening.
 #' @keywords internal
 #' @author Janko Thyson \email{janko.thyson.rstuff@@googlemail.com}
+#' @examples
+#'  ##
 flatten <- function (x, 
                      start_after=NULL, 
                      stop_at=NULL, 
@@ -355,7 +358,7 @@ flatten <- function (x,
     envir$nms <- envir$nms[-length(envir$nms)]
     envir$counter <- envir$counter[-length(envir$counter)]
     
-    return(TRUE)
+    TRUE
   }
   
   .updateOutInner <- function (envir, out.1, ...)
@@ -368,7 +371,7 @@ flatten <- function (x,
     envir$nms       <- envir$nms[-length(envir$nms)]
     envir$counter   <- envir$counter[-length(envir$counter)]
     
-    return(TRUE)
+    TRUE
   }
   
   .flattenInner <- function(x, envir, ...)
@@ -426,22 +429,22 @@ flatten <- function (x,
         .updateOutInner(envir=envir, out.1=out.1)
     }
     
-    return(TRUE)
+    TRUE
   }
   
-  out                     <- list()
+  out <- list()
   # ENVIR
-  envir                   <- new.env()
-  envir$counter           <- NULL
-  envir$counter_history   <- NULL
-  envir$delim_path        <- delim_path
-  envir$do_warn           <- do_warn
-  envir$do_block_warning  <- FALSE
-  envir$history           <- NULL
-  envir$nms               <- NULL
-  envir$out               <- list()
-  envir$src               <- x
-  envir$start_after       <- start_after
+  envir <- new.env()
+  envir$counter <- NULL
+  envir$counter_history <- NULL
+  envir$delim_path <- delim_path
+  envir$do_warn <- do_warn
+  envir$do_block_warning <- FALSE
+  envir$history <- NULL
+  envir$nms <- NULL
+  envir$out <- list()
+  envir$src <- x
+  envir$start_after <- start_after
   
   if (!is.null(stop_at)) {
     stop_at_0 <- stop_at
@@ -452,7 +455,7 @@ flatten <- function (x,
     }
   }
   
-  envir$stop_at           <- stop_at
+  envir$stop_at <- stop_at
   
   .flattenInner(x, envir)
   
@@ -474,9 +477,8 @@ flatten <- function (x,
       }
     }
   }
-  
   out <- envir$out
-  return(out)    
+  out    
 }
 
 getCompounds <- function (x) {
@@ -506,6 +508,11 @@ expandIds <- function (x) {
   id3 <- list(ids=getIndex(xTail, FALSE), keys=getKey(xTail, FALSE))
   Map(function(a, b, c) c(a, b, c), a=id1, b=id2, c=Recall(xTail))
 }
+
+`%@%` <- function(x, f) {
+  eval.parent(as.call(append(as.list(substitute(f)), list(x), 1)))
+}
+
 
 # --R-- vim:ft=r:sw=2:sts=2:ts=4:tw=76:
 #       vim:fdm=marker:fmr={{{,}}}:fdl=0
