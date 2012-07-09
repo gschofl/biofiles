@@ -169,7 +169,7 @@ setGeneric("shift", function (x, shift = 0L, ...) standardGeneric("shift"))
 ##' This function extracts features or information contained in features
 ##' from \code{gbRecord}s or \code{gbFeatureList}s.
 ##' 
-##' \sQuote{subset} specifications are given in a character string separated
+##' \sQuote{keys} specifications are given in a character string separated
 ##' by semicolons.
 ##' 
 ##' \describe{
@@ -192,28 +192,30 @@ setGeneric("shift", function (x, shift = 0L, ...) standardGeneric("shift"))
 ##'    }
 ##' }
 ##' 
-##' @usage select(x, subset = c(""), select =c(""))
+##' @usage select(x, index = NULL, keys = "", cols = "")
 ##' 
 ##' @param x A \sQuote{\code{gbRecord}} or \sQuote{\code{gbFeatureList}}
 ##' object
-##' @param subset A character string specifying the elements to select
-##' indicated by index, key, location, or qualifier value. See Details.
-##' @param select A character string specifying the information to be
-##' returned from the subsetted elements. Supported values are \dQuote{idx}
-##' or \dQuote{index}, \dQuote{location} or \dQuote{range}, \dQuote{start},
-##' \dQuote{end}, \dQuote{strand}, \dQuote{key}, or any qualifier tag (e.g.,
-##' \dQuote{locus_tag}, \dQuote{product}). The default will return a
-##' \code{\link{gbFeature-class}} or \code{\link{gbFeatureList-class}} object
+##' @param index (Optional) A numeric vector of feature indices.
+##' @param keys (Optional) A character string \sQuote{\emph{keys=value}}-pairs
+##' specifying the elements to select. See Details.
+##' @param cols (Optional) A character string of \sQuote{\emph{keys}} that
+##' indicate the data to be retrieved from the selected features.
+##' Supported \sQuote{\emph{keys}} are \dQuote{idx} or \dQuote{index},
+##' \dQuote{location} or \dQuote{range}, \dQuote{start}, \dQuote{end},
+##' \dQuote{strand}, \dQuote{key}, or any qualifier tag (e.g.,
+##' \dQuote{locus_tag}, \dQuote{product}). If no \sQuote{\emph{keys}} is given
+##' a  \code{\link{gbFeature-class}} or \code{\link{gbFeatureList-class}}
+##' object is returned.
 ##' 
 ##' @return Depending on the value of \code{select}.
 ##' 
 ##' @export
 ##' @docType methods
 setGeneric("select",
-           function(x, subset = "", select = "")
+           function(x, ...)
              standardGeneric("select")
            )
-
 
 ## initGB-generic =========================================================== 
 ##

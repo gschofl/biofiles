@@ -8,19 +8,21 @@
 # which="key=CDS,gene"
 # which="product"
 # which="key=gene;pseudo"
-
+# keys="idx=10:20"
+# index=c(1,2,3,8:12)
+# subset=571:573
 
 ## select features by index, key, location, qualifier values from
 ## gbData or gbFeatureList objects
-.select <- function (x, subset = "")
-{
-  subset <- gsub("\n|\t", " ", subset)
-  subset <- strsplit(subset, ";")[[1]]
+.select <- function (x, index = NULL, keys = "") {
+  
+  indices <- as.numeric(index)
+  keys <- gsub("\n|\t", " ", keys)
+  keys <- strsplit(keys, ";")[[1]]
   
   #### restrict to selected indices
-  if (any(i <- isIndex(subset))) {
-    indices <- numeric(0)
-    for (term in subset[i]) {
+  if (any(i <- isIndex(keys))) {
+    for (term in keys[i]) {
       idx <- strsplit(strsplit(term, "=")[[1]][2], ",")[[1]]
       if (any(r <- grepl(":", idx))) {
         ranges <- strsplit(idx[r], ":")
@@ -32,13 +34,16 @@
       }
       indices <- c(indices, idx)
     }
-    x <- x[ matchIdx(x, indices) ]
+    indices <- unique(indices)
   }
+  if (!isEmpty(indices))
+    x <- x[matchIdx(x, indices)]
+  
   
   #### restrict to selected location
-  if (any(l <- isLocation(subset))) {
+  if (any(l <- isLocation(keys))) {
     start <- end <- numeric(0)
-    for (term in subset[l]) {
+    for (term in keys[l]) {
       loc <- strsplit(strsplit(strsplit(term, "=")[[1]][2], ",")[[1]], ":")
       start <- c(start, as.numeric(unlist(lapply(loc, "[", 1))))
       end <- c(end, as.numeric(unlist(lapply(loc, "[", 2))))
@@ -53,9 +58,9 @@
   }
   
   #### within the selected window restrict by key(s) 
-  if (any(k <- isKey(subset))) {
+  if (any(k <- isKey(keys))) {
     key <- character(0)
-    for (term in subset[k]) {
+    for (term in keys[k]) {
       key <- c(key, gsub(",", "|", strsplit(term, "=")[[1]][2]))
     }
     key <- paste0(key, collapse="|")
@@ -65,11 +70,11 @@
   
   #### within resticted window and for restricted key,
   #### search pattern for specified qualifiers 
-  if (any(q <- !( isIndex(subset) |  isLocation(subset) | isKey(subset) ))) {
-    tag_value <- strsplit(subset[q], "=")
+  if (any(q <- !( isIndex(keys) |  isLocation(keys) | isKey(keys) ))) {
+    tag_value <- strsplit(keys[q], "=")
     tags <- vapply(tag_value, "[", 1, FUN.VALUE=character(1))
     vals <- vapply(tag_value, "[", 2, FUN.VALUE=character(1))
-    vals <- gsub(",","|",vals)
+    vals <- gsub(",", "|", vals)
     idx <- 
       lapply(tags, function (tag, val=vals[charmatch(tag, tags)]) {
         if (is.na(val)) {
@@ -93,52 +98,53 @@
   x
 }
 
-.retrieve <- function (x, select = "") {
+.retrieve <- function (x, cols = "") {
   
-  if (!nzchar(select)) return( x )
+  if (!nzchar(cols))
+    return(x)
   
-  select <- gsub("\n|\t", " ", select)
-  select <- strsplit(select, ";")[[1]]
+  cols <- gsub("\n|\t", " ", cols)
+  cols <- strsplit(cols, ";")[[1]]
   col_names <- character(0)
   i <- k <- l <- q <- NULL
   
-  if (any(idx <- grepl("idx|index", select, ignore.case=TRUE))) {
+  if (any(idx <- grepl("idx|index", cols, ignore.case=TRUE))) {
     i <- vapply(x, function (x) x@.ID, numeric(1))
-    col_names <- c(col_names, select[idx])
-    if (isEmpty(select <- select[!idx]))
-      return( .return(i, .Names=col_names) )
+    col_names <- c(col_names, cols[idx])
+    if (isEmpty(cols <- cols[!idx]))
+      return(.return(i, .Names=col_names))
   }
   
-  if (any(idx <- grepl("key", select, ignore.case=TRUE))) {
+  if (any(idx <- grepl("key", cols, ignore.case=TRUE))) {
     k <- vapply(x, function (x) x@key, character(1))
-    col_names <- c(col_names, select[idx])
-    if (isEmpty(select <- select[!idx]))
-      return( .return(i, k, .Names=col_names) )
+    col_names <- c(col_names, cols[idx])
+    if (isEmpty(cols <- cols[!idx]))
+      return(.return(i, k, .Names=col_names))
   }
 
-  if (any(idx <- grepl("location|range|start|end|width|strand", select, ignore.case=TRUE))) {
+  if (any(idx <- grepl("location|range|start|end|width|strand", cols, ignore.case=TRUE))) {
     
-    if (any(grepl("location|range", select, ignore.case=TRUE))) {
+    if (any(grepl("location|range", cols, ignore.case=TRUE))) {
       l <- range(x, join = TRUE)
     } else {
-      col_names <- c(col_names, loc <- select[idx])
+      col_names <- c(col_names, loc <- cols[idx])
       l <- lapply(loc, function (loc) {
         switch(loc, start=start(x), end=end(x), width=width(x), strand=strand(x))
       })
     }
 
-    if (isEmpty(select <- select[!idx]))
+    if (isEmpty(cols <- cols[!idx]))
       return( .return(i, k, l, .Names=col_names) )
   }
 
-  col_names <- c(col_names, select)
-  q <- lapply(select, function (qual) {
+  col_names <- c(col_names, cols)
+  q <- lapply(cols, function (qual) {
     lapply(x, function (x) .qualAccess(x, qual, TRUE)) %@% .simplify
   })
   
   ## special treatment for db_xref
-  if ("db_xref" %in% select) {
-    dbx <- which(select %in% "db_xref")
+  if ("db_xref" %in% cols) {
+    dbx <- which(cols %in% "db_xref")
     dbx_list <- parseDbXref(dbx=q[[dbx]])
     q <- append(q[-dbx], dbx_list, dbx - 1)
     dbx_name <- which(col_names %in% "db_xref")
@@ -193,7 +199,7 @@ hasList <- function (x) vapply(x, typeof, character(1L)) == "list"
 hasListOfLists <- function (x) unlist(lapply(x[hasList(x)], hasList))
 
 matchIdx <- function (x, idx) {
-  x_idx <- vapply(x, function (f) f@.ID, FUN.VALUE=numeric(1))
+  x_idx <- vapply(x, function (f) f@.ID, numeric(1))
   which(x_idx %in% idx)  
 }
 

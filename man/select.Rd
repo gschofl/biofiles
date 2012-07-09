@@ -6,19 +6,23 @@
   \item{x}{A \sQuote{\code{gbRecord}} or
   \sQuote{\code{gbFeatureList}} object}
 
-  \item{subset}{A character string specifying the elements
-  to select indicated by index, key, location, or qualifier
-  value. See Details.}
+  \item{index}{(Optional) A numeric vector of feature
+  indices.}
 
-  \item{select}{A character string specifying the
-  information to be returned from the subsetted elements.
-  Supported values are \dQuote{idx} or \dQuote{index},
+  \item{keys}{(Optional) A character string
+  \sQuote{\emph{keys=value}}-pairs specifying the elements
+  to select. See Details.}
+
+  \item{cols}{(Optional) A character string of
+  \sQuote{\emph{keys}} that indicate the data to be
+  retrieved from the selected features. Supported
+  \sQuote{\emph{keys}} are \dQuote{idx} or \dQuote{index},
   \dQuote{location} or \dQuote{range}, \dQuote{start},
   \dQuote{end}, \dQuote{strand}, \dQuote{key}, or any
   qualifier tag (e.g., \dQuote{locus_tag},
-  \dQuote{product}). The default will return a
+  \dQuote{product}). If no \sQuote{\emph{keys}} is given a
   \code{\link{gbFeature-class}} or
-  \code{\link{gbFeatureList-class}} object}
+  \code{\link{gbFeatureList-class}} object is returned.}
 }
 \value{
   Depending on the value of \code{select}.
@@ -29,7 +33,7 @@
   \code{gbFeatureList}s.
 }
 \details{
-  \sQuote{subset} specifications are given in a character
+  \sQuote{keys} specifications are given in a character
   string separated by semicolons.
 
   \describe{ \item{by index}{ For example:

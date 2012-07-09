@@ -28,9 +28,9 @@ NULL
 ##' 
 ##' @return A list with two elements. The first contains the joined
 ##' character vector, the second the number of lines joined
+##' 
 ##' @keywords internal
-joinLines <- function (lines, extract_pat=".*", break_pat=NULL, sep=TRUE)
-{
+joinLines <- function (lines, extract_pat = ".*", break_pat = NULL, sep = TRUE) {
   i  <-  0
   list(eval(function (lines, extract_pat, break_pat) {
     l <- regmatches(lines[1], regexpr(extract_pat, lines[1], perl=T))
@@ -73,8 +73,8 @@ joinLines <- function (lines, extract_pat=".*", break_pat=NULL, sep=TRUE)
 ##' @return a character vector
 ##' @keywords internal
 linebreak <- function (s, width=getOption("width") - 2, indent=0, offset=0,
-                       split=" ", FORCE=FALSE, FULL_FORCE=FALSE)
-{
+                       split=" ", FORCE=FALSE, FULL_FORCE=FALSE) {
+  
   if (!is.character(s)) 
     s <- as.character(s)
   
@@ -108,13 +108,13 @@ linebreak <- function (s, width=getOption("width") - 2, indent=0, offset=0,
                     linebreak(s=trailing_string, width=width, indent=0,
                               offset=offset, split=split, FORCE=FORCE,
                               FULL_FORCE=FULL_FORCE))
-      } 
-      else if ((fws == -1 || fws >= (width - offset + indent)) && !FORCE) {
+        
+      } else if ((fws == -1 || fws >= (width - offset + indent)) && !FORCE) {
         # if no whitespace or first word too long and NO force break
         # stop right here
         stop("Can't break in the middle of a word. Use the force!")
-      }
-      else {
+        
+      } else {
         # break the line
         s_split <- unlist(strsplit(s, split))
         s_cum <- cumsum(nchar(s_split) + 1)
@@ -127,8 +127,8 @@ linebreak <- function (s, width=getOption("width") - 2, indent=0, offset=0,
                     linebreak(s=trailing_string, width=width, indent=0,
                               offset=offset, split=split, FORCE=FORCE, FULL_FORCE=FULL_FORCE))
       }
-    }
-    else
+      
+    } else
       # if everything fits on one line go with the string
       s
   }, s, width, offset, abs(indent), indent_string, split, FORCE, FULL_FORCE,
@@ -141,8 +141,17 @@ linebreak <- function (s, width=getOption("width") - 2, indent=0, offset=0,
 ##' @keywords internal
 blanks <- function(n) {
   vapply(Map(rep.int, rep.int(" ", length(n)), n, USE.NAMES=FALSE),
-         paste, "", collapse="")
+         paste0, collapse="", character(1))
 }
+
+## chain functions
+`%@%` <- function(x, f) {
+  eval.parent(as.call(append(as.list(substitute(f)), list(x), 1)))
+}
+
+# negate %in%
+`%ni%` <- Negate(`%in%`)
+
 
 ##' Extract matched group(s) from a string.
 ##'
@@ -159,12 +168,8 @@ blanks <- function(n) {
 ##' @keywords internal
 ##' @examples
 ##' ##
-strmatch <- function (pattern, str, 
-                      capture=TRUE, 
-                      perl=TRUE, 
-                      global=TRUE, 
-                      ignore.case=FALSE)
-{
+strmatch <- function (pattern, str, capture = TRUE, perl = TRUE, 
+                      global = TRUE, ignore.case = FALSE) {
   
   if (!is.atomic(str))
     stop("String must be an atomic vector", call. = FALSE)
@@ -248,10 +253,11 @@ strmatch <- function (pattern, str,
 ## introduce line breaks after 80 cols
 ## the negative indent accounts for the length of the qualifier tag
 ## and the following "="
-.cleanQualifiers <- function (q, v) 
-{
+.cleanQualifiers <- function (q, v) {
+  
   v <- linebreak(s=.unescape(v), width=79, offset=21,
                  indent=-(nchar(q)+1), FORCE=TRUE)
+  
   l_pos <- which(pmatch(q, "/locus_tag", dup=TRUE, nomatch=0) == 1)
   p_pos <- which(pmatch(q, "/parent", dup=TRUE, nomatch=0) == 1)
   g_pos <- which(pmatch(q, "/gene", dup=TRUE, nomatch=0) == 1)
@@ -269,8 +275,7 @@ strmatch <- function (pattern, str,
     v[l_pos] <- lp[which(nchar(lp) == min(nchar(lp)))]
     v <- v[-c(l_pos[-1], p_pos)]
     q <- q[-c(l_pos[-1], p_pos)]
-  } 
-  else {
+  } else {
     # otherwise choose among locus tag, parent, and gene; throw
     # out parrent and gene
     v[l_pos] <- lpg[which(nchar(lpg) == min(nchar(lpg)))]
@@ -323,8 +328,7 @@ flatten <- function (x,
   }
   
   # INNER FUNCTIONS
-  .startAfterInner <- function(envir, nms, out.1, ...)
-  {
+  .startAfterInner <- function(envir, nms, out.1, ...) {
     idx_diff <- diff(c(envir$start_after, length(envir$counter)))
     
     # UPDATE IF DEGREE OF NESTEDNESS EXCEEDS START CRITERION
@@ -332,9 +336,9 @@ flatten <- function (x,
       idx_cutoff <-
         seq(from=(length(envir$counter) - idx_diff + 1), to=length(envir$counter))
       
-      idx_left        <- envir$counter[-idx_cutoff]
-      nms.1           <- nms[idx_cutoff]
-      names(out.1)    <- paste(nms.1, collapse=envir$delim_path)
+      idx_left <- envir$counter[-idx_cutoff]
+      nms.1 <- nms[idx_cutoff]
+      names(out.1) <- paste(nms.1, collapse=envir$delim_path)
       # UPDATE SRC
       idx_append <- sapply(envir$history, function (x_hist) {
         all(idx_left == x_hist)        
@@ -342,15 +346,13 @@ flatten <- function (x,
       
       if (any(idx_append)) {                                          
         envir$src[[idx_left]] <- append(envir$src[[idx_left]], values=out.1)                    
-      }
-      else {
+      } else {
         envir$src[[idx_left]] <- out.1
         # UPDATE HISTORY
         envir$history <- c(envir$history, list(idx_left))
       }
       envir$out <- envir$src          
-    } 
-    else if (idx_diff < 0) {
+    } else if (idx_diff < 0) {
       envir$out <- envir$src
     }
     
@@ -361,8 +363,7 @@ flatten <- function (x,
     TRUE
   }
   
-  .updateOutInner <- function (envir, out.1, ...)
-  {
+  .updateOutInner <- function (envir, out.1, ...) {
     
     # UPDATE OUT
     envir$out <- c(get("out", envir = envir), out.1)
@@ -374,8 +375,7 @@ flatten <- function (x,
     TRUE
   }
   
-  .flattenInner <- function(x, envir, ...)
-  {
+  .flattenInner <- function(x, envir, ...) {
     if ( is(x, "list") && length(x) != 0 ) {
       
       # UPDATE
@@ -392,8 +392,7 @@ flatten <- function (x,
           if (!is.null(envir$start_after)) {
             .startAfterInner(envir=envir, nms=nms, out.1=out.1)
             return(NULL)
-          }
-          else {
+          } else {
             .updateOutInner(envir=envir, out.1=out.1)
             return(NULL)
           }
@@ -415,8 +414,7 @@ flatten <- function (x,
           envir$counter <- envir$counter[-length(envir$counter)]
         }
       }
-    } 
-    else {
+    } else {
       
       nms <- get("nms", envir=envir)
       out.1 <- list(x)
@@ -481,12 +479,14 @@ flatten <- function (x,
   out    
 }
 
+
 getCompounds <- function (x) {
   x <- x[which(is.compound(x))]
   if (length(x) == 0) return(NA_real_) 
   cL <- vapply(x, function (f) nrow(f@location@.Data), numeric(1))
   cL
 }
+
 
 expandIds <- function (x) {
   cmp_pos <- Position(is.compound, x)
@@ -509,10 +509,97 @@ expandIds <- function (x) {
   Map(function(a, b, c) c(a, b, c), a=id1, b=id2, c=Recall(xTail))
 }
 
-`%@%` <- function(x, f) {
-  eval.parent(as.call(append(as.list(substitute(f)), list(x), 1)))
+## Access qualifiers from gbFeature or gbFeatureList objects
+.qualAccess <- function (x, qual = "", fixed = FALSE) {
+  
+  .access <- function (q) {
+    q <- q@qualifiers
+    if (fixed) qual <- paste0("\\b", qual, "\\b") 
+    n <- length(q)
+    idx <- matrix(
+      vapply(qual, grepl, names(q),
+             USE.NAMES=FALSE, FUN.VALUE=logical(n)),
+      nrow=n)
+    n_col <- dim(idx)[2]
+    if (n_col == 1L) {
+      if (any(idx))
+        q[idx]
+      else
+        structure(NA_character_, names=gsub("\\b", "", qual, fixed=TRUE))
+    } else {
+      ans <- lapply(seq.int(n_col), function (i) q[ idx[ ,i]])
+      if (any(na_idx <- !apply(idx, 2, any))) {
+        for (na in which(na_idx)) {
+          ans[[na]] <- structure(NA_character_, names=gsub("\\b", "", qual, fixed=TRUE)[na])
+        }
+      }
+      unlist(ans)
+    }
+  }
+  if (is(x, "gbFeature")) {
+    .access(x)
+  } else if (is(x, "gbFeatureList")) {
+    lapply(x, .access)
+  }
 }
 
+
+.simplify <- function (x, unlist = TRUE) {
+  if (length(len <- unique(unlist(lapply(x, length)))) > 1L) {
+    return(x)
+  }
+  if (len == 1L && unlist) {
+    unlist(x, recursive=FALSE)
+  } else if (len >= 1L) {
+    n <- length(x)
+    r <- as.vector(unlist(x, recursive=FALSE))
+    if (prod(d <- c(len, n)) == length(r)) {
+      return(data.frame(stringsAsFactors=FALSE,
+                        matrix(r, nrow=n, byrow=TRUE,
+                               dimnames=if (!(is.null(nm <- names(x[[1L]]))))
+                                 list(NULL, nm))))
+    } else {
+      x
+    }
+  } else {
+    x
+  }
+}
+
+
+
+.seqAccess <- function (s, x, type) {
+  ## merge Sequences
+  mergeSeq <- function (s, x, type) {
+    if (length(start(x)) == 1L) {
+      seq <- subseq(s, start=start(x), end=end(x))
+    } else {
+      seq <- do.call(xscat, Map(subseq, s, start=start(x), end=end(x)))
+    }
+    seq <- switch(type,
+                  DNA=DNAStringSet(seq),
+                  AA=AAStringSet(seq),
+                  RNA=RNAStringSet(seq))
+    seq@ranges@NAMES <- sprintf("%s.%s.%s", x@.ACCN, x@key, x@.ID)
+    seq
+  }
+  
+  if (is(x, "gbFeatureList")) {
+    ## initiate empty XStringSet
+    seq <- switch(type, 
+                  DNA=DNAStringSet(),
+                  AA=AAStringSet(),
+                  RNA=RNAStringSet())
+    for (i in seq_along(x)) {
+      seq[i] <- mergeSeq(s, x[[i]], type)             
+    }
+  } else if (is(x, "gbFeature")) {
+    seq <- mergeSeq(s, x, type)
+  }
+  
+  seq@metadata <- list(definition=x@.DEF, database=x@.Dir)
+  seq
+}
 
 # --R-- vim:ft=r:sw=2:sts=2:ts=4:tw=76:
 #       vim:fdm=marker:fmr={{{,}}}:fdl=0

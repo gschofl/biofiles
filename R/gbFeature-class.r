@@ -149,7 +149,7 @@ setMethod("range", "gbFeature",
 setMethod("getLocation", "gbFeature",
           function (x, attributes = FALSE, join = FALSE) {     
             ans <- range(x@location, join = join)
-            ans@elementMetadata$key <- x@key
+            ans@elementMetadata$feature <- x@key
             ans@elementMetadata$id <- x@.ID
             if (attributes) {
               structure(ans,
@@ -190,38 +190,6 @@ setMethod("getKey", "gbFeature",
             }
           })
 
-
-.qualAccess <- function (x, which = "", fixed = FALSE)
-{
-  .x <- x@qualifiers
-  if (fixed) which <- paste0("\\b", which, "\\b") 
-  n_row <- length(.x)
-  idx <- matrix(
-    vapply(which, grepl, names(.x),
-           USE.NAMES=FALSE, FUN.VALUE=logical(n_row)),
-    nrow=n_row)
-  if (ncol(idx) == 1L) {
-    ans <- .x[idx]
-    if (length(ans) > 0L) {
-      return(ans)
-    } else {
-      return(structure(NA_character_,
-                       names=gsub("\\b", "", which, fixed=TRUE)))
-    }
-  } 
-  else if (ncol(idx) > 1L) {
-    ans <- lapply(seq.int(ncol(idx)), function (i) .x[idx[,i]])   
-    if (any(na_idx <- vapply(ans, length, FUN.VALUE=integer(1L)) == 0L)) {
-      for (na in which(na_idx)) {
-        ans[[na]] <- structure(NA_character_,
-                               names=gsub("\\b", "", which, fixed=TRUE)[na])
-      }
-    }
-    return(unlist(ans))
-  }
-}
-
-
 ##' @export
 setMethod("dbXref", "gbFeature",
           function (x, db = NULL, ...) {     
@@ -260,7 +228,7 @@ setMethod("getQualifier", "gbFeature",
               ans <- .qualAccess(x, which, fixed)
             }
             if (attributes) {
-              structure(ans, key=x@key, id=x@.ID,
+              structure(ans, id=x@.ID,
                         accession=x@.ACCN,
                         definition=x@.DEF,
                         database=x@.Dir)
@@ -268,42 +236,6 @@ setMethod("getQualifier", "gbFeature",
               ans
             }
           })
-
-
-.seqAccess <- function(s, x, type)
-{
-  ## merge Sequences
-  mergeSeq <- function (s, x, type) {
-    if (length(start(x)) == 1L) {
-      seq <- subseq(s, start=start(x), end=end(x))
-    } else {
-      seq <- do.call(xscat, Map(subseq, s, start=start(x), end=end(x)))
-    }
-    seq <- switch(type,
-                  DNA=DNAStringSet(seq),
-                  AA=AAStringSet(seq),
-                  RNA=RNAStringSet(seq))
-    seq@ranges@NAMES <- sprintf("%s.%s.%s", x@.ACCN, x@key, x@.ID)
-    seq
-  }
-  
-  if (is(x, "gbFeatureList")) {
-    ## initiate empty XStringSet
-    seq <- switch(type, 
-                  DNA=DNAStringSet(),
-                  AA=AAStringSet(),
-                  RNA=RNAStringSet())
-    for (i in seq_along(x)) {
-      seq[i] <- mergeSeq(s, x[[i]], type)             
-    }
-  }
-  else if (is(x, "gbFeature")) {
-    seq <- mergeSeq(s, x, type)
-  }
-  
-  seq@metadata <- list(definition=x@.DEF, database=x@.Dir)
-  seq
-}
 
 ##' @export
 setMethod("getSequence", "gbFeature",

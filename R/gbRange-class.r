@@ -12,6 +12,8 @@ NULL
 ##' @name gbRange-class
 ##' @rdname gbRange-class
 ##' @aliases $,gbRange-method
+##' @aliases [,gbRange-method
+##' @aliases [[,gbRange-method
 .gbRange <- setClass("gbRange", contains="IRanges")
 
 
@@ -54,13 +56,31 @@ setMethod("show", "gbRange",
           })
 
 
-#' @export
+##' @keywords internal
+setMethod("coerce", signature(from="gbRange", to="data.frame"),
+          function(from, to, strict) {
+            data.frame(as.data.frame(x),
+                       as.data.frame(stringsAsFactors=FALSE, x@elementMetadata)
+            )
+          })
+
+
+##' @export
 setMethod("$", "gbRange",
-          function (x, name) {
-            switch(name,
-                   start=start(x),
-                   end=end(x),
-                   width=end(x) - start(x) + 1,
-                   as.data.frame(stringsAsFactors=FALSE,
-                                 elementMetadata(x))[[name]])
+          function (x, name) as(x, "data.frame")[[name]]
+)
+
+##' @export
+setMethod("[", "gbRange",
+          function (x, i, j, ..., drop) {
+            if (missing(j))
+              callNextMethod(x, i, j, ..., drop)
+            else
+              as(x, "data.frame")[i, j, drop]
+          })
+
+##' @export
+setMethod("[[", "gbRange",
+          function (x, i, j, ...)  {
+            as(x, "data.frame")[[i]]
           })

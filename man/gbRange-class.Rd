@@ -1,5 +1,7 @@
 \name{gbRange-class}
 \alias{$,gbRange-method}
+\alias{[,gbRange-method}
+\alias{[[,gbRange-method}
 \alias{gbRange-class}
 \title{gbRange class}
 \usage{

@@ -214,11 +214,11 @@ setMethod("getLocation", "gbFeatureList",
             keys <- getKey(x, attributes=FALSE)
             ids <- getIndex(x, attributes=FALSE)
             if (join || length(ans) == length(keys)) {
-              ans@elementMetadata$key <- keys
+              ans@elementMetadata$feature <- keys
               ans@elementMetadata$id <- ids
             } else {
               exp <- expandIds(x)
-              ans@elementMetadata$key <- exp$keys
+              ans@elementMetadata$feature <- exp$keys
               ans@elementMetadata$id <- exp$ids
             }
             if (attributes) {
@@ -261,55 +261,17 @@ setMethod("getKey", "gbFeatureList",
 ##' @export
 setMethod("getQualifier", "gbFeatureList",
           function (x, which = "", attributes = TRUE, fixed = FALSE) {          
-            ans <- .simplify(lapply(x, getQualifier, which=which,
-                                    attributes=FALSE, fixed=fixed),
-                             unlist=FALSE)
-            if (is.data.frame(ans) && attributes) {
-              ans <- structure(
-                data.frame(stringsAsFactors=FALSE,
-                           cbind(getIndex(x, attributes=FALSE),
-                                 getKey(x, attributes=FALSE),
-                                 structure(ans, names=NULL))),
-                names=c("index", "key", names(ans)),
-                accession=x@.ACCN,
-                definition=x@.DEF,
-                database=x@.Dir)
-            } else if (is.list(ans) && attributes) {
-              ans <- structure(
-                ans,
-                names=paste0(getKey(x, attributes=FALSE), ".", getIndex(x, attributes=FALSE)),
-                accession=x@.ACCN,
-                definition=x@.DEF,
-                database=x@.Dir)
+            ans <- .qualAccess(x, which, fixed) %@% .simplify(unlist=FALSE)
+            if (attributes) {
+              ans <- structure(ans, 
+                               id=vapply(x, function(f) f@.ID, numeric(1)),
+                               accession=x@.ACCN,
+                               definition=x@.DEF,
+                               database=x@.Dir)
             }
             
             ans
           })
-
-#' @keywords internal
-.simplify <- function (x, unlist = TRUE) {
-  if (length(len <- unique(unlist(lapply(x, length)))) > 1L) {
-    return( x )
-  }
-  if (len == 1L && unlist) {
-    unlist(x, recursive=FALSE)
-  } else if (len >= 1L) {
-    n <- length(x)
-    r <- as.vector(unlist(x, recursive=FALSE))
-    if (prod(d <- c(len, n)) == length(r)) {
-      return( data.frame(stringsAsFactors=FALSE,
-                         matrix(r, nrow=n, byrow=TRUE,
-                                dimnames=if (!(is.null(nm <- names(x[[1L]]))))
-                                  list(NULL, nm))) )
-    } else {
-      x
-    }
-  }
-  else {
-    x
-  }
-}
-
 
 ##' @export
 setMethod("dbXref", "gbFeatureList",
@@ -379,9 +341,9 @@ setMethod("[", c("gbFeatureList", "missing", "missing", "ANY"),
 
 ##' @export
 setMethod("select", "gbFeatureList", 
-          function (x, subset = "", select = "") {
-            ans <- .select(x, subset)
-            ans <- .retrieve(ans, select)
+          function (x, index = NULL, keys = "", cols = "") {
+            ans <- .select(x, index, keys)
+            ans <- .retrieve(ans, cols)
             ans
           })
 
