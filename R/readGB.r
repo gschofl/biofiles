@@ -73,7 +73,7 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
     stop("No features in the GenBank file")
   
   seq_idx <- seq(gb_fields["ORIGIN"]+1, gb_fields["//"]-1)
-  if (length(seq_idx) > 1L && seq_idxseq_idx[2] < seq_idx[1]) {
+  if (length(seq_idx) > 1L && seq_idx[2] < seq_idx[1]) {
     # happens if "//" is next after "ORIGIN", i.e. no  sequence is present
     gb_sequence <- NULL
   } else {
