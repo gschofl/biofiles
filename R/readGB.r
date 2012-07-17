@@ -73,7 +73,7 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
     stop("No features in the GenBank file")
   
   seq_idx <- seq(gb_fields["ORIGIN"]+1, gb_fields["//"]-1)
-  if (seq_idx[2] < seq_idx[1]) {
+  if (length(seq_idx) > 1L && seq_idxseq_idx[2] < seq_idx[1]) {
     # happens if "//" is next after "ORIGIN", i.e. no  sequence is present
     gb_sequence <- NULL
   } else {
@@ -212,11 +212,13 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
 #   ###
   
   cat("Parsing features\n")
+
   f_list <- mcmapply(function (idx, n) {
     .parseFeatureField(db_dir=db_dir, accession=accession,
                        definition=definition, id=n, lines=gb_features[idx])
   }, idx=feature_idx, n=seq_along(feature_start),
      SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
+  
   
   gbFeatureList(db_dir=db_dir, accession=accession,
                 definition=definition, features=f_list)
@@ -224,6 +226,7 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
 
 .parseFeatureField <- function (db_dir, accession, definition, id, lines,
                                 key_pat="(?<=^\\s{5})\\S+") {
+
   key <- regmatches(lines[1], regexpr(key_pat, lines[1], perl=TRUE))
   ## concatenate feature locations if they span multiple lines
   ## loc[[2]] contains the number of lines concatenated (mostly 1 anyways)

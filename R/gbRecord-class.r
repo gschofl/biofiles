@@ -62,13 +62,18 @@ setMethod("show", "gbRecord",
                 sprintf("COMMENT     %s\n", linebreak(object$comment,
                                                       offset=13, FORCE=TRUE)),
                 if (!is.null(object$sequence)) {
-                  sprintf("ORIGIN      %s\n             ...\n             %s\n",
-                          toString(subseq(object$sequence, 
-                                          start=1, end=getOption("width")-14)),
-                          toString(subseq(object$sequence,
-                                          start=length(object$sequence[[1L]]) - 
-                                            getOption("width")+15,
-                                          end=length(object$sequence[[1L]]))))
+                  
+                  if (object$sequence@ranges@width[1] < getOption("width")-14) {
+                    sprintf("ORIGIN      %s\n", toString(object$sequence))
+                  } else {
+                    sprintf("ORIGIN      %s\n             ...\n             %s\n",
+                            toString(subseq(object$sequence, 
+                                            start=1, end=getOption("width")-14)),
+                            toString(subseq(object$sequence,
+                                            start=length(object$sequence[[1L]]) - 
+                                              getOption("width")+15,
+                                            end=length(object$sequence[[1L]]))))
+                  }
                 })
           })
 

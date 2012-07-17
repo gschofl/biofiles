@@ -152,7 +152,6 @@ blanks <- function(n) {
 # negate %in%
 `%ni%` <- Negate(`%in%`)
 
-
 ##' Extract matched group(s) from a string.
 ##'
 ##' @param pattern character string containing a regular expression
