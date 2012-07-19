@@ -557,7 +557,7 @@ expandIds <- function (x) {
     return(x)
   }
   if (len == 1L && unlist) {
-    sunlist(x, recursive=FALSE)
+    unlist(x, recursive=FALSE)
   } else if (len >= 1L) {
     n <- length(x)
     r <- as.vector(unlist(x, recursive=FALSE))

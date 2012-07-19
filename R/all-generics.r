@@ -17,6 +17,8 @@ setGeneric("strand<-", function (x, ...) standardGeneric("strand<-"))
 
 setGeneric("partial", function (x, ...)  standardGeneric("partial"))
 
+setGeneric("accession", function (x, ...)  standardGeneric("accession"))
+
 
 ## getter-generics ========================================================== 
 

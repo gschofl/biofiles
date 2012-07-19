@@ -39,6 +39,7 @@ NULL
 ##' @aliases strand<-,gbLocation-method
 ##' @aliases range,gbLocation-method
 ##' @aliases partial,gbLocation-method
+##' @aliases as.gbLocation,gbLocation-method
 .gbLocation <- 
   setClass("gbLocation",
            representation(strand = "integer",
@@ -59,7 +60,7 @@ NULL
              if ( !all(object@compound %in% c("join","order",NA_character_)) )
                return("The 'compound' slot should contain 'join', 'order', or NA")
              
-             return(TRUE)
+             TRUE
            })
 
 ##' @keywords internal
@@ -164,6 +165,10 @@ setMethod("range", "gbLocation",
 #' @export
 setMethod("partial", "gbLocation",
           function (x) x@partial)
+
+#' @export
+setMethod("accession", "gbLocation",
+          function (x) x@accession)
 
 
 # Replace methods -----------------------------------------------------
@@ -281,6 +286,22 @@ setAs("gbLocation", "character",
       })
 
 
+setAs("character", "gbLocation",
+      function (from) {
+        l <- .getLocation(from)
+        if (is.null(l)) {
+          err <- sprintf("The string %s cannot be parsed as a gbLocation.",
+                         sQuote(from))
+          stop(err)
+        }
+        l
+      })
+
+##' @export
+as.gbLocation <- function (base_span) {
+  as(as.character(base_span), "gbLocation")
+}
+
 # shift ---------------------------------------------------------------
 
 
@@ -350,16 +371,15 @@ setMethod("show", "gbLocation",
   pl <- "[<]?\\d+\\.\\.[>]?\\d+"
   
   # simple location
-  sl <- sprintf("([a-zA-z][a-zA-Z0-9]*(\\.[a-zA-Z0-9]+)?\\:)?(%s|%s|%s|%s)",
+  sl <- sprintf("([a-zA-z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?\\:)?(%s|%s|%s|%s)",
                 sil, bl, wl, pl)
   # complemented simple location
   csl <- sprintf("complement\\(%s\\)", sl)
   # possibly complemented simplex location
   pcsl <- sprintf("(%s|%s)", sl, csl)
   
-  
   # remote accession
-  ra <- "([a-zA-Z][a-zA-Z0-9]*(\\.[a-zA-Z0-9]+)?)" 
+  ra <- "([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)" 
   # compound location
   cl <- sprintf("(join|order)\\(%s(,%s)*\\)", pcsl, pcsl)
   # complemented compound location
@@ -379,17 +399,21 @@ setMethod("show", "gbLocation",
     ## get partial
     partial <- matrix(grepl("^(<|>)", span), ncol=2)
     span <- matrix(as.integer(gsub("^(<|>)", "", span)), ncol=2)
-    return(list(span=span, strand=strand, partial=partial, accn=accn,
-                remote=remote, closed=closed))
+    
+    list(span=span, strand=strand, partial=partial, accn=accn,
+         remote=remote, closed=closed)
   }
+  
+  # clean up possible whitespace
+  gb_base_span <- gsub(" +", "", gb_base_span)
   
   # test for possibly complemented simple location
   if ( str_detect(gb_base_span, sprintf("^%s$", pcsl)) ) {
     l <- .parseSimpleSpan(gb_base_span)
-    return(.gbLocation(.Data=l$span, strand=l$strand,
-                       compound=NA_character_, partial=l$partial,
-                       accession=l$accn, remote=l$remote,
-                       closed=l$closed))
+    .gbLocation(.Data=l$span, strand=l$strand,
+                compound=NA_character_, partial=l$partial,
+                accession=l$accn, remote=l$remote,
+                closed=l$closed)
   }
   
   # test for possibly complemented compound location
@@ -407,10 +431,14 @@ setMethod("show", "gbLocation",
       strand <- vapply(l, "[[", "strand", FUN.VALUE=integer(1))
     }
     
-    return(.gbLocation(.Data=do.call(rbind, lapply(l, "[[", "span")), 
-                       strand=strand, compound=compound,
-                       partial=do.call(rbind, lapply(l, "[[", "partial")),
-                       accession=vapply(l, "[[", "accn", FUN.VALUE=character(1)),
-                       remote=vapply(l, "[[", "remote", FUN.VALUE=logical(1))))
+    .gbLocation(.Data=do.call(rbind, lapply(l, "[[", "span")), 
+                strand=strand, compound=compound,
+                partial=do.call(rbind, lapply(l, "[[", "partial")),
+                accession=vapply(l, "[[", "accn", FUN.VALUE=character(1)),
+                remote=vapply(l, "[[", "remote", FUN.VALUE=logical(1)))
+  } else {
+    invisible(NULL)
   }
 }
+
+

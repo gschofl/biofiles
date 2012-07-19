@@ -84,11 +84,11 @@ gbFeatureList <- function(db_dir, accession, definition, features)
 {
   if (!is.list(features))
     stop("'features' must be a list")
-  if (!all(vapply(features, is, "gbFeature", FUN.VALUE=TRUE)))
+  if (!all(vapply(features, is, "gbFeature", FUN.VALUE=logical(1))))
     stop("all elements in 'features' must be gbFeature objects")
-  if (!all(vapply(features, function(f) f@.Dir, FUN.VALUE="") == db_dir))
+  if (!all(vapply(features, function(f) f@.Dir, character(1)) == db_dir))
     stop("all elements in 'features' must be from a valid gbData object")
-  if (!all(vapply(features, function(f) f@.ACCN, FUN.VALUE="") == accession))
+  if (!all(vapply(features, function(f) f@.ACCN, character(1)) == accession))
     stop("all elements in 'features' must be from the same gbData object")
   
   .gbFeatureList(.Data=features, .Dir=as.character(db_dir),

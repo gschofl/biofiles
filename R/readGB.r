@@ -105,19 +105,20 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
 
 .parseGbHeader <- function (gb_header, gb_fields) {
   #### LOCUS
-  locus_line <- strsplit(gb_header[gb_fields[names(gb_fields) == "LOCUS"]], split=" +")[[1]]
+  locus_line <- strsplit(gb_header[gb_fields[names(gb_fields) == "LOCUS"]], " +")[[1]]
+  
   # if split by whitespace the LOCUS field seems to be made up of up to 8
   # different elements, 6 of which are data: LOCUS (1), locus name (2)
   # sequence length (3), bp or aa (4), molecule type (5, not given if protein,
   # GenBank division (6), topology (7, optional?), and modification date (8)
   if (length(locus_line) == 8 || 
-    (length(locus_line) == 7 && locus_line[4] == "aa")) {
+     (length(locus_line) == 7 && locus_line[4] == "aa")) {
     locus <- locus_line[2]
     length <- as.numeric(locus_line[3])
     names(length) <- locus_line[4]
-    if (identical(locus_line[4], "aa")) {
-      # these are GenPept files; they don't have a 'moecule type' but we set it 'AA'
-      type <- "AA"
+    if (locus_line[4] == 'aa') {
+      # these are GenPept files; they don't have a 'molecule type' but we set it 'AA'
+      type <- 'AA'
       topology <- locus_line[5]
       division <- locus_line[6]
       date <- locus_line[7]
@@ -127,76 +128,91 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
       division <- locus_line[7]
       date <- as.POSIXlt(locus_line[8], format="%d-%b-%Y")
     }
-  }
-  else {
-    # some GenBank files just don't seem to have topology
-    warning("Sequence topology might be missing from the locus definition.\nBetter check the result.")
+  } else {
+    # some GenBank files just don't seem to have topology or division
     locus <- locus_line[2]
     length <- as.numeric(locus_line[3])
     names(length) <- locus_line[4]
-    type <- locus_line[5]
-    topology <- NULL
-    division <- locus_line[6]
-    date <- locus_line[7]
+    if (locus_line[4] == 'aa') {
+      type <- 'AA'
+      topology <- locus_line[5]
+      division <- NULL
+      date <- as.POSIXlt(locus_line[6], format="%d-%b-%Y")
+    } else {
+      type <- locus_line[5]
+      topology <- NULL
+      division <- locus_line[6]
+      date <- as.POSIXlt(locus_line[7], format="%d-%b-%Y")
+    }
   }
+  
   #### DEFINITION
-  def_line <- gb_header[seq.int(gb_fields[names(gb_fields) == "DEFINITION"],
-                                gb_fields[names(gb_fields) == "ACCESSION"] - 1L)]
+  def_idx <- which(names(gb_fields) == "DEFINITION")
+  def_line <-gb_header[seq.int(gb_fields[def_idx], gb_fields[def_idx + 1] - 1)]
   definition <- paste(gsub(" +", " ", sub("DEFINITION  ", "", def_line)), collapse=" ")
+  
   #### ACCESSION
   acc_line <- gb_header[gb_fields[names(gb_fields) == "ACCESSION"]]
-  accession <- strsplit(acc_line, split=" +")[[1]][2]
+  accession <- strsplit(acc_line, " +")[[1]][2]
+  if (is.na(accession)) accession <- locus
+  
   #### VERSION and GI
   ver_line <- gb_header[gb_fields[names(gb_fields) == "VERSION"]]
-  version <- strsplit(ver_line, split=" +")[[1]][2]
-  GI <- strsplit(ver_line, split="GI:")[[1]][2]
+  version <- strsplit(ver_line, " +")[[1]][2]
+  GI <- strsplit(ver_line, "GI:")[[1]][2]
+  
   #### DBLINK (not seen everywhere)
-  if (length(db_line <- gb_header[gb_fields[names(gb_fields) == "DBLINK"]]) > 0L)
+  if (length(db_line <- gb_header[gb_fields[names(gb_fields) == "DBLINK"]]) > 0L) {
     dblink <- strsplit(db_line, "Project: ")[[1]][2]
-  else
+  } else {
     dblink <- NULL
+  }
+  
   #### DBSOURCE (only in GenPept files)
   # sometimes more than one line, but always followed by "KEYWORDS"?
-  if (length(gb_fields[names(gb_fields) == "DBSOURCE"]) > 0L) {
+  if (length(dbsrc_idx <- which(names(gb_fields) == "DBSOURCE")) > 0L) {
     dbs_lines <- 
-      gb_header[seq.int(gb_fields[names(gb_fields) == "DBSOURCE"],
-                        gb_fields[names(gb_fields) == "KEYWORDS"] - 1L)]
+      gb_header[seq.int(gb_fields[dbsrc_idx], gb_fields[dbsrc_idx + 1] - 1)]
     dbsource <- paste(gsub("^ +", "", sub("DBSOURCE", "", dbs_lines)), collapse="\n")
-  }
-  else
+  } else {
     dbsource <- NULL
+  }
+  
   #### KEYWORDS
   key_line <- gb_header[gb_fields[names(gb_fields) == "KEYWORDS"]]
   keywords <- sub("KEYWORDS    ", "", key_line)
+  
   #### SOURCE with ORGANISM and the complete lineage
+  src_idx <- which(names(gb_fields) == 'SOURCE')
   source_lines <- 
-    gb_header[seq.int(gb_fields[names(gb_fields) == "SOURCE"], 
-                      gb_fields[names(gb_fields) == "REFERENCE"][1L] - 1L)]
+    gb_header[seq.int(gb_fields[src_idx], gb_fields[src_idx + 1] - 1)]                  
   source <- sub("SOURCE      ", "", source_lines[1L])
   organism <- sub("  ORGANISM  ", "", source_lines[2L])
   lineage <- paste(gsub("^ +", "", source_lines[-c(1L,2L)]), collapse=" ")
+  
   #### COMMENT (not always there)
   if (length(gb_fields[names(gb_fields) == "COMMENT"]) > 0L) {
     com_lines <- 
       gb_header[seq.int(gb_fields[names(gb_fields) == "COMMENT"],
                         length(gb_header))]
     comment <- paste(gsub("^ +", "", sub("COMMENT", "", com_lines)), collapse="\n")
-  }
-  else
+  } else {
     comment <- NULL
+  }
+
   #### REFERENCE parsing references isn't implemented yet
   # References are assigned to the 'gb_reference' class
-  return(list(locus=locus, length=length, type=type, topology=topology,
-              division=division, date=date, definition=definition,
-              accession=accession, version=version, GI=GI, dblink=dblink,
-              dbsource=dbsource, keywords=keywords, source=source,
-              organism=organism, lineage=lineage, references=list("Not implemented yet"),
-              comment=comment))
+  list(locus=locus, length=length, type=type, topology=topology,
+       division=division, date=date, definition=definition,
+       accession=accession, version=version, GI=GI, dblink=dblink,
+       dbsource=dbsource, keywords=keywords, source=source,
+       organism=organism, lineage=lineage, references=list("Not implemented yet"),
+       comment=comment)
 } 
 
 .parseGbFeatures <- function (db_dir, accession, definition, gb_features) {
   # where do all the features start
-  feature_start <- grep("^\\s{5}[[:alpha:]]+", gb_features)
+  feature_start <- grep("^\\s{5}\\S", gb_features)
   # where do all the features end
   feature_end <- c(feature_start[-1] - 1, length(gb_features))
   # indeces for all features

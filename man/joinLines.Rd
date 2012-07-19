@@ -2,7 +2,7 @@
 \alias{joinLines}
 \title{Join lines of text recursively}
 \usage{
-  joinLines(lines, extract_pat = ".*", break_pat = NULL,
+  joinLines(lines, extract_pat = NULL, break_pat = NULL,
     sep = TRUE)
 }
 \arguments{

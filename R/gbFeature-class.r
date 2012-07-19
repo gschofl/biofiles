@@ -197,22 +197,17 @@ setMethod("dbXref", "gbFeature",
             if (all(is.na(ans))) {
               return( NA_character_ )
             } else {
-              dbs <- vapply(ans, function (x) strsplit(x, ":")[[1]][1], 
-                            character(1), USE.NAMES=FALSE)
-              ids <- vapply(ans, function (x) strsplit(x, ":")[[1]][2], 
-                            character(1), USE.NAMES=FALSE)
+              dbs <- unlist(lapply(strsplit(ans, ":"), "[", 1), use.names=FALSE)
+              ids <- unlist(lapply(strsplit(ans, ":"), "[", 2), use.names=FALSE)
               if (is.null(db)) {
-                names(ids) <- dbs
-                return( ids )
+                structure(ids, names = dbs)
               } else {
                 db_pattern <- paste(sprintf("\\b%s\\b", db), collapse="|")
                 db_pos <- grep(db_pattern, dbs, ignore.case=TRUE)
                 if (length(db_pos) == 0L) {
                   return( NA_character_ )
                 } else {
-                  ids <- ids[db_pos]
-                  names(ids) <- dbs[db_pos]
-                  return( ids )
+                  structure(ids[db_pos], names = dbs[db_pos])
                 }
               }
             }

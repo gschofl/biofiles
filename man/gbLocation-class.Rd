@@ -1,4 +1,5 @@
 \name{gbLocation-class}
+\alias{as.gbLocation,gbLocation-method}
 \alias{end,gbLocation-method}
 \alias{end<-,gbLocation-method}
 \alias{gbLocation-class}

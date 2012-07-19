@@ -144,9 +144,9 @@
   
   ## special treatment for db_xref
   if ("db_xref" %in% cols) {
-    dbx <- which(cols %in% "db_xref")
-    dbx_list <- parseDbXref(dbx=q[[dbx]])
-    q <- append(q[-dbx], dbx_list, dbx - 1)
+    i.dbx <- which(cols %in% "db_xref")
+    dbx_list <- parseDbXref(q[[i.dbx]])
+    q <- append(q[-i.dbx], dbx_list, i.dbx - 1)
     dbx_name <- which(col_names %in% "db_xref")
     col_names <- append(col_names[-dbx_name], names(dbx_list), dbx_name - 1)
   }
@@ -162,7 +162,7 @@
   zero <- vapply(args, is.null, logical(1L))
   args[zero] <- NULL
   if (!any(hasList(args)) && length(args) == 1L)
-    return(args[[1L]])
+    structure(args[[1L]], names = rep(.Names, length(args[[1L]])))
   else if (!any(hasListOfLists(args))) {
     args <- flatten(args)
     if (any(r <- vapply(args, function (x) is(x, "gbRange"), logical(1)))) {
@@ -170,15 +170,16 @@
       df <-  DataFrame(range@elementMetadata, args[!r])
       dimnames(df)[[2]] <- c("strand", .Names)
       range@elementMetadata <- df
-      return(range)
+      range
     } else {
       structure(
-        data.frame(stringsAsFactors=FALSE, args),
-        names=.Names)
+        data.frame(stringsAsFactors = FALSE, args),
+        names=.Names
+      )
     }
   }
   else {
-    args <- flatten(args, stop.at=2)
+    args <- flatten(args, stop.at = 2)
     if (any(r <- vapply(args, function (x) is(x, "gbRange"), logical(1)))) {
       .Names <- append(.Names, "range", which(r) - 1)
     }
@@ -205,14 +206,17 @@ matchIdx <- function (x, idx) {
 
 parseDbXref <- function (dbx) {
   n <- if (is.null(n <- nrow(dbx))) length(dbx) else n
-
-  if (is.data.frame(dbx) || is.atomic(dbx)) {
+  
+  if (is.atomic(dbx)) {
+    dbs <-  unique(sapply(strsplit(dbx, ":"), "[", 1))
+    structure(list(unlist(lapply(strsplit(dbx, ":"), "[", 2), use.names=FALSE)),
+              names = dbs)
+  } else if (is.data.frame(dbx)) {
     dbs <- sapply(dbx, function (x) sapply(strsplit(x, ":"), "[", 1)) %@%
       unique %@% `dim<-`(NULL)
     structure(lapply(dbx, function (x) sapply(strsplit(x, ":"), "[", 2)),
               names = dbs)
   } else if (is.list(dbx)) {
-    
     l <- lapply(dbx, function (x) {
       a <- sapply(x, strsplit, split=":")
       a <- setNames(sapply(a, "[", 2), sapply(a, "[", 1))
