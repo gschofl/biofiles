@@ -211,7 +211,7 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
 #   }
 #   ###
   
-  cat("Parsing features\n")
+  message("Parsing features")
 
   f_list <- mcmapply(function (idx, n) {
     .parseFeatureField(db_dir=db_dir, accession=accession,
@@ -246,13 +246,13 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
   if (is.null(gb_sequence)) {
     return(NULL)
   } else {
-    cat("Parsing sequence\n")
+    message("Parsing sequence")
     tmp <- tempfile()
     on.exit(unlink(tmp))
     writeLines(text=.joinSeq(gb_sequence, accession_no), con=tmp)
     origin <- switch(seq_type,
-              AA=read.AAStringSet(tmp, format="fasta"),
-              read.DNAStringSet(tmp, format="fasta"))
+                     AA=read.AAStringSet(tmp, format="fasta"),
+                     read.DNAStringSet(tmp, format="fasta"))
     origin
   }
 }
@@ -343,11 +343,9 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
 
 .joinSeq <- function (seq, accession_no) {
   mc_cores <- detectCores()
-  s <- unlist(mclapply(strsplit(substring(text=seq, first=11, last=75), " "), 
-                     function (x) { 
-                       paste(x, collapse="") 
-                     }, mc.cores=mc_cores))
-  # paste0 pastes more efficiently than paste(..., sep="")
+  s <- unlist(mclapply(seq, function(x) {
+    paste0(strsplit(substr(x, 11, 75), " ")[[1L]], collapse="")
+  }, mc.cores=mc_cores))
   s <- c(paste0(">", accession_no), s)
   s
 }

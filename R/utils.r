@@ -30,26 +30,35 @@ NULL
 ##' character vector, the second the number of lines joined
 ##' 
 ##' @keywords internal
-joinLines <- function (lines, extract_pat = ".*", break_pat = NULL, sep = TRUE) {
+joinLines <- function (lines, extract_pat = NULL, break_pat = NULL, sep = TRUE) {
   i  <-  0
   list(eval(function (lines, extract_pat, break_pat) {
-    l <- regmatches(lines[1], regexpr(extract_pat, lines[1], perl=T))
+    
+    if (is.null(extract_pat)) {
+      l <- lines[1]
+    } else {
+      l <- regmatches(lines[1], regexpr(extract_pat, lines[1], perl=TRUE))
+    }
     i <<- i + 1
     
     if (length(l) == 0) {
       # jump out if we reach the last element of the character vector
       i <<- i - 1
-      return(l) }
-    else if (!is.null(break_pat) && grepl(break_pat, l, perl=TRUE))
+      return(l)
+    } else if (!is.null(break_pat) && grepl(break_pat, l, perl=TRUE)) {
       # or if a break pattern is set jump out when the break condition is met 
       return(l)
-    
-    if (sep)
+    }
+
+    if (sep) {
       l <- paste(l, Recall(lines[-1], extract_pat, break_pat))
-    else
+    }  else {
       l <- paste0(l, Recall(lines[-1], extract_pat, break_pat))
-  }) (lines, extract_pat=extract_pat, break_pat=break_pat), i)
+    }
+      
+  }) (lines, extract_pat = extract_pat, break_pat = break_pat), i)
 }
+
 
 ##' Format paragraphs
 ##' 
@@ -548,7 +557,7 @@ expandIds <- function (x) {
     return(x)
   }
   if (len == 1L && unlist) {
-    unlist(x, recursive=FALSE)
+    sunlist(x, recursive=FALSE)
   } else if (len >= 1L) {
     n <- length(x)
     r <- as.vector(unlist(x, recursive=FALSE))
