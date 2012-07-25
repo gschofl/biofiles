@@ -22,7 +22,7 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
     if (!grepl("^gb|^gp", gb@type) || gb@mode != "text")
       stop("Must use efetch with rettype='gbwithparts','gb', or 'gp' and retmode='text'")
     
-    split_gb <- strsplit(gb@data, split="\n\n")[[1L]]
+    split_gb <- strsplit(gb@content, split="\n\n")[[1L]]
     n <- length(split_gb)
     db_path <- replicate(n, tempfile(fileext=".db"))
     

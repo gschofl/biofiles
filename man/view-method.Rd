@@ -1,15 +1,15 @@
 \docType{methods}
 \name{view}
 \alias{view}
-\title{View method}
+\title{View gbFeatures in a gbFeatureList}
 \arguments{
-  \item{x}{x}
+  \item{x}{A gbFeatureList.}
 
-  \item{n}{n}
+  \item{n}{How many Features.}
 
   \item{...}{Additional parameters.}
 }
 \description{
-  View method
+  View gbFeatures in a gbFeatureList
 }
 

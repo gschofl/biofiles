@@ -56,19 +56,21 @@ setMethod("show", "gbRange",
           })
 
 
-##' @keywords internal
-setMethod("coerce", signature(from="gbRange", to="data.frame"),
-          function(from, to, strict) {
-            data.frame(as.data.frame(x),
-                       as.data.frame(stringsAsFactors=FALSE, x@elementMetadata)
-            )
-          })
+#' As(gbRange, "data.frame")
+#'
+#' @name as
+setAs("gbRange", "data.frame",
+      function (from) {
+        data.frame(as.data.frame(from),
+                   as.data.frame(stringsAsFactors=FALSE, from@elementMetadata))
+      })
 
 
 ##' @export
 setMethod("$", "gbRange",
           function (x, name) as(x, "data.frame")[[name]]
 )
+
 
 ##' @export
 setMethod("[", "gbRange",
@@ -78,6 +80,7 @@ setMethod("[", "gbRange",
             else
               as(x, "data.frame")[i, j, drop]
           })
+
 
 ##' @export
 setMethod("[[", "gbRange",

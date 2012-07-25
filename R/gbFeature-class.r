@@ -94,8 +94,7 @@ setMethod("show", "gbFeature",
 # Constructor ---------------------------------------------------------
 
 
-gbFeature <- function (db_dir, accession, definition, id, key, location, qualifiers) 
-{
+gbFeature <- function (db_dir, accession, definition, id, key, location, qualifiers) {
   .gbFeature(.Dir=as.character(db_dir),
              .ACCN=as.character(accession),
              .DEF=as.character(definition),

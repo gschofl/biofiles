@@ -164,6 +164,42 @@ setGeneric("getFeatures",
 setGeneric("shift", function (x, shift = 0L, ...) standardGeneric("shift"))
 
 
+## revcomp-generic ========================================================== 
+##
+##' reverse complement features in a GenBank record
+##'
+##' @usage revcomp(x, update_db=TRUE)
+##'
+##' @param x A gbFeatureList or gbRecord object
+##' (gbFeatureLists must include a 'source' field).
+##' @param order Should the resulting gbFeatureList be reordered.
+##' @param update_db Should the sequence and the new feature locations be
+##' updated in the underlying filehash database?
+##' 
+##' @return A gbFeatureList object
+##'
+##' @docType methods
+##' @export
+setGeneric("revcomp", function (x, order=FALSE, update_db=FALSE, ...) 
+  standardGeneric("revcomp"))
+
+
+## View-generic ============================================================ 
+##
+##' View gbFeatures in a gbFeatureList
+##' 
+##' @usage view(x, n, ...)
+##' 
+##' @param x A gbFeatureList.
+##' @param n How many Features.
+##' @param ... Additional parameters.
+##' 
+##' @export
+##' @docType methods
+##' @rdname view-method
+setGeneric("view", function (x, n, ...) standardGeneric("view"))
+
+
 ## select-generic =========================================================== 
 ##
 ##' Select elements from a GenBank Record

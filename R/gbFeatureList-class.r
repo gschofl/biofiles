@@ -80,8 +80,7 @@ setMethod("show", "gbFeatureList",
 
 
 #' @keywords internal
-gbFeatureList <- function(db_dir, accession, definition, features)
-{
+gbFeatureList <- function(db_dir, accession, definition, features) {
   if (!is.list(features))
     stop("'features' must be a list")
   if (!all(vapply(features, is, "gbFeature", FUN.VALUE=logical(1))))
@@ -351,24 +350,8 @@ setMethod("select", "gbFeatureList",
 # View ----------------------------------------------------------------
 
 
-##' View method
-##' 
-##' @usage view(x, n, ...)
-##' 
-##' @param x x
-##' @param n n
-##' @param ... Additional parameters.
-##' 
 ##' @export
-##' @docType methods
-##' @rdname view-method
-setGeneric( "view", function(x, n, ...)
-             standardGeneric("view") )
-
-##' @export
-setMethod("view",
-          #### view-method ####
-          signature(x="gbFeatureList"), 
+setMethod("view", "gbFeatureList", 
           function (x, n)  {
             for (i in x[seq(if (missing(n)) length(x) else n)]){
               show(i)
@@ -377,7 +360,15 @@ setMethod("view",
           })
 
 
-# shift features ------------------------------------------------------
+# shift-method -----------------------------------------------------------
+
+
+#' @export
+setMethod("shift", "gbFeatureList",
+          function(x, shift=0L, split=FALSE, order=FALSE, update_db=FALSE) {
+            .shift_features(x=x, shift=shift, split=split, order=order,
+                            update_db=update_db)
+          })
 
 
 .shift_features <- function (x,
@@ -420,9 +411,9 @@ setMethod("view",
   new_end <- Map("+", end_pos, shift)
   
   exceeds_len_start <- which(mapply(function (x) any(x > len), new_start) |
-                             mapply(function (x) any(x < 0L), new_start)) 
+    mapply(function (x) any(x < 0L), new_start)) 
   exceeds_len_end <-  which(mapply(function (x) any(x > len), new_end) |
-                            mapply(function (x) any(x < 0L), new_end))
+    mapply(function (x) any(x < 0L), new_end))
   
   if (length(exceeds_len_start) > 0L || length(exceeds_len_end) > 0L) {
     
@@ -471,7 +462,7 @@ setMethod("view",
     } else {
       shift_point <- 0L - shift + 1L
     }
-      
+    
     new_seq <- xscat(subseq(seq, start = shift_point), 
                      subseq(seq, start = 1L, end = shift_point - 1L))
     names(new_seq) <- names(seq)
@@ -480,6 +471,15 @@ setMethod("view",
   
   return( f )
 }
+
+
+# revcomp-method ---------------------------------------------------------
+
+
+#' @export
+setMethod("revcomp", "gbFeatureList",
+          function(x, order=FALSE, update_db=FALSE)
+            .revcomp_features(x=x, order=order, update_db=update_db))
 
 
 .revcomp_features <- function (x, order=FALSE, update_db=FALSE) {
@@ -522,35 +522,3 @@ setMethod("view",
   
   return( f )
 }
-
-
-#' @export
-setMethod("shift", "gbFeatureList",
-          function(x, shift=0L, split=FALSE, order=FALSE, update_db=FALSE) {
-            .shift_features(x=x, shift=shift, split=split, order=order,
-                            update_db=update_db)
-          })
-
-
-##' reverse complement features in a GenBank record
-##'
-##' @usage revcomp(x, update_db=TRUE)
-##'
-##' @param x A gbFeatureList or gbRecord object
-##' (gbFeatureLists must include a 'source' field).
-##' @param order Should the resulting gbFeatureList be reordered.
-##' @param update_db Should the sequence and the new feature locations be
-##' updated in the underlying filehash database?
-##' 
-##' @return A gbFeatureList object
-##'
-##' @docType methods
-##' @export
-setGeneric("revcomp", function(x, order=FALSE, update_db=FALSE, ...) 
-  standardGeneric("revcomp") )
-
-
-#' @export
-setMethod("revcomp", "gbFeatureList",
-          function(x, order=FALSE, update_db=FALSE)
-            .revcomp_features(x=x, order=order, update_db=update_db))

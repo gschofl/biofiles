@@ -297,10 +297,12 @@ setAs("character", "gbLocation",
         l
       })
 
+
 ##' @export
 as.gbLocation <- function (base_span) {
   as(as.character(base_span), "gbLocation")
 }
+
 
 # shift ---------------------------------------------------------------
 
