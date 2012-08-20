@@ -1,7 +1,10 @@
-\docType{methods}
 \name{view}
 \alias{view}
+\alias{view-methods}
 \title{View gbFeatures in a gbFeatureList}
+\usage{
+  view(x, n, ...)
+}
 \arguments{
   \item{x}{A gbFeatureList.}
 

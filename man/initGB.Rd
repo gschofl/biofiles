@@ -1,7 +1,10 @@
-\docType{methods}
 \name{initGB}
 \alias{initGB}
+\alias{initGB-methods}
 \title{Create and/or initialise a gbRecord filehash database}
+\usage{
+  initGB(db_name, create=FALSE, ...)
+}
 \arguments{
   \item{db_name}{name of the database or database object.}
 

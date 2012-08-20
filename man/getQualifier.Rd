@@ -1,7 +1,10 @@
-\docType{methods}
 \name{getQualifier}
 \alias{getQualifier}
+\alias{getQualifier-methods}
 \title{Retrieve feature keys from a GenBank record}
+\usage{
+  getKey(x, attributes = FALSE)
+}
 \arguments{
   \item{x}{A \code{gbFeature} or \code{gbFeatureList}
   object.}

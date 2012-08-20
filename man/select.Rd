@@ -1,7 +1,10 @@
-\docType{methods}
 \name{select}
 \alias{select}
+\alias{select-methods}
 \title{Select elements from a GenBank Record}
+\usage{
+  select(x, index = NULL, keys = "", cols = "")
+}
 \arguments{
   \item{x}{A \sQuote{\code{gbRecord}} or
   \sQuote{\code{gbFeatureList}} object}

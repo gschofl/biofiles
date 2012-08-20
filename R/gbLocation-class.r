@@ -336,52 +336,50 @@ setMethod("show", "gbLocation",
 
 # parser --------------------------------------------------------------
 
+# test_that("genbank location matches", {
+#   
+#   ## simple locations
+#   expect_output(.getLocation("340"), "340"),
+#   expect_output(.getLocation("340..565"), "340..565"),
+#   expect_output(.getLocation("<340..565"), "<340..565"),
+#   expect_that(.getLocation(">340..565"), equals(NULL)),
+#   expect_output(.getLocation("566..>567"), "566..>567"),
+#   expect_that(.getLocation("566..<567"), equals(NULL)),
+#   expect_output(.getLocation("102.110"), "102.110"),
+#   # expect_output(.getLocation("123^124"), "123^124"),
+#   # expect_output(.getLocation(gb_base_span="(123.130)..540"), "(123.130)..540"),
+#   expect_output(.getLocation("J00194.1:100..202"), "J00194.1:100..202"),
+#   
+#   ## complex locations
+#   # expect_output(.getLocation("(9.10)..(20.25)"),
+#   #              "\\(9.10\\)..\\(20.25\\)"),
+#   expect_output(.getLocation("join(104..160,320..390,504..579)"),
+#                 "join\\(104..160,320..390,504..579\\)")
+#   expect_output(.getLocation("order(1..69,1308..1465)"),
+#                 "order\\(1..69,1308..1465\\)")
+# })
 
-# test cases simple
-# gb_base_span  <- "340"
-# gb_base_span <- "340..565"
-# gb_base_span <- "<340..565"
-# gb_base_span <- "566..>567"
-# gb_base_span <- "102.110"
-# gb_base_span <- "123^124"
-# gb_base_span <- "J00194.1:100..202"
 
-# test cases complex
-# gb_base_span <- "complement(565..>567)"
-# gb_base_span <- "join(345..543,567..>590)"
-# gb_base_span <- "order(<345..543,<567..>569,666..7000)"
-# gb_base_span <- "order(9,14,34,58,76,88)"
-# gb_base_span <- "order(52,121..126)"
-# gb_base_span <- "join(complement(4918..5163),complement(2691..4571),7665..7899)"
-# gb_base_span <- "complement(join(345..543,AL121804.2:567..>569,AL121804.2:<600..603))"
-
-# gb_base_span <- "order(31..34,36..37,39,52,54,70,84,105..108,111,113..114,149,151,153..154,156,166..167,170,185,187..190,192,230)"
-
-# .getLocation(gb_base_span="complement(join(345..543,AL121804.2:567..>569,AL121804.2:<600..603))")
-# .getLocation("join(345..543,567..590)")
-# .getLocation(gb_base_span)
-
-.getLocation <- function(gb_base_span)
-{                       
-  # single location
-  sil <- "\\d+"
+.getLocation <- function(gb_base_span) {                       
+  
+  # single location possibly fuzzy
+  sil <- "[<>]?\\d+"
+  # within location
+  wl <- "\\d+\\.\\d+"
   # between location
   bl <- "\\d+\\^\\d+"
-  # within location
-  wl <- "[<]?\\d+\\.[>]?\\d+"
-  # paired location
-  pl <- "[<]?\\d+\\.\\.[>]?\\d+"
-  
-  # simple location
-  sl <- sprintf("([a-zA-z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?\\:)?(%s|%s|%s|%s)",
-                sil, bl, wl, pl)
+  # paired location possibly fuzzy
+  pl <- sprintf("%s\\.\\.%s", sil, sil)
+  # remote accession
+  ra <- "([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)"
+
+  # simple location possibly with remote accession
+  sl <- sprintf("(%s\\:)?(%s|%s|%s|%s)", ra, sil, bl, wl, pl)
   # complemented simple location
   csl <- sprintf("complement\\(%s\\)", sl)
-  # possibly complemented simplex location
+  # possibly complemented simple location
   pcsl <- sprintf("(%s|%s)", sl, csl)
   
-  # remote accession
-  ra <- "([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)" 
   # compound location
   cl <- sprintf("(join|order)\\(%s(,%s)*\\)", pcsl, pcsl)
   # complemented compound location
@@ -439,7 +437,7 @@ setMethod("show", "gbLocation",
                 accession=vapply(l, "[[", "accn", FUN.VALUE=character(1)),
                 remote=vapply(l, "[[", "remote", FUN.VALUE=logical(1)))
   } else {
-    invisible(NULL)
+    invisible()
   }
 }
 

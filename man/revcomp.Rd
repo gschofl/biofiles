@@ -1,7 +1,10 @@
-\docType{methods}
 \name{revcomp}
 \alias{revcomp}
+\alias{revcomp-methods}
 \title{reverse complement features in a GenBank record}
+\usage{
+  revcomp(x, update_db=TRUE)
+}
 \arguments{
   \item{x}{A gbFeatureList or gbRecord object
   (gbFeatureLists must include a 'source' field).}

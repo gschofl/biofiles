@@ -419,10 +419,12 @@ setMethod("shift", "gbFeatureList",
     
     start_end <- intersect(exceeds_len_start, exceeds_len_end)
     
-    get_len <- function (x, len) ifelse(x > len, x - len, ifelse(x < 0L, len + x, x))
-    new_start[start_end] <- Map(get_len, new_start[start_end], len)
-    new_end[start_end] <- Map(get_len, new_end[start_end], len)
-    
+    if (length(start_end) > 0L) {
+      get_len <- function (x, len) ifelse(x > len, x - len, ifelse(x < 0L, len + x, x))
+      new_start[start_end] <- Map(get_len, new_start[start_end], len)
+      new_end[start_end] <- Map(get_len, new_end[start_end], len)
+    }
+
     end_only <- setdiff(exceeds_len_end, exceeds_len_start)
     
     if (length(end_only) > 0L) {

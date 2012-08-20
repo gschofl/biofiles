@@ -1,7 +1,11 @@
-\docType{methods}
 \name{shift}
 \alias{shift}
+\alias{shift-methods}
 \title{shift location of features in a GenBank record}
+\usage{
+  shift(x, shift=0L, split=FALSE, order=FALSE,
+    update_db=FALSE)
+}
 \arguments{
   \item{x}{A gbLocation, gbFeature, gbFeatureList, or
   gbRecord object (gbFeatureLists must include a 'source'
