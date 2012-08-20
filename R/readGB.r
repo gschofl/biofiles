@@ -219,6 +219,7 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
   feature_idx <- Map(seq.int, feature_start, feature_end)
   
 #   ### for debugging
+#   n <- 2
 #   for (n in seq_along(feature_idx)) {
 #     idx <- feature_idx[[n]]
 #     gb_features[idx]
@@ -273,7 +274,7 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
   }
 }
 
-.joinLocation <- function (lines, loc_pat="\\b\\S+$") {
+.joinLocation <- function (lines, loc_pat="\\S+$") {
   if (grepl("\\b\\S{0,}[^,]$", lines[1])) {
     list(regmatches(lines[1], regexpr(loc_pat, lines[1], perl=TRUE)), 1)
   } else {
@@ -294,7 +295,7 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
 ##
 ## Free text: "text"
 ##   enclosed in double quotation marks; composed of printable
-##   characters (ASCII values 32-126 decimal); interal quotation markes are
+##   characters (ASCII values 32-126 decimal); internal quotation markes are
 ##   ""escaped"" by placing a second quotation mark immediately before.
 ##
 ## Controlled vocabulary/Enumerators:

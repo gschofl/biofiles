@@ -359,7 +359,6 @@ setMethod("show", "gbLocation",
 #                 "order\\(1..69,1308..1465\\)")
 # })
 
-
 .getLocation <- function(gb_base_span) {                       
   
   # single location possibly fuzzy
