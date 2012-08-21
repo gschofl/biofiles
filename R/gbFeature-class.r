@@ -70,39 +70,26 @@ setMethod("show", "gbFeature",
           function (object) {
             op <- options("useFancyQuotes")
             options(useFancyQuotes=FALSE)
-            indent <- 16
-            pad <- blanks(indent)
-            len_feat <- nchar(object@key)
-            pad_feat <- blanks(indent - len_feat)
-            
-            # if necessary wrap the lines
-            qua <- names(object@qualifiers)
+
             loc <- linebreak(as(object@location, "character"),
-                             offset=indent+1, indent=0, split=",", FORCE=TRUE)
-            val <- linebreak(dQuote(object@qualifiers), offset=indent+1, 
-                             indent=-(nchar(qua) + 2), FORCE=TRUE)
+                             offset=17, indent=0, split=",", FORCE=TRUE)
             
-            cat("Feature:         Location/Qualifiers:\n",
-                sprintf("%s%s%s\n", object@key, pad_feat, loc),
-                sprintf("%s/%s=%s\n", pad, qua, val))
-            
+            if (is.null(object@qualifiers)) {
+              cat("Feature:         Location/Qualifiers:\n",
+                  sprintf("%-16s%s\n", object@key, loc))
+            } else {
+              qua <- names(object@qualifiers)
+              val <- linebreak(dQuote(object@qualifiers), offset=17, 
+                               indent=-(nchar(qua) + 2), FORCE=TRUE)
+              
+              cat("Feature:         Location/Qualifiers:\n",
+                  sprintf("%-16s%s\n", object@key, loc),
+                  sprintf("%+17s%s=%s\n", "/", qua, val))
+            }
+
             options(op)
             invisible(object)
           })
-
-
-# Constructor ---------------------------------------------------------
-
-
-gbFeature <- function (db_dir, accession, definition, id, key, location, qualifiers) {
-  .gbFeature(.Dir=as.character(db_dir),
-             .ACCN=as.character(accession),
-             .DEF=as.character(definition),
-             .ID=as.integer(id),
-             key=as.character(key),
-             location=.getLocation(location),
-             qualifiers=qualifiers)
-}
 
 
 # Getter-methods ---------------------------------------------------------

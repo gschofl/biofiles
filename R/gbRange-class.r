@@ -78,7 +78,7 @@ setMethod("[", "gbRange",
             if (missing(j))
               callNextMethod(x, i, j, ..., drop)
             else
-              as(x, "data.frame")[i, j, drop]
+              as(x, "data.frame")[i, j, ..., drop]
           })
 
 

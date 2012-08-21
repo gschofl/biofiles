@@ -100,7 +100,7 @@
 
 .retrieve <- function (x, cols = "") {
   
-  if (!nzchar(cols))
+  if (!nzchar(cols) || length(x) == 0)
     return(x)
   
   cols <- gsub("\n|\t", " ", cols)

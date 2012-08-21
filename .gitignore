@@ -4,6 +4,8 @@
 dev/
 data/
 inst/
+test/
+old/
 .db
 .gb
 .gbk

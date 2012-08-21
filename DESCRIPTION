@@ -31,3 +31,4 @@ Collate:
     'gbRecord-class.r'
     'readGB.r'
     'writeGB.r'
+    'parser.r'
