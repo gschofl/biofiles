@@ -1,5 +1,5 @@
 Package: biofiles
-Version: 0.1-1
+Version: 0.1-5
 Title: Working with GenBank flat file records
 Authors@R: person("Gerhard", "Schöfl", role=c("aut","cre"),
     email="gschofl@yahoo.de")
@@ -32,3 +32,4 @@ Collate:
     'readGB.r'
     'writeGB.r'
     'parser.r'
+    'writeFeatureTable.r'

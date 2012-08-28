@@ -167,6 +167,16 @@
   feature_idx <- Map(seq.int, feature_start, feature_end)
   
   message("Parsing features")
+
+#   f_list <- list()
+#   for (i in seq_along(feature_idx)) {
+#     print(i)
+#     f_list[[i]] <- .parseFeatureTable(id=i, lines=gb_features[feature_idx[[i]]],
+#                                  db_dir=db_dir, accession=accession,
+#                                  definition=definition)
+#   }
+  
+  
   f_list <- mcmapply(function (idx, n) {
     .parseFeatureTable(id=n, lines=gb_features[idx], db_dir=db_dir,
                        accession=accession, definition=definition)
@@ -235,8 +245,10 @@
   ## merge key/location/qualifier lines
   qual_pos_lines <- lapply(qual_pos_idx, function (i) lines[i])
   merged_lines <- vapply(qual_pos_lines, mergeLines, character(1))
-  
-  key_loc <- strsplit(merged_lines[1], "\\s\\s+")[[1]]
+
+  ## match only the first occurrence of whitespace after the key
+  m <- regexpr("\\s+", merged_lines[1])
+  key_loc <- regmatches(merged_lines[1], m, invert=TRUE)[[1]]
   key <- as.character(key_loc[1])
   loc <- .getLocation(gb_base_span=key_loc[2])
   
