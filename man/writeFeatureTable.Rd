@@ -3,7 +3,7 @@
 \title{General function for writing out NCBI feature tables}
 \usage{
   writeFeatureTable(db, tablename = "", dbname = "",
-    outfile = "out.tbl")
+    with_sequence = TRUE, outfile = "out.tbl")
 }
 \arguments{
   \item{db}{A \code{gbRecord} object.}
@@ -13,6 +13,8 @@
 
   \item{dbname}{Data base name associated with the CDS
   qualifier protein_id.}
+
+  \item{with_sequence}{Additionally autput fasta file}
 
   \item{outfile}{Output file.}
 }

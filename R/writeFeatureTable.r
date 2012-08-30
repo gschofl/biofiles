@@ -9,29 +9,47 @@
 ##' @param tablename (Optional) Optional table name to appear in the first line
 ##' of the feature table.
 ##' @param dbname Data base name associated with the CDS qualifier protein_id.
+##' @param with_sequence Additionally autput fasta file 
 ##' @param outfile Output file.
 ##' 
 ##' @export
-writeFeatureTable <- function(db, tablename="", dbname="", outfile = "out.tbl") {
+writeFeatureTable <- function(db, tablename="", dbname="",
+                              with_sequence=TRUE, outfile="out.tbl") {
   
   if (file.exists(outfile)) {
     unlink(outfile)
   }
   
-  ## write header
+  fasta_outfile <- sub("tbl$", "fna", outfile)
+  if (file.exists(fasta_outfile)) {
+    unlink(fasta_info)
+  }
+  
+  # write header
   header <- gsub("<\\s+|\\s+$", "",
                  sprintf(">Feature %s %s", db$accession, tablename))
   cat(paste(header, "\n"), file=outfile)
   
-  ## write features
-  f <- unlist(lapply(db$features, .getTableFeature, dbname=dbname))
-  cat(paste(f, collapse="\n"), file=outfile, append=TRUE)
+  # kick out source if present
+  features <- dbFetch(db, "features")
+  features <- features[getKey(features) != "source"]
+  # get index of genes
+  gene_idx <- getIndex(features[getKey(features) == "gene"])
+  # write features
+  f_table <- unlist(lapply(features, .getTableFeature, gene_idx, dbname))
+  cat(paste(f_table, collapse="\n"), file=outfile, append=TRUE)
   
-  invisible(list(features=f))
+  if (with_sequence) {
+    seq <- db$sequence
+    names(seq) <- db$accession
+    write.XStringSet(seq, filepath=fasta_outfile, format="fasta")
+  }
+  
+  invisible(list(features=f_table))
 }
 
 
-.getTableFeature <- function (f, dbname) {
+.getTableFeature <- function (f, gene_idx, dbname) {
   
   getLoc <- function (l, p, strand) {
     if (strand == 1) {
@@ -72,12 +90,9 @@ writeFeatureTable <- function(db, tablename="", dbname="", outfile = "out.tbl") 
     if (!is.na(locus_tag_idx)) {
       locus_tag <- val[locus_tag_idx]
     } else {
-      previous_gene <- dbFetch(db, "features")[f@.ID - 1]
-      if (previous_gene[[1]]@key == "gene") {
-        locus_tag <- unname(select(previous_gene, cols="locus_tag"))
-      } else {
-        stop("Cannot associate locus_tag with feature ", f@.ID)
-      }
+      previous_gene_idx <- max(gene_idx[gene_idx < f@.ID])
+      previous_gene <- dbFetch(db, "features")[previous_gene_idx]
+      locus_tag <- unname(select(previous_gene, cols="locus_tag"))
     }
     prot_id_line <- paste0("\t\t\tprotein_id\tgnl|", dbname, "|", locus_tag)
   } else {
@@ -109,12 +124,12 @@ writeFeatureTable <- function(db, tablename="", dbname="", outfile = "out.tbl") 
   ## replace any "TRUE" feature values
   val[val %in% "TRUE"] <- ""
   
-  ## remove locus_tag from all but /gene qualifiers
+  ## remove locus_tag and gene from all but /gene qualifiers
   if (f@key != "gene") {
-    locus_tag_idx <- match("locus_tag", qua)
-    if (!is.na(locus_tag_idx)) {
-      qua <- qua[-locus_tag_idx]
-      val <- val[-locus_tag_idx] 
+    tag_idx <- qua %in% c("locus_tag","gene")
+    if (any(tag_idx)) {
+      qua <- qua[!tag_idx]
+      val <- val[!tag_idx] 
     }
   }
   
