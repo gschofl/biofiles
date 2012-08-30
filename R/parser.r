@@ -138,6 +138,12 @@
   organism <- sub("  ORGANISM  ", "", source_lines[2L])
   lineage <- paste(gsub("^ +", "", source_lines[-c(1L,2L)]), collapse=" ")
   
+  #### REFERENCES
+  ref_idx <- which(names(gb_fields) == "REFERENCE")
+  ref_lines <- gb_header[seq.int(gb_fields[ref_idx[1]],
+                                 gb_fields[ref_idx[length(ref_idx)] + 1] - 1)]
+  references <- .parseGbReferences(ref_lines)
+  
   #### COMMENT (not always there)
   if (length(gb_fields[names(gb_fields) == "COMMENT"]) > 0L) {
     com_lines <- 
@@ -147,16 +153,20 @@
   } else {
     comment <- NULL
   }
-  
-  #### REFERENCE parsing references isn't implemented yet
+
   # References are assigned to the 'gb_reference' class
   list(locus=locus, length=length, type=type, topology=topology,
        division=division, date=date, definition=definition,
        accession=accession, version=version, GI=GI, dblink=dblink,
        dbsource=dbsource, keywords=keywords, source=source,
-       organism=organism, lineage=lineage, references=list("Not implemented yet"),
+       organism=organism, lineage=lineage, references=references,
        comment=comment)
 } 
+
+
+.parseGbReferences <- function (ref_lines) {
+  return("Not implemented yet")
+}
 
 .parseGbFeatures <- function (db_dir, accession, definition, gb_features) {
   # where do all the features start
