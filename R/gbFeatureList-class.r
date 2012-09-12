@@ -66,10 +66,10 @@ setMethod("show", "gbFeatureList",
             cat(sprintf("'%s' with %i features:\n\n", 
                         class(object), n_f))
             if (n_f > 0L) {
-              biofiles::show(object[[1L]])
+              show(object[[1L]])
               if (n_f > 1L) {
                 cat("\n...\n")
-                biofiles::show(object[[n_f]])
+                show(object[[n_f]])
               }
             }
             return(invisible(object))
@@ -340,8 +340,8 @@ setMethod("[", c("gbFeatureList", "missing", "missing", "ANY"),
 
 ##' @export
 setMethod("select", "gbFeatureList", 
-          function (x, index = NULL, keys = "", cols = "") {
-            ans <- .select(x, index, keys)
+          function (x, ..., keys = "", cols = "") {
+            ans <- .select(x, ..., keys)
             ans <- .retrieve(ans, cols)
             ans
           })

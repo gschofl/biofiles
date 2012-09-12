@@ -188,9 +188,9 @@ setMethod("$", "gbRecord",
 
 ##' @export
 setMethod("select", "gbRecord",
-          function (x, index = NULL, keys = "", cols = "") {
+          function (x, ..., keys = "", cols = "") {
             ans <- dbFetch(db=x, key="features")
-            ans <- .select(x, index, keys)
+            ans <- .select(x, ..., keys)
             ans <- .retrieve(ans, cols)
             ans
           })

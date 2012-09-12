@@ -1,103 +1,181 @@
-# which="idx=1,2,3,4,8:10,12:14;key=CDS"
-# which="idx=1"
-# which="idx=1:4,6"
-# which="index=2;index=3;idx=40:42"
-# which="loc=:20000;key=CDS;product=replication;gene=tnpR;pseudo"
-# which="loc=10000:20000,30000:40000,60000:"
-# which="location=:10000;key=CDS,gene"
-# which="key=CDS,gene"
-# which="product"
-# which="key=gene;pseudo"
-# keys="idx=10:20"
-# index=c(1,2,3,8:12)
-# subset=571:573
-
-## select features by index, key, location, qualifier values from
-## gbData or gbFeatureList objects
-.select <- function (x, index = NULL, keys = "") {
+#' @keywords internal
+.select <- function (x, ..., keys = "") {
   
-  indices <- as.numeric(index)
-  keys <- gsub("\n|\t", " ", keys)
-  keys <- strsplit(keys, ";")[[1]]
+  args <- parseArgs(..., keys=keys)
   
-  #### restrict to selected indices
-  if (any(i <- isIndex(keys))) {
-    for (term in keys[i]) {
-      idx <- strsplit(strsplit(term, "=")[[1]][2], ",")[[1]]
-      if (any(r <- grepl(":", idx))) {
-        ranges <- strsplit(idx[r], ":")
-        low <- sapply(ranges, function(x) as.numeric(x[1]))
-        high <- sapply(ranges, function(x) as.numeric(x[2]))
-        idx <- c(as.numeric(idx[!r]), unlist(Map(seq, low, high)))
-      } else {
-        idx <- as.numeric(idx)
-      }
-      indices <- c(indices, idx)
-    }
-    indices <- unique(indices)
+  # restrict features to the selected indices
+  if (!isEmpty(args$idx)) {
+    x <- x[matchIdx(x, args$idx)]
   }
-  if (!isEmpty(indices))
-    x <- x[matchIdx(x, indices)]
   
-  
-  #### restrict to selected location
-  if (any(l <- isLocation(keys))) {
-    start <- end <- numeric(0)
-    for (term in keys[l]) {
-      loc <- strsplit(strsplit(strsplit(term, "=")[[1]][2], ",")[[1]], ":")
-      start <- c(start, as.numeric(unlist(lapply(loc, "[", 1))))
-      end <- c(end, as.numeric(unlist(lapply(loc, "[", 2))))
-    }
-    
+  # for the selected indices restrict features to
+  # the selected range
+  if (!isEmpty(args$range)) {
+    start <- args$range$start
+    end <- args$range$end
     subject_range <- IntervalTree(range(x, join=TRUE))
-    start[is.na(start)] <- min(start(subject_range))
+    start[is.na(start)] <- 1
     end[is.na(end)] <- max(end(subject_range))
     query_range <- IntervalTree(IRanges(start, end))
     overlaps <- findOverlaps(query_range, subject_range)
     x <- x[overlaps@subjectHits]
   }
   
-  #### within the selected window restrict by key(s) 
-  if (any(k <- isKey(keys))) {
-    key <- character(0)
-    for (term in keys[k]) {
-      key <- c(key, gsub(",", "|", strsplit(term, "=")[[1]][2]))
-    }
-    key <- paste0(key, collapse="|")
-    key_idx <- which(grepl(key, getKey(x, attributes=FALSE)))
+  # for the selected range restrict features to
+  # the selected keys 
+  if (!isEmpty(args$key)) {
+    key_idx <- which(grepl(args$key, getKey(x, attributes=FALSE)))
     x <- x[key_idx]
   }
   
-  #### within resticted window and for restricted key,
-  #### search pattern for specified qualifiers 
-  if (any(q <- !( isIndex(keys) |  isLocation(keys) | isKey(keys) ))) {
-    tag_value <- strsplit(keys[q], "=")
-    tags <- vapply(tag_value, "[", 1, FUN.VALUE=character(1))
-    vals <- vapply(tag_value, "[", 2, FUN.VALUE=character(1))
-    vals <- gsub(",", "|", vals)
-    idx <- 
-      lapply(tags, function (tag, val=vals[charmatch(tag, tags)]) {
-        if (is.na(val)) {
-          ## test for the presence of a qualifier tag among the qualifiers
-          ## of each feature
-          idx <- vapply(x, function(x_item) {
-            any(grepl(tag, names(x_item@qualifiers)))
-          }, logical(1L))
-        }
-        else {
-          ## get indices for matching tags for each feature
-          tag_idx_lst <- 
-            lapply(x, function(x_item) grep(tag, names(x_item@qualifiers)))
-          idx <- mapply( function(x_item, tag_idx) { 
-            any(grepl(val, x_item@qualifiers[tag_idx]))
-          }, x, tag_idx_lst, USE.NAMES=FALSE)
-        }   
-      })    
+  # for the selected keys restrict to features with
+  # the specified qualifiers 
+  if (any(feature_idx <- isFeature(names(args)))) {
+    features <- args[feature_idx]
+    idx <- Map(function (tag, val) {
+      if (isTRUE(val)) {
+        ## test for the presence of a qualifier tag among the qualifiers
+        ## of each feature
+        idx <- vapply(x, function(x_item) {
+          any(grepl(tag, names(x_item@qualifiers)))
+        }, logical(1L))
+      } else {
+        ## get indices for matching tags for each feature
+        tag_idx_lst <- 
+          lapply(x, function(x_item) grep(tag, names(x_item@qualifiers)))
+        idx <- mapply( function(x_item, tag_idx) { 
+          any(grepl(val[[1]], x_item@qualifiers[tag_idx]))
+        }, x, tag_idx_lst, USE.NAMES=FALSE)
+      }   
+    }, tag=names(features), val=features)    
     x <- x[ Reduce("&", idx) ]
   }
+  
+  # return features
+  x  
+}
+
+
+#' @keywords internal
+parseArgs <- function (..., keys="") {
+  
+  args <- list(...)
+  
+  # rename 'index' to 'idx'
+  names(args)[charmatch("index", names(args))] <- "idx"
+  
+  # evaluate ranges
+  range_idx <- charmatch("range", names(args))
+  if (!is.na(range_idx)) {
+    args[range_idx] <- parseRange(paste0("range=", args[[range_idx]]))
+  }
+  
+  # keys
+  key_idx <- isKey(names(args))
+  if (sum(key_idx) > 0) {
+    if (sum(key_idx) > 1) {
+      stop("")
+    }
+    args[key_idx] <- paste(args[[which(key_idx)]], collapse="|")
+  }
+
+  # features
+  feature_idx <- isFeature(names(args))
+  if (sum(feature_idx) > 0) {
+    for (idx in which(feature_idx)) {
+      args[idx] <- paste(args[[idx]], collapse="|")
+    }
+  }
+  
+  merge.list(args, parseKeys(keys))
+}
+
+#' @keywords internal
+parseKeys <- function (keys) {
+  x <- strsplit(keys, ";")[[1]]
+  c(parseIndex(x[isIndex(x)]),
+    parseRange(x[isRange(x)]),
+    parseKey(x[isKey(x)]),
+    parseFeatures(feature=x[isFeature(x)]))
+}
+
+#' @keywords internal
+parseIndex <- function (index) {
+  if (length(index) == 0) {
+    list(idx = numeric(0))
+  } else {
+    idx <- vapply(strsplit(index, "="), "[", 2, FUN.VALUE=character(1))
+    idx <- unlist(strsplit(idx, ","))
+    idx <- unlist(lapply(idx, function (i) {
+      eval(parse(text=i)) 
+    }))
+    list(idx = unique(idx))
+  }
+}
+
+#' @keywords internal
+parseRange <- function (range) {
+  if (length(range) == 0) {
+    list(range = numeric(0))
+  } else {
+    start <- end <- numeric(0)
+    r <- vapply(strsplit(range, "="), "[", 2, FUN.VALUE=character(1))
+    r <- strsplit(unlist(strsplit(r, ",")), ":")
+    r <- list(start = as.numeric(vapply(r, "[", 1, FUN.VALUE=character(1))),
+              end = as.numeric(vapply(r, "[", 2, FUN.VALUE=character(1))))
+    list(range = r)
+  }
+}
+
+#' @keywords internal
+parseKey <- function (key) {
+  if (length(key) == 0) {
+    list(key = character(0))
+  } else {
+    key <- vapply(strsplit(key, "="), "[", 2, FUN.VALUE=character(1))
+    key <- paste0(gsub(",", "|", key), collapse="|")
+    list(key = key)
+  }
+}
+
+#' @keywords internal
+parseFeatures <- function (feature) {
+  if (length(feature) == 0) {
+    NULL
+  } else {
+    tag_val <- strsplit(feature, "=")
+    tags <- vapply(tag_val, "[", 1, FUN.VALUE=character(1))
+    vals <- sub(",", "|", vapply(tag_val, "[", 2, FUN.VALUE=character(1)))
+    vals <- lapply(vals, function (v) if (is.na(v)) TRUE else v )
+    setNames(vals, nm=tags)
+  }
+}
+
+#' @keywords internal
+merge.list <- function (x, y, ...) {
+  if (length(x) == 0) 
+    return(y)
+  if (length(y) == 0) 
+    return(x)
+  i = match(names(y), names(x))
+  i = is.na(i)
+  if (any(i)) 
+    x[names(y)[which(i)]] = y[which(i)]
   x
 }
 
+isRange <- function (x) grepl("^range", x)
+
+isKey <- function (x) grepl("^key", x)
+
+isIndex <- function (x) grepl("^idx|^index", x)
+
+isFeature <- function (x) !(isRange(x) | isKey(x) | isIndex(x))
+
+isEmpty <- function (x) length(x) == 0L || !nzchar(x)
+
+
+#' @keywords internal
 .retrieve <- function (x, cols = "") {
   
   if (!nzchar(cols) || length(x) == 0)
@@ -157,6 +235,7 @@
 }
 
 # args = list(i, k, l, q)
+#' @keywords internal
 .return <- function (..., .Names) {
   args <- list(...)
   zero <- vapply(args, is.null, logical(1L))
@@ -186,14 +265,6 @@
     structure(args, names=.Names)
   }
 }
-
-isLocation <- function (x) grepl("^loc=|^location=", x)
-
-isKey <- function (x) grepl("^key=", x)
-
-isIndex <- function (x) grepl("^idx=|^index=", x)
-
-isEmpty <- function (x) length(x) == 0L || !nzchar(x)
 
 hasList <- function (x) vapply(x, typeof, character(1L)) == "list"
 
@@ -225,8 +296,6 @@ parseDbXref <- function (dbx) {
     as.list(l)
   }
 }
-
-
 
 # --R-- vim:ft=r:sw=2:sts=2:ts=4:tw=76:
 #       vim:fdm=marker:fmr={{{,}}}:fdl=0

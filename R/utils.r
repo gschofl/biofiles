@@ -1,3 +1,7 @@
+##' @import filehash
+##' @import intervals
+##' @import IRanges
+##' @import stringr
 ##' @importFrom Biostrings read.DNAStringSet
 ##' @importFrom Biostrings read.RNAStringSet
 ##' @importFrom Biostrings read.AAStringSet
@@ -12,9 +16,6 @@
 ##' @importFrom parallel mcmapply
 ##' @importFrom parallel mclapply
 ##' @importFrom parallel detectCores
-##' @import intervals
-##' @import IRanges
-##' @import stringr
 NULL
 
 

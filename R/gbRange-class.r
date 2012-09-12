@@ -40,7 +40,7 @@ setMethod("initialize",
           })
 
 
-##' @keywords internal
+##' @keywords export
 setMethod("show", "gbRange",
           function (object)
           {

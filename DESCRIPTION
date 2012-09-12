@@ -16,8 +16,7 @@ Depends:
     intervals,
     Biostrings,
     IRanges,
-    stringr
-Imports:
+    stringr,
     plyr
 Collate:
     'all-generics.r'
