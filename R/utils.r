@@ -9,6 +9,9 @@
 ##' @importFrom Biostrings subseq
 ##' @importFrom Biostrings toString 
 ##' @importFrom plyr rbind.fill
+##' @importFrom parallel mcmapply
+##' @importFrom parallel mclapply
+##' @importFrom parallel detectCores
 ##' @import intervals
 ##' @import IRanges
 ##' @import stringr

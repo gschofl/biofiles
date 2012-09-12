@@ -166,7 +166,14 @@
 
 .parseGbReferences <- function (ref_lines) {
   return("Not implemented yet")
-}
+  ref_idx <- grep("^REFERENCE", ref_lines)
+  idx <- Map(seq, ref_idx, c(ref_idx[-1] - 1, length(ref_lines)))
+  ref <- ref_lines[idx[[1]]]
+  auth_line <- grep("^  AUTHORS", ref, value=TRUE)
+  .parseAuthors <- function (auth_line) {}
+  
+  
+  }
 
 .parseGbFeatures <- function (db_dir, accession, definition, gb_features) {
   # where do all the features start
