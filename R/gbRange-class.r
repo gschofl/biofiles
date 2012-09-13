@@ -20,10 +20,12 @@ NULL
 ##' @keywords internal
 setMethod("initialize",
           signature(.Object = "gbRange"),
-          function (.Object, start, width, strand, ...) 
-          {
+          function (.Object, start, width, strand, ...) {
             if (missing(start) || missing(width) || missing(strand)) {
               stop("Missing arguments")
+            }
+            if (!all(strand %in% c(1,-1))) {
+              stop("Strand must be encoded as 1 (plus strand) or -1 (minus strand)")
             }
             anno=list(...)
             z <- vapply(c(list(start, width, strand), anno), length, numeric(1))
