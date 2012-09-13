@@ -45,12 +45,12 @@
   \describe{ \item{index} or \item{idx}{ For example:
   \code{idx=c(3,4,5,6)}, \code{idx=100:150},
   \code{index=c(1,12:20)} } \item{range}{ For example:
-  \code{range="10000:25000"},
-  \code{range=":10000,20000:25000"}, \code{range="30000:"}
-  } \item{key}{ For example: \code{key="CDS"},
-  \code{key=c("CDS", "gene")}, \code{key="CDS|gene"} }
-  \item{arbitrary qualifiers}{ For example:
-  \code{product="ribosomal"},
+  \code{range="10000..25000"},
+  \code{range="..10000,20000..25000"},
+  \code{range="30000.."} } \item{key}{ For example:
+  \code{key="CDS"}, \code{key=c("CDS", "gene")},
+  \code{key="CDS|gene"} } \item{arbitrary qualifiers}{ For
+  example: \code{product="ribosomal"},
   \code{locus_tag=c("CPSIT_0123", "CPSIT_0124",
   "CPSIT_0125")}, \code{pseudo=TRUE} } }
 
@@ -64,12 +64,13 @@
   \describe{ \item{index}{ For example: \code{"idx=1,3,4"},
   \code{"idx=1:4"}, \code{"index=1,3,5:8"},
   \code{"idx=1;idx=3;idx=4"} } \item{by range}{ For
-  example: \code{"range=10000:20000"},
-  \code{"range=:20000"}, \code{"range=:20000,40000:60000"}
-  } \item{by key}{ For example: \code{"key=CDS"},
-  \code{"key=CDS,gene"} } \item{by qualifier values}{ For
-  example: \code{"product=replication"}, \code{"pseudo"} }
-  \item{by any combination of the above}{ For example:
-  \code{"location=:10000;key=CDS,gene"} } }
+  example: \code{"range=10000..20000"},
+  \code{"range=..20000"},
+  \code{"range=..20000,40000..60000"} } \item{by key}{ For
+  example: \code{"key=CDS"}, \code{"key=CDS,gene"} }
+  \item{by qualifier values}{ For example:
+  \code{"product=replication"}, \code{"pseudo"} } \item{by
+  any combination of the above}{ For example:
+  \code{"range=..10000;key=CDS,gene"} } }
 }
 

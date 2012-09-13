@@ -1,54 +1,54 @@
 
 # gbFeatureList-class -------------------------------------------------
 
-##' @include gbFeature-class.r
+#' @include gbFeature-class.r
 NULL
 
 setOldClass("list")
 
-##' gbFeatureList class
-##' 
-##' gbFeatureList is an S4 class that extends the
-##' \code{\link{gbRecord-class}}. This class provides a container for
-##' feature data retrived from GenBank flat files.
-##'
-##' gbFeatureList objects have four slots in addition to the slots provided
-##' by \code{\link{gbRecord-class}} objects:
-##' \describe{
-##'    \item{.Dir}{The path to the database file containing the GenBank
-##'    record the feature list is part of.}
-##'    \item{.ACCN}{Accession number of the GenBank record that the
-##'    feature list is part of.}
-##'    \item{.DEF}{The definition line (brief description of the sequence)
-##'    of the GenBank record the feature list is part of.}
-##'    \item{.Data}{A list of gbFeature objects}
-##' }
-##' 
-##' @param ... Slots of gbFeature
-##' 
-##' @name gbFeatureList-class
-##' @rdname gbFeatureList-class
-##' @exportClass gbFeatureList
-##' @aliases show,gbFeatureList-method
-##' @aliases start,gbFeatureList-method
-##' @aliases end,gbFeatureList-method
-##' @aliases strand,gbFeatureList-method
-##' @aliases start<-,gbFeatureList-method
-##' @aliases end<-,gbFeatureList-method
-##' @aliases strand<-,gbFeatureList-method
-##' @aliases width,gbFeatureList-method
-##' @aliases range,gbFeatureList-method
-##' @aliases getIndex,gbFeatureList-method
-##' @aliases getKey,gbFeatureList-method
-##' @aliases getLocation,gbFeatureList-method
-##' @aliases getQualifier,gbFeatureList-method
-##' @aliases dbXref,gbFeatureList-method
-##' @aliases getSequence,gbFeatureList-method
-##' @aliases hasKey,gbFeatureList-method
-##' @aliases hasQualifier,gbFeatureList-method
-##' @aliases [,gbFeatureList-method
-##' @aliases select,select-method,gbFeatureList-method
-##' @aliases view,view-method,gbFeatureList-method
+#' gbFeatureList class
+#' 
+#' gbFeatureList is an S4 class that extends the
+#' \code{\link{gbRecord-class}}. This class provides a container for
+#' feature data retrived from GenBank flat files.
+#'
+#' gbFeatureList objects have four slots in addition to the slots provided
+#' by \code{\link{gbRecord-class}} objects:
+#' \describe{
+#'    \item{.Dir}{The path to the database file containing the GenBank
+#'    record the feature list is part of.}
+#'    \item{.ACCN}{Accession number of the GenBank record that the
+#'    feature list is part of.}
+#'    \item{.DEF}{The definition line (brief description of the sequence)
+#'    of the GenBank record the feature list is part of.}
+#'    \item{.Data}{A list of gbFeature objects}
+#' }
+#' 
+#' @param ... Slots of gbFeature
+#' 
+#' @name gbFeatureList-class
+#' @rdname gbFeatureList-class
+#' @exportClass gbFeatureList
+#' @aliases show,gbFeatureList-method
+#' @aliases start,gbFeatureList-method
+#' @aliases end,gbFeatureList-method
+#' @aliases strand,gbFeatureList-method
+#' @aliases start<-,gbFeatureList-method
+#' @aliases end<-,gbFeatureList-method
+#' @aliases strand<-,gbFeatureList-method
+#' @aliases width,gbFeatureList-method
+#' @aliases range,gbFeatureList-method
+#' @aliases getIndex,gbFeatureList-method
+#' @aliases getKey,gbFeatureList-method
+#' @aliases getLocation,gbFeatureList-method
+#' @aliases getQualifier,gbFeatureList-method
+#' @aliases dbXref,gbFeatureList-method
+#' @aliases getSequence,gbFeatureList-method
+#' @aliases hasKey,gbFeatureList-method
+#' @aliases hasQualifier,gbFeatureList-method
+#' @aliases [,gbFeatureList-method
+#' @aliases select,select-method,gbFeatureList-method
+#' @aliases view,view-method,gbFeatureList-method
 .gbFeatureList <- setClass("gbFeatureList", 
                            representation(.Dir="character",
                                           .ACCN="character",
@@ -59,7 +59,7 @@ setOldClass("list")
 # show-method ---------------------------------------------------------
 
 
-##' @export
+#' @export
 setMethod("show", "gbFeatureList", 
           function (object) {
             n_f <- length(object)
@@ -98,7 +98,7 @@ gbFeatureList <- function(db_dir, accession, definition, features) {
 # Getter-methods ---------------------------------------------------------
 
 
-##' @export
+#' @export
 setMethod("start", "gbFeatureList",
           function (x, join = FALSE, drop = TRUE) {
             ans <- lapply(x, start, join = join, drop = drop)
@@ -114,7 +114,7 @@ setMethod("start", "gbFeatureList",
           })
 
 
-##' @export
+#' @export
 setMethod("start<-", "gbFeatureList",
           function (x, value) {
             if (length(value) < length(x)) {
@@ -130,7 +130,7 @@ setMethod("start<-", "gbFeatureList",
           })
 
 
-##' @export
+#' @export
 setMethod("end", "gbFeatureList",
           function (x, join = FALSE, drop = TRUE) {
             ans <- lapply(x, end, join = join, drop = drop)
@@ -145,7 +145,7 @@ setMethod("end", "gbFeatureList",
             }
           })
 
-##' @export
+#' @export
 setMethod("end<-", "gbFeatureList",
           function(x, value){
             if (length(value) != length(x)) {
@@ -160,7 +160,7 @@ setMethod("end<-", "gbFeatureList",
                            .ACCN=x@.ACCN, .DEF=x@.DEF)
           })
 
-##' @export
+#' @export
 setMethod("strand", "gbFeatureList",
           function (x, join = FALSE) {
             ans <- lapply(x, strand, join = join)        
@@ -171,7 +171,7 @@ setMethod("strand", "gbFeatureList",
             }
           })
 
-##' @export
+#' @export
 setMethod("strand<-", "gbFeatureList",
           function (x, value) {
             if (length(value) != length(x)) {
@@ -186,7 +186,7 @@ setMethod("strand<-", "gbFeatureList",
                            .ACCN=x@.ACCN, .DEF=x@.DEF)
           })
 
-##' @export
+#' @export
 setMethod("width", "gbFeatureList",
           function (x, join = FALSE) {
             ans <- lapply(x, width, join = join)
@@ -197,7 +197,7 @@ setMethod("width", "gbFeatureList",
             }
           })
 
-##' @export
+#' @export
 setMethod("range", "gbFeatureList",
           function (x, join = FALSE) {
             start <- as.integer(unlist(start(x, join = join)))
@@ -206,7 +206,7 @@ setMethod("range", "gbFeatureList",
             .gbRange(start, width, strand)
           })
 
-##' @export
+#' @export
 setMethod("getLocation", "gbFeatureList",
           function (x, attributes = TRUE, join = FALSE) {
             ans <- range(x, join = join)
@@ -231,7 +231,7 @@ setMethod("getLocation", "gbFeatureList",
             }
           })
 
-##' @export
+#' @export
 setMethod("getIndex", "gbFeatureList",
           function (x, attributes=TRUE) { 
             ans <- vapply(x, function(f) f@.ID, numeric(1))
@@ -243,7 +243,7 @@ setMethod("getIndex", "gbFeatureList",
             ans
           })
 
-##' @export
+#' @export
 setMethod("getKey", "gbFeatureList",
           function (x, attributes=TRUE) {
             ans <- vapply(x, function(f) f@key, character(1))
@@ -257,7 +257,7 @@ setMethod("getKey", "gbFeatureList",
             ans
           })
 
-##' @export
+#' @export
 setMethod("getQualifier", "gbFeatureList",
           function (x, which = "", attributes = TRUE, fixed = FALSE) {          
             ans <- .qualAccess(x, which, fixed) %@% .simplify(unlist=FALSE)
@@ -272,7 +272,7 @@ setMethod("getQualifier", "gbFeatureList",
             ans
           })
 
-##' @export
+#' @export
 setMethod("dbXref", "gbFeatureList",
           function (x, db=NULL, na.rm=TRUE, ...) {     
             ans <- lapply(x, dbXref, db=db)
@@ -286,7 +286,7 @@ setMethod("dbXref", "gbFeatureList",
             ans
           })
 
-##' @export
+#' @export
 setMethod("getSequence", "gbFeatureList",
           function (x, db = NULL) {
             stopifnot(hasValidDb(x))
@@ -294,12 +294,12 @@ setMethod("getSequence", "gbFeatureList",
             .seqAccess(s=dbFetch(db, "sequence"), x, type=dbFetch(db, "type"))
           })
 
-##' @export
+#' @export
 setMethod("hasKey", "gbFeatureList", 
           function (x, key)
             vapply(x, hasKey, key, FUN.VALUE=logical(1)))
 
-##' @export
+#' @export
 setMethod("hasQualifier", "gbFeatureList", 
           function (x, qualifier)
             vapply(x, hasQualifier, qualifier, FUN.VALUE=logical(1)))
@@ -308,7 +308,7 @@ setMethod("hasQualifier", "gbFeatureList",
 # Subsetting ----------------------------------------------------------
 
 
-##' @export
+#' @export
 setMethod("[", c("gbFeatureList", "character", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
             idx <- vapply(x@.Data, function(f) f@key, character(1L)) == i       
@@ -316,21 +316,21 @@ setMethod("[", c("gbFeatureList", "character", "missing", "ANY"),
                            .DEF=x@.DEF)
           })
 
-##' @export
+#' @export
 setMethod("[", c("gbFeatureList", "numeric", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
             .gbFeatureList(.Data=x@.Data[i], .Dir=x@.Dir, .ACCN=x@.ACCN,
                            .DEF=x@.DEF)
           })
 
-##' @export
+#' @export
 setMethod("[", c("gbFeatureList", "logical", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
             .gbFeatureList(.Data=x@.Data[i], .Dir=x@.Dir, .ACCN=x@.ACCN,
                            .DEF=x@.DEF)
           })
 
-##' @export
+#' @export
 setMethod("[", c("gbFeatureList", "missing", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) x
           )
@@ -338,11 +338,11 @@ setMethod("[", c("gbFeatureList", "missing", "missing", "ANY"),
 
 # Select-method ----------------------------------------------------------
 
-##' @export
+#' @export
 setMethod("select", "gbFeatureList", 
-          function (x, ..., keys = "", cols = "") {
-            ans <- .select(x, ..., keys)
-            ans <- .retrieve(ans, cols)
+          function (x, ..., keys = NULL, cols = NULL) {
+            ans <- .select(x, ..., keys = keys)
+            ans <- .retrieve(ans, cols = cols)
             ans
           })
 
@@ -350,7 +350,7 @@ setMethod("select", "gbFeatureList",
 # View ----------------------------------------------------------------
 
 
-##' @export
+#' @export
 setMethod("view", "gbFeatureList", 
           function (x, n)  {
             for (i in x[seq(if (missing(n)) length(x) else n)]){

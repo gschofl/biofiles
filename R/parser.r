@@ -261,7 +261,7 @@
   
   ## merge key/location/qualifier lines
   qual_pos_lines <- lapply(qual_pos_idx, function (i) lines[i])
-  merged_lines <- vapply(qual_pos_lines, mergeLines, character(1))
+  merged_lines <- vapply(qual_pos_lines, merge_lines, character(1))
 
   ## match only the first occurrence of whitespace after the key
   m <- regexpr("\\s+", merged_lines[1])

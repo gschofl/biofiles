@@ -1,45 +1,117 @@
-##' @import filehash
-##' @import intervals
-##' @import IRanges
-##' @import stringr
-##' @importFrom Biostrings read.DNAStringSet
-##' @importFrom Biostrings read.RNAStringSet
-##' @importFrom Biostrings read.AAStringSet
-##' @importFrom Biostrings DNAStringSet
-##' @importFrom Biostrings RNAStringSet
-##' @importFrom Biostrings AAStringSet
-##' @importFrom Biostrings reverseComplement
-##' @importFrom Biostrings xscat
-##' @importFrom Biostrings subseq
-##' @importFrom Biostrings toString 
-##' @importFrom plyr rbind.fill
-##' @importFrom parallel mcmapply
-##' @importFrom parallel mclapply
-##' @importFrom parallel detectCores
-NULL
+#' @import filehash
+#' @import intervals
+#' @import IRanges
+#' @import stringr
+#' @importFrom Biostrings read.DNAStringSet
+#' @importFrom Biostrings read.RNAStringSet
+#' @importFrom Biostrings read.AAStringSet
+#' @importFrom Biostrings DNAStringSet
+#' @importFrom Biostrings RNAStringSet
+#' @importFrom Biostrings AAStringSet
+#' @importFrom Biostrings reverseComplement
+#' @importFrom Biostrings xscat
+#' @importFrom Biostrings subseq
+#' @importFrom Biostrings toString 
+#' @importFrom plyr rbind.fill
+#' @importFrom parallel mcmapply
+#' @importFrom parallel mclapply
+#' @importFrom parallel detectCores
+NULL#' @keywords internal
 
 
-##' Format paragraphs
-##' 
-##' Similar to \code{\link{strwrap}} but returns a single string with
-##' linefeeds inserted
-##' 
-##' @param s a character vector or a list of character vectors
-##' @param width a positive integer giving the column for inserting
-##' linefeeds
-##' @param indent an integer giving the indentation of the first line of
-##' the paragraph; negative values of \code{indent} are allowed and reduce
-##' the width for the first line by that value.
-##' @param offset a non-negative integer giving the indentation of all
-##' but the first line
-##' @param split regular expression used for splitting. Defaults to
-##' a whitespace character.
-##' @param FORCE if \code{TRUE} words are force split if the available width
-##' is too small.
-##' @param FULL_FORCE Always split at the specified position.
-##' 
-##' @return a character vector
-##' @keywords internal
+merge_list <- function (x, y, ...) {
+  if (length(x) == 0) return(y)
+  if (length(y) == 0) return(x) 
+  i = match(names(y), names(x))
+  i = is.na(i)
+  if (any(i)) {
+    x[names(y)[which(i)]] = y[which(i)]
+  }
+  x
+}
+
+
+merge_dups <- function (x) {
+  if (is_empty(x))
+    return(NULL)
+  x_names <- names(x)
+  a <- x[!duplicated(x_names)]
+  b <- x[duplicated(x_names)]
+  modify_list(a, b, "merge")
+}
+
+
+# taken from lattice by Deepayan Sarkar
+modify_list <- function (a, b, mode=c("replace",  "merge")) {
+  stopifnot(is.list(a), is.list(b))
+  mode <- match.arg(mode)
+  a_names <- names(a)
+  for (v in names(b)) {
+    a[[v]] <- if (v %in% a_names && is.list(a[[v]]) && is.list(b[[v]])) {
+      modify_list(a[[v]], b[[v]])
+    } else {
+      switch(mode,
+             replace=b[[v]],
+             merge=unique(c(a[[v]], b[[v]])))
+    }
+  }
+  a
+}
+
+
+#' create blank strings with a given number of characters
+#' @seealso Examples for \code{\link{regmatches}}
+#' @keywords internal
+blanks <- function(n) {
+  vapply(Map(rep.int, rep.int(" ", length(n)), n, USE.NAMES=FALSE),
+         paste0, collapse="", character(1))
+}
+
+
+# chain functions
+`%@%` <- function(x, f) {
+  eval.parent(as.call(append(as.list(substitute(f)), list(x), 1)))
+}
+
+`%ni%` <- Negate(`%in%`)
+
+not.na <- Negate(is.na)
+
+not.null <- Negate(is.null)
+
+# taken from roxygen3 by Hadley Wickham
+compact <- function (x) {
+   Filter(Negate(is.null), x)
+}
+
+
+is_empty <- function (x) {
+  is.null(x) || length(x) == 0L || any(!nzchar(x))
+}
+
+not_empty <- Negate(is_empty)
+
+#' Format paragraphs
+#' 
+#' Similar to \code{\link{strwrap}} but returns a single string with
+#' linefeeds inserted
+#' 
+#' @param s a character vector or a list of character vectors
+#' @param width a positive integer giving the column for inserting
+#' linefeeds
+#' @param indent an integer giving the indentation of the first line of
+#' the paragraph; negative values of \code{indent} are allowed and reduce
+#' the width for the first line by that value.
+#' @param offset a non-negative integer giving the indentation of all
+#' but the first line
+#' @param split regular expression used for splitting. Defaults to
+#' a whitespace character.
+#' @param FORCE if \code{TRUE} words are force split if the available width
+#' is too small.
+#' @param FULL_FORCE Always split at the specified position.
+#' 
+#' @return a character vector
+#' @keywords internal
 linebreak <- function (s, width=getOption("width") - 2, indent=0, offset=0,
                        split=" ", FORCE=FALSE, FULL_FORCE=FALSE) {
   
@@ -105,32 +177,13 @@ linebreak <- function (s, width=getOption("width") - 2, indent=0, offset=0,
 }
 
 
-mergeLines <- function (lines) {
+merge_lines <- function (lines) {
   if (length(lines) == 1) {
     gsub("^\\s+|\\s+$", "", lines)
   } else {
     paste0(gsub("^\\s+|\\s+$", "", lines), collapse=" ")
   }
 }
-
-
-##' create blank strings with a given number of characters
-##' @seealso Examples for \code{\link{regmatches}}
-##' @keywords internal
-blanks <- function(n) {
-  vapply(Map(rep.int, rep.int(" ", length(n)), n, USE.NAMES=FALSE),
-         paste0, collapse="", character(1))
-}
-
-
-## chain functions
-`%@%` <- function(x, f) {
-  eval.parent(as.call(append(as.list(substitute(f)), list(x), 1)))
-}
-
-
-# negate %in%
-`%ni%` <- Negate(`%in%`)
 
 
 #' Flatten (Nested) Lists.
@@ -421,8 +474,8 @@ expandIds <- function (x) {
 
 
 .seqAccess <- function (s, x, type) {
-  ## merge Sequences
-  mergeSeq <- function (s, x, type) {
+  # merge Sequences
+  merge_seq <- function (s, x, type) {
     if (length(start(x)) == 1L) {
       seq <- subseq(s, start=start(x), end=end(x))
     } else {
@@ -443,10 +496,10 @@ expandIds <- function (x) {
                   AA=AAStringSet(),
                   RNA=RNAStringSet())
     for (i in seq_along(x)) {
-      seq[i] <- mergeSeq(s, x[[i]], type)             
+      seq[i] <- merge_seq(s, x[[i]], type)             
     }
   } else if (is(x, "gbFeature")) {
-    seq <- mergeSeq(s, x, type)
+    seq <- merge_seq(s, x, type)
   }
   
   seq@metadata <- list(definition=x@.DEF, database=x@.Dir)
