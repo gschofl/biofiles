@@ -99,7 +99,7 @@ setMethod("$", "gbRange",
 setMethod("[", "gbRange",
           function (x, i, j, ..., drop=TRUE) {
             if (missing(j) && length(list(...)) == 0L)
-              callNextMethod(x, i, j, ..., drop=TRUE)
+              callNextMethod(x=x, i=i)
             else
               as(x, "data.frame")[i, j, ..., drop=FALSE]
           })
