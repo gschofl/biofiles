@@ -33,3 +33,4 @@ Collate:
     'parser.r'
     'writeFeatureTable.r'
     'retrieve.r'
+    'flanking.r'
