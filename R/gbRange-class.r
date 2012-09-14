@@ -17,7 +17,10 @@ NULL
 .gbRange <- setClass("gbRange", contains="IRanges")
 
 
-##' @keywords internal
+# initialize-method ------------------------------------------------------
+
+
+#' @keywords internal
 setMethod("initialize",
           signature(.Object = "gbRange"),
           function (.Object, start, width, strand, ...) {
@@ -42,19 +45,33 @@ setMethod("initialize",
           })
 
 
-##' @keywords export
+# show-method ------------------------------------------------------------
+
+
+#' @export
 setMethod("show", "gbRange",
-          function (object)
-          {
+          function (object) {
             lo <- length(object)
-            cat(class(object), " of length ", lo, "\n", sep = "")
-            if (lo == 0L) 
+            cat(sprintf("%s of length %s\n", class(object), lo))
+            if (lo == 0L){
               return(NULL)
-            else {
-              showme <- as.data.frame(cbind(as.data.frame(object), as.data.frame(object@elementMetadata)),
-                                      row.names = paste("[", seq_len(lo), "]", sep = ""))
-              show(showme)
-            }  
+            } 
+            if (lo < 20L) {
+              showme <- 
+                as.data.frame(cbind(as.data.frame(object),
+                                    as.data.frame(object@elementMetadata)),
+                              row.names = paste0("[", seq_len(lo), "]"))
+            } else {
+              n <- 8
+              headshow <- as(head(object, n), "data.frame")
+              tailshow <- as(tail(object, n), "data.frame")
+              rows <- c(paste0("[", c(1:n), "]"),
+                        "---",
+                        paste0("[", (lo - n + 1):lo, "]"))
+              showme <- as.data.frame(rbind(headshow, "---", tailshow),
+                                      row.names = rows)
+            }
+            show(showme)
           })
 
 
@@ -64,27 +81,31 @@ setMethod("show", "gbRange",
 setAs("gbRange", "data.frame",
       function (from) {
         data.frame(as.data.frame(from),
-                   as.data.frame(stringsAsFactors=FALSE, from@elementMetadata))
+                   as.data.frame(stringsAsFactors=FALSE,
+                                 from@elementMetadata))
       })
 
 
-##' @export
+# subsetting-methods -----------------------------------------------------
+
+
+#' @export
 setMethod("$", "gbRange",
           function (x, name) as(x, "data.frame")[[name]]
 )
 
-
-##' @export
+## Ignores the 'drop' argument and behaves as if it was set to FALSE
+#' @export
 setMethod("[", "gbRange",
-          function (x, i, j, ..., drop) {
-            if (missing(j))
-              callNextMethod(x, i, j, ..., drop)
+          function (x, i, j, ..., drop=TRUE) {
+            if (missing(j) && length(list(...)) == 0L)
+              callNextMethod(x, i, j, ..., drop=TRUE)
             else
-              as(x, "data.frame")[i, j, ..., drop]
+              as(x, "data.frame")[i, j, ..., drop=FALSE]
           })
 
 
-##' @export
+#' @export
 setMethod("[[", "gbRange",
           function (x, i, j, ...)  {
             as(x, "data.frame")[[i]]
