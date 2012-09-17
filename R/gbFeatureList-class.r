@@ -30,6 +30,7 @@ setOldClass("list")
 #' @rdname gbFeatureList-class
 #' @exportClass gbFeatureList
 #' @aliases show,gbFeatureList-method
+#' @aliases summary,gbFeatureList-method
 #' @aliases start,gbFeatureList-method
 #' @aliases end,gbFeatureList-method
 #' @aliases strand,gbFeatureList-method
@@ -73,6 +74,17 @@ setMethod("show", "gbFeatureList",
               }
             }
             return(invisible(object))
+          })
+
+
+# summary-method ---------------------------------------------------------
+
+
+#' @export
+setMethod("summary", "gbFeatureList",
+          function (object, ...) {
+            x <- lapply(object, summary)
+            return(invisible(x))
           })
 
 

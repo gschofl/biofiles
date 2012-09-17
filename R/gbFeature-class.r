@@ -1,56 +1,57 @@
 
 # gbFeature-class -----------------------------------------------------
 
-##' @include gbRange-class.r
+#' @include gbRange-class.r
 NULL
 
 setClassUnion("charOrNull", c("character", "NULL"))
 
-##' gbFeature class
-##' 
-##' \sQuote{gbFeature} is an S4 class that extends the
-##' \code{\link{gbFeatureList-class}}. This class provides a container
-##' for feature data retrived from GenBank flat files.
-##' 
-##' \code{gbFeature} provide the following slots:
-##' 
-##' \describe{
-##'    \item{.Dir}{The path to the database file containing the GenBank
-##'    record the feature is part of.}
-##'    \item{.ACCN}{Accession number of the GenBank record that the
-##'    feature is part of.}
-##'    \item{.DEF}{The definition line (brief description of the sequence)
-##'    of the GenBank record the feature is part of.}
-##'    \item{.ID}{Identifier (sequential index) of the feature in the
-##'    GenBank record the feature is part of.}
-##'    \item{key}{Feature key (e.g. Source, CDS, gene, etc.)}
-##'    \item{location}{An object of \code{\link{gbLocation-class}}}
-##'    \item{qualifiers}{Named character vector. Name attributes
-##'    correspond to GenBank qualifier tags.}       
-##' }
-##' 
-##' @param ... Slots of gbFeature
-##'
-##' @name gbFeature-class
-##' @rdname gbFeature-class
-##' @exportClass gbFeature
-##' @aliases show,gbFeature-method
-##' @aliases start,gbFeature-method
-##' @aliases end,gbFeature-method
-##' @aliases strand,gbFeature-method
-##' @aliases width,gbFeature-method
-##' @aliases range,gbFeature-method
-##' @aliases partial,gbFeature-method
-##' @aliases getIndex,gbFeature-method
-##' @aliases getKey,gbFeature-method
-##' @aliases getLocation,gbFeature-method
-##' @aliases getQualifier,gbFeature-method
-##' @aliases dbXref,gbFeature-method
-##' @aliases getSequence,gbFeature-method
-##' @aliases hasKey,gbFeature-method
-##' @aliases hasQualifier,gbFeature-method
-##' @aliases [[,gbFeature-method
-##' @aliases $,gbFeature-method
+#' gbFeature class
+#' 
+#' \sQuote{gbFeature} is an S4 class that extends the
+#' \code{\link{gbFeatureList-class}}. This class provides a container
+#' for feature data retrived from GenBank flat files.
+#' 
+#' \code{gbFeature} provide the following slots:
+#' 
+#' \describe{
+#'    \item{.Dir}{The path to the database file containing the GenBank
+#'    record the feature is part of.}
+#'    \item{.ACCN}{Accession number of the GenBank record that the
+#'    feature is part of.}
+#'    \item{.DEF}{The definition line (brief description of the sequence)
+#'    of the GenBank record the feature is part of.}
+#'    \item{.ID}{Identifier (sequential index) of the feature in the
+#'    GenBank record the feature is part of.}
+#'    \item{key}{Feature key (e.g. Source, CDS, gene, etc.)}
+#'    \item{location}{An object of \code{\link{gbLocation-class}}}
+#'    \item{qualifiers}{Named character vector. Name attributes
+#'    correspond to GenBank qualifier tags.}       
+#' }
+#' 
+#' @param ... Slots of gbFeature
+#'
+#' @name gbFeature-class
+#' @rdname gbFeature-class
+#' @exportClass gbFeature
+#' @aliases show,gbFeature-method
+#' @aliases summary,gbFeature-method
+#' @aliases start,gbFeature-method
+#' @aliases end,gbFeature-method
+#' @aliases strand,gbFeature-method
+#' @aliases width,gbFeature-method
+#' @aliases range,gbFeature-method
+#' @aliases partial,gbFeature-method
+#' @aliases getIndex,gbFeature-method
+#' @aliases getKey,gbFeature-method
+#' @aliases getLocation,gbFeature-method
+#' @aliases getQualifier,gbFeature-method
+#' @aliases dbXref,gbFeature-method
+#' @aliases getSequence,gbFeature-method
+#' @aliases hasKey,gbFeature-method
+#' @aliases hasQualifier,gbFeature-method
+#' @aliases [[,gbFeature-method
+#' @aliases $,gbFeature-method
 .gbFeature <- 
   setClass("gbFeature",
            representation(.Dir="character",
@@ -65,7 +66,7 @@ setClassUnion("charOrNull", c("character", "NULL"))
 # show-method ---------------------------------------------------------
 
 
-##' @export
+#' @export
 setMethod("show", "gbFeature",
           function (object) {
             op <- options("useFancyQuotes")
@@ -92,10 +93,23 @@ setMethod("show", "gbFeature",
           })
 
 
+
+# summary-method ---------------------------------------------------------
+
+#' @export
+setMethod("summary", "gbFeature",
+    function (object, ...) {
+        showme <- sprintf("%-6s%-20s%-32s\n",
+                          object@.ID, object@key, as(object@location, "character"))
+        cat(showme)
+        return(invisible(TRUE))
+    })
+
+
 # Getter-methods ---------------------------------------------------------
 
 
-##' @export
+#' @export
 setMethod("start", "gbFeature",
           function (x, join = FALSE, drop = TRUE) 
             start(x@location, join = join, drop = drop)
