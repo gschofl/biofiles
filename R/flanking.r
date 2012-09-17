@@ -54,6 +54,9 @@ find_neighbors <- function (query, subject, n=5,
                 downstream=list(IRanges::precede),
                 flanking=list(IRanges::follow, IRanges::precede))
   
+  # if "flanking" is called we need to reset the query ranges to
+  # the original values
+  ori_query <- query
   UID <- vector("list", length(query))
   for (i in seq_along(FUN)) {
     for (j in seq_len(n)) {
@@ -68,6 +71,7 @@ find_neighbors <- function (query, subject, n=5,
       }
       query <- new_query
     }
+    query <- ori_query # reset query ranges if a second FUN is called
   }
   
   feature_list <- lapply(UID, function (id) {
