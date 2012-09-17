@@ -91,8 +91,8 @@ setAs("gbRange", "data.frame",
 
 #' @export
 setMethod("$", "gbRange",
-          function (x, name) as(x, "data.frame")[[name]]
-)
+          function (x, name) as(x, "data.frame")[[name]])
+
 
 ## Ignores the 'drop' argument and behaves as if it was set to FALSE
 #' @export

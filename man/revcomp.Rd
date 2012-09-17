@@ -3,7 +3,7 @@
 \alias{revcomp-methods}
 \title{reverse complement features in a GenBank record}
 \usage{
-  revcomp(x, update_db=TRUE)
+  revcomp(x, updateDb=TRUE)
 }
 \arguments{
   \item{x}{A gbFeatureList or gbRecord object

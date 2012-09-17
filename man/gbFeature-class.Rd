@@ -1,21 +1,22 @@
 \name{gbFeature-class}
-\alias{$,gbFeature-method}
 \alias{[[,gbFeature-method}
-\alias{dbXref,gbFeature-method}
+\alias{$,gbFeature-method}
+\alias{dbxref,gbFeature-method}
 \alias{end,gbFeature-method}
 \alias{gbFeature-class}
-\alias{getIndex,gbFeature-method}
-\alias{getKey,gbFeature-method}
-\alias{getLocation,gbFeature-method}
-\alias{getQualifier,gbFeature-method}
-\alias{getSequence,gbFeature-method}
 \alias{hasKey,gbFeature-method}
-\alias{hasQualifier,gbFeature-method}
+\alias{hasQualif,gbFeature-method}
+\alias{index,gbFeature-method}
+\alias{key,gbFeature-method}
+\alias{location,gbFeature-method}
 \alias{partial,gbFeature-method}
+\alias{qualif,gbFeature-method}
 \alias{range,gbFeature-method}
+\alias{sequence,gbFeature-method}
 \alias{show,gbFeature-method}
 \alias{start,gbFeature-method}
 \alias{strand,gbFeature-method}
+\alias{summary,gbFeature-method}
 \alias{width,gbFeature-method}
 \title{gbFeature class}
 \usage{
@@ -25,8 +26,8 @@
   \item{...}{Slots of gbFeature}
 }
 \description{
-  \sQuote{gbFeature} is an S4 class that extends the
-  \code{\link{gbFeatureList-class}}. This class provides a
+  \sQuote{gbFeature} is an S4 class that extends the class
+  \code{\linkS4class{gbFeatureList}}. This class provides a
   container for feature data retrived from GenBank flat
   files.
 }

@@ -1,35 +1,36 @@
 
 # gbRecord-Class ------------------------------------------------------
 
-##' @include gbFeatureList-class.r
+#' @include gbFeatureList-class.r
 NULL
 
-##' gbRecord class
-##' 
-##' gbRecord is an S4 class that provides a container for data parsed from
-##' a GenBank flat file record. It is implemented as an extension of a
-##' '\link[filehash]{filehashRDS-class}' with no additional slots.
-##'
-##' @param ... Slots of gbRecord
-##'
-##' @name gbRecord-class
-##' @rdname gbRecord-class
-##' @exportClass gbRecord
-##' @aliases initGB,initGB-method,gbRecord-method
-##' @aliases show,gbRecord-method
-##' @aliases getFeatures,gbRecord-method
-##' @aliases [[,gbRecord-method
-##' @aliases $,gbRecord-method
-##' @aliases select,select-method,gbRecord-method
-##' @aliases write,gbRecord-method
-##' @aliases shiftFeatures,gbFeature-method
+#' gbRecord class
+#' 
+#' gbRecord is an S4 class that provides a container for data parsed from
+#' a GenBank flat file record. It is implemented as an extension of a
+#' '\link[filehash]{filehashRDS-class}' with no additional slots.
+#'
+#' @param ... Slots of gbRecord
+#'
+#' @name gbRecord-class
+#' @rdname gbRecord-class
+#' @exportClass gbRecord
+#' @aliases initGB,initGB-method,gbRecord-method
+#' @aliases show,gbRecord-method
+#' @aliases getFeatures,gbRecord-method
+#' @aliases [[,gbRecord-method
+#' @aliases $,gbRecord-method
+#' @aliases select,select-method,gbRecord-method
+#' @aliases write,gbRecord-method
+#' @aliases shift,gbFeature-method
+#' @aliases revcomp,gbFeature-method
 .gbRecord <- setClass("gbRecord", contains="filehashRDS")
 
 
 # show-method ---------------------------------------------------------
 
 
-##' @export
+#' @export
 setMethod("show", "gbRecord",
           function (object) {
             if(length(object@name) == 0)
@@ -81,7 +82,7 @@ setMethod("show", "gbRecord",
 # Constructor ---------------------------------------------------------
 
 
-##' @export
+#' @export
 setMethod("initGB",
           signature(db_dir="ANY"),
           function(db_dir, create=FALSE, ...) {
@@ -167,35 +168,35 @@ gbRecord <- function (db_dir, header, features, sequence=NULL) {
 # Getter-methods ---------------------------------------------------------
 
 
-##' @export
-setMethod("getFeatures", "gbRecord", 
-          function (x) dbFetch(x, "features")
-          )
+#' @export
+setMethod("features", "gbRecord", 
+          function (x) dbFetch(x, "features"))
 
 
 # Subsetting ----------------------------------------------------------
 
 
-##' @export
+#' @export
 setMethod("[[", c("gbRecord", "character", "missing"),
-          function(x, i) dbFetch(x, i)
-          )
+          function(x, i) dbFetch(x, i))
 
-##' @export
+
+#' @export
 setMethod("$", "gbRecord",
-          function(x, name) dbFetch(x, name)
-          )
+          function(x, name) dbFetch(x, name))
 
-##' @export
+
+#' @export
 setMethod("select", "gbRecord",
           function (x, ..., keys = NULL, cols = NULL) {
-            ans <- dbFetch(db=x, key="features")
+            ans <- dbFetch(x, "features")
             ans <- .select(ans, ..., keys = keys)
             ans <- .retrieve(ans, cols = cols)
             ans
           })
 
-##' @export
+
+#' @export
 setMethod("write", "gbRecord",
           function (x, file = "data") {
             if (file.exists(x@dir)) {
@@ -223,14 +224,13 @@ setMethod("write", "gbRecord",
 
 #' @export
 setMethod("shift", "gbRecord",
-          function(x, shift, split=FALSE, order=FALSE, update_db=FALSE)
+          function(x, shift, split=FALSE, order=FALSE, updateDb=FALSE)
             .shift_features(x=x, shift=shift, split=split, order=order, 
-                            update_db=update_db)
-          )
+                            updateDb=updateDb))
+
 
 #' @export
 setMethod("revcomp", "gbRecord",
-          function(x, order=FALSE, update_db=FALSE)
+          function(x, order=FALSE, updateDb=FALSE)
             .revcomp_features(x=x, order=order,
-                              update_db=update_db)
-          )
+                              updateDb=updateDb))

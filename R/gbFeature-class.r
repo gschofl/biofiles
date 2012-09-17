@@ -8,8 +8,8 @@ setClassUnion("charOrNull", c("character", "NULL"))
 
 #' gbFeature class
 #' 
-#' \sQuote{gbFeature} is an S4 class that extends the
-#' \code{\link{gbFeatureList-class}}. This class provides a container
+#' \sQuote{gbFeature} is an S4 class that extends the class
+#' \code{\linkS4class{gbFeatureList}}. This class provides a container
 #' for feature data retrived from GenBank flat files.
 #' 
 #' \code{gbFeature} provide the following slots:
@@ -42,25 +42,24 @@ setClassUnion("charOrNull", c("character", "NULL"))
 #' @aliases width,gbFeature-method
 #' @aliases range,gbFeature-method
 #' @aliases partial,gbFeature-method
-#' @aliases getIndex,gbFeature-method
-#' @aliases getKey,gbFeature-method
-#' @aliases getLocation,gbFeature-method
-#' @aliases getQualifier,gbFeature-method
-#' @aliases dbXref,gbFeature-method
-#' @aliases getSequence,gbFeature-method
+#' @aliases index,gbFeature-method
+#' @aliases key,gbFeature-method
+#' @aliases location,gbFeature-method
+#' @aliases qualif,gbFeature-method
+#' @aliases dbxref,gbFeature-method
+#' @aliases sequence,gbFeature-method
 #' @aliases hasKey,gbFeature-method
-#' @aliases hasQualifier,gbFeature-method
+#' @aliases hasQualif,gbFeature-method
 #' @aliases [[,gbFeature-method
 #' @aliases $,gbFeature-method
-.gbFeature <- 
-  setClass("gbFeature",
-           representation(.Dir="character",
-                          .ACCN="character",
-                          .DEF="character",
-                          .ID="integer",
-                          key="character",
-                          location="gbLocation",
-                          qualifiers="charOrNull"))
+.gbFeature <- setClass("gbFeature",
+                       representation(.Dir="character",
+                                      .ACCN="character",
+                                      .DEF="character",
+                                      .ID="integer",
+                                      key="character",
+                                      location="gbLocation",
+                                      qualifiers="charOrNull"))
 
 
 # show-method ---------------------------------------------------------
@@ -96,6 +95,7 @@ setMethod("show", "gbFeature",
 
 # summary-method ---------------------------------------------------------
 
+
 #' @export
 setMethod("summary", "gbFeature",
     function (object, ...) {
@@ -112,41 +112,41 @@ setMethod("summary", "gbFeature",
 #' @export
 setMethod("start", "gbFeature",
           function (x, join = FALSE, drop = TRUE) 
-            start(x@location, join = join, drop = drop)
-          )
+            start(x@location, join = join, drop = drop))
 
-##' @export
+
+#' @export
 setMethod("end", "gbFeature",
           function (x, join = FALSE, drop = TRUE) 
-            end(x@location, join = join, drop = drop)
-          )
+            end(x@location, join = join, drop = drop))
 
-##' @export
+
+#' @export
 setMethod("strand", "gbFeature",
           function (x, join = FALSE)
-            strand(x@location, join = join)
-          )
+            strand(x@location, join = join))
 
-##' @export
+
+#' @export
 setMethod("width", "gbFeature",
           function (x, join = FALSE)
-            width(x@location, join = join)
-          )
+            width(x@location, join = join))
 
-##' @export
+
+#' @export
 setMethod("partial", "gbFeature",
           function (x)
-            partial(x@location)
-          )
+            partial(x@location))
 
-##' @export
+
+#' @export
 setMethod("range", "gbFeature",
           function (x, join = FALSE)
-            range(x@location, join = join)
-          )
+            range(x@location, join = join))
 
-##' @export
-setMethod("getLocation", "gbFeature",
+
+#' @export
+setMethod("location", "gbFeature",
           function (x, attributes = FALSE, join = FALSE) {     
             ans <- range(x@location, join = join)
             ans@elementMetadata$feature <- x@key
@@ -161,8 +161,9 @@ setMethod("getLocation", "gbFeature",
             }
           })
 
-##' @export
-setMethod("getIndex", "gbFeature",
+
+#' @export
+setMethod("index", "gbFeature",
           function (x, attributes = FALSE) {
             ans <- x@.ID
             if (attributes) {
@@ -175,8 +176,9 @@ setMethod("getIndex", "gbFeature",
             }
           })
 
-##' @export
-setMethod("getKey", "gbFeature", 
+
+#' @export
+setMethod("key", "gbFeature", 
           function (x, attributes=FALSE) {
             ans <- structure(x@key, names=NULL)
             if (attributes) {
@@ -190,8 +192,10 @@ setMethod("getKey", "gbFeature",
             }
           })
 
-##' @export
-setMethod("dbXref", "gbFeature",
+
+
+#' @export
+setMethod("dbxref", "gbFeature",
           function (x, db = NULL, ...) {     
             ans <- .qualAccess(x, "db_xref")
             if (all(is.na(ans))) {
@@ -214,10 +218,10 @@ setMethod("dbXref", "gbFeature",
           })
 
 
-##' @export
-setMethod("getQualifier", "gbFeature", 
-          function (x, which = "", attributes = FALSE, fixed = FALSE) {
-            if (!any(nzchar(which))) {
+#' @export
+setMethod("qualif", "gbFeature", 
+          function (x, which, attributes = FALSE, fixed = FALSE) {
+            if (missing(which)) {
               ans <- x@qualifiers
             } else {
               ans <- .qualAccess(x, which, fixed)
@@ -232,8 +236,9 @@ setMethod("getQualifier", "gbFeature",
             }
           })
 
-##' @export
-setMethod("getSequence", "gbFeature",
+
+#' @export
+setMethod("sequence", "gbFeature",
           function (x) {
             stopifnot(hasValidDb(x))
             db <- initGB(x@.Dir, verbose=FALSE)
@@ -242,39 +247,63 @@ setMethod("getSequence", "gbFeature",
             ans
           })
 
-##' @export
+
+#' @export
 setMethod("hasKey", "gbFeature", 
           function (x, key) 
-            !is.na(charmatch(key, x@key))
-          )
+            !is.na(charmatch(key, x@key)))
 
-##' @export
-setMethod("hasQualifier", "gbFeature",
+
+#' @export
+setMethod("hasQualif", "gbFeature",
           function (x, qualifier)
-            !is.na(charmatch(qualifier, names(x@qualifiers)))
-          )
+            !is.na(charmatch(qualifier, names(x@qualifiers))))
 
 
 # Replacement methods -------------------------------------------------
 
 
-##' @export
+#' @export
 setMethod("start<-", "gbFeature",
           function(x, value) {
             start(x@location) <- value
             x })
 
-##' @export
+
+#' @export
 setMethod("end<-", "gbFeature",
           function(x, value) {
             end(x@location)  <- value
             x })
 
-##' @export
+
+#' @export
 setMethod("strand<-", "gbFeature",
           function(x, value) { 
             strand(x@location) <- value 
             x})
+
+
+setReplaceMethod("key", "gbFeature",
+                 function (x, value, updateDb = FALSE) {
+                   x <- initialize(x, key=value)
+                   if (updateDb) {
+                     db <- dbInit(x@.Dir, "RDS")
+                     db$features[x@.ID] <- x
+                   }
+                   x
+                 })
+
+
+setReplaceMethod("qualif", "gbFeature",
+                 function (x, which, value, updateDb = FALSE) {
+                   x@qualifiers[which] <- value
+                   if (updateDb) {
+                     db <- dbInit(x@.Dir, "RDS")
+                     db$features[x@.ID] <- x
+                   }
+                   x
+                 })
 
 
 # Shift ---------------------------------------------------------------
@@ -290,13 +319,12 @@ setMethod("shift", "gbFeature",
 # Subsetting ----------------------------------------------------------
 
 
-##' @export
+#' @export
 setMethod("[[", c("gbFeature", "character", "missing"),
-          function(x, i, j) slot(object, i)
-          )
+          function(x, i, j) slot(object, i))
 
-##' @export
+
+#' @export
 setMethod("$", "gbFeature",
-          function(x, name) slot(x, name)
-          )
+          function(x, name) slot(x, name))
 

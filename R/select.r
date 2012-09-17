@@ -27,7 +27,7 @@
   # for the selected range restrict features to
   # the selected keys 
   if (not_empty(args$key)) {
-    key_idx <- which(grepl(args$key, getKey(x, attributes=FALSE)))
+    key_idx <- which(grepl(args$key, key(x, attributes=FALSE)))
     x <- x[key_idx]
   }
   

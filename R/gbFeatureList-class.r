@@ -39,14 +39,14 @@ setOldClass("list")
 #' @aliases strand<-,gbFeatureList-method
 #' @aliases width,gbFeatureList-method
 #' @aliases range,gbFeatureList-method
-#' @aliases getIndex,gbFeatureList-method
-#' @aliases getKey,gbFeatureList-method
-#' @aliases getLocation,gbFeatureList-method
-#' @aliases getQualifier,gbFeatureList-method
-#' @aliases dbXref,gbFeatureList-method
-#' @aliases getSequence,gbFeatureList-method
+#' @aliases index,gbFeatureList-method
+#' @aliases key,gbFeatureList-method
+#' @aliases location,gbFeatureList-method
+#' @aliases qualif,gbFeatureList-method
+#' @aliases dbxref,gbFeatureList-method
+#' @aliases sequence,gbFeatureList-method
 #' @aliases hasKey,gbFeatureList-method
-#' @aliases hasQualifier,gbFeatureList-method
+#' @aliases hasQualif,gbFeatureList-method
 #' @aliases [,gbFeatureList-method
 #' @aliases select,select-method,gbFeatureList-method
 #' @aliases view,view-method,gbFeatureList-method
@@ -172,6 +172,7 @@ setMethod("end<-", "gbFeatureList",
                            .ACCN=x@.ACCN, .DEF=x@.DEF)
           })
 
+
 #' @export
 setMethod("strand", "gbFeatureList",
           function (x, join = FALSE) {
@@ -182,6 +183,7 @@ setMethod("strand", "gbFeatureList",
               ans
             }
           })
+
 
 #' @export
 setMethod("strand<-", "gbFeatureList",
@@ -198,6 +200,7 @@ setMethod("strand<-", "gbFeatureList",
                            .ACCN=x@.ACCN, .DEF=x@.DEF)
           })
 
+
 #' @export
 setMethod("width", "gbFeatureList",
           function (x, join = FALSE) {
@@ -209,6 +212,7 @@ setMethod("width", "gbFeatureList",
             }
           })
 
+
 #' @export
 setMethod("range", "gbFeatureList",
           function (x, join = FALSE) {
@@ -218,12 +222,13 @@ setMethod("range", "gbFeatureList",
             .gbRange(start, width, strand)
           })
 
+
 #' @export
-setMethod("getLocation", "gbFeatureList",
+setMethod("location", "gbFeatureList",
           function (x, attributes = TRUE, join = FALSE) {
             ans <- range(x, join = join)
-            keys <- getKey(x, attributes=FALSE)
-            ids <- getIndex(x, attributes=FALSE)
+            keys <- key(x, attributes=FALSE)
+            ids <- index(x, attributes=FALSE)
             if (join || length(ans) == length(keys)) {
               ans@elementMetadata$feature <- keys
               ans@elementMetadata$id <- ids
@@ -243,8 +248,9 @@ setMethod("getLocation", "gbFeatureList",
             }
           })
 
+
 #' @export
-setMethod("getIndex", "gbFeatureList",
+setMethod("index", "gbFeatureList",
           function (x, attributes=TRUE) { 
             ans <- vapply(x, function(f) f@.ID, numeric(1))
             if (attributes) {
@@ -255,8 +261,9 @@ setMethod("getIndex", "gbFeatureList",
             ans
           })
 
+
 #' @export
-setMethod("getKey", "gbFeatureList",
+setMethod("key", "gbFeatureList",
           function (x, attributes=TRUE) {
             ans <- vapply(x, function(f) f@key, character(1))
             if (attributes) {
@@ -269,9 +276,12 @@ setMethod("getKey", "gbFeatureList",
             ans
           })
 
+
 #' @export
-setMethod("getQualifier", "gbFeatureList",
-          function (x, which = "", attributes = TRUE, fixed = FALSE) {          
+setMethod("qualif", "gbFeatureList",
+          function (x, which, attributes = TRUE, fixed = FALSE) {
+            if (missing(which))
+              which <- ""
             ans <- .qualAccess(x, which, fixed) %@% .simplify(unlist=FALSE)
             if (attributes) {
               ans <- structure(ans, 
@@ -284,10 +294,11 @@ setMethod("getQualifier", "gbFeatureList",
             ans
           })
 
+
 #' @export
-setMethod("dbXref", "gbFeatureList",
+setMethod("dbxref", "gbFeatureList",
           function (x, db=NULL, na.rm=TRUE, ...) {     
-            ans <- lapply(x, dbXref, db=db)
+            ans <- lapply(x, dbxref, db=db)
             names(ans) <- lapply(x, function(f) paste0(f@key, ".", f@.ID))
             if (na.rm)
               ans <- ans[!is.na(ans)]
@@ -298,23 +309,26 @@ setMethod("dbXref", "gbFeatureList",
             ans
           })
 
+
 #' @export
-setMethod("getSequence", "gbFeatureList",
+setMethod("sequence", "gbFeatureList",
           function (x, db = NULL) {
             stopifnot(hasValidDb(x))
             db <- initGB(x@.Dir, verbose=FALSE)
             .seqAccess(s=dbFetch(db, "sequence"), x, type=dbFetch(db, "type"))
           })
 
+
 #' @export
 setMethod("hasKey", "gbFeatureList", 
           function (x, key)
             vapply(x, hasKey, key, FUN.VALUE=logical(1)))
 
+
 #' @export
-setMethod("hasQualifier", "gbFeatureList", 
+setMethod("hasQualif", "gbFeatureList", 
           function (x, qualifier)
-            vapply(x, hasQualifier, qualifier, FUN.VALUE=logical(1)))
+            vapply(x, hasQualif, qualifier, FUN.VALUE=logical(1)))
 
 
 # Subsetting ----------------------------------------------------------
@@ -377,9 +391,9 @@ setMethod("view", "gbFeatureList",
 
 #' @export
 setMethod("shift", "gbFeatureList",
-          function(x, shift=0L, split=FALSE, order=FALSE, update_db=FALSE) {
+          function(x, shift=0L, split=FALSE, order=FALSE, updateDb=FALSE) {
             .shift_features(x=x, shift=shift, split=split, order=order,
-                            update_db=update_db)
+                            updateDb=updateDb)
           })
 
 
@@ -387,7 +401,7 @@ setMethod("shift", "gbFeatureList",
                              shift=0L,
                              split=FALSE,
                              order=FALSE,
-                             update_db=FALSE) {
+                             updateDb=FALSE) {
   
   if (is(x, "gbRecord")) {
     len <- x$length
@@ -465,7 +479,7 @@ setMethod("shift", "gbFeatureList",
   f <- .gbFeatureList(.Data=c(src, f), .Dir=src@.Dir,
                       .ACCN=src@.ACCN, .DEF=src@.DEF)
   
-  if (update_db) {
+  if (updateDb) {
     db <- initGB(src@.Dir, verbose=FALSE)
     dbInsert(db, key="features", value=f)
     
@@ -492,11 +506,11 @@ setMethod("shift", "gbFeatureList",
 
 #' @export
 setMethod("revcomp", "gbFeatureList",
-          function(x, order=FALSE, update_db=FALSE)
-            .revcomp_features(x=x, order=order, update_db=update_db))
+          function(x, order=FALSE, updateDb=FALSE)
+            .revcomp_features(x=x, order=order, updateDb=updateDb))
 
 
-.revcomp_features <- function (x, order=FALSE, update_db=FALSE) {
+.revcomp_features <- function (x, order=FALSE, updateDb=FALSE) {
   
   if (is(x, "gbRecord")) {
     max_len <- x$length
@@ -525,7 +539,7 @@ setMethod("revcomp", "gbFeatureList",
   
   f <- .gbFeatureList(.Data=f, .Dir=f@.Dir, .ACCN=f@.ACCN, .DEF=f@.DEF)
   
-  if (update_db) {
+  if (updateDb) {
     db <- initGB(f@.Dir)
     dbInsert(db, key="features", value=f)
     

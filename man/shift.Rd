@@ -4,7 +4,7 @@
 \title{shift location of features in a GenBank record}
 \usage{
   shift(x, shift=0L, split=FALSE, order=FALSE,
-    update_db=FALSE)
+    updateDb=FALSE)
 }
 \arguments{
   \item{x}{A gbLocation, gbFeature, gbFeatureList, or
@@ -21,7 +21,7 @@
   \item{order}{(For gbFeatureList and gbRecord objects)
   Should the resulting gbFeatureList be reordered.}
 
-  \item{update_db}{Should filehash database be updated with
+  \item{updateDb}{Should filehash database be updated with
   new feature locations.}
 }
 \value{

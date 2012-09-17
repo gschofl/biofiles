@@ -20,131 +20,142 @@ setGeneric("partial", function (x, ...)  standardGeneric("partial"))
 setGeneric("accession", function (x, ...)  standardGeneric("accession"))
 
 
-## getter-generics ========================================================== 
+# getter-generics ========================================================== 
 
 
-##' Retrieve feature locations from a GenBank record
-##'
-##' @usage getLocation(x, attributes = TRUE, join = FALSE)
-##'
-##' @param x A \code{\link{gbFeature}} or \code{\link{gbFeatureList}} object
-##' @param attributes Set the \code{accession}, \code{definition},
-##' \code{database} attributes.
-##' @param join combine compound locations
-##'
-##' @return A data frame
-##'
-##' @docType methods
-##' @export
-setGeneric("getLocation",
+#' Get feature locations from a GenBank record
+#'
+#' @usage location(x, attributes = TRUE, join = FALSE)
+#'
+#' @param x A \code{\linkS4class{gbFeature}} or \code{\linkS4class{gbFeatureList}}
+#' object.
+#' @param attributes Set the \code{accession}, \code{definition},
+#' \code{database} attributes.
+#' @param join combine compound locations
+#'
+#' @return A data frame
+#'
+#' @docType methods
+#' @export
+setGeneric("location",
            function (x, attributes = FALSE, join = FALSE, ...) 
-             standardGeneric("getLocation")
-           )
+             standardGeneric("location"))
 
-##' Retrieve feature indices from a GenBank record
-##'
-##' @usage getIndex(x, attributes = FALSE)
-##'
-##' @param x A \code{gbFeature} or \code{gbFeatureList} object.
-##' @param attributes Set the \code{accession}, \code{definition},
-##' \code{database} attributes.
-##'
-##' @return A numeric vector of feature indeces
-##'
-##' @docType methods
-##' @export
-setGeneric("getIndex",
+
+#' Get feature indices from a GenBank record
+#'
+#' @usage index(x, attributes = FALSE)
+#'
+#' @param x A \code{\linkS4class{gbFeature}} or \code{\linkS4class{gbFeatureList}}
+#' object.
+#' @param attributes Set the \code{accession}, \code{definition},
+#' \code{database} attributes.
+#'
+#' @return A numeric vector of feature indeces
+#'
+#' @docType methods
+#' @export
+setGeneric("index",
            function (x, attributes = FALSE, ...) 
-             standardGeneric("getIndex")
-           )
+             standardGeneric("index"))
 
-##' Retrieve feature keys from a GenBank record
-##'
-##' @usage getKey(x, attributes = FALSE)
-##' 
-##' @param x A \code{gbFeature} or \code{gbFeatureList} object.
-##' @param attributes Set the \code{accession}, \code{definition},
-##' \code{database} attributes.
-##'
-##' @docType methods
-##' @export
-setGeneric("getKey",
+
+#' Get/set feature keys from a GenBank Record
+#'
+#' @usage key(x, attributes = FALSE)
+#' 
+#' @param x A \code{\linkS4class{gbFeature}} or \code{\linkS4class{gbFeatureList}}
+#' object.
+#' @param attributes Set the \code{accession}, \code{definition},
+#' \code{database} attributes.
+#'
+#' @docType methods
+#' @export
+setGeneric("key", signature = "x",
            function(x, attributes = FALSE, ...) 
-             standardGeneric("getKey")
-           )
-
-##' Retrieve feature keys from a GenBank record
-##'
-##' @usage getKey(x, attributes = FALSE)
-##' 
-##' @param x A \code{gbFeature} or \code{gbFeatureList} object.
-##' @param which Character vector giving the name(s) of the qualifiers
-##' to retrieve.
-##' @param attributes Set the \code{accession}, \code{definition},
-##' \code{database} attributes.
-##'
-##' @docType methods
-##' @export
-setGeneric("getQualifier",
-           function(x, which = "", attributes = FALSE, ...)
-             standardGeneric("getQualifier")
-           )
+             standardGeneric("key"))
 
 
-##' @docType methods
-##' @export
-setGeneric("dbXref",
+#' @docType methods
+#' @export
+setGeneric("key<-", signature = "x",
+           function(x, value, ...) standardGeneric("key<-"))
+
+
+#' Get/set feature qualifiers from a GenBank record
+#'
+#' @usage qualif(x, which, attributes = FALSE)
+#' 
+#' @param x A \code{\linkS4class{gbFeature}} or \code{\linkS4class{gbFeatureList}}
+#' object.
+#' @param which (Optional) Character vector giving the name(s) of the qualifiers
+#' to retrieve.
+#' @param attributes Set the \code{accession}, \code{definition},
+#' \code{database} attributes.
+#'
+#' @docType methods
+#' @export
+setGeneric("qualif", signature = "x",
+           function(x, which, attributes = FALSE, ...)
+             standardGeneric("qualif"))
+
+
+#' @docType methods
+#' @export
+setGeneric("qualif<-", signature = "x",
+           function(x, which, value, ...)
+             standardGeneric("qualif<-"))
+
+
+#' @docType methods
+#' @export
+setGeneric("dbxref",
            function(x, db = NULL, ...) 
-             standardGeneric("dbXref")
-           )
+             standardGeneric("dbxref"))
 
 
-##' @docType methods
-##' @export
-setGeneric("getSequence",
+#' @docType methods
+#' @export
+setGeneric("sequence",
            function(x, ...) 
-             standardGeneric("getSequence")
-           )
+             standardGeneric("sequence"))
 
 
-##' @docType methods
-##' @export
+#' @docType methods
+#' @export
 setGeneric("hasKey",
            function(x, key, ...)
-             standardGeneric("hasKey")
-           )
+             standardGeneric("hasKey"))
 
 
-##' @docType methods
-##' @export
-setGeneric("hasQualifier",
+#' @docType methods
+#' @export
+setGeneric("hasQualif",
            function(x, qualifier, ...)
-             standardGeneric("hasQualifier")
-           )
+             standardGeneric("hasQualif"))
 
 
-##' Retrieve features of a GenBank record.
-##'
-##' @usage getFeatures(x, ...)
-##'
-##' @param data An instance of \code{\link{gbRecord-class}}.
-##'
-##' @return The \code{\link{gbFeatureList-class}} object contained in a
-##' gbRecord database.
-##'
-##' @docType methods
-##' @export
-setGeneric("getFeatures",
+#' Retrieve features of a GenBank record.
+#'
+#' @usage features(x, ...)
+#'
+#' @param data An instance of \code{\linkS4class{gbRecord}}.
+#'
+#' @return The \code{\linkS4class{gbFeatureList}} object contained in a
+#' gbRecord database.
+#'
+#' @docType methods
+#' @export
+setGeneric("features", signature=c("x"),
            function (x, ...)
-             standardGeneric("getFeatures")
-           )
+             standardGeneric("features"))
 
 
 ## shift-generic ============================================================ 
 ##
 ##' shift location of features in a GenBank record
 ##'
-##' @usage shift(x, shift=0L, split=FALSE, order=FALSE, update_db=FALSE)
+##' @usage shift(x, shift=0L, split=FALSE, order=FALSE, updateDb=FALSE)
 ##'
 ##' @param x A gbLocation, gbFeature, gbFeatureList, or gbRecord object
 ##' (gbFeatureLists must include a 'source' field).
@@ -153,7 +164,7 @@ setGeneric("getFeatures",
 ##' that spans across the end of the sequence be split.
 ##' @param order (For gbFeatureList and gbRecord objects) Should the
 ##' resulting gbFeatureList be reordered.
-##' @param update_db Should filehash database be updated with new feature
+##' @param updateDb Should filehash database be updated with new feature
 ##' locations.
 ##'
 ##' @return A \code{\link{gbLocation-class}}, \code{\link{gbFeature-class}},
@@ -168,7 +179,7 @@ setGeneric("shift", function (x, shift = 0L, ...) standardGeneric("shift"))
 ##
 ##' reverse complement features in a GenBank record
 ##'
-##' @usage revcomp(x, update_db=TRUE)
+##' @usage revcomp(x, updateDb=TRUE)
 ##'
 ##' @param x A gbFeatureList or gbRecord object
 ##' (gbFeatureLists must include a 'source' field).
@@ -180,7 +191,7 @@ setGeneric("shift", function (x, shift = 0L, ...) standardGeneric("shift"))
 ##'
 ##' @docType methods
 ##' @export
-setGeneric("revcomp", function (x, order=FALSE, update_db=FALSE, ...) 
+setGeneric("revcomp", function (x, order=FALSE, updateDb=FALSE, ...) 
   standardGeneric("revcomp"))
 
 
@@ -282,8 +293,8 @@ setGeneric("view", function (x, n, ...) standardGeneric("view"))
 ##' @docType methods
 setGeneric("select",
            function(x, ...)
-             standardGeneric("select")
-           )
+             standardGeneric("select"))
+
 
 ## initGB-generic =========================================================== 
 ##
@@ -303,5 +314,4 @@ setGeneric("select",
 ##' @docType methods
 setGeneric("initGB",
            function(db_dir, ...)
-             standardGeneric("initGB")
-           )
+             standardGeneric("initGB"))

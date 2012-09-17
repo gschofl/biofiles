@@ -1,11 +1,12 @@
 \name{gbRecord-class}
-\alias{$,gbRecord-method}
 \alias{[[,gbRecord-method}
+\alias{$,gbRecord-method}
 \alias{gbRecord-class}
 \alias{getFeatures,gbRecord-method}
 \alias{initGB,initGB-method,gbRecord-method}
+\alias{revcomp,gbFeature-method}
 \alias{select,select-method,gbRecord-method}
-\alias{shiftFeatures,gbFeature-method}
+\alias{shift,gbFeature-method}
 \alias{show,gbRecord-method}
 \alias{write,gbRecord-method}
 \title{gbRecord class}
