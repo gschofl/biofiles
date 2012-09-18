@@ -138,11 +138,15 @@
   organism <- sub("  ORGANISM  ", "", source_lines[2L])
   lineage <- paste(gsub("^ +", "", source_lines[-c(1L,2L)]), collapse=" ")
   
-  #### REFERENCES
-  ref_idx <- which(names(gb_fields) == "REFERENCE")
-  ref_lines <- gb_header[seq.int(gb_fields[ref_idx[1]],
-                                 gb_fields[ref_idx[length(ref_idx)] + 1] - 1)]
-  references <- .parseGbReferences(ref_lines)
+  #### REFERENCES (not seen everywhere)
+  if (length(ref_idx <- which(names(gb_fields) == "REFERENCE")) > 0L) {
+    
+    ref_lines <- gb_header[seq.int(gb_fields[ref_idx[1]],
+                                   gb_fields[ref_idx[length(ref_idx)] + 1] - 1)]
+    references <- .parseGbReferences(ref_lines)
+  } else {
+    references <- "Not available"
+  }
   
   #### COMMENT (not always there)
   if (length(gb_fields[names(gb_fields) == "COMMENT"]) > 0L) {
