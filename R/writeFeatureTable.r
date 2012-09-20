@@ -22,19 +22,18 @@ writeFeatureTable <- function(db, tablename="", dbname="",
   
   fasta_outfile <- sub("tbl$", "fna", outfile)
   if (file.exists(fasta_outfile)) {
-    unlink(fasta_info)
+    unlink(fasta_outfile)
   }
   
   # write header
-  header <- gsub("<\\s+|\\s+$", "",
-                 sprintf(">Feature %s %s", db$accession, tablename))
+  header <- trim(sprintf(">Feature %s %s", db$accession, tablename))
   cat(paste(header, "\n"), file=outfile)
   
   # kick out source if present
   features <- dbFetch(db, "features")
-  features <- features[getKey(features) != "source"]
+  features <- features[key(features) != "source"]
   # get index of genes
-  gene_idx <- getIndex(features[getKey(features) == "gene"])
+  gene_idx <- index(features[key(features) == "gene"])
   # write features
   f_table <- unlist(lapply(features, .getTableFeature, gene_idx, dbname))
   cat(paste(f_table, collapse="\n"), file=outfile, append=TRUE)

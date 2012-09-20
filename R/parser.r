@@ -1,26 +1,27 @@
 .parseGB <- function (gb_data, db_path, with_sequence = TRUE, force = FALSE) {
-  # get a vector with the positions of the main fields
-  gb_fields <- grep("^[A-Z//]+", gb_data)
-  names(gb_fields) <- regmatches(gb_data[gb_fields], regexpr("^.[^ ]+", gb_data[gb_fields]))
+  # get a vector with the positions of the main GenBank fields
+  gbf <- grep("^[A-Z//]+", gb_data)
+  names(gbf) <- regmatches(gb_data[gbf], regexpr("^.[^ ]+", gb_data[gbf]))
+  gbf_names <- names(gbf)
   
   # Check the presence of a number of the absolutely essential data fields
-  essential_fields <- "DEFINITION|ACCESSION|FEATURES"
-  if (sum(grepl(essential_fields, names(gb_fields))) < 3)
+  essential <- c("DEFINITION", "ACCESSION", "FEATURES")
+  if (length(match(essential, gbf_names)) < 3L)
     stop("Some fields seem to be missing from the GenBank file")
   
   # Split the GenBank file into HEADER, FEATURES, ORIGIN
-  gb_header <- gb_data[seq(gb_fields["FEATURES"])-1]
+  gb_header <- gb_data[seq.int(gbf["FEATURES"]) - 1]
   
-  if (which(names(gb_fields) == "FEATURES") == length(gb_fields)) {
-    gb_features <- gb_data[seq(gb_fields["FEATURES"]+1, length(gb_data)-1)]
+  if (match("FEATURES", gbf_names) == length(gbf)) {
+    gb_features <- gb_data[seq.int(gbf["FEATURES"] + 1, length(gb_data) - 1)]
   } else {
-    gb_features <- gb_data[seq(gb_fields["FEATURES"]+1, gb_fields[which(names(gb_fields) == "FEATURES")+1]-1)]
+    gb_features <- gb_data[seq.int(gbf["FEATURES"] + 1, gbf[match("FEATURES", gbf_names) + 1] - 1)]
   }
   
-  if (length(gb_features) < 2) 
+  if (length(gb_features) < 2L) 
     stop("No features in the GenBank file")
   
-  seq_idx <- seq(gb_fields["ORIGIN"]+1, gb_fields["//"]-1)
+  seq_idx <- seq.int(gbf["ORIGIN"] + 1, gbf["//"] - 1)
   if (length(seq_idx) > 1L && seq_idx[2] < seq_idx[1]) {
     # happens if "//" is next after "ORIGIN", i.e. no  sequence is present
     gb_sequence <- NULL
@@ -37,7 +38,7 @@
   }
   
   ## parse HEADER, FEATURES, and ORIGIN and construct 'gbData' object
-  header <- .parseGbHeader(gb_header, gb_fields)
+  header <- .parseGbHeader(gb_header, gbf)
   
   features <- .parseGbFeatures(db_dir=db_path,
                                accession=header$accession, 
@@ -50,6 +51,7 @@
   
   gbRecord(db_dir=db_path, header=header, features=features, sequence=sequence)
 }
+
 
 .parseGbHeader <- function (gb_header, gb_fields) {
   #### LOCUS
@@ -179,30 +181,34 @@
   
   }
 
+
 .parseGbFeatures <- function (db_dir, accession, definition, gb_features) {
   # where do all the features start
-  feature_start <- grep("^\\s{5}\\S", gb_features)
+  feature_start <- grep("^     \\S", gb_features)
   # where do all the features end
   feature_end <- c(feature_start[-1] - 1, length(gb_features))
   # indeces for all features
-  feature_idx <- Map(seq.int, feature_start, feature_end)
+  feature_idx <- mapply(seq.int, feature_start, feature_end,
+                        SIMPLIFY=FALSE, USE.NAMES=FALSE)
   
   message("Parsing features")
 
 #   f_list <- list()
+#   i <- 1
 #   for (i in seq_along(feature_idx)) {
 #     print(i)
 #     f_list[[i]] <- .parseFeatureTable(id=i, lines=gb_features[feature_idx[[i]]],
 #                                  db_dir=db_dir, accession=accession,
 #                                  definition=definition)
 #   }
-  
+#   id <- 4
+#   lines <- gb_features[feature_idx[[id]]]
   
   f_list <- mcmapply(function (idx, n) {
     .parseFeatureTable(id=n, lines=gb_features[idx], db_dir=db_dir,
                        accession=accession, definition=definition)
   }, idx=feature_idx, n=seq_along(feature_start),
-                     SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
+     SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
   
   gbFeatureList(db_dir=db_dir, accession=accession,
                 definition=definition, features=f_list)
@@ -257,39 +263,35 @@
   
   key <- loc <- qual <- NULL
   
-  ## match qualifier positions
-  qual_pat <- "^\\s{21}/"
-  qual_pos_start <- c(1, grep(qual_pat, lines))
-  qual_pos_end <- c(qual_pos_start[-1] - 1, length(lines))
-  qual_pos_idx <- mapply(seq.int, qual_pos_start, qual_pos_end)
+  # match qualifier positions
+  start <- c(1, grep("^\\s{21}/", lines))
+  end <- c(start[-1] - 1, length(lines))
+  idx <- Map(seq.int, start, end)
   
-  ## merge key/location/qualifier lines
-  qual_pos_lines <- lapply(qual_pos_idx, function (i) lines[i])
-  merged_lines <- vapply(qual_pos_lines, merge_lines, character(1))
+  # merge key/location/qualifier lines
+  llist <- lapply(idx, function (i) lines[i])
+  merged <- vapply(llist, merge_lines, character(1))
 
-  ## match only the first occurrence of whitespace after the key
-  m <- regexpr("\\s+", merged_lines[1])
-  key_loc <- regmatches(merged_lines[1], m, invert=TRUE)[[1]]
-  key <- as.character(key_loc[1])
-  loc <- .getLocation(gb_base_span=key_loc[2])
+  # match only the first occurrence of whitespace after the key
+  m <- regexpr("\\s+", merged[1])
+  key_loc <- unlist(regmatches(merged[1], m, invert=TRUE))
   
-  qual_lines <- merged_lines[-1]
-  if (length(qual_lines) != 0) {
-    qual_lines <- strsplit(qual_lines, "=")
-    qual <- setNames(gsub("^\"|\"$", "", vapply(qual_lines, "[", 2, FUN.VALUE=character(1))),
-                     gsub("/", "", vapply(qual_lines, "[", 1, FUN.VALUE=character(1))))
-    
-    ## cleanup: /pseudo tags are given NA as a qualifier value. Replace with TRUE
-    ## remove whitspace from /translation
+  qual_lines <- merged[-1]
+  if (not_empty(qual_lines)) {
+    qual <- setNames(trim(strsplitN(qual_lines, "=", 2), "\""),
+                     trim(strsplitN(qual_lines, "=", 1), "/"))
+    # cleanup: /pseudo tags are given NA as a qualifier value. Replace with TRUE
+    # remove whitspace from /translation
     qual[is.na(qual)] <- TRUE
-    if (!is.na(qual["translation"])) {
-      qual["translation"] <- gsub("\\s+", "", qual["translation"])
+    if (not.na(qual["translation"])) {
+      qual["translation"] <- gsub('\\s+', '', qual["translation"])
     }
   }
   
-  .gbFeature(.Dir = as.character(db_dir), .ACCN = as.character(accession),
-             .DEF = as.character(definition), .ID = as.integer(id),
-             key = key, location = loc, qualifiers = qual)
+  .gbFeature(.Dir = db_dir, .ACCN = accession, .DEF = definition,
+             .ID = as.integer(id), key = key_loc[1],
+             location = .getLocation(gb_base_span=key_loc[2]),
+             qualifiers = qual)
 }
 
 
@@ -302,7 +304,6 @@
   if (is.null(gb_sequence)) {
     return(NULL)
   } else {
-    message("Parsing sequence")
     tmp <- tempfile()
     on.exit(unlink(tmp))
     writeLines(text=.joinSeq(gb_sequence, accession_no), con=tmp)

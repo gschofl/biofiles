@@ -1,6 +1,6 @@
 \name{gbFeature-class}
-\alias{[[,gbFeature-method}
 \alias{$,gbFeature-method}
+\alias{[[,gbFeature-method}
 \alias{dbxref,gbFeature-method}
 \alias{end,gbFeature-method}
 \alias{gbFeature-class}

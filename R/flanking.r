@@ -1,9 +1,10 @@
 #' @keywords internal
-find_neighbors <- function (query, subject, n=5, 
-                            direction=c("flanking","downstream","upstream"),
-                            include_key="any", exclude_key="none") {
+find_neighbors <- function (query, subject, n = 5, 
+                            direction = 'flanking',
+                            include_key = 'any',
+                            exclude_key = 'none') {
   
-  direction <- match.arg(direction)
+  direction <- match.arg(direction, c("flanking","downstream","upstream"))
   
   if (!(is(query, "Ranges") || is(query, "gbFeatureList") ||
     is(query, "gbFeature"))) {

@@ -82,7 +82,6 @@ setMethod("show", "gbRecord",
 # Constructor ---------------------------------------------------------
 
 
-#' @export
 setMethod("initGB",
           signature(db_dir="ANY"),
           function(db_dir, create=FALSE, ...) {
@@ -98,10 +97,8 @@ setMethod("initGB",
 
 
 #' @keywords internal
-setMethod("initialize",
-          signature(.Object="gbRecord"),
-          function (.Object, dir=character(0), name=character(0), verbose=TRUE)
-          {
+setMethod("initialize", "gbRecord",
+          function (.Object, dir=character(0), name=character(0), verbose=TRUE) {
             if (missing(dir))
               stop("No database directory provided")
             if (missing(name))
@@ -168,7 +165,6 @@ gbRecord <- function (db_dir, header, features, sequence=NULL) {
 # Getter-methods ---------------------------------------------------------
 
 
-#' @export
 setMethod("features", "gbRecord", 
           function (x) dbFetch(x, "features"))
 
@@ -186,7 +182,6 @@ setMethod("$", "gbRecord",
           function(x, name) dbFetch(x, name))
 
 
-#' @export
 setMethod("select", "gbRecord",
           function (x, ..., keys = NULL, cols = NULL) {
             ans <- dbFetch(x, "features")
@@ -196,7 +191,6 @@ setMethod("select", "gbRecord",
           })
 
 
-#' @export
 setMethod("write", "gbRecord",
           function (x, file = "data") {
             if (file.exists(x@dir)) {
@@ -222,14 +216,12 @@ setMethod("write", "gbRecord",
 # Shift features ------------------------------------------------------
 
 
-#' @export
 setMethod("shift", "gbRecord",
           function(x, shift, split=FALSE, order=FALSE, updateDb=FALSE)
             .shift_features(x=x, shift=shift, split=split, order=order, 
                             updateDb=updateDb))
 
 
-#' @export
 setMethod("revcomp", "gbRecord",
           function(x, order=FALSE, updateDb=FALSE)
             .revcomp_features(x=x, order=order,

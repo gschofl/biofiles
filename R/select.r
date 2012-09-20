@@ -186,4 +186,3 @@ parse_range <- function (range) {
   list(range = r)
 }
 
-

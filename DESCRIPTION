@@ -10,12 +10,14 @@ License: MIT
 Encoding: latin1
 Depends:
     R (>= 2.15),
-    methods,
-    parallel,
+    methods
+Imports:
+    rmisc,
     filehash,
     intervals,
-    Biostrings,
     IRanges,
+    Biostrings,
+    parallel,
     stringr,
     plyr
 Collate:
@@ -34,3 +36,4 @@ Collate:
     'writeFeatureTable.r'
     'retrieve.r'
     'flanking.r'
+    'zzz.R'

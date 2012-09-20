@@ -109,43 +109,36 @@ setMethod("summary", "gbFeature",
 # Getter-methods ---------------------------------------------------------
 
 
-#' @export
 setMethod("start", "gbFeature",
           function (x, join = FALSE, drop = TRUE) 
             start(x@location, join = join, drop = drop))
 
 
-#' @export
 setMethod("end", "gbFeature",
           function (x, join = FALSE, drop = TRUE) 
             end(x@location, join = join, drop = drop))
 
 
-#' @export
 setMethod("strand", "gbFeature",
           function (x, join = FALSE)
             strand(x@location, join = join))
 
 
-#' @export
 setMethod("width", "gbFeature",
           function (x, join = FALSE)
             width(x@location, join = join))
 
 
-#' @export
 setMethod("partial", "gbFeature",
           function (x)
             partial(x@location))
 
 
-#' @export
 setMethod("range", "gbFeature",
           function (x, join = FALSE)
             range(x@location, join = join))
 
 
-#' @export
 setMethod("location", "gbFeature",
           function (x, attributes = FALSE, join = FALSE) {     
             ans <- range(x@location, join = join)
@@ -162,7 +155,6 @@ setMethod("location", "gbFeature",
           })
 
 
-#' @export
 setMethod("index", "gbFeature",
           function (x, attributes = FALSE) {
             ans <- x@.ID
@@ -177,7 +169,6 @@ setMethod("index", "gbFeature",
           })
 
 
-#' @export
 setMethod("key", "gbFeature", 
           function (x, attributes=FALSE) {
             ans <- structure(x@key, names=NULL)
@@ -193,22 +184,20 @@ setMethod("key", "gbFeature",
           })
 
 
-
-#' @export
 setMethod("dbxref", "gbFeature",
           function (x, db = NULL, ...) {     
             ans <- .qualAccess(x, "db_xref")
             if (all(is.na(ans))) {
               return( NA_character_ )
             } else {
-              dbs <- unlist(lapply(strsplit(ans, ":"), "[", 1), use.names=FALSE)
-              ids <- unlist(lapply(strsplit(ans, ":"), "[", 2), use.names=FALSE)
+              dbs <- strsplitN(ans, ":", 1)
+              ids <- strsplitN(ans, ":", 2)
               if (is.null(db)) {
                 structure(ids, names = dbs)
               } else {
-                db_pattern <- paste(sprintf("\\b%s\\b", db), collapse="|")
+                db_pattern <- paste(wrap(db, "\\b"), collapse="|")
                 db_pos <- grep(db_pattern, dbs, ignore.case=TRUE)
-                if (length(db_pos) == 0L) {
+                if (is_empty(db_pos)) {
                   return( NA_character_ )
                 } else {
                   structure(ids[db_pos], names = dbs[db_pos])
@@ -218,7 +207,6 @@ setMethod("dbxref", "gbFeature",
           })
 
 
-#' @export
 setMethod("qualif", "gbFeature", 
           function (x, which, attributes = FALSE, fixed = FALSE) {
             if (missing(which)) {
@@ -237,7 +225,6 @@ setMethod("qualif", "gbFeature",
           })
 
 
-#' @export
 setMethod("sequence", "gbFeature",
           function (x) {
             stopifnot(hasValidDb(x))
@@ -248,13 +235,11 @@ setMethod("sequence", "gbFeature",
           })
 
 
-#' @export
 setMethod("hasKey", "gbFeature", 
           function (x, key) 
             !is.na(charmatch(key, x@key)))
 
 
-#' @export
 setMethod("hasQualif", "gbFeature",
           function (x, qualifier)
             !is.na(charmatch(qualifier, names(x@qualifiers))))
@@ -263,25 +248,25 @@ setMethod("hasQualif", "gbFeature",
 # Replacement methods -------------------------------------------------
 
 
-#' @export
-setMethod("start<-", "gbFeature",
-          function(x, value) {
-            start(x@location) <- value
-            x })
+setReplaceMethod("start", "gbFeature",
+                 function(x, value) {
+                   start(x@location) <- value
+                   x 
+                 })
 
 
-#' @export
-setMethod("end<-", "gbFeature",
-          function(x, value) {
-            end(x@location)  <- value
-            x })
+setReplaceMethod("end", "gbFeature",
+                 function(x, value) {
+                   end(x@location) <- value
+                   x
+                 })
 
 
-#' @export
-setMethod("strand<-", "gbFeature",
-          function(x, value) { 
-            strand(x@location) <- value 
-            x})
+setReplaceMethod("strand", "gbFeature",
+                 function(x, value) { 
+                   strand(x@location) <- value 
+                   x
+                 })
 
 
 setReplaceMethod("key", "gbFeature",

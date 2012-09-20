@@ -1,19 +1,19 @@
 
 # gbRange-class ----------------------------------------------------------
 
-##' @include gbLocation-class.r
+#' @include gbLocation-class.r
 NULL
 
-##' gbRange class
-##' 
-##' @param ... Slots of gbRange
-##' 
-##' @exportClass gbRange
-##' @name gbRange-class
-##' @rdname gbRange-class
-##' @aliases $,gbRange-method
-##' @aliases [,gbRange-method
-##' @aliases [[,gbRange-method
+#' gbRange class
+#' 
+#' @param ... Slots of gbRange
+#' 
+#' @exportClass gbRange
+#' @name gbRange-class
+#' @rdname gbRange-class
+#' @aliases $,gbRange-method
+#' @aliases [,gbRange-method
+#' @aliases [[,gbRange-method
 .gbRange <- setClass("gbRange", contains="IRanges")
 
 
@@ -21,13 +21,12 @@ NULL
 
 
 #' @keywords internal
-setMethod("initialize",
-          signature(.Object = "gbRange"),
+setMethod("initialize", "gbRange",
           function (.Object, start, width, strand, ...) {
             if (missing(start) || missing(width) || missing(strand)) {
               stop("Missing arguments")
             }
-            if (!all(strand %in% c(1,-1))) {
+            if (any(strand %ni% c(1,-1))) {
               stop("Strand must be encoded as 1 (plus strand) or -1 (minus strand)")
             }
             anno=list(...)
@@ -36,7 +35,7 @@ setMethod("initialize",
               stop("Arguments have unequal length")
             }
             r <- callNextMethod(.Object, start = start, width = width)
-            r@elementMetadata <- if (length(anno) > 0) {
+            elementMetadata(r) <- if (length(anno) > 0) {
               DataFrame(strand, anno)
             } else {
               DataFrame(strand)
@@ -58,8 +57,7 @@ setMethod("show", "gbRange",
             } 
             if (lo < 20L) {
               showme <- 
-                as.data.frame(cbind(as.data.frame(object),
-                                    as.data.frame(object@elementMetadata)),
+                as.data.frame(as(object, "data.frame"),
                               row.names = paste0("[", seq_len(lo), "]"))
             } else {
               n <- 8

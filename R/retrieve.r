@@ -1,11 +1,11 @@
 #' @keywords internal
 .retrieve <- function (x, cols = NULL) {
   
-  if (is.null(cols) || length(x) == 0)
+  if (is_empty(x) || is.null(cols))
     return(x)
   
   cols <- gsub("\n|\t", " ", cols)
-  cols <- strsplit(cols, ";")[[1]]
+  cols <- unlist(strsplit(cols, ";"))
   col_names <- character(0)
   i <- k <- l <- q <- NULL
   
@@ -79,8 +79,7 @@
         names=.Names
       )
     }
-  }
-  else {
+  } else {
     args <- flatten(args, stop.at = 2)
     if (any(r <- vapply(args, function (x) is(x, "gbRange"), logical(1)))) {
       .Names <- append(.Names, "range", which(r) - 1)
@@ -102,17 +101,14 @@ parseDbXref <- function (dbx) {
   n <- if (is.null(n <- nrow(dbx))) length(dbx) else n
   
   if (is.atomic(dbx)) {
-    dbs <-  unique(sapply(strsplit(dbx, ":"), "[", 1))
-    structure(list(unlist(lapply(strsplit(dbx, ":"), "[", 2), use.names=FALSE)),
-              names = dbs)
+    structure(list(strsplitN(dbx, ":", 2)), names=unique(strsplitN(dbx, ":", 1)))
   } else if (is.data.frame(dbx)) {
-    dbs <- sapply(dbx, function (x) sapply(strsplit(x, ":"), "[", 1)) %@%
+    dbs <- vapply(dbx, strsplitN, ":", 1, FUN.VALUE=character(1)) %@%
       unique %@% `dim<-`(NULL)
-    structure(lapply(dbx, function (x) sapply(strsplit(x, ":"), "[", 2)),
-              names = dbs)
+    structure(lapply(dbx, strsplitN, ":", 2), names = dbs)
   } else if (is.list(dbx)) {
     l <- lapply(dbx, function (x) {
-      a <- sapply(x, strsplit, split=":")
+      a <- sapply(x, strsplit, ":")
       a <- setNames(sapply(a, "[", 2), sapply(a, "[", 1))
       data.frame(stringsAsFactors=FALSE, as.list(a))
     }) %@% rbind.fill

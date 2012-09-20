@@ -7,7 +7,7 @@
 }
 \arguments{
   \item{x}{A \sQuote{\code{gbRecord}} or
-  \sQuote{\code{gbFeatureList}} object}
+  \sQuote{\code{gbFeatureList}} instance}
 
   \item{...}{Named values that specify the features to
   select. These are merged with the values of \code{keys}
@@ -25,8 +25,8 @@
   \dQuote{key}, or any qualifier tag (e.g.,
   \dQuote{locus_tag}, \dQuote{product}). If no
   \sQuote{\emph{keys}} is given a
-  \code{\link{gbFeature-class}} or
-  \code{\link{gbFeatureList-class}} object is returned.}
+  \code{\linkS4class{gbFeature}} or
+  \code{\linkS4class{gbFeatureList}} object is returned.}
 }
 \value{
   Depending on the value of \code{select}.
@@ -42,7 +42,7 @@
 
   Possible keywords are:
 
-  \describe{ \item{index} or \item{idx}{ For example:
+  \describe{ \item{index/idx}{ For example:
   \code{idx=c(3,4,5,6)}, \code{idx=100:150},
   \code{index=c(1,12:20)} } \item{range}{ For example:
   \code{range="10000..25000"},

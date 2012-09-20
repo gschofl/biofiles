@@ -1,11 +1,6 @@
-GBFIELDS <- paste0("@G@I|accession|comment|date|dblink|dbsource|",
-                   "definition|division|features|keywords|length|",
-                   "lineage|locus|organism|references|sequence|",
-                   "source|topology|type|version")
-
-##' validate a gbRecord database which if referenced by gbFeature or
-##' gbFeatureList objects by their '.Dir' slot. 
-##' @keywords internal
+#' validate a gbRecord database which if referenced by gbFeature or
+#' gbFeatureList objects by their '.Dir' slot. 
+#' @keywords internal
 hasValidDb <- function (x, verbose=TRUE, fields=GBFIELDS) {
   
   if (!.hasSlot(x, ".Dir")) {
@@ -19,7 +14,7 @@ hasValidDb <- function (x, verbose=TRUE, fields=GBFIELDS) {
     return( FALSE )
   }
   
-  if (sum(idx <- grepl(fields, list.files(x@.Dir))) != 20L) {
+  if (sum(idx <- grepl(fields, dir(x@.Dir))) != 20L) {
     if (verbose)
       message(paste("Field(s) are missing from the database:",
                     paste(strsplit(fields, split="\\|")[[1]][!idx], collapse=",")))
@@ -29,9 +24,9 @@ hasValidDb <- function (x, verbose=TRUE, fields=GBFIELDS) {
   TRUE
 }
 
-##' validate a gbRecord database (i.e. check if the db directory contains
-##' all fields).
-##' @keywords internal
+#' validate a gbRecord database (i.e. check if the db directory contains
+#' all fields).
+#' @keywords internal
 isValidDb <- function (x, verbose=TRUE, fields=GBFIELDS) {
   
   if (sum(idx <- grepl(fields, list.files(x@dir))) != 20L) {
@@ -44,15 +39,14 @@ isValidDb <- function (x, verbose=TRUE, fields=GBFIELDS) {
   TRUE
 }
 
-## check if the db directory has been moved from the location
-## where it was instantiated
+# check if the db directory has been moved from the location
+# where it was instantiated
 hasNewPath <- function (x) {
-  ## check if the db directory has moved
   !identical(x@dir, x$features@.Dir) 
 }
 
-## if yes update the gbFeatureList@.Dir and gbFeature@.Dir
-## slots to  point to the current directory.
+# if yes update the gbFeatureList@.Dir and gbFeature@.Dir
+# slots to  point to the current directory.
 updateDirectory <- function (db) {
   newPath <- db@dir
   data <- dbFetch(db, "features")
@@ -69,11 +63,11 @@ updateDirectory <- function (db) {
 
 is.compound <- function (x) {
   if (is(x, "gbFeatureList")) {
-    return(vapply(x, function (f) !is.na(f@location@compound), logical(1)))
+    return(vapply(x, function (f) not.na(f@location@compound), logical(1)))
   } else if (is(x, "gbFeature")) {
-    return(!is.na(x@location@compound))
+    return(not.na(x@location@compound))
   } else if (is(x, "gbLocation")) {
-    return(!is.na(x@compound))
+    return(not.na(x@compound))
   }
 }
 

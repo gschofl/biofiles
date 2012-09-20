@@ -110,7 +110,6 @@ gbFeatureList <- function(db_dir, accession, definition, features) {
 # Getter-methods ---------------------------------------------------------
 
 
-#' @export
 setMethod("start", "gbFeatureList",
           function (x, join = FALSE, drop = TRUE) {
             ans <- lapply(x, start, join = join, drop = drop)
@@ -126,23 +125,21 @@ setMethod("start", "gbFeatureList",
           })
 
 
-#' @export
-setMethod("start<-", "gbFeatureList",
-          function (x, value) {
-            if (length(value) < length(x)) {
-              value <- c(rep(value, length(x)%/%length(value)),
-                         value[seq_len(length(x)%%length(value))])
-            }
-            new_x <- Map(function(Feature, val) { 
-              start(Feature) <- val
-              Feature }, Feature=x, val=value)
-            
-            .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
-                           .ACCN=x@.ACCN, .DEF=x@.DEF)
-          })
+setReplaceMethod("start", "gbFeatureList",
+                 function (x, value) {
+                   if (length(value) < length(x)) {
+                     value <- c(rep(value, length(x)%/%length(value)),
+                                value[seq_len(length(x)%%length(value))])
+                   }
+                   new_x <- Map(function(Feature, val) { 
+                     start(Feature) <- val
+                     Feature }, Feature=x, val=value)
+                   
+                   .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
+                                  .ACCN=x@.ACCN, .DEF=x@.DEF)
+                 })
 
 
-#' @export
 setMethod("end", "gbFeatureList",
           function (x, join = FALSE, drop = TRUE) {
             ans <- lapply(x, end, join = join, drop = drop)
@@ -157,23 +154,22 @@ setMethod("end", "gbFeatureList",
             }
           })
 
-#' @export
-setMethod("end<-", "gbFeatureList",
-          function(x, value){
-            if (length(value) != length(x)) {
-              value <- c(rep(value, length(x)%/%length(value)),
-                         value[seq_len(length(x)%%length(value))])
-            }
-            new_x <- Map(function(Feature, val) { 
-              end(Feature) <- val
-              Feature }, Feature=x, val=value)
-            
-            .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
-                           .ACCN=x@.ACCN, .DEF=x@.DEF)
-          })
+
+setReplaceMethod("end", "gbFeatureList",
+                 function(x, value){
+                   if (length(value) != length(x)) {
+                     value <- c(rep(value, length(x)%/%length(value)),
+                                value[seq_len(length(x)%%length(value))])
+                   }
+                   new_x <- Map(function(Feature, val) { 
+                     end(Feature) <- val
+                     Feature }, Feature=x, val=value)
+                   
+                   .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
+                                  .ACCN=x@.ACCN, .DEF=x@.DEF)
+                 })
 
 
-#' @export
 setMethod("strand", "gbFeatureList",
           function (x, join = FALSE) {
             ans <- lapply(x, strand, join = join)        
@@ -185,23 +181,21 @@ setMethod("strand", "gbFeatureList",
           })
 
 
-#' @export
-setMethod("strand<-", "gbFeatureList",
-          function (x, value) {
-            if (length(value) != length(x)) {
-              value <- c(rep(value, length(x)%/%length(value)),
-                         value[seq_len(length(x)%%length(value))])
-            }
-            new_x <- Map(function(Feature, val) { 
-              strand(Feature) <- val
-              Feature }, Feature=x, val=value)
-            
-            .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
-                           .ACCN=x@.ACCN, .DEF=x@.DEF)
-          })
+setReplaceMethod("strand", "gbFeatureList",
+                 function (x, value) {
+                   if (length(value) != length(x)) {
+                     value <- c(rep(value, length(x)%/%length(value)),
+                                value[seq_len(length(x)%%length(value))])
+                   }
+                   new_x <- Map(function(Feature, val) { 
+                     strand(Feature) <- val
+                     Feature }, Feature=x, val=value)
+                   
+                   .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
+                                  .ACCN=x@.ACCN, .DEF=x@.DEF)
+                 })
 
 
-#' @export
 setMethod("width", "gbFeatureList",
           function (x, join = FALSE) {
             ans <- lapply(x, width, join = join)
@@ -213,7 +207,6 @@ setMethod("width", "gbFeatureList",
           })
 
 
-#' @export
 setMethod("range", "gbFeatureList",
           function (x, join = FALSE) {
             start <- as.integer(unlist(start(x, join = join)))
@@ -223,7 +216,6 @@ setMethod("range", "gbFeatureList",
           })
 
 
-#' @export
 setMethod("location", "gbFeatureList",
           function (x, attributes = TRUE, join = FALSE) {
             ans <- range(x, join = join)
@@ -249,7 +241,6 @@ setMethod("location", "gbFeatureList",
           })
 
 
-#' @export
 setMethod("index", "gbFeatureList",
           function (x, attributes=TRUE) { 
             ans <- vapply(x, function(f) f@.ID, numeric(1))
@@ -262,7 +253,6 @@ setMethod("index", "gbFeatureList",
           })
 
 
-#' @export
 setMethod("key", "gbFeatureList",
           function (x, attributes=TRUE) {
             ans <- vapply(x, function(f) f@key, character(1))
@@ -277,7 +267,6 @@ setMethod("key", "gbFeatureList",
           })
 
 
-#' @export
 setMethod("qualif", "gbFeatureList",
           function (x, which, attributes = TRUE, fixed = FALSE) {
             if (missing(which))
@@ -295,14 +284,13 @@ setMethod("qualif", "gbFeatureList",
           })
 
 
-#' @export
 setMethod("dbxref", "gbFeatureList",
           function (x, db=NULL, na.rm=TRUE, ...) {     
             ans <- lapply(x, dbxref, db=db)
-            names(ans) <- lapply(x, function(f) paste0(f@key, ".", f@.ID))
+            names(ans) <- lapply(x, function(f) sprintf("%s.%s", f@key, f@.ID))
             if (na.rm)
               ans <- ans[!is.na(ans)]
-            if (length(ans) == 0) {
+            if (is_empty(ans)) {
               return(NA_character_)
             }
             
@@ -310,7 +298,6 @@ setMethod("dbxref", "gbFeatureList",
           })
 
 
-#' @export
 setMethod("sequence", "gbFeatureList",
           function (x, db = NULL) {
             stopifnot(hasValidDb(x))
@@ -319,13 +306,11 @@ setMethod("sequence", "gbFeatureList",
           })
 
 
-#' @export
 setMethod("hasKey", "gbFeatureList", 
           function (x, key)
             vapply(x, hasKey, key, FUN.VALUE=logical(1)))
 
 
-#' @export
 setMethod("hasQualif", "gbFeatureList", 
           function (x, qualifier)
             vapply(x, hasQualif, qualifier, FUN.VALUE=logical(1)))
@@ -364,7 +349,7 @@ setMethod("[", c("gbFeatureList", "missing", "missing", "ANY"),
 
 # Select-method ----------------------------------------------------------
 
-#' @export
+
 setMethod("select", "gbFeatureList", 
           function (x, ..., keys = NULL, cols = NULL) {
             ans <- .select(x, ..., keys = keys)
@@ -376,7 +361,6 @@ setMethod("select", "gbFeatureList",
 # View ----------------------------------------------------------------
 
 
-#' @export
 setMethod("view", "gbFeatureList", 
           function (x, n)  {
             for (i in x[seq(if (missing(n)) length(x) else n)]){
@@ -389,7 +373,6 @@ setMethod("view", "gbFeatureList",
 # shift-method -----------------------------------------------------------
 
 
-#' @export
 setMethod("shift", "gbFeatureList",
           function(x, shift=0L, split=FALSE, order=FALSE, updateDb=FALSE) {
             .shift_features(x=x, shift=shift, split=split, order=order,
@@ -397,10 +380,7 @@ setMethod("shift", "gbFeatureList",
           })
 
 
-.shift_features <- function (x,
-                             shift=0L,
-                             split=FALSE,
-                             order=FALSE,
+.shift_features <- function (x, shift=0L, split=FALSE, order=FALSE,
                              updateDb=FALSE) {
   
   if (is(x, "gbRecord")) {
@@ -415,7 +395,7 @@ setMethod("shift", "gbFeatureList",
   }
   
   update_split <- function(x, split_matrix) {
-    if (!is.na(x@location@compound)) {
+    if (not.na(x@location@compound)) {
       stop("Cannot split a compound location")
     }
     x@location@.Data <- split_matrix
@@ -504,7 +484,6 @@ setMethod("shift", "gbFeatureList",
 # revcomp-method ---------------------------------------------------------
 
 
-#' @export
 setMethod("revcomp", "gbFeatureList",
           function(x, order=FALSE, updateDb=FALSE)
             .revcomp_features(x=x, order=order, updateDb=updateDb))
