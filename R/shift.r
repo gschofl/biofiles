@@ -1,4 +1,3 @@
-#' @keywords internal
 .shift_features <- function (x, shift=0L, split=FALSE, order=FALSE,
                              updateDb=FALSE) {
   

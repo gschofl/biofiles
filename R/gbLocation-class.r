@@ -1,63 +1,53 @@
-
-# gbLocation-class ----------------------------------------------------
-
 #' @include utils.r
 #' @include validate.r
 #' @include all-generics.r
+#' @importClassesFrom intervals Intervals_full
 NULL
+
+
+# gbLocation-class ----------------------------------------------------
+
 
 #' gbLocation class
 #' 
-#' dQuote{\code{gbLocation}} is a container for GenBank Feature Locations.
-#' It extends \code{\link[intervals]{Intervals_full}} and provides 5
-#' additional Slots:
-#' \describe{
-#'   \item{strand}{A single integer -1 or 1 (for minus or plus strand,
-#'   respectively)}
-#'   \item{compound}{A character code specifying how multiple segments
-#'   are joined. One of \sQuote{join} or \sQuote{order}.}
-#'   \item{partial}{A logical matrix specifying whether residues are
-#'   missing from the 5' and 3' ends respectively.}
-#'   \item{accession}{}
-#'   \item{remote}{}
-#' }
+#' \dQuote{\code{gbLocation}} is a container for GenBank Feature Locations.
+#' It extends \code{\linkS4class{Intervals_full}} and provides 5
+#' additional Slots.
 #' 
+#' @slot strand A single integer -1 or 1 (for minus or plus strand,
+#'   respectively)
+#' @slot compound A character code specifying how multiple segments
+#'   are joined. One of \sQuote{join} or \sQuote{order}.
+#' @slot partial A logical matrix specifying whether residues are
+#'   missing from the 5' and 3' ends respectively.
+#' @slot accession
+#' @slot remote
+#'
+#' @details
 #' For more information see the 
 #' \href{ftp://ftp.ncbi.nih.gov/genbank/gbrel.txt}{GenBank Release Note}
 #'
-#' @param ... Slots of gbLocation
-#'
-#' @exportClass gbLocation
-#' @name gbLocation-class
-#' @rdname gbLocation-class
-#' @aliases show,gbLocation-method
-#' @aliases start,gbLocation-method
-#' @aliases start<-,gbLocation-method
-#' @aliases end,gbLocation-method
-#' @aliases end<-,gbLocation-method
-#' @aliases width,gbLocation-method
-#' @aliases strand,gbLocation-method
-#' @aliases strand<-,gbLocation-method
-#' @aliases range,gbLocation-method
-#' @aliases partial,gbLocation-method
-#' @aliases as.gbLocation,gbLocation-method
-.gbLocation <- 
-  setClass("gbLocation",
-           representation(strand = "integer",
-                          compound = "character",
-                          partial = "matrix",
-                          accession = "character",
-                          remote = "logical"),
-           prototype(type = "Z",
-                     strand = NA_integer_,
-                     compound = NA_character_,
-                     partial = matrix( FALSE, 0, 2 ),
-                     accession = NA_character_,
-                     remote = FALSE ),
-           contains = "Intervals_full")
+#' @rdname gbLocation
+#' @export
+#' @classHierarchy
+#' @classMethods
+.gbLocation <- setClass("gbLocation",
+                        representation(strand = "integer",
+                                       compound = "character",
+                                       partial = "matrix",
+                                       accession = "character",
+                                       remote = "logical"),
+                        prototype(type = "Z",
+                                  strand = NA_integer_,
+                                  compound = NA_character_,
+                                  partial = matrix( FALSE, 0, 2 ),
+                                  accession = NA_character_,
+                                  remote = FALSE ),
+                        contains = "Intervals_full")
 
 
 #' @keywords internal
+#' @autoImports
 setValidity("gbLocation",
             function (object) {
               
@@ -74,6 +64,7 @@ setValidity("gbLocation",
 
 
 #' @keywords internal
+#' @autoImports
 setMethod("initialize", "gbLocation",
           function (.Object, .Data, strand, compound, partial, remote, ...)  {
             if (missing(.Data)) {
@@ -103,7 +94,6 @@ setMethod("initialize", "gbLocation",
 # Getter-methods ---------------------------------------------------------
 
 
-#' @export
 setMethod("start", "gbLocation",
           function (x, join = FALSE, drop = TRUE) {
             if (join)
@@ -113,7 +103,6 @@ setMethod("start", "gbLocation",
           })
 
 
-#' @export
 setMethod("end", "gbLocation",
           function (x, join = FALSE, drop = TRUE) {
             if (join)
@@ -287,7 +276,6 @@ setAs("character", "gbLocation",
       })
 
 
-#' @export
 as.gbLocation <- function (base_span) {
   as(as.character(base_span), "gbLocation")
 }
@@ -316,7 +304,6 @@ setMethod("shift", "gbLocation",
 # Show-method ---------------------------------------------------------
 
 
-#' @export 
 setMethod("show", "gbLocation",
           function (object) {
             res <- as(object, "character")
@@ -328,6 +315,7 @@ setMethod("show", "gbLocation",
 
 
 #' @keywords internal
+#' @autoImports
 .parseSimpleSpan <- function (base_span) {
   # test for strand
   strand <- if (grepl("complement", base_span, fixed=TRUE)) -1L else 1L
@@ -347,7 +335,9 @@ setMethod("show", "gbLocation",
        remote=remote, closed=closed)
 }
 
+
 #' @keywords internal
+#' @autoImports
 .getLocation <- function(gb_base_span) {                       
   
   # clean up possible whitespace

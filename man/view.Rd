@@ -1,6 +1,6 @@
+% Built by roxygen3 0.1
 \name{view}
 \alias{view}
-\alias{view-methods}
 \title{View all features in a gbFeatureList}
 \usage{
   view(x, n, ...)
@@ -12,10 +12,18 @@
 
   \item{...}{Additional arguments passed to methods.}
 }
+
 \value{
-  NULL
+NULL
 }
 \description{
-  View all features in a gbFeatureList
+View all features in a gbFeatureList
+}
+\section{Method signatures for generic view}{
+\itemize{
+  \item \linkS4class{gbFeatureList}
 }
 
+}
+
+\keyword{methods}

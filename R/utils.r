@@ -1,71 +1,3 @@
-#' @importClassesFrom intervals Intervals_full
-#' @importClassesFrom intervals Intervals_virtual
-#' @importClassesFrom intervals Intervals_virtual_or_numeric
-#' @importClassesFrom IRanges IRanges
-#' @importClassesFrom IRanges Ranges
-#' @importClassesFrom IRanges IntegerList
-#' @importClassesFrom IRanges RangesORmissing
-#' @importClassesFrom IRanges List
-#' @importClassesFrom IRanges AtomicList
-#' @importClassesFrom IRanges Vector
-#' @importClassesFrom IRanges Annotated
-#' @importClassesFrom IRanges DataFrame
-#' @importClassesFrom filehash filehashRDS
-#' @importClassesFrom filehash filehash
-#'  
-#' @import rmisc
-#' 
-#' @importFrom intervals closed
-#' 
-#' @importFrom stats start
-#' @importFrom stats end
-#' 
-#' @importFrom IRanges DataFrame
-#' @importFrom IRanges IRanges
-#' @importFrom IRanges precede
-#' @importFrom IRanges follow
-#' @importFrom IRanges "start<-"
-#' @importFrom IRanges "end<-"
-#' @importFrom IRanges width
-#' @importFrom IRanges shift
-#' @importFrom IRanges IntervalTree
-#' @importFrom IRanges findOverlaps
-#' @importFrom IRanges queryHits
-#' @importFrom IRanges subjectHits
-#' @importFrom IRanges as.data.frame
-#' @importFrom IRanges elementMetadata
-#' @importFrom IRanges "elementMetadata<-"
-#' @importMethodsFrom IRanges coerce
-#' 
-#' @importFrom filehash dbCreate
-#' @importFrom filehash dbInit
-#' @importFrom filehash dbFetch
-#' @importFrom filehash dbInsert
-#' @importFrom filehash dbDelete
-#' 
-#' @importFrom Biostrings read.DNAStringSet
-#' @importFrom Biostrings read.RNAStringSet
-#' @importFrom Biostrings read.AAStringSet
-#' @importFrom Biostrings write.XStringSet
-#' @importFrom Biostrings DNAStringSet
-#' @importFrom Biostrings RNAStringSet
-#' @importFrom Biostrings AAStringSet
-#' @importFrom Biostrings reverseComplement
-#' @importFrom Biostrings xscat
-#' @importFrom Biostrings subseq
-#' @importFrom Biostrings toString
-#' 
-#' @importFrom stringr str_extract
-#' @importFrom stringr str_detect
-#' 
-#' @importFrom plyr rbind.fill
-#' 
-#' @importFrom parallel mcmapply
-#' @importFrom parallel mclapply
-#' @importFrom parallel detectCores
-NULL
-
-
 recycle <- function (x, val) {
   lx <- length(x)
   lv <- length(val)
@@ -81,6 +13,7 @@ recycle <- function (x, val) {
 }
 
 
+#' @autoImports
 merge_lines <- function (lines) {
   if (length(lines) == 1L) {
     trim(lines)
@@ -90,8 +23,20 @@ merge_lines <- function (lines) {
 }
 
 
+#' @autoImports
+is_compound <- function (x) {
+  if (is(x, "gbFeatureList")) {
+    return(vapply(x, function (f) not.na(f@location@compound), logical(1)))
+  } else if (is(x, "gbFeature")) {
+    return(not.na(x@location@compound))
+  } else if (is(x, "gbLocation")) {
+    return(not.na(x@compound))
+  }
+}
+
+
 getCompounds <- function (x) {
-  x <- x[which(is.compound(x))]
+  x <- x[which(is_compound(x))]
   if (length(x) == 0) return(NA_real_) 
   cL <- vapply(x, function (f) nrow(f@location@.Data), numeric(1))
   cL
@@ -99,7 +44,7 @@ getCompounds <- function (x) {
 
 
 expandIds <- function (x) {
-  cmp_pos <- Position(is.compound, x)
+  cmp_pos <- Position(is_compound, x)
   if (is.na(cmp_pos)) {
     return(list(ids=index(x, FALSE), keys=key(x, FALSE)))
   }
@@ -120,7 +65,6 @@ expandIds <- function (x) {
 }
 
 
-# Access qualifiers from gbFeature or gbFeatureList objects
 .qualAccess <- function (x, qual = "", fixed = FALSE) {
   
   .access <- function (q) {
@@ -129,8 +73,8 @@ expandIds <- function (x) {
     n <- length(q)
     
     if (n == 0) {
-      return( structure(rep(NA_character_, length(qual)),
-                        names=trim(qual, "\\\\b")) )
+      return(structure(rep(NA_character_, length(qual)),
+                       names=trim(qual, "\\\\b")))
     }
     
     idx <- matrix(
@@ -185,6 +129,7 @@ expandIds <- function (x) {
 }
 
 
+#' @autoImports
 .seqAccess <- function (s, x, type) {
   
   if (is.null(s))
@@ -195,7 +140,8 @@ expandIds <- function (x) {
     if (length(start(x)) == 1L) {
       seq <- subseq(s, start=start(x), end=end(x))
     } else {
-      seq <- do.call(xscat, Map(subseq, s, start=start(x), end=end(x)))
+      seq <- do.call(xscat, base::Map(Biostrings::subseq, s, 
+                                      start=start(x), end=end(x)))
     }
     seq <- switch(type,
                   DNA=DNAStringSet(seq),

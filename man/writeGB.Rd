@@ -1,3 +1,4 @@
+% Built by roxygen3 0.1
 \name{writeGB}
 \alias{writeGB}
 \title{General function for writing out GenBank flat files}
@@ -9,8 +10,8 @@
 
   \item{outfile}{Output file.}
 }
-\description{
-  For a description of the GenBank format see
-  \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
-}
 
+\description{
+For a description of the GenBank format see
+\url{http://www.ncbi.nlm.nih.gov/collab/FT/}
+}

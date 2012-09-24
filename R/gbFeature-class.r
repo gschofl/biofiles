@@ -8,50 +8,28 @@ setClassUnion("charOrNull", c("character", "NULL"))
 
 #' gbFeature class
 #' 
-#' \sQuote{gbFeature} is an S4 class that extends the class
+#' @description
+#' \sQuote{\code{gbFeature}} is an S4 class that extends the class
 #' \code{\linkS4class{gbFeatureList}}. This class provides a container
 #' for feature data retrived from GenBank flat files.
 #' 
-#' \code{gbFeature} provide the following slots:
+#' @slot .Dir The path to the database file containing the GenBank
+#' record the feature is part of.
+#' @slot .ACCN Accession number of the GenBank record that the
+#' feature is part of.
+#' @slot .DEF The definition line (brief description of the sequence)
+#' of the GenBank record the feature is part of.
+#' @slot .ID Identifier (sequential index) of the feature in the
+#' GenBank record the feature is part of.
+#' @slot key
+#' @slot location
+#' @slot qualifiers Named character vector. Name attributes
+#'    correspond to GenBank qualifier tags.       
 #' 
-#' \describe{
-#'    \item{.Dir}{The path to the database file containing the GenBank
-#'    record the feature is part of.}
-#'    \item{.ACCN}{Accession number of the GenBank record that the
-#'    feature is part of.}
-#'    \item{.DEF}{The definition line (brief description of the sequence)
-#'    of the GenBank record the feature is part of.}
-#'    \item{.ID}{Identifier (sequential index) of the feature in the
-#'    GenBank record the feature is part of.}
-#'    \item{key}{Feature key (e.g. Source, CDS, gene, etc.)}
-#'    \item{location}{An object of \code{\link{gbLocation-class}}}
-#'    \item{qualifiers}{Named character vector. Name attributes
-#'    correspond to GenBank qualifier tags.}       
-#' }
-#' 
-#' @param ... Slots of gbFeature
-#'
-#' @name gbFeature-class
-#' @rdname gbFeature-class
+#' @rdname gbFeature
 #' @exportClass gbFeature
-#' @aliases show,gbFeature-method
-#' @aliases summary,gbFeature-method
-#' @aliases start,gbFeature-method
-#' @aliases end,gbFeature-method
-#' @aliases strand,gbFeature-method
-#' @aliases width,gbFeature-method
-#' @aliases range,gbFeature-method
-#' @aliases partial,gbFeature-method
-#' @aliases index,gbFeature-method
-#' @aliases key,gbFeature-method
-#' @aliases location,gbFeature-method
-#' @aliases qualif,gbFeature-method
-#' @aliases dbxref,gbFeature-method
-#' @aliases sequence,gbFeature-method
-#' @aliases hasKey,gbFeature-method
-#' @aliases hasQualif,gbFeature-method
-#' @aliases [[,gbFeature-method
-#' @aliases $,gbFeature-method
+#' @classHierarchy
+#' @classMethods
 .gbFeature <- setClass("gbFeature",
                        representation(.Dir="character",
                                       .ACCN="character",
@@ -71,7 +49,7 @@ setValidity("gbFeature", function (object) {
 # show -------------------------------------------------------------------
 
 
-#' @export
+#' @autoImports
 setMethod("show", "gbFeature",
           function (object) {
             op <- options("useFancyQuotes")
@@ -101,7 +79,6 @@ setMethod("show", "gbFeature",
 # summary ----------------------------------------------------------------
 
 
-#' @export
 setMethod("summary", "gbFeature",
     function (object, ...) {
         showme <- sprintf("%-6s%-20s%-32s\n",

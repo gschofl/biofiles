@@ -8,48 +8,25 @@ setOldClass("list")
 
 #' gbFeatureList class
 #' 
-#' gbFeatureList is an S4 class that extends the
-#' \code{\link{gbRecord-class}}. This class provides a container for
+#' \dQuote{\code{gbFeatureList}} is an S4 class that extends the
+#' \code{\linkS4class{gbRecord}} class. This class provides a container for
 #' feature data retrived from GenBank flat files.
 #'
-#' gbFeatureList objects have four slots in addition to the slots provided
-#' by \code{\link{gbRecord-class}} objects:
-#' \describe{
-#'    \item{.Dir}{The path to the database file containing the GenBank
-#'    record the feature list is part of.}
-#'    \item{.ACCN}{Accession number of the GenBank record that the
-#'    feature list is part of.}
-#'    \item{.DEF}{The definition line (brief description of the sequence)
-#'    of the GenBank record the feature list is part of.}
-#'    \item{.Data}{A list of gbFeature objects}
-#' }
+#' \dQuote{\code{gbFeatureList}} instances have four slots in addition to the7
+#' slots provided by \code{\linkS4class{gbRecord}} objects:
 #' 
-#' @param ... Slots of gbFeature
+#' @slot .Dir The path to the database file containing the GenBank
+#' record the feature list is part of.
+#' @slot .ACCN Accession number of the GenBank record that the
+#' feature list is part of.
+#' @slot .DEF The definition line (brief description of the sequence)
+#' of the GenBank record the feature list is part of.
+#' @slot .Data A list of \dQuote{\code{gbFeature}} instances.
 #' 
-#' @name gbFeatureList-class
-#' @rdname gbFeatureList-class
+#' @rdname gbFeatureList
 #' @exportClass gbFeatureList
-#' @aliases show,gbFeatureList-method
-#' @aliases summary,gbFeatureList-method
-#' @aliases start,gbFeatureList-method
-#' @aliases end,gbFeatureList-method
-#' @aliases strand,gbFeatureList-method
-#' @aliases start<-,gbFeatureList-method
-#' @aliases end<-,gbFeatureList-method
-#' @aliases strand<-,gbFeatureList-method
-#' @aliases width,gbFeatureList-method
-#' @aliases range,gbFeatureList-method
-#' @aliases index,gbFeatureList-method
-#' @aliases key,gbFeatureList-method
-#' @aliases location,gbFeatureList-method
-#' @aliases qualif,gbFeatureList-method
-#' @aliases dbxref,gbFeatureList-method
-#' @aliases sequence,gbFeatureList-method
-#' @aliases hasKey,gbFeatureList-method
-#' @aliases hasQualif,gbFeatureList-method
-#' @aliases [,gbFeatureList-method
-#' @aliases select,select-method,gbFeatureList-method
-#' @aliases view,view-method,gbFeatureList-method
+#' @classHierarchy
+#' @classMethods
 .gbFeatureList <- setClass("gbFeatureList", 
                            representation(.Dir="character",
                                           .ACCN="character",
@@ -75,7 +52,6 @@ setValidity("gbFeatureList", function (object) {
 # show -------------------------------------------------------------------
 
 
-#' @export
 setMethod("show", "gbFeatureList", 
           function (object) {
             n_f <- length(object)
@@ -95,7 +71,6 @@ setMethod("show", "gbFeatureList",
 # summary ----------------------------------------------------------------
 
 
-#' @export
 setMethod("summary", "gbFeatureList",
           function (object, ...) {
             x <- lapply(object, summary)
@@ -134,7 +109,6 @@ setMethod("end", "gbFeatureList",
               setNames(data.frame(do.call(rbind, ans)), "end")
             }
           })
-
 
 
 setMethod("strand", "gbFeatureList",

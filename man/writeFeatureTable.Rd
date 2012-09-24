@@ -1,3 +1,4 @@
+% Built by roxygen3 0.1
 \name{writeFeatureTable}
 \alias{writeFeatureTable}
 \title{General function for writing out NCBI feature tables}
@@ -8,20 +9,18 @@
 \arguments{
   \item{db}{A \code{gbRecord} object.}
 
-  \item{tablename}{(Optional) Optional table name to appear
-  in the first line of the feature table.}
+  \item{tablename}{(Optional) Optional table name to appear in the first line
+of the feature table.}
 
-  \item{dbname}{Data base name associated with the CDS
-  qualifier protein_id.}
+  \item{dbname}{Data base name associated with the CDS qualifier protein_id.}
 
   \item{with_sequence}{Additionally autput fasta file}
 
   \item{outfile}{Output file.}
 }
-\description{
-  Feature tables are simple five-column tab-delimited
-  tables specifying the location and type of each feature.
-  They can be used as input for tbl2asn or Sequin to
-  generate annotation.
-}
 
+\description{
+Feature tables are simple five-column tab-delimited tables specifying the
+location and type of each feature. They can be used as input for tbl2asn
+or Sequin to generate annotation.
+}

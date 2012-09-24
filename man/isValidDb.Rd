@@ -1,3 +1,4 @@
+% Built by roxygen3 0.1
 \name{isValidDb}
 \alias{isValidDb}
 \title{validate a gbRecord database (i.e. check if the db directory contains
@@ -6,8 +7,7 @@ all fields).}
   isValidDb(object, verbose = TRUE)
 }
 \description{
-  validate a gbRecord database (i.e. check if the db
-  directory contains all fields).
+validate a gbRecord database (i.e. check if the db directory contains
+all fields).
 }
 \keyword{internal}
-

@@ -1,4 +1,5 @@
 #' @keywords internal
+#' @autoImports
 .select <- function (x, ..., keys = NULL) {
     
   args <- parse_args(..., keys = keys)
@@ -105,6 +106,7 @@ parse_args <- function (..., keys) {
 
 
 #' @keywords internal
+#' @autoImports
 parse_tags <- function (keys) {
   if (is_empty(keys))
     return(NULL)
@@ -131,6 +133,7 @@ parse_tags <- function (keys) {
 
 
 #' @keywords internal
+#' @autoImports
 parse_index <- function (index) {
   if (is_empty(index))
     return(NULL)
@@ -144,6 +147,7 @@ parse_index <- function (index) {
 
 
 #' @keywords internal
+#' @autoImports
 prepare_range <- function (range) {
   if (is_empty(range))
     return(NULL)
@@ -153,6 +157,7 @@ prepare_range <- function (range) {
 
 
 #' @keywords internal
+#' @autoImports
 prepare_key <- function (key) {
   if (is_empty(key))
     return(NULL)
@@ -162,6 +167,7 @@ prepare_key <- function (key) {
 
 
 #' @keywords internal
+#' @autoImports
 prepare_features <- function (feature) {
   if (is_empty(feature))
     return(NULL)
@@ -175,6 +181,7 @@ prepare_features <- function (feature) {
 
 
 #' @keywords internal
+#' @autoImports
 parse_range <- function (range) {
   if (is_empty(range))
     return(NULL)

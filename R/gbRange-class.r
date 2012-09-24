@@ -1,19 +1,14 @@
-
-# gbRange-class ----------------------------------------------------------
-
 #' @include gbLocation-class.r
 NULL
 
+# gbRange-class ----------------------------------------------------------
+
 #' gbRange class
 #' 
-#' @param ... Slots of gbRange
-#' 
-#' @exportClass gbRange
-#' @name gbRange-class
-#' @rdname gbRange-class
-#' @aliases $,gbRange-method
-#' @aliases [,gbRange-method
-#' @aliases [[,gbRange-method
+#' @rdname gbRange
+#' @export
+#' @classHierarchy
+#' @classMethods
 .gbRange <- setClass("gbRange", contains="IRanges")
 
 
@@ -21,6 +16,7 @@ NULL
 
 
 #' @keywords internal
+#' @autoImports
 setMethod("initialize", "gbRange",
           function (.Object, start, width, strand, ...) {
             if (missing(start) || missing(width) || missing(strand)) {
@@ -47,7 +43,6 @@ setMethod("initialize", "gbRange",
 # show-method ------------------------------------------------------------
 
 
-#' @export
 setMethod("show", "gbRange",
           function (object) {
             lo <- length(object)
@@ -73,9 +68,6 @@ setMethod("show", "gbRange",
           })
 
 
-#' As(gbRange, "data.frame")
-#'
-#' @name as
 setAs("gbRange", "data.frame",
       function (from) {
         data.frame(as.data.frame(from),
@@ -87,23 +79,18 @@ setAs("gbRange", "data.frame",
 # getters ----------------------------------------------------------------
 
 
-#' @export
 setMethod("start", "gbRange", function (x) callNextMethod(x))
 
 
-#' @export
 setMethod("end", "gbRange", function (x) callNextMethod(x))
 
 
-#' @export
 setMethod("width", "gbRange", function (x) IRanges::width(x))
-
 
 
 # shift ------------------------------------------------------------------
 
 
-#' @export
 setMethod("shift", "gbRange",
     function (x, shift = 0L, use.names = TRUE) {
         IRanges::shift(x=x, shift=shift, use.names=use.names)
@@ -113,13 +100,11 @@ setMethod("shift", "gbRange",
 # subsetting -------------------------------------------------------------
 
 
-#' @export
 setMethod("$", "gbRange",
           function (x, name) as(x, "data.frame")[[name]])
 
 
 ## Ignores the 'drop' argument and behaves as if it was set to FALSE
-#' @export
 setMethod("[", "gbRange",
           function (x, i, j, ..., drop=TRUE) {
             if (missing(j) && length(list(...)) == 0L)
@@ -129,7 +114,6 @@ setMethod("[", "gbRange",
           })
 
 
-#' @export
 setMethod("[[", "gbRange",
           function (x, i, j, ...)  {
             as(x, "data.frame")[[i]]

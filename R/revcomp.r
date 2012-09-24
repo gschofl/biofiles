@@ -1,4 +1,3 @@
-#' @keywords internal
 .revcomp_features <- function (x, order=FALSE, updateDb=FALSE) {
   
   if (is(x, "gbRecord")) {

@@ -1,14 +1,14 @@
-##' General function for writing out GenBank flat files
-##'
-##' For a description of the GenBank format see
-##' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
-##'
-##' @usage writeGB(db, outfile = "out.gbk")
-##'
-##' @param db A \code{gbRecord} object.
-##' @param outfile Output file.
-##' 
-##' @export
+#' General function for writing out GenBank flat files
+#'
+#' For a description of the GenBank format see
+#' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
+#'
+#' @usage writeGB(db, outfile = "out.gbk")
+#'
+#' @param db A \code{gbRecord} object.
+#' @param outfile Output file.
+#' 
+#' @export
 writeGB <- function(db, outfile = "out.gbk") {
   
   if (file.exists(outfile)) {

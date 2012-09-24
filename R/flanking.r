@@ -1,4 +1,8 @@
+#' @importFrom rmisc Curry
+NULL
+
 #' @keywords internal
+#' @autoImports
 find_neighbors <- function (query, subject, n = 5, 
                             direction = 'flanking',
                             include_key = 'any',
@@ -103,11 +107,8 @@ find_neighbors <- function (query, subject, n = 5,
 #' @param exclude_key Which feature(s) should be excluded from the search.
 #' Defaults to \dQuote{none}.
 #' 
-#' @family neighbors
-#' @export upstream downstream flanking
-#' @aliases upstream downstream flanking
-#' @examples
-#' ##
+#' @rdname upstream
+#' @export
 upstream <- 
   # upstream ####
   Curry(FUN = find_neighbors, direction = "upstream")

@@ -8,22 +8,12 @@ NULL
 #' 
 #' gbRecord is an S4 class that provides a container for data parsed from
 #' a GenBank flat file record. It is implemented as an extension of a
-#' '\link[filehash]{filehashRDS-class}' with no additional slots.
+#' \dQuote{\code{\linkS4class{filehashRDS-class}}} with no additional slots.
 #'
-#' @param ... Slots of gbRecord
-#'
-#' @name gbRecord-class
-#' @rdname gbRecord-class
-#' @exportClass gbRecord
-#' @aliases initGB,initGB-method,gbRecord-method
-#' @aliases show,gbRecord-method
-#' @aliases getFeatures,gbRecord-method
-#' @aliases [[,gbRecord-method
-#' @aliases $,gbRecord-method
-#' @aliases select,select-method,gbRecord-method
-#' @aliases write,gbRecord-method
-#' @aliases shift,gbFeature-method
-#' @aliases revcomp,gbFeature-method
+#' @rdname gbRecord
+#' @export
+#' @classHierarchy
+#' @classMethods
 .gbRecord <- setClass("gbRecord", contains="filehashRDS")
 
 
@@ -100,7 +90,6 @@ gbRecord <- function (db_dir, header, features, sequence=NULL) {
 # show -------------------------------------------------------------------
 
 
-#' @export
 setMethod("show", "gbRecord",
           function (object) {
             if(length(object@name) == 0)

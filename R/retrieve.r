@@ -1,4 +1,5 @@
 #' @keywords internal
+#' @autoImports
 .retrieve <- function (x, cols = NULL) {
   
   if (is_empty(x) || is.null(cols))
@@ -59,6 +60,7 @@
 
 # args = list(i, k, l, q)
 #' @keywords internal
+#' @autoImports
 .return <- function (..., .Names) {
   args <- list(...)
   zero <- vapply(args, is.null, logical(1L))
@@ -97,6 +99,7 @@ matchIdx <- function (x, idx) {
   which(x_idx %in% idx)  
 }
 
+#' @autoImports
 parseDbXref <- function (dbx) {
   n <- if (is.null(n <- nrow(dbx))) length(dbx) else n
   

@@ -1,16 +1,10 @@
-###
-GBFIELDS <- paste0("@G@I|accession|comment|date|dblink|dbsource|",
-                   "definition|division|features|keywords|length|",
-                   "lineage|locus|organism|references|sequence|",
-                   "source|topology|type|version")
-
+#
 .GBFIELDS <- c("@G@I","accession","comment","date","dblink",
                "dbsource","definition","division","features",
                "keywords","length","lineage","locus","organism",
                "references","sequence","source","topology",
                "type","version")
 
-###
 # Declare the regex patterns for use in .getLocation
 # single location possibly fuzzy
 .SIL <- "[<>]?\\d+"
@@ -32,3 +26,4 @@ GBFIELDS <- paste0("@G@I|accession|comment|date|dblink|dbsource|",
 .CL <- sprintf("(join|order)\\(%s(,%s)*\\)", .PCSL, .PCSL)
 # complemented compound location
 .CCL <- sprintf("complement\\(%s\\)", .CL)
+

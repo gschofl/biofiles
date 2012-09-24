@@ -48,6 +48,7 @@ hasNewPath <- function (x) {
 
 # if yes update the gbFeatureList@.Dir and gbFeature@.Dir
 # slots to  point to the current directory.
+#' @autoImports
 updateDirectory <- function (db) {
   newPath <- db@dir
   data <- dbFetch(db, "features")
@@ -59,16 +60,5 @@ updateDirectory <- function (db) {
                           check=FALSE, value=newPath))
   dbDelete(db, "features")
   dbInsert(db, "features", data)
-}
-
-
-is.compound <- function (x) {
-  if (is(x, "gbFeatureList")) {
-    return(vapply(x, function (f) not.na(f@location@compound), logical(1)))
-  } else if (is(x, "gbFeature")) {
-    return(not.na(x@location@compound))
-  } else if (is(x, "gbLocation")) {
-    return(not.na(x@compound))
-  }
 }
 
