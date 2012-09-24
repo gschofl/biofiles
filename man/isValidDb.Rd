@@ -3,7 +3,7 @@
 \title{validate a gbRecord database (i.e. check if the db directory contains
 all fields).}
 \usage{
-  isValidDb(x, verbose = TRUE, fields = GBFIELDS)
+  isValidDb(object, verbose = TRUE)
 }
 \description{
   validate a gbRecord database (i.e. check if the db

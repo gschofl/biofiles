@@ -62,7 +62,13 @@ setClassUnion("charOrNull", c("character", "NULL"))
                                       qualifiers="charOrNull"))
 
 
-# show-method ---------------------------------------------------------
+setValidity("gbFeature", function (object) {
+  # at the moment do nothing but the default checks
+  TRUE
+})
+
+
+# show -------------------------------------------------------------------
 
 
 #' @export
@@ -92,8 +98,7 @@ setMethod("show", "gbFeature",
           })
 
 
-
-# summary-method ---------------------------------------------------------
+# summary ----------------------------------------------------------------
 
 
 #' @export
@@ -106,7 +111,7 @@ setMethod("summary", "gbFeature",
     })
 
 
-# Getter-methods ---------------------------------------------------------
+# getters ----------------------------------------------------------------
 
 
 setMethod("start", "gbFeature",
@@ -132,6 +137,14 @@ setMethod("width", "gbFeature",
 setMethod("partial", "gbFeature",
           function (x)
             partial(x@location))
+
+
+setMethod("accession", "gbFeature",
+          function (x) x@.ACCN)
+
+
+setMethod("definition", "gbFeature",
+          function (x) x@.DEF)
 
 
 setMethod("range", "gbFeature",
@@ -170,7 +183,7 @@ setMethod("index", "gbFeature",
 
 
 setMethod("key", "gbFeature", 
-          function (x, attributes=FALSE) {
+          function (x, attributes = FALSE) {
             ans <- structure(x@key, names=NULL)
             if (attributes) {
               structure(ans, id=x@.ID,
@@ -229,28 +242,18 @@ setMethod("sequence", "gbFeature",
           function (x) {
             stopifnot(hasValidDb(x))
             db <- initGB(x@.Dir, verbose=FALSE)
-            ans <- .seqAccess(s=dbFetch(db, "sequence"),
-                              x, type=dbFetch(db, "type"))
+            ans <- .seqAccess(dbFetch(db, "sequence"), x, dbFetch(db, "type"))
             ans
           })
 
 
-setMethod("hasKey", "gbFeature", 
-          function (x, key) 
-            !is.na(charmatch(key, x@key)))
-
-
-setMethod("hasQualif", "gbFeature",
-          function (x, qualifier)
-            !is.na(charmatch(qualifier, names(x@qualifiers))))
-
-
-# Replacement methods -------------------------------------------------
+# setters ----------------------------------------------------------------
 
 
 setReplaceMethod("start", "gbFeature",
                  function(x, value) {
                    start(x@location) <- value
+                   validObject(x)
                    x 
                  })
 
@@ -258,13 +261,15 @@ setReplaceMethod("start", "gbFeature",
 setReplaceMethod("end", "gbFeature",
                  function(x, value) {
                    end(x@location) <- value
+                   validObject(x)
                    x
                  })
 
 
 setReplaceMethod("strand", "gbFeature",
                  function(x, value) { 
-                   strand(x@location) <- value 
+                   strand(x@location) <- value
+                   validObject(x)
                    x
                  })
 
@@ -276,6 +281,7 @@ setReplaceMethod("key", "gbFeature",
                      db <- dbInit(x@.Dir, "RDS")
                      db$features[x@.ID] <- x
                    }
+                   validObject(x)
                    x
                  })
 
@@ -287,11 +293,26 @@ setReplaceMethod("qualif", "gbFeature",
                      db <- dbInit(x@.Dir, "RDS")
                      db$features[x@.ID] <- x
                    }
+                   validObject(x)
                    x
                  })
 
 
-# Shift ---------------------------------------------------------------
+# testers ----------------------------------------------------------------
+
+
+
+setMethod("hasKey", "gbFeature", 
+          function (x, key) 
+            not.na(charmatch(key, x@key)))
+
+
+setMethod("hasQualif", "gbFeature",
+          function (x, qualifier)
+            not.na(charmatch(qualifier, names(x@qualifiers))))
+
+
+# shift ---------------------------------------------------------------
 
 
 setMethod("shift", "gbFeature",
@@ -301,12 +322,12 @@ setMethod("shift", "gbFeature",
           })
 
 
-# Subsetting ----------------------------------------------------------
+# subsetting ----------------------------------------------------------
 
 
 #' @export
 setMethod("[[", c("gbFeature", "character", "missing"),
-          function(x, i, j) slot(object, i))
+          function(x, i, j) slot(x, i))
 
 
 #' @export

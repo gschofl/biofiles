@@ -103,6 +103,7 @@ setMethod("initialize", "gbLocation",
 # Getter-methods ---------------------------------------------------------
 
 
+#' @export
 setMethod("start", "gbLocation",
           function (x, join = FALSE, drop = TRUE) {
             if (join)
@@ -112,6 +113,7 @@ setMethod("start", "gbLocation",
           })
 
 
+#' @export
 setMethod("end", "gbLocation",
           function (x, join = FALSE, drop = TRUE) {
             if (join)
@@ -330,13 +332,13 @@ setMethod("show", "gbLocation",
   # test for strand
   strand <- if (grepl("complement", base_span, fixed=TRUE)) -1L else 1L
   # get span string
-  span_str <- regmatches(base_span, regexpr(sl, base_span))
+  span_str <- regmatches(base_span, regexpr(.SL, base_span))
   # get remote accession number
-  accn <- regmatches(span_str, regexpr(ra, span_str))
+  accn <- regmatches(span_str, regexpr(.RA, span_str))
   { remote <- not_empty(accn) } %||% { accn <- NA_character_ }
   # get closed and span
-  span <- gsub(paste0(ra, "\\:"), "", span_str)
-  closed <- if (grepl(wl, span)) FALSE else TRUE
+  span <- gsub(paste0(.RA, "\\:"), "", span_str)
+  closed <- if (grepl(.WL, span)) FALSE else TRUE
   span <- rbind(unlist(strsplit(span, "\\.\\.|\\.|\\^")))
   # get partial
   partial <- matrix(grepl("^(<|>)", span), ncol = 2)
@@ -350,23 +352,23 @@ setMethod("show", "gbLocation",
   
   # clean up possible whitespace
   gb_base_span <- gsub('\\s+', '', gb_base_span)
-  if (grepl(sprintf("^%s$", pcsl), gb_base_span)) {
+  if (grepl(sprintf("^%s$", .PCSL), gb_base_span)) {
     # test for possibly complemented simple location  
-    l <- .parseSimpleSpan(base_span=gb_base_span)
+    l <- .parseSimpleSpan(gb_base_span)
     .gbLocation(.Data=l$span, strand=l$strand,
                 compound=NA_character_, partial=l$partial,
                 accession=l$accn, remote=l$remote,
                 closed=l$closed)
     
-  } else if (grepl(cl, gb_base_span)) {
+  } else if (grepl(.CL, gb_base_span)) {
     # test for possibly complemented compound location
     # test for complementary strand
     strand <- if (grepl("complement", gb_base_span, fixed=TRUE)) -1L else 1L
     # get compound
-    cmpnd_str <- regmatches(gb_base_span, regexpr(cl, gb_base_span))
+    cmpnd_str <- regmatches(gb_base_span, regexpr(.CL, gb_base_span))
     compound <- regmatches(cmpnd_str, regexpr('(join|order)', cmpnd_str))
     # get span strings
-    span_str <- regmatches(cmpnd_str, regexpr(sprintf("%s(,%s)*", pcsl, pcsl), cmpnd_str))
+    span_str <- regmatches(cmpnd_str, regexpr(sprintf("%s(,%s)*", .PCSL, .PCSL), cmpnd_str))
     span_str <- unlist(strsplit(span_str, ","))
     l <- lapply(span_str, .parseSimpleSpan)
     

@@ -9,9 +9,9 @@ Description: Parse GenBank records into R object and store the
 License: MIT
 Encoding: latin1
 Depends:
-    R (>= 2.15),
-    methods
+    R (>= 2.15)
 Imports:
+    methods,
     rmisc,
     filehash,
     intervals,
@@ -21,9 +21,9 @@ Imports:
     stringr,
     plyr
 Collate:
-    'all-generics.r'
     'utils.r'
     'validate.r'
+    'all-generics.r'
     'gbLocation-class.r'
     'gbRange-class.r'
     'gbFeature-class.r'
@@ -37,3 +37,5 @@ Collate:
     'retrieve.r'
     'flanking.r'
     'zzz.R'
+    'revcomp.r'
+    'shift.r'

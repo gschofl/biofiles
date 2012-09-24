@@ -6,8 +6,9 @@
   features(x, ...)
 }
 \arguments{
-  \item{data}{An instance of
-  \code{\linkS4class{gbRecord}}.}
+  \item{x}{A \code{\linkS4class{gbRecord}} instance.}
+
+  \item{...}{Additional arguments passed to methods.}
 }
 \value{
   The \code{\linkS4class{gbFeatureList}} object contained

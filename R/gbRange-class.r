@@ -84,7 +84,33 @@ setAs("gbRange", "data.frame",
       })
 
 
-# subsetting-methods -----------------------------------------------------
+# getters ----------------------------------------------------------------
+
+
+#' @export
+setMethod("start", "gbRange", function (x) callNextMethod(x))
+
+
+#' @export
+setMethod("end", "gbRange", function (x) callNextMethod(x))
+
+
+#' @export
+setMethod("width", "gbRange", function (x) IRanges::width(x))
+
+
+
+# shift ------------------------------------------------------------------
+
+
+#' @export
+setMethod("shift", "gbRange",
+    function (x, shift = 0L, use.names = TRUE) {
+        IRanges::shift(x=x, shift=shift, use.names=use.names)
+    })
+
+
+# subsetting -------------------------------------------------------------
 
 
 #' @export

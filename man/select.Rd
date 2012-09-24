@@ -3,7 +3,7 @@
 \alias{select-methods}
 \title{Select features from a GenBank Record}
 \usage{
-  select(x, ..., keys = "", cols = "")
+  select(x, ..., keys = NULL, cols = NULL)
 }
 \arguments{
   \item{x}{A \sQuote{\code{gbRecord}} or

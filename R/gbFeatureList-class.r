@@ -57,7 +57,22 @@ setOldClass("list")
                            contains="list")
 
 
-# show-method ---------------------------------------------------------
+setValidity("gbFeatureList", function (object) {
+  if (any(vapply(object@.Data, class, character(1)) != "gbFeature")) {
+    return("All elements in a 'gbFeatureList' must be 'gbFeature' instances")
+  }
+  if (any(vapply(object@.Data, function(x) x@.Dir, character(1)) != object@.Dir)) {
+    return("All elements in a 'gbFeatureList' must stem from a valid 'gbRecord' instance")
+  }
+  if (any(vapply(object@.Data, function(x) x@.ACCN, character(1)) != object@.ACCN)) {
+    return("All elements in a 'gbFeatureList' must stem from the same 'gbRecord' instance")
+  }
+  
+  TRUE
+})
+
+
+# show -------------------------------------------------------------------
 
 
 #' @export
@@ -77,7 +92,7 @@ setMethod("show", "gbFeatureList",
           })
 
 
-# summary-method ---------------------------------------------------------
+# summary ----------------------------------------------------------------
 
 
 #' @export
@@ -88,26 +103,7 @@ setMethod("summary", "gbFeatureList",
           })
 
 
-# Constructor ---------------------------------------------------------
-
-
-#' @keywords internal
-gbFeatureList <- function(db_dir, accession, definition, features) {
-  if (!is.list(features))
-    stop("'features' must be a list")
-  if (!all(vapply(features, is, "gbFeature", FUN.VALUE=logical(1))))
-    stop("all elements in 'features' must be gbFeature objects")
-  if (!all(vapply(features, function(f) f@.Dir, character(1)) == db_dir))
-    stop("all elements in 'features' must be from a valid gbData object")
-  if (!all(vapply(features, function(f) f@.ACCN, character(1)) == accession))
-    stop("all elements in 'features' must be from the same gbData object")
-  
-  .gbFeatureList(.Data=features, .Dir=as.character(db_dir),
-                 .ACCN=as.character(accession), .DEF=as.character(definition)) 
-}
-
-
-# Getter-methods ---------------------------------------------------------
+# getters ----------------------------------------------------------------
 
 
 setMethod("start", "gbFeatureList",
@@ -125,21 +121,6 @@ setMethod("start", "gbFeatureList",
           })
 
 
-setReplaceMethod("start", "gbFeatureList",
-                 function (x, value) {
-                   if (length(value) < length(x)) {
-                     value <- c(rep(value, length(x)%/%length(value)),
-                                value[seq_len(length(x)%%length(value))])
-                   }
-                   new_x <- Map(function(Feature, val) { 
-                     start(Feature) <- val
-                     Feature }, Feature=x, val=value)
-                   
-                   .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
-                                  .ACCN=x@.ACCN, .DEF=x@.DEF)
-                 })
-
-
 setMethod("end", "gbFeatureList",
           function (x, join = FALSE, drop = TRUE) {
             ans <- lapply(x, end, join = join, drop = drop)
@@ -155,20 +136,6 @@ setMethod("end", "gbFeatureList",
           })
 
 
-setReplaceMethod("end", "gbFeatureList",
-                 function(x, value){
-                   if (length(value) != length(x)) {
-                     value <- c(rep(value, length(x)%/%length(value)),
-                                value[seq_len(length(x)%%length(value))])
-                   }
-                   new_x <- Map(function(Feature, val) { 
-                     end(Feature) <- val
-                     Feature }, Feature=x, val=value)
-                   
-                   .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
-                                  .ACCN=x@.ACCN, .DEF=x@.DEF)
-                 })
-
 
 setMethod("strand", "gbFeatureList",
           function (x, join = FALSE) {
@@ -180,20 +147,6 @@ setMethod("strand", "gbFeatureList",
             }
           })
 
-
-setReplaceMethod("strand", "gbFeatureList",
-                 function (x, value) {
-                   if (length(value) != length(x)) {
-                     value <- c(rep(value, length(x)%/%length(value)),
-                                value[seq_len(length(x)%%length(value))])
-                   }
-                   new_x <- Map(function(Feature, val) { 
-                     strand(Feature) <- val
-                     Feature }, Feature=x, val=value)
-                   
-                   .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
-                                  .ACCN=x@.ACCN, .DEF=x@.DEF)
-                 })
 
 
 setMethod("width", "gbFeatureList",
@@ -207,6 +160,14 @@ setMethod("width", "gbFeatureList",
           })
 
 
+setMethod("accession", "gbFeatureList",
+          function (x) x@.ACCN)
+
+
+setMethod("definition", "gbFeatureList",
+          function (x) x@.DEF)
+
+
 setMethod("range", "gbFeatureList",
           function (x, join = FALSE) {
             start <- as.integer(unlist(start(x, join = join)))
@@ -217,7 +178,7 @@ setMethod("range", "gbFeatureList",
 
 
 setMethod("location", "gbFeatureList",
-          function (x, attributes = TRUE, join = FALSE) {
+          function (x, attributes = FALSE, join = FALSE) {
             ans <- range(x, join = join)
             keys <- key(x, attributes=FALSE)
             ids <- index(x, attributes=FALSE)
@@ -242,7 +203,7 @@ setMethod("location", "gbFeatureList",
 
 
 setMethod("index", "gbFeatureList",
-          function (x, attributes=TRUE) { 
+          function (x, attributes = FALSE) { 
             ans <- vapply(x, function(f) f@.ID, numeric(1))
             if (attributes) {
               ans <- structure(ans, accession=x@.ACCN,
@@ -254,7 +215,7 @@ setMethod("index", "gbFeatureList",
 
 
 setMethod("key", "gbFeatureList",
-          function (x, attributes=TRUE) {
+          function (x, attributes = FALSE) {
             ans <- vapply(x, function(f) f@key, character(1))
             if (attributes) {
               ans <- structure(ans,
@@ -268,7 +229,7 @@ setMethod("key", "gbFeatureList",
 
 
 setMethod("qualif", "gbFeatureList",
-          function (x, which, attributes = TRUE, fixed = FALSE) {
+          function (x, which, attributes = FALSE, fixed = FALSE) {
             if (missing(which))
               which <- ""
             ans <- .qualAccess(x, which, fixed) %@% .simplify(unlist=FALSE)
@@ -285,7 +246,7 @@ setMethod("qualif", "gbFeatureList",
 
 
 setMethod("dbxref", "gbFeatureList",
-          function (x, db=NULL, na.rm=TRUE, ...) {     
+          function (x, db = NULL, na.rm = TRUE, ...) {     
             ans <- lapply(x, dbxref, db=db)
             names(ans) <- lapply(x, function(f) sprintf("%s.%s", f@key, f@.ID))
             if (na.rm)
@@ -302,8 +263,53 @@ setMethod("sequence", "gbFeatureList",
           function (x, db = NULL) {
             stopifnot(hasValidDb(x))
             db <- initGB(x@.Dir, verbose=FALSE)
-            .seqAccess(s=dbFetch(db, "sequence"), x, type=dbFetch(db, "type"))
+            .seqAccess(dbFetch(db, "sequence"), x, dbFetch(db, "type"))
           })
+
+
+# setters ----------------------------------------------------------------
+
+
+setReplaceMethod("start", "gbFeatureList",
+                 function (x, value) {
+                   value <- recycle(x, value)
+                   new_x <- Map(function(Feature, val) { 
+                     start(Feature) <- val
+                     Feature
+                   }, Feature=x, val=value)
+                   
+                   .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
+                                  .ACCN=x@.ACCN, .DEF=x@.DEF)
+                 })
+
+
+setReplaceMethod("end", "gbFeatureList",
+                 function(x, value) {
+                   value <- recycle(x, value)
+                   new_x <- Map(function(Feature, val) { 
+                     end(Feature) <- val
+                     Feature
+                   }, Feature=x, val=value)
+                   
+                   .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
+                                  .ACCN=x@.ACCN, .DEF=x@.DEF)
+                 })
+
+
+setReplaceMethod("strand", "gbFeatureList",
+                 function(x, value) {
+                   value <- recycle(x, value)
+                   new_x <- Map(function(Feature, val) { 
+                     strand(Feature) <- val
+                     Feature
+                   }, Feature=x, val=value)
+                   
+                   .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
+                                  .ACCN=x@.ACCN, .DEF=x@.DEF)
+                 })
+
+
+# testers ----------------------------------------------------------------
 
 
 setMethod("hasKey", "gbFeatureList", 
@@ -316,7 +322,7 @@ setMethod("hasQualif", "gbFeatureList",
             vapply(x, hasQualif, qualifier, FUN.VALUE=logical(1)))
 
 
-# Subsetting ----------------------------------------------------------
+# subsetting ----------------------------------------------------------
 
 
 #' @export
@@ -327,12 +333,14 @@ setMethod("[", c("gbFeatureList", "character", "missing", "ANY"),
                            .DEF=x@.DEF)
           })
 
+
 #' @export
 setMethod("[", c("gbFeatureList", "numeric", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
             .gbFeatureList(.Data=x@.Data[i], .Dir=x@.Dir, .ACCN=x@.ACCN,
                            .DEF=x@.DEF)
           })
+
 
 #' @export
 setMethod("[", c("gbFeatureList", "logical", "missing", "ANY"),
@@ -341,13 +349,14 @@ setMethod("[", c("gbFeatureList", "logical", "missing", "ANY"),
                            .DEF=x@.DEF)
           })
 
+
 #' @export
 setMethod("[", c("gbFeatureList", "missing", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) x
           )
 
 
-# Select-method ----------------------------------------------------------
+# select -----------------------------------------------------------------
 
 
 setMethod("select", "gbFeatureList", 
@@ -358,7 +367,7 @@ setMethod("select", "gbFeatureList",
           })
 
     
-# View ----------------------------------------------------------------
+# view -------------------------------------------------------------------
 
 
 setMethod("view", "gbFeatureList", 
@@ -370,162 +379,22 @@ setMethod("view", "gbFeatureList",
           })
 
 
-# shift-method -----------------------------------------------------------
+# shift ------------------------------------------------------------------
 
 
 setMethod("shift", "gbFeatureList",
           function(x, shift=0L, split=FALSE, order=FALSE, updateDb=FALSE) {
-            .shift_features(x=x, shift=shift, split=split, order=order,
-                            updateDb=updateDb)
+            .shift_features(x=x, shift=shift, split=split,
+                            order=order, updateDb=updateDb)
           })
 
 
-.shift_features <- function (x, shift=0L, split=FALSE, order=FALSE,
-                             updateDb=FALSE) {
-  
-  if (is(x, "gbRecord")) {
-    len <- x$length
-    features <-x$features
-  } else if (is(x, "gbFeatureList")) {
-    if (!any(hasKey(x, "source"))) {
-      stop("No source key in this gbFeatureList")
-    }
-    len <- end(x["source"])
-    features <- x
-  }
-  
-  update_split <- function(x, split_matrix) {
-    if (not.na(x@location@compound)) {
-      stop("Cannot split a compound location")
-    }
-    x@location@.Data <- split_matrix
-    x@location@compound <- "join"
-    x@location@partial <- matrix(c(FALSE, TRUE, TRUE, FALSE), ncol=2)
-    x@location@accession <- rep(x@location@accession, 2)
-    x@location@remote <- rep(x@location@remote, 2)
-    x@location@closed <- matrix(rep(x@location@closed, 2), ncol=2)
-    x
-  }
-  
-  src <- features[1]
-  f <- features[-1]
-  
-  start_pos <- start(f)
-  end_pos <- end(f)
-  
-  new_start <- Map("+", start_pos, shift)
-  new_end <- Map("+", end_pos, shift)
-  
-  exceeds_len_start <- which(mapply(function (x) any(x > len), new_start) |
-    mapply(function (x) any(x < 0L), new_start)) 
-  exceeds_len_end <-  which(mapply(function (x) any(x > len), new_end) |
-    mapply(function (x) any(x < 0L), new_end))
-  
-  if (length(exceeds_len_start) > 0L || length(exceeds_len_end) > 0L) {
-    
-    start_end <- intersect(exceeds_len_start, exceeds_len_end)
-    
-    if (length(start_end) > 0L) {
-      get_len <- function (x, len) ifelse(x > len, x - len, ifelse(x < 0L, len + x, x))
-      new_start[start_end] <- Map(get_len, new_start[start_end], len)
-      new_end[start_end] <- Map(get_len, new_end[start_end], len)
-    }
-
-    end_only <- setdiff(exceeds_len_end, exceeds_len_start)
-    
-    if (length(end_only) > 0L) {
-      if (split) {
-        ss <- mapply("-", new_start[end_only], len)
-        se <- mapply("-", new_end[end_only], len)
-        ## Split Matrix
-        sm <- Map(function(ss, se) matrix(c(len + ss, 1, len, se), ncol=2), ss, se)
-        f[end_only] <- Map(update_split, x=f[end_only], split_matrix=sm)
-        new_start[end_only] <- Map(function(x) x[,1], sm)
-        new_end[end_only] <- Map(function(x) x[,2], sm)
-      } else {
-        stop("This shiftwidth would split feature(s) ", paste(end_only, collapse=", "))
-      }
-    }
-    
-  }
-  
-  start(f) <- new_start
-  end(f) <- new_end
-  
-  if (order) {
-    f <- f[order(mapply("[", new_start, 1))]
-  }
-  
-  f <- .gbFeatureList(.Data=c(src, f), .Dir=src@.Dir,
-                      .ACCN=src@.ACCN, .DEF=src@.DEF)
-  
-  if (updateDb) {
-    db <- initGB(src@.Dir, verbose=FALSE)
-    dbInsert(db, key="features", value=f)
-    
-    seq <- dbFetch(db, "sequence")
-    
-    if (shift > 0) {
-      shift_point <- seq@ranges@width - shift + 1L
-    } else {
-      shift_point <- 0L - shift + 1L
-    }
-    
-    new_seq <- xscat(subseq(seq, start = shift_point), 
-                     subseq(seq, start = 1L, end = shift_point - 1L))
-    names(new_seq) <- names(seq)
-    dbInsert(db, key="sequence", value=new_seq)
-  }
-  
-  return( f )
-}
-
-
-# revcomp-method ---------------------------------------------------------
+# revcomp ----------------------------------------------------------------
 
 
 setMethod("revcomp", "gbFeatureList",
-          function(x, order=FALSE, updateDb=FALSE)
-            .revcomp_features(x=x, order=order, updateDb=updateDb))
+          function(x, order=FALSE, updateDb=FALSE) {
+            .revcomp_features(x=x, order=order, updateDb=updateDb)
+          })
 
 
-.revcomp_features <- function (x, order=FALSE, updateDb=FALSE) {
-  
-  if (is(x, "gbRecord")) {
-    max_len <- x$length
-    f <-x$features
-  } else if (is(x, "gbFeatureList")) {
-    
-    if (length(x["source"]) == 0) {
-      stop("No source field in gbFeatureList")
-    }
-    
-    max_len <- end(x["source"])
-    f <- x
-  }
-  
-  new_end <- max_len - start(f) + 1
-  new_start <- max_len - end(f) + 1
-  new_strand <- strand(f)*-1
-  
-  start(f) <- new_start
-  end(f) <- new_end
-  strand(f) <- new_strand
-  
-  if (order) {
-    f <- f[order(new_start)]
-  }
-  
-  f <- .gbFeatureList(.Data=f, .Dir=f@.Dir, .ACCN=f@.ACCN, .DEF=f@.DEF)
-  
-  if (updateDb) {
-    db <- initGB(f@.Dir)
-    dbInsert(db, key="features", value=f)
-    
-    seq <- dbFetch(db, "sequence")
-    new_seq <- reverseComplement(seq)
-    dbInsert(db, key="sequence", value=new_seq)
-  }
-  
-  return( f )
-}

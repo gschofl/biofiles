@@ -1,14 +1,14 @@
 \name{shift}
 \alias{shift}
 \alias{shift-methods}
-\title{shift location of features in a GenBank record}
+\title{Shift location of features in a GenBank record}
 \usage{
   shift(x, shift=0L, split=FALSE, order=FALSE,
     updateDb=FALSE)
 }
 \arguments{
   \item{x}{A gbLocation, gbFeature, gbFeatureList, or
-  gbRecord object (gbFeatureLists must include a 'source'
+  gbRecord instance (gbFeatureLists must include a 'source'
   field).}
 
   \item{shift}{Number of basepairs (or aa residues) to
@@ -30,6 +30,6 @@
   or\code{\link{gbFeatureList-class}} object
 }
 \description{
-  shift location of features in a GenBank record
+  Shift location of features in a GenBank record
 }
 

@@ -31,15 +31,15 @@ readGB <- function (gb, with_sequence = TRUE, force = FALSE) {
       cat(gettextf("Importing into %s\n", dQuote(basename(db_path[i]))))
       .parseGB(gb_data, db_path[i], with_sequence=with_sequence, force=force)
     }
+    
   } else if (!isS4(gb) && file.exists(gb)) {
     con <- file(gb, open="rt")
     on.exit(close(con))
     db_path <- paste0(gb, ".db")
+    .parseGB(gb_data=readLines(con), db_path, with_sequence=with_sequence,
+             force=force)
     
-    cat(gettextf("Importing into %s\n", dQuote(basename(db_path))))
-    .parseGB(gb_data=readLines(con), db_path, with_sequence=with_sequence, force=force)
-  }
-  else {
+  } else {
     stop("'gb' must be a valid GenBank flat file or an 'efetch' object containing GenBank records")
   }
   return(invisible(db_path))

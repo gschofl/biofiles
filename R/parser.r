@@ -190,8 +190,8 @@
   # indeces for all features
   feature_idx <- mapply(seq.int, feature_start, feature_end,
                         SIMPLIFY=FALSE, USE.NAMES=FALSE)
-  
-  message("Parsing features")
+
+  message(sprintf("Parsing features into %s", dQuote(basename(db_dir))))
 
 #   f_list <- list()
 #   i <- 1
@@ -208,10 +208,9 @@
     .parseFeatureTable(id=n, lines=gb_features[idx], db_dir=db_dir,
                        accession=accession, definition=definition)
   }, idx=feature_idx, n=seq_along(feature_start),
-     SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
+                     SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
   
-  gbFeatureList(db_dir=db_dir, accession=accession,
-                definition=definition, features=f_list)
+  .gbFeatureList(.Data=f_list, .Dir=db_dir, .ACCN=accession, .DEF=definition) 
 }
 
 

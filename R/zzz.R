@@ -4,28 +4,31 @@ GBFIELDS <- paste0("@G@I|accession|comment|date|dblink|dbsource|",
                    "lineage|locus|organism|references|sequence|",
                    "source|topology|type|version")
 
+.GBFIELDS <- c("@G@I","accession","comment","date","dblink",
+               "dbsource","definition","division","features",
+               "keywords","length","lineage","locus","organism",
+               "references","sequence","source","topology",
+               "type","version")
+
 ###
 # Declare the regex patterns for use in .getLocation
-
 # single location possibly fuzzy
-sil <- "[<>]?\\d+"
+.SIL <- "[<>]?\\d+"
 # within location
-wl <- "\\d+\\.\\d+"
+.WL <- "\\d+\\.\\d+"
 # between location
-bl <- "\\d+\\^\\d+"
+.BL <- "\\d+\\^\\d+"
 # paired location possibly fuzzy
-pl <- sprintf("%s\\.\\.%s", sil, sil)
+.PL <- sprintf("%s\\.\\.%s", .SIL, .SIL)
 # remote accession
-ra <- "([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)"
-
+.RA <- "([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)"
 # simple location possibly with remote accession
-sl <- sprintf("(%s\\:)?(%s|%s|%s|%s)", ra, sil, bl, wl, pl)
+.SL <- sprintf("(%s\\:)?(%s|%s|%s|%s)", .RA, .SIL, .BL, .WL, .PL)
 # complemented simple location
-csl <- sprintf("complement\\(%s\\)", sl)
+.CSL <- sprintf("complement\\(%s\\)", .SL)
 # possibly complemented simple location
-pcsl <- sprintf("(%s|%s)", sl, csl)
-
+.PCSL <- sprintf("(%s|%s)", .SL, .CSL)
 # compound location
-cl <- sprintf("(join|order)\\(%s(,%s)*\\)", pcsl, pcsl)
+.CL <- sprintf("(join|order)\\(%s(,%s)*\\)", .PCSL, .PCSL)
 # complemented compound location
-ccl <- sprintf("complement\\(%s\\)", cl)
+.CCL <- sprintf("complement\\(%s\\)", .CL)

@@ -17,10 +17,17 @@
 #' 
 #' @importFrom intervals closed
 #' 
+#' @importFrom stats start
+#' @importFrom stats end
+#' 
 #' @importFrom IRanges DataFrame
 #' @importFrom IRanges IRanges
 #' @importFrom IRanges precede
 #' @importFrom IRanges follow
+#' @importFrom IRanges "start<-"
+#' @importFrom IRanges "end<-"
+#' @importFrom IRanges width
+#' @importFrom IRanges shift
 #' @importFrom IRanges IntervalTree
 #' @importFrom IRanges findOverlaps
 #' @importFrom IRanges queryHits
@@ -57,6 +64,16 @@
 #' @importFrom parallel mclapply
 #' @importFrom parallel detectCores
 NULL
+
+
+recycle <- function (x, val) {
+  lx <- length(x)
+  lv <- length(val)
+  if (lx > lv) {
+    val <- c(rep(val, lx%/%lv), val[seq_len(lx%%lv)])
+  }
+  val
+}
 
 
 "%||%" <- function (a, b) {

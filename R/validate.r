@@ -1,24 +1,25 @@
 #' validate a gbRecord database which if referenced by gbFeature or
 #' gbFeatureList objects by their '.Dir' slot. 
 #' @keywords internal
-hasValidDb <- function (x, verbose=TRUE, fields=GBFIELDS) {
+hasValidDb <- function (object, verbose=TRUE) {
   
-  if (!.hasSlot(x, ".Dir")) {
-    if (verbose) message("Object has no '.Dir' slot")
-    return( FALSE )
-  }
-  
-  if (!file.exists(x@.Dir)) {
+  if (!.hasSlot(object, ".Dir")) {
     if (verbose) 
-      message(gettextf("directory %s does not exist", sQuote(x@.Dir)))
-    return( FALSE )
+      message("Object has no '.Dir' slot")
+    return(FALSE)
   }
   
-  if (sum(idx <- grepl(fields, dir(x@.Dir))) != 20L) {
+  if (!file.exists(object@.Dir)) {
     if (verbose)
-      message(paste("Field(s) are missing from the database:",
-                    paste(strsplit(fields, split="\\|")[[1]][!idx], collapse=",")))
-    return( FALSE )
+      message(sprintf("Directory %s does not exist.", sQuote(object@.Dir)))
+    return(FASLE)
+  }
+  
+  if (any(idx <- is.na(match(.GBFIELDS, dir(object@.Dir))))) {
+    if (verbose)
+      message(sprintf("Field(s) %s are missing from database.",
+                      sQuote(paste(.GBFIELDS[-idx], collapse=","))))
+    return(FALSE)
   }
   
   TRUE
@@ -27,13 +28,13 @@ hasValidDb <- function (x, verbose=TRUE, fields=GBFIELDS) {
 #' validate a gbRecord database (i.e. check if the db directory contains
 #' all fields).
 #' @keywords internal
-isValidDb <- function (x, verbose=TRUE, fields=GBFIELDS) {
+isValidDb <- function (object, verbose=TRUE) {
   
-  if (sum(idx <- grepl(fields, list.files(x@dir))) != 20L) {
+  if (any(idx <- is.na(match(.GBFIELDS, dir(object@dir))))) {
     if (verbose)
-      message(paste("Field(s) are missing from the database:",
-                    paste(strsplit(fields, split="\\|")[[1]][!idx], collapse=",")))
-    return( FALSE )
+      message(sprintf("Field(s) %s are missing from database.",
+                      sQuote(paste(.GBFIELDS[-idx], collapse=", "))))
+    return(FALSE)
   }
   
   TRUE

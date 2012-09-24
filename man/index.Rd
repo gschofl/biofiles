@@ -11,6 +11,8 @@
 
   \item{attributes}{Set the \code{accession},
   \code{definition}, \code{database} attributes.}
+
+  \item{...}{Additional arguments passed to methods.}
 }
 \value{
   A numeric vector of feature indeces

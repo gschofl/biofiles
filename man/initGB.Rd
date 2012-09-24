@@ -3,20 +3,20 @@
 \alias{initGB-methods}
 \title{Create and/or initialise a gbRecord filehash database}
 \usage{
-  initGB(db_name, create=FALSE, ...)
+  initGB(db_dir, create = FALSE, ...)
 }
 \arguments{
-  \item{db_name}{name of the database or database object.}
+  \item{db_dir}{Path to database.}
 
-  \item{create}{if \code{TRUE} a new database is created
-  and initialised, else a database object is initialised
-  from an existing database.}
+  \item{create}{If \code{TRUE} a new
+  \code{\link{filehashRDS-class}} instance is created and
+  initialised, else a \code{gbRecord} instance is
+  initialised from an existing database.}
 
-  \item{...}{other arguments passed to methods}
+  \item{...}{Additional arguments passed to methods.}
 }
 \value{
-  Returns a \sQuote{\code{gbRecord-class}} object
-  inheriting from \code{\link[filehash]{filehashRDS-class}}
+  Returns a \code{\linkS4class{gbRecord}} instance
 }
 \description{
   Create and/or initialise a gbRecord filehash database

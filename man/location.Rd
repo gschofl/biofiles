@@ -13,6 +13,8 @@
   \code{definition}, \code{database} attributes.}
 
   \item{join}{combine compound locations}
+
+  \item{...}{Additional arguments passed to methods.}
 }
 \value{
   A data frame

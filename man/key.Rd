@@ -11,6 +11,8 @@
 
   \item{attributes}{Set the \code{accession},
   \code{definition}, \code{database} attributes.}
+
+  \item{...}{Additional arguments passed to methods.}
 }
 \description{
   Get/set feature keys from a GenBank Record
