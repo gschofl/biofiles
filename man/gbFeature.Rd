@@ -2,11 +2,10 @@
 \docType{class}
 \name{gbFeature-class}
 \alias{gbFeature-class}
-\title{gbFeature class}
+\title{gbFeature}
 \description{
-\sQuote{\code{gbFeature}} is an S4 class that extends the class
-\code{\linkS4class{gbFeatureList}}. This class provides a container
-for feature data retrived from GenBank flat files.
+\dQuote{gbFeature} is an S4 class that provides a container
+for GenBank feature tables.
 }
 \section{Generics with methods for gbFeature}{
 \itemize{
@@ -50,12 +49,12 @@ of the GenBank record the feature is part of.}
   \item{.ID}{Identifier (sequential index) of the feature in the
 GenBank record the feature is part of.}
 
-  \item{key}{An object of class \linkS4class{character}}
+  \item{key}{The feature key.}
 
-  \item{location}{An object of class \linkS4class{gbLocation}}
+  \item{location}{The feature location.}
 
   \item{qualifiers}{Named character vector. Name attributes
-   correspond to GenBank qualifier tags.}
+correspond to GenBank qualifier tags.}
 
 }
 }

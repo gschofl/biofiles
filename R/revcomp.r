@@ -28,7 +28,7 @@
   f <- .gbFeatureList(.Data=f, .Dir=f@.Dir, .ACCN=f@.ACCN, .DEF=f@.DEF)
   
   if (updateDb) {
-    db <- initGB(f@.Dir)
+    db <- init_db(f@.Dir)
     dbInsert(db, key="features", value=f)
     
     seq <- dbFetch(db, "sequence")

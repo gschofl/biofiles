@@ -44,38 +44,39 @@ NULL
 
 
 #' @rdname start
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("start")
 
 
-#' @rdname start<-
-#' @exportMethods
+#' @rdname start
+#' @export
 #' @genericMethods
 setGeneric("start<-")
 
 
 #' @rdname end
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("end")
 
-#' @rdname end<-
-#' @exportMethods
+
+#' @rdname end
+#' @export
 #' @genericMethods
 setGeneric("end<-")
 
 
 #' @rdname strand
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("strand", signature="x", function (x, ...) {
   standardGeneric("strand")
 })
 
 
-#' @rdname strand<-
-#' @exportMethods
+#' @rdname strand
+#' @export
 #' @genericMethods
 setGeneric("strand<-", signature="x", function (x, value, ...) {
   standardGeneric("strand<-")
@@ -83,7 +84,7 @@ setGeneric("strand<-", signature="x", function (x, value, ...) {
 
 
 #' @rdname width
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("width", signature="x", function (x, ...) {
   standardGeneric("width")
@@ -91,7 +92,7 @@ setGeneric("width", signature="x", function (x, ...) {
 
 
 #' @rdname partial
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("partial", signature="x", function (x, ...) {
   standardGeneric("partial")
@@ -99,7 +100,7 @@ setGeneric("partial", signature="x", function (x, ...) {
 
 
 #' @rdname accession
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("accession", signature="x", function (x, ...) {
   standardGeneric("accession")
@@ -107,24 +108,15 @@ setGeneric("accession", signature="x", function (x, ...) {
 
 
 #' @rdname definition
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("definition", signature="x", function (x, ...) {
   standardGeneric("definition")
 })
 
 
-#' Return feature locations from a GenBank record.
-#'
-#' @param x A \code{\linkS4class{gbFeature}} or
-#' \code{\linkS4class{gbFeatureList}} instance.
-#' @param attributes Set the \code{accession}, \code{definition},
-#' \code{database} attributes.
-#' @param join Combine compound locations
-#' @param ... Additional arguments passed to methods.
-#' @return A \code{\linkS4class{gbRange}} object.
 #' @rdname location
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("location", signature="x",
            function (x, attributes = FALSE, join = FALSE, ...) {
@@ -141,7 +133,7 @@ setGeneric("location", signature="x",
 #' @param ... Additional arguments passed to methods.
 #' @return A numeric vector of feature indeces.
 #' @rdname index
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("index", signature="x",
            function (x, attributes = FALSE, ...) {
@@ -157,7 +149,7 @@ setGeneric("index", signature="x",
 #' \code{database} attributes.
 #' @param ... Additional arguments passed to methods.
 #' @rdname key
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("key", signature="x",
            function(x, attributes = FALSE, ...) {
@@ -166,7 +158,7 @@ setGeneric("key", signature="x",
 
 
 #' @rdname key
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("key<-", signature="x",
            function(x, value, ...) {
@@ -184,7 +176,7 @@ setGeneric("key<-", signature="x",
 #' \code{database} attributes.
 #' @param ... Additional arguments passed to methods.
 #' @rdname qualif
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("qualif", signature=c("x", "which"),
            function(x, which, attributes = FALSE, ...) {
@@ -193,7 +185,7 @@ setGeneric("qualif", signature=c("x", "which"),
 
 
 #' @rdname qualif
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("qualif<-", signature=c("x", "which"),
            function(x, which, value, ...) {
@@ -209,7 +201,7 @@ setGeneric("qualif<-", signature=c("x", "which"),
 #' desired db_xrefs.
 #' @param ... Additional arguments passed to methods.
 #' @rdname dbxref
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("dbxref", signature="x",
            function(x, db = NULL, ...) {
@@ -224,7 +216,7 @@ setGeneric("dbxref", signature="x",
 #' @param ... Additional arguments passed to methods.
 #' @return An \code{\linkS4class{XStringSet}} object.
 #' @rdname sequence
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("sequence", signature="x", function(x, ...) {
   standardGeneric("sequence")
@@ -238,7 +230,7 @@ setGeneric("sequence", signature="x", function(x, ...) {
 #' @return The \code{\linkS4class{gbFeatureList}} object contained in a
 #' gbRecord database.
 #' @rdname features
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("features", signature="x", function (x, ...) {
   standardGeneric("features")
@@ -249,7 +241,7 @@ setGeneric("features", signature="x", function (x, ...) {
 
 
 #' @rdname hasKey
-#' @exportMethod
+#' @export
 #' @genericMethods
 setGeneric("hasKey", signature=c("x","key"), function(x, key, ...) {
   standardGeneric("hasKey")
@@ -257,7 +249,7 @@ setGeneric("hasKey", signature=c("x","key"), function(x, key, ...) {
 
 
 #' @rdname hasQualif
-#' @exportMethod
+#' @export
 #' @genericMethods
 setGeneric("hasQualif", signature=c("x","qualifier"),
            function(x, qualifier, ...) {
@@ -286,7 +278,7 @@ setGeneric("hasQualif", signature=c("x","qualifier"),
 #' @return A \code{\link{gbLocation-class}}, \code{\link{gbFeature-class}},
 #' or\code{\link{gbFeatureList-class}} object
 #' @rdname shift
-#' @exportMethod
+#' @export
 #' @genericMethods
 setGeneric("shift", signature="x",
            function(x, shift=0L, use.names=TRUE, ...) {
@@ -309,7 +301,7 @@ setGeneric("shift", signature="x",
 #' 
 #' @return A \code{\linkS4class{gbFeatureList}} instance
 #' @rdname revcomp
-#' @exportMethod
+#' @export
 #' @genericMethods
 setGeneric("revcomp", signature="x",
            function (x, order=FALSE, updateDb=FALSE, ...){
@@ -327,7 +319,7 @@ setGeneric("revcomp", signature="x",
 #' @param ... Additional arguments passed to methods.
 #' @return NULL
 #' @rdname view
-#' @exportMethod
+#' @export
 #' @genericMethods
 setGeneric("view", signature="x", function (x, n, ...){
   standardGeneric("view")
@@ -412,31 +404,10 @@ setGeneric("view", signature="x", function (x, n, ...){
 #' 
 #' @return Depending on the value of \code{select}.
 #' @rdname select
-#' @exportMethods
+#' @export
 #' @genericMethods
 setGeneric("select", signature="x",
            function(x, ..., keys = NULL, cols = NULL) {
              standardGeneric("select")
            })
-
-
-# initGB -----------------------------------------------------------------
-
-
-#' Create and/or initialise a gbRecord filehash database
-#'
-#' @usage initGB(db_dir, create = FALSE, ...)
-#'
-#' @param db_dir Path to database.
-#' @param create If \code{TRUE} a new \code{\link{filehashRDS-class}}
-#' instance is created and initialised, else a \code{gbRecord} instance is
-#' initialised from an existing database.
-#' @param ... Additional arguments passed to methods.
-#' @return Returns a \code{\linkS4class{gbRecord}} instance
-#' @rdname initGB
-#' @exportMethod
-#' @genericMethods
-setGeneric("initGB", signature="db_dir", function(db_dir, create = FALSE, ...) {
-  standardGeneric("initGB")
-})
 

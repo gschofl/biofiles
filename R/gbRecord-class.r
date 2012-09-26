@@ -4,11 +4,11 @@
 #' @include gbFeatureList-class.r
 NULL
 
-#' gbRecord class
+#' gbRecord
 #' 
-#' gbRecord is an S4 class that provides a container for data parsed from
-#' a GenBank flat file record. It is implemented as an extension of a
-#' \dQuote{\code{\linkS4class{filehashRDS-class}}} with no additional slots.
+#' \dQuote{gbRecord} is an S4 class that provides a container for data
+#' parsed from a GenBank record. It is implemented as a
+#' \code{\linkS4class{filehashRDS}} database.
 #'
 #' @rdname gbRecord
 #' @export
@@ -23,10 +23,6 @@ setValidity("gbRecord", function (object) {
 })
 
 
-# constructor ------------------------------------------------------------
-
-
-#' @keywords internal
 setMethod("initialize", "gbRecord",
           function (.Object, dir=character(0), name=character(0), verbose=TRUE) {
             if (missing(dir))
@@ -50,40 +46,114 @@ setMethod("initialize", "gbRecord",
           })
 
 
-#' @keywords internal
-gbRecord <- function (db_dir, header, features, sequence=NULL) {
-  
-  db <- initGB(db_dir, create=TRUE)
-  
-  if (is.null(header$accession))
-    stop("No accession number available")
-  if (is.null(header$definition))
-    stop("No sequence definition available")
-  if (!is(features, "gbFeatureList"))
-    stop("Features must be a 'gbFeatureList' instance")
-  
-  dbInsert(db, "locus", header[["locus"]])
-  dbInsert(db, "length", header[["length"]])
-  dbInsert(db, "type", header[["type"]])
-  dbInsert(db, "topology", header[["topology"]])
-  dbInsert(db, "division", header[["division"]])
-  dbInsert(db, "date", header[["date"]])
-  dbInsert(db, "definition", header[["definition"]]) # mandatory
-  dbInsert(db, "accession", header[["accession"]])   # mandatory
-  dbInsert(db, "version", header[["version"]])
-  dbInsert(db, "GI", header[["GI"]])
-  dbInsert(db, "dblink", header[["dblink"]])
-  dbInsert(db, "dbsource", header[["dbsource"]])
-  dbInsert(db, "keywords", header[["keywords"]])
-  dbInsert(db, "source", header[["source"]])
-  dbInsert(db, "organism", header[["organism"]])
-  dbInsert(db, "lineage", header[["lineage"]])
-  dbInsert(db, "references", header[["references"]])
-  dbInsert(db, "comment", header[["comment"]])
-  dbInsert(db, "features", features) # mandatory
-  dbInsert(db, "sequence", sequence)
 
-  return(invisible(db))
+# constructor ------------------------------------------------------------
+
+
+#' \code{gbRecord} instances can be construced by parsing a GenBank flat
+#' file or an \code{\linkS4class{efetch}} instance containing one or more
+#' GenBank records.
+#' If \code{gb} points to a valid \code{gbRecord} database, a \code{gbRecord}
+#' object is initialised in the global environment.  
+#'
+#' @details
+#' For a description of the GenBank format see
+#' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
+#'
+#' @param gb Path to a valid \code{gbRecord} database, a GenBank flat file or
+#' an \code{\linkS4class{efetch}} object containing GenBank record(s).
+#' @param with_sequence Parse with sequence information if avaliable.
+#' @param force Overwrite existing database directories without prompting.
+#' @return A (list of) \code{\linkS4class{gbRecord}} object(s).
+#' @export
+gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
+  
+  # if gb is a path to a valid gbRecord database we initialise and return
+  if (is_gbRecord_db(gb)) {
+    return(init_db(gb, create = FALSE))
+  
+  # otherwise we can parse efetch instances or a GenBank flat file.
+  } else if (is(gb, "efetch")) {
+    # we can parse rettype = gbwithparts, gb, gp and retmode =  text
+    if (!grepl("^gb|^gp", gb@type) || gb@mode != "text")
+      stop("Must use efetch with rettype='gbwithparts','gb', or 'gp' and retmode='text'")
+    
+    split_gb <- unlist(strsplit(gb@content, "\n\n"))
+    n <- length(split_gb)
+    db_path <- replicate(n, tempfile(fileext=".db"))
+    
+    parsed_data <- vector("list", n)
+    for (i in seq_len(n)) {
+      gb_data <- unlist(strsplit(split_gb[i], "\n"))
+      cat(gettextf("Importing into %s\n", dQuote(basename(db_path[i]))))
+      parsed_data[[i]] <- .parseGB(gb_data, db_path[i], with_sequence=with_sequence,
+                                   force=force)
+    }
+    
+  } else if (!isS4(gb) && file.exists(gb)) {
+    con <- file(gb, open="rt")
+    on.exit(close(con))
+    db_path <- paste0(gb, ".db")
+    parsed_data <- list(.parseGB(gb_data=readLines(con), db_path,
+                                 with_sequence=with_sequence, force=force))
+    
+  } else {
+    stop("'gb' must be a valid GenBank flat file or an 'efetch' object containing GenBank records")
+  }
+  
+  gbk_list <- list() 
+  for (gbk in parsed_data) {
+    db <- init_db(gbk[["db_dir"]], create = TRUE)
+    
+    if (is.null(gbk[["header"]][["accession"]]))
+      stop("No accession number available")
+    if (is.null(gbk[["header"]][["definition"]]))
+      stop("No sequence definition available")
+    if (!is(gbk[["features"]], "gbFeatureList"))
+      stop("Features must be a 'gbFeatureList' instance")
+    
+    dbInsert(db, "locus", gbk[["header"]][["locus"]])
+    dbInsert(db, "length", gbk[["header"]][["length"]])
+    dbInsert(db, "type", gbk[["header"]][["type"]])
+    dbInsert(db, "topology", gbk[["header"]][["topology"]])
+    dbInsert(db, "division", gbk[["header"]][["division"]])
+    dbInsert(db, "date", gbk[["header"]][["date"]])
+    dbInsert(db, "definition", gbk[["header"]][["definition"]]) # mandatory
+    dbInsert(db, "accession", gbk[["header"]][["accession"]])   # mandatory
+    dbInsert(db, "version", gbk[["header"]][["version"]])
+    dbInsert(db, "GI", gbk[["header"]][["GI"]])
+    dbInsert(db, "dblink", gbk[["header"]][["dblink"]])
+    dbInsert(db, "dbsource", gbk[["header"]][["dbsource"]])
+    dbInsert(db, "keywords", gbk[["header"]][["keywords"]])
+    dbInsert(db, "source", gbk[["header"]][["source"]])
+    dbInsert(db, "organism", gbk[["header"]][["organism"]])
+    dbInsert(db, "lineage", gbk[["header"]][["lineage"]])
+    dbInsert(db, "references", gbk[["header"]][["references"]])
+    dbInsert(db, "comment", gbk[["header"]][["comment"]])
+    dbInsert(db, "features", gbk[["features"]]) # mandatory
+    dbInsert(db, "sequence", gbk[["sequence"]])
+    
+    gbk_list <- c(gbk_list, db)
+  }
+  
+  gbk_list <- if (length(gbk_list) == 1L) gbk_list[[1L]]
+  gbk_list
+}
+
+
+
+#' @keywords internal
+#' @autoImports
+init_db <- function(db_dir, create = FALSE, ...) {
+  db_dir <- sub("/$", "", db_dir, perl=TRUE)
+  if (create) {
+    dbCreate(db_dir, "RDS")
+  }
+  if (!file.exists(db_dir)) {
+    stop(sprintf("Database directory %s does not exist",
+                 sQuote(db_dir)))
+  }
+  .gbRecord(dir=normalizePath(db_dir), name=basename(db_dir), ...)
 }
 
 
@@ -166,23 +236,6 @@ setMethod("show", "gbRecord",
           })
 
 
-# initGB -----------------------------------------------------------------
-
-
-setMethod("initGB", "character",
-          function(db_dir, create = FALSE, ...) {
-            db_dir <- sub("/$", "", db_dir, perl=TRUE)
-            if (create) {
-              dbCreate(db_dir, "RDS")
-            }
-            if(!file.exists(db_dir)) {
-              stop(sprintf("Database directory %s does not exist",
-                           sQuote(db_dir)))
-            }
-            .gbRecord(dir=normalizePath(db_dir), name=basename(db_dir), ...)
-          })
-
-
 # getters ----------------------------------------------------------------
 
 
@@ -206,12 +259,10 @@ setMethod("definition", "gbRecord",
 # subsetting ----------------------------------------------------------
 
 
-#' @export
 setMethod("[[", c("gbRecord", "character", "missing"),
           function(x, i) dbFetch(x, i))
 
 
-#' @export
 setMethod("$", "gbRecord",
           function(x, name) dbFetch(x, name))
 
@@ -226,7 +277,6 @@ setMethod("select", "gbRecord",
             ans <- .retrieve(ans, cols = cols)
             ans
           })
-
 
 
 # write ------------------------------------------------------------------
@@ -270,3 +320,4 @@ setMethod("revcomp", "gbRecord",
           function(x, order=FALSE, updateDb=FALSE)
             .revcomp_features(x=x, order=order,
                               updateDb=updateDb))
+

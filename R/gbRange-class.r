@@ -31,7 +31,7 @@ setMethod("initialize", "gbRange",
               stop("Arguments have unequal length")
             }
             r <- callNextMethod(.Object, start = start, width = width)
-            elementMetadata(r) <- if (length(anno) > 0) {
+            r@elementMetadata <- if (length(anno) > 0) {
               DataFrame(strand, anno)
             } else {
               DataFrame(strand)
@@ -100,11 +100,12 @@ setMethod("shift", "gbRange",
 # subsetting -------------------------------------------------------------
 
 
+#' @export
 setMethod("$", "gbRange",
           function (x, name) as(x, "data.frame")[[name]])
 
 
-## Ignores the 'drop' argument and behaves as if it was set to FALSE
+#' @export
 setMethod("[", "gbRange",
           function (x, i, j, ..., drop=TRUE) {
             if (missing(j) && length(list(...)) == 0L)
@@ -114,7 +115,9 @@ setMethod("[", "gbRange",
           })
 
 
+#' @export
 setMethod("[[", "gbRange",
           function (x, i, j, ...)  {
             as(x, "data.frame")[[i]]
           })
+

@@ -49,7 +49,7 @@
                                accession_no=header$accession,
                                seq_type=header$type)
   
-  gbRecord(db_dir=db_path, header=header, features=features, sequence=sequence)
+  list(db_dir=db_path, header=header, features=features, sequence=sequence)
 }
 
 
@@ -181,7 +181,7 @@
   
   }
 
-
+#' @autoImports
 .parseGbFeatures <- function (db_dir, accession, definition, gb_features) {
   # where do all the features start
   feature_start <- grep("^     \\S", gb_features)
@@ -294,6 +294,7 @@
 }
 
 
+#' @autoImports
 .parseGbSequence <- function (gb_sequence, accession_no, seq_type) {
   # read.BStringSet() does not support connections and
   # currently only accepts fasta format. So we write out gb_sequence as
@@ -314,6 +315,7 @@
 }
 
 
+#' @autoImports
 .joinSeq <- function (seq, accession_no) {
   mc_cores <- detectCores()
   s <- unlist(mclapply(seq, function(x) {

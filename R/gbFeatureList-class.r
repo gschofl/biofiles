@@ -6,15 +6,11 @@ NULL
 
 setOldClass("list")
 
-#' gbFeatureList class
+#' gbFeatureList
 #' 
-#' \dQuote{\code{gbFeatureList}} is an S4 class that extends the
-#' \code{\linkS4class{gbRecord}} class. This class provides a container for
-#' feature data retrived from GenBank flat files.
+#' \dQuote{gbFeatureList} is an S4 class that provides a container for
+#' \dQuote{\linkS4class{gbFeature}}s retrived from GenBank flat files.
 #'
-#' \dQuote{\code{gbFeatureList}} instances have four slots in addition to the7
-#' slots provided by \code{\linkS4class{gbRecord}} objects:
-#' 
 #' @slot .Dir The path to the database file containing the GenBank
 #' record the feature list is part of.
 #' @slot .ACCN Accession number of the GenBank record that the
@@ -24,7 +20,7 @@ setOldClass("list")
 #' @slot .Data A list of \dQuote{\code{gbFeature}} instances.
 #' 
 #' @rdname gbFeatureList
-#' @exportClass gbFeatureList
+#' @export
 #' @classHierarchy
 #' @classMethods
 .gbFeatureList <- setClass("gbFeatureList", 
@@ -151,6 +147,15 @@ setMethod("range", "gbFeatureList",
           })
 
 
+#' Get genomic locations of features
+#'
+#' @param x A \code{\linkS4class{gbFeatureList}} instance.
+#' @param attributes Include the \code{accession}, \code{definition},
+#' \code{database} attributes of the feature.
+#' @param join Join compound genomic locations into a single range.
+#' @return A \code{\linkS4class{gbRange}} object including feature keys
+#' and feature indices.
+#' @rdname location
 setMethod("location", "gbFeatureList",
           function (x, attributes = FALSE, join = FALSE) {
             ans <- range(x, join = join)
@@ -236,7 +241,7 @@ setMethod("dbxref", "gbFeatureList",
 setMethod("sequence", "gbFeatureList",
           function (x, db = NULL) {
             stopifnot(hasValidDb(x))
-            db <- initGB(x@.Dir, verbose=FALSE)
+            db <- init_db(x@.Dir, verbose=FALSE)
             .seqAccess(dbFetch(db, "sequence"), x, dbFetch(db, "type"))
           })
 

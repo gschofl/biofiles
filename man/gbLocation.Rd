@@ -2,9 +2,10 @@
 \docType{class}
 \name{gbLocation-class}
 \alias{gbLocation-class}
-\title{gbLocation class}
+\title{gbLocation}
 \description{
-\dQuote{\code{gbLocation}} is a container for GenBank Feature Locations.
+\dQuote{gbLocation} is an S4 class that provides a container for
+GenBank feature locations.
 It extends \code{\linkS4class{Intervals_full}} and provides 5
 additional Slots.
 }

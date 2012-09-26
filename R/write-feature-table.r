@@ -1,20 +1,28 @@
-
-##' General function for writing out NCBI feature tables
-##'
-##' Feature tables are simple five-column tab-delimited tables specifying the
-##' location and type of each feature. They can be used as input for tbl2asn
-##' or Sequin to generate annotation.
-##'
-##' @param db A \code{gbRecord} object.
-##' @param tablename (Optional) Optional table name to appear in the first line
-##' of the feature table.
-##' @param dbname Data base name associated with the CDS qualifier protein_id.
-##' @param with_sequence Additionally autput fasta file 
-##' @param outfile Output file.
-##' 
-##' @export
-writeFeatureTable <- function(db, tablename="", dbname="",
-                              with_sequence=TRUE, outfile="out.tbl") {
+#' General function for writing out NCBI feature tables
+#'
+#' Feature tables are simple five-column tab-delimited tables specifying the
+#' location and type of each feature. They can be used as input for tbl2asn
+#' or Sequin to generate annotation.
+#'
+#' @param db A \code{\linkS4class{gbRecord}} instance.
+#' @param tablename (Optional) Optional table name to appear in the first line
+#' of the feature table.
+#' @param dbname Data base name associated with the CDS qualifier protein_id.
+#' @param with_sequence Additionally autput fasta file 
+#' @param outfile Output file.
+#' @return NULL
+#' @export
+#' @autoImports
+write_feature_table <- function(db, tablename="", dbname="",
+                                with_sequence=TRUE, outfile="out.tbl") {
+  
+  if (missing(db)) {
+    stop("Provide a 'gbRecord' object to write to file")
+  }
+  
+  if (!is(db, "gbRecord")) {
+    stop("Not implemented for ", sQuote(class(db)), ". Provide a 'gbRecord' object")
+  }
   
   if (file.exists(outfile)) {
     unlink(outfile)
@@ -44,7 +52,7 @@ writeFeatureTable <- function(db, tablename="", dbname="",
     write.XStringSet(seq, filepath=fasta_outfile, format="fasta")
   }
   
-  invisible(list(features=f_table))
+  invisible(NULL)
 }
 
 

@@ -1,15 +1,14 @@
 #' General function for writing out GenBank flat files
 #'
+#' @details
 #' For a description of the GenBank format see
 #' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
 #'
-#' @usage writeGB(db, outfile = "out.gbk")
-#'
-#' @param db A \code{gbRecord} object.
+#' @param db A \code{\linkS4class{gbRecord}} object.
 #' @param outfile Output file.
 #' 
 #' @export
-writeGB <- function(db, outfile = "out.gbk") {
+write_genbank <- function(db, outfile = "out.gbk") {
   
   if (file.exists(outfile)) {
     unlink(outfile)
@@ -46,7 +45,7 @@ writeGB <- function(db, outfile = "out.gbk") {
   acc_line <- sprintf("%-12s%s", "ACCESSION", db$accession)
   ver_line <- sprintf("%-12s%-12s%s%s", "VERSION", db$version, "GI:", db$GI)
   
-  dbl_line <- if (!is.null(db$dblink)) {
+  dbl_line <- if (not.null(db$dblink)) {
     sprintf("%-12s%s%s", "DBLINK", "Project: ", db$dblink)
   } else {
     character()
@@ -66,7 +65,7 @@ writeGB <- function(db, outfile = "out.gbk") {
                       "  TITLE", "title",
                       "  JOURNAL", "journal")
   
-  com_line <- if (!is.null(db$comment)) {
+  com_line <- if (not.null(db$comment)) {
     sprintf("%-12s%s", "COMMENTS", linebreak(db$comment, width=79, offset=12))
   } else {
     character()
@@ -104,7 +103,7 @@ writeGB <- function(db, outfile = "out.gbk") {
 
 .writeSequence <- function (db, outfile = "out.gbk") {
   
-  if (!is.null(db$sequence)) {
+  if (not.null(db$sequence)) {
     sequence <- db$sequence
     lineno <- seq(from=1, to=sequence@ranges@width, by=60)
     lines <- seq_along(lineno)

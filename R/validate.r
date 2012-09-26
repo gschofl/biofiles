@@ -62,3 +62,13 @@ updateDirectory <- function (db) {
   dbInsert(db, "features", data)
 }
 
+
+is_gbRecord_db <- function (object) {
+  if (file.exists(object) || file.info(object)$isDir) {
+    all(not.na(match(.GBFIELDS, dir(object))))
+  } else {
+    FALSE
+  }
+}
+
+

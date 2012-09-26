@@ -2,15 +2,10 @@
 \docType{class}
 \name{gbFeatureList-class}
 \alias{gbFeatureList-class}
-\title{gbFeatureList class}
+\title{gbFeatureList}
 \description{
-\dQuote{\code{gbFeatureList}} is an S4 class that extends the
-\code{\linkS4class{gbRecord}} class. This class provides a container for
-feature data retrived from GenBank flat files.
-}
-\details{
-\dQuote{\code{gbFeatureList}} instances have four slots in addition to the7
-slots provided by \code{\linkS4class{gbRecord}} objects:
+\dQuote{gbFeatureList} is an S4 class that provides a container for
+\dQuote{\linkS4class{gbFeature}}s retrived from GenBank flat files.
 }
 \section{Class hierarchy for gbFeatureList}{
 Super classes:

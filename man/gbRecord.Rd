@@ -3,14 +3,36 @@
 \name{gbRecord-class}
 \alias{gbRecord}
 \alias{gbRecord-class}
-\title{gbRecord class}
+\title{gbRecord}
 \usage{
-  gbRecord(db_dir, header, features, sequence = NULL)
+  gbRecord(gb, with_sequence = TRUE, force = FALSE)
+}
+\arguments{
+  \item{gb}{Path to a valid \code{gbRecord} database, a GenBank flat file or
+an \code{\linkS4class{efetch}} object containing GenBank record(s).}
+
+  \item{with_sequence}{Parse with sequence information if avaliable.}
+
+  \item{force}{Overwrite existing database directories without prompting.}
+}
+
+\value{
+A (list of) \code{\linkS4class{gbRecord}} object(s).
 }
 \description{
-gbRecord is an S4 class that provides a container for data parsed from
-a GenBank flat file record. It is implemented as an extension of a
-\dQuote{\code{\linkS4class{filehashRDS-class}}} with no additional slots.
+\dQuote{gbRecord} is an S4 class that provides a container for data
+parsed from a GenBank record. It is implemented as a
+\code{\linkS4class{filehashRDS}} database.
+
+\code{gbRecord} instances can be construced by parsing a GenBank flat
+file or an \code{\linkS4class{efetch}} instance containing one or more
+GenBank records.
+If \code{gb} points to a valid \code{gbRecord} database, a \code{gbRecord}
+object is initialised in the global environment.
+}
+\details{
+For a description of the GenBank format see
+\url{http://www.ncbi.nlm.nih.gov/collab/FT/}
 }
 \section{Class hierarchy for gbRecord}{
 Super classes:
@@ -39,4 +61,3 @@ Super classes:
 }
 
 \keyword{classes}
-\keyword{internal}

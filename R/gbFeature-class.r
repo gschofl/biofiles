@@ -6,12 +6,10 @@ NULL
 
 setClassUnion("charOrNull", c("character", "NULL"))
 
-#' gbFeature class
+#' gbFeature
 #' 
-#' @description
-#' \sQuote{\code{gbFeature}} is an S4 class that extends the class
-#' \code{\linkS4class{gbFeatureList}}. This class provides a container
-#' for feature data retrived from GenBank flat files.
+#' \dQuote{gbFeature} is an S4 class that provides a container
+#' for GenBank feature tables.
 #' 
 #' @slot .Dir The path to the database file containing the GenBank
 #' record the feature is part of.
@@ -21,13 +19,13 @@ setClassUnion("charOrNull", c("character", "NULL"))
 #' of the GenBank record the feature is part of.
 #' @slot .ID Identifier (sequential index) of the feature in the
 #' GenBank record the feature is part of.
-#' @slot key
-#' @slot location
+#' @slot key The feature key.
+#' @slot location The feature location.
 #' @slot qualifiers Named character vector. Name attributes
-#'    correspond to GenBank qualifier tags.       
+#' correspond to GenBank qualifier tags.       
 #' 
 #' @rdname gbFeature
-#' @exportClass gbFeature
+#' @export
 #' @classHierarchy
 #' @classMethods
 .gbFeature <- setClass("gbFeature",
@@ -91,16 +89,35 @@ setMethod("summary", "gbFeature",
 # getters ----------------------------------------------------------------
 
 
+#' Get the start of genomic features
+#' 
+#' @param x A \code{gbFeature} object.
+#' @param join Join compound genomic locations into a single range.
+#' @param ... Further arguments passed to methods.
+#' @return An integer vector
 setMethod("start", "gbFeature",
           function (x, join = FALSE, drop = TRUE) 
             start(x@location, join = join, drop = drop))
 
 
+#' Get the end of genomic features
+#' 
+#' @param x A \code{gbFeature} object.
+#' @param join Join compound genomic locations into a single range.
+#' @param ... Further arguments passed to methods.
+#' @return An integer vector
 setMethod("end", "gbFeature",
           function (x, join = FALSE, drop = TRUE) 
             end(x@location, join = join, drop = drop))
 
 
+#' Get the strand of genomic features
+#' 
+#' @param x A \code{gbFeature} object.
+#' @param join Join compound genomic locations into a single range.
+#' @param ... Further arguments passed to methods.
+#' @return An integer vector of 1 (plus strand), -1 (minus strand), or
+#' \code{NA}
 setMethod("strand", "gbFeature",
           function (x, join = FALSE)
             strand(x@location, join = join))
@@ -129,6 +146,15 @@ setMethod("range", "gbFeature",
             range(x@location, join = join))
 
 
+#' Get genomic locations of features
+#'
+#' @param x A \code{\linkS4class{gbFeature}} instance.
+#' @param attributes Include the \code{accession}, \code{definition},
+#' \code{database} attributes of the feature.
+#' @param join Join compound genomic locations into a single range.
+#' @return A \code{\linkS4class{gbRange}} object including the feature key
+#' and the feature index.
+#' @rdname location
 setMethod("location", "gbFeature",
           function (x, attributes = FALSE, join = FALSE) {     
             ans <- range(x@location, join = join)
@@ -218,7 +244,7 @@ setMethod("qualif", "gbFeature",
 setMethod("sequence", "gbFeature",
           function (x) {
             stopifnot(hasValidDb(x))
-            db <- initGB(x@.Dir, verbose=FALSE)
+            db <- init_db(x@.Dir, verbose=FALSE)
             ans <- .seqAccess(dbFetch(db, "sequence"), x, dbFetch(db, "type"))
             ans
           })

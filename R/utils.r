@@ -140,8 +140,8 @@ expandIds <- function (x) {
     if (length(start(x)) == 1L) {
       seq <- subseq(s, start=start(x), end=end(x))
     } else {
-      seq <- do.call(xscat, base::Map(Biostrings::subseq, s, 
-                                      start=start(x), end=end(x)))
+      seq <- do.call(xscat, Map(Biostrings::subseq, s, 
+                                start=start(x), end=end(x)))
     }
     seq <- switch(type,
                   DNA=DNAStringSet(seq),

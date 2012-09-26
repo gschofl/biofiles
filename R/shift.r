@@ -78,7 +78,7 @@
                       .ACCN=src@.ACCN, .DEF=src@.DEF)
   
   if (updateDb) {
-    db <- initGB(src@.Dir, verbose=FALSE)
+    db <- init_db(src@.Dir, verbose=FALSE)
     dbInsert(db, key="features", value=f)
     
     seq <- dbFetch(db, "sequence")

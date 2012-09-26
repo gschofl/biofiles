@@ -8,9 +8,10 @@ NULL
 # gbLocation-class ----------------------------------------------------
 
 
-#' gbLocation class
+#' gbLocation
 #' 
-#' \dQuote{\code{gbLocation}} is a container for GenBank Feature Locations.
+#' \dQuote{gbLocation} is an S4 class that provides a container for
+#' GenBank feature locations.
 #' It extends \code{\linkS4class{Intervals_full}} and provides 5
 #' additional Slots.
 #' 
@@ -204,6 +205,9 @@ setReplaceMethod("strand", "gbLocation",
 # Coerce-methods ------------------------------------------------------
 
 
+#' @autoImports
+#' @importFrom intervals closed
+#' @importFrom intervals partial
 setAs("gbLocation", "character",
       function (from) {
         if (nrow(from) == 0)
@@ -276,6 +280,7 @@ setAs("character", "gbLocation",
       })
 
 
+#' @export
 as.gbLocation <- function (base_span) {
   as(as.character(base_span), "gbLocation")
 }
