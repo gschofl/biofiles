@@ -75,7 +75,7 @@ gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
   # otherwise we can parse efetch instances or a GenBank flat file.
   } else if (is(gb, "efetch")) {
     # we can parse rettype = gbwithparts, gb, gp and retmode =  text
-    if (!grepl("^gb|^gp", gb@type) || gb@mode != "text")
+    if (gb@type %ni% c("gb", "gp") || gb@mode != "text")
       stop("Must use efetch with rettype='gbwithparts','gb', or 'gp' and retmode='text'")
     
     split_gb <- unlist(strsplit(gb@content, "\n\n"))
@@ -85,8 +85,8 @@ gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
     parsed_data <- vector("list", n)
     for (i in seq_len(n)) {
       gb_data <- unlist(strsplit(split_gb[i], "\n"))
-      cat(gettextf("Importing into %s\n", dQuote(basename(db_path[i]))))
-      parsed_data[[i]] <- .parseGB(gb_data, db_path[i], with_sequence=with_sequence,
+      parsed_data[[i]] <- .parseGB(gb_data, db_path[i],
+                                   with_sequence=with_sequence,
                                    force=force)
     }
     
@@ -101,7 +101,8 @@ gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
     stop("'gb' must be a valid GenBank flat file or an 'efetch' object containing GenBank records")
   }
   
-  gbk_list <- list() 
+  gbk_list <- list()
+  accn <- character()
   for (gbk in parsed_data) {
     db <- init_db(gbk[["db_dir"]], create = TRUE)
     
@@ -134,9 +135,14 @@ gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
     dbInsert(db, "sequence", gbk[["sequence"]])
     
     gbk_list <- c(gbk_list, db)
+    accn <- c(accn, gbk[["header"]][["accession"]])
   }
   
-  gbk_list <- if (length(gbk_list) == 1L) gbk_list[[1L]]
+  if (length(gbk_list) == 1L) 
+    gbk_list <- gbk_list[[1L]]
+  else
+    names(gbk_list) <- accn
+ 
   gbk_list
 }
 

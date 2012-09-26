@@ -64,7 +64,7 @@ updateDirectory <- function (db) {
 
 
 is_gbRecord_db <- function (object) {
-  if (file.exists(object) || file.info(object)$isDir) {
+  if (!isS4(object) && file.exists(object) && file.info(object)$isDir) {
     all(not.na(match(.GBFIELDS, dir(object))))
   } else {
     FALSE
