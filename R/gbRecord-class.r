@@ -69,7 +69,7 @@ setMethod("initialize", "gbRecord",
 gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
   
   # if gb is a path to a valid gbRecord database we initialise and return
-  if (is_gbRecord_db(gb)) {
+  if (is_gbRecord_db(object=gb)) {
     return(init_db(gb, create = FALSE))
   
   # otherwise we can parse efetch instances or a GenBank flat file.

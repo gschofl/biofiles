@@ -1,6 +1,9 @@
 #' @include utils.r
 #' @include validate.r
-#' @importFrom IRanges "start<-" "end<-"
+#' @importFrom IRanges "start<-"
+#' @importFrom IRanges "end<-"
+#' @importFrom IRanges elementMetadata
+#' @importFrom IRanges "elementMetadata<-"
 NULL
 
 
@@ -121,6 +124,15 @@ setGeneric("definition", signature="x", function (x, ...) {
 setGeneric("location", signature="x",
            function (x, attributes = FALSE, join = FALSE, ...) {
              standardGeneric("location")
+           })
+
+
+#' @rdname annotation
+#' @export
+#' @genericMethods
+setGeneric("annotation", signature="x",
+           function (x, ...) {
+             standardGeneric("annotation")
            })
 
 

@@ -20,17 +20,21 @@ NULL
 setMethod("initialize", "gbRange",
           function (.Object, start, width, strand, ...) {
             if (missing(start) || missing(width) || missing(strand)) {
-              stop("Missing arguments")
+              return( .Object )
             }
-            if (any(strand %ni% c(1,-1))) {
-              stop("Strand must be encoded as 1 (plus strand) or -1 (minus strand)")
+            if (any(strand %ni% c(1,-1,NA))) {
+              stop("Strand must be encoded as 1 (plus strand), -1 (minus strand), or NA")
             }
             anno=list(...)
             z <- vapply(c(list(start, width, strand), anno), length, numeric(1))
             if (length(unique(z)) != 1L) {
               stop("Arguments have unequal length")
             }
-            r <- callNextMethod(.Object, start = start, width = width)
+            
+            r <- callNextMethod(.Object, start = start, width = width,
+                                NAMES = anno[["names"]])
+            
+            anno[["names"]] <- NULL
             r@elementMetadata <- if (length(anno) > 0) {
               DataFrame(strand, anno)
             } else {
@@ -43,6 +47,7 @@ setMethod("initialize", "gbRange",
 # show-method ------------------------------------------------------------
 
 
+#' @autoImports
 setMethod("show", "gbRange",
           function (object) {
             lo <- length(object)
@@ -68,11 +73,17 @@ setMethod("show", "gbRange",
           })
 
 
+#' @export
 setAs("gbRange", "data.frame",
       function (from) {
-        data.frame(as.data.frame(from),
-                   as.data.frame(stringsAsFactors=FALSE,
-                                 from@elementMetadata))
+        # there is no proper setAs() method defined for coercion from
+        # IRanges to data.frames in IRanges, only as.data.frame.
+        # So we can't use callNextMethod() here.
+        op <- options(stringsAsFactors = FALSE)
+        df <- data.frame(IRanges::as.data.frame(from),
+                         as(from@elementMetadata, "data.frame"))
+        options(op)
+        df
       })
 
 
@@ -86,6 +97,21 @@ setMethod("end", "gbRange", function (x) callNextMethod(x))
 
 
 setMethod("width", "gbRange", function (x) IRanges::width(x))
+
+
+setMethod("strand", "gbRange", 
+          function (x) elementMetadata(x)[["strand"]])
+
+
+setMethod("range", "gbRange", 
+          function (x) {
+            elementMetadata(x) <- NULL
+            x
+          })
+
+
+setMethod("annotation", "gbRange", 
+          function (x)  elementMetadata(x))
 
 
 # shift ------------------------------------------------------------------
