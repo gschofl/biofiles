@@ -25,7 +25,8 @@ setMethod("initialize", "gbRange",
             if (any(strand %ni% c(1,-1,NA))) {
               stop("Strand must be encoded as 1 (plus strand), -1 (minus strand), or NA")
             }
-            anno=list(...)
+            
+            anno <- as.list(unlist(list(...))) 
             z <- vapply(c(list(start, width, strand), anno), length, numeric(1))
             if (length(unique(z)) != 1L) {
               stop("Arguments have unequal length")
@@ -112,6 +113,36 @@ setMethod("range", "gbRange",
 
 setMethod("annotation", "gbRange", 
           function (x)  elementMetadata(x))
+
+
+setMethod("sequence", "gbRange",
+          function (x, seq, ...) {
+            
+            if (is(seq, "gbRecord")) {
+              seq <- sequence(seq)
+            }
+            
+            if (is(seq, "DNAStringSet")) {
+              if (length(seq) > 1) {
+                warning("'seq' contains multiple sequences. Only the first will be used")
+              }
+              seq <- seq[[1]]
+            }
+            
+            if (!is(seq, "DNAString")) {
+              stop("'seq' must be a 'DNAString' object")
+            }
+            
+            x <- sort(x)
+            start <- biofiles::start(x)
+            end <- biofiles::end(x)
+            strand <- biofiles::strand(x)
+            seqs <- as(Views(seq, start, end), "DNAStringSet")
+            o <- order(c(start[strand == -1], start[strand == 1]))
+            
+            append(reverseComplement(seqs[strand == -1]),
+                   seqs[strand == 1])[o]
+          })
 
 
 # shift ------------------------------------------------------------------
