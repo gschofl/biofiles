@@ -26,10 +26,10 @@ Super classes:
   \item \code{\link{[}}
   \item \code{\link{[[}}
   \item \code{\link{$}}
-  \item \code{\link{annotation}}
   \item \code{\link{end}}
   \item \code{\link{initialize}}
   \item \code{\link{range}}
+  \item \code{\link{sequence}}
   \item \code{\link{show}}
   \item \code{\link{start}}
 }

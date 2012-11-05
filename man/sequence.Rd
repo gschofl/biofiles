@@ -22,6 +22,7 @@ Get sequences of a GenBank records or features.
 \itemize{
   \item \linkS4class{gbFeature}
   \item \linkS4class{gbFeatureList}
+  \item \linkS4class{gbRange}
   \item \linkS4class{gbRecord}
 }
 
