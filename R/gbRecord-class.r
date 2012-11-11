@@ -14,7 +14,7 @@ NULL
 #' @export
 #' @classHierarchy
 #' @classMethods
-.gbRecord <- setClass("gbRecord", contains="filehashRDS")
+setClass("gbRecord", contains="filehashRDS")
 
 
 setValidity("gbRecord", function (object) {
@@ -46,7 +46,6 @@ setMethod("initialize", "gbRecord",
           })
 
 
-
 # constructor ------------------------------------------------------------
 
 
@@ -66,16 +65,17 @@ setMethod("initialize", "gbRecord",
 #' @param force Overwrite existing database directories without prompting.
 #' @return A (list of) \code{\linkS4class{gbRecord}} object(s).
 #' @export
+#' @autoImports
 gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
   
   # if gb is a path to a valid gbRecord database we initialise and return
-  if (is_gbRecord_db(object=gb)) {
+  if (is_gbRecord_db(gb)) {
     return(init_db(gb, create = FALSE))
   
   # otherwise we can parse efetch instances or a GenBank flat file.
   } else if (is(gb, "efetch")) {
     # we can parse rettype = gbwithparts, gb, gp and retmode =  text
-    if (gb@type %ni% c("gb", "gp") || gb@mode != "text")
+    if (gb@rettype %ni% c("gb", "gp") || gb@retmode != "text")
       stop("Must use efetch with rettype='gbwithparts','gb', or 'gp' and retmode='text'")
     
     split_gb <- unlist(strsplit(gb@content, "\n\n"))
@@ -159,7 +159,7 @@ init_db <- function(db_dir, create = FALSE, ...) {
     stop(sprintf("Database directory %s does not exist",
                  sQuote(db_dir)))
   }
-  .gbRecord(dir=normalizePath(db_dir), name=basename(db_dir), ...)
+  new("gbRecord", dir=normalizePath(db_dir), name=basename(db_dir), ...)
 }
 
 
