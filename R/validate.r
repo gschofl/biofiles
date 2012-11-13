@@ -64,7 +64,7 @@ updateDirectory <- function (db) {
 
 
 is_gbRecord_db <- function (object) {
-  if (!is.atomic(object)) {
+  if (!is.atomic(object) || is(object, "connection")) {
     return(FALSE)
   }
   if (file.exists(object) && file.info(object)[["isdir"]]) {
