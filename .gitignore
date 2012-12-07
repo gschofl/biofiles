@@ -2,6 +2,9 @@
 .Rhistory
 .RData
 *.Rproj
+src/*.o
+src/*.so
+src/*.dll
 data/
 doc/
 inst/

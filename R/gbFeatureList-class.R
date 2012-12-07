@@ -251,7 +251,7 @@ setMethod("sequence", "gbFeatureList",
 
 setReplaceMethod("start", "gbFeatureList",
                  function (x, value) {
-                   value <- recycle(x, value)
+                   value <- recycle(value, length(x))
                    new_x <- Map(function(Feature, val) { 
                      start(Feature) <- val
                      Feature
@@ -264,7 +264,7 @@ setReplaceMethod("start", "gbFeatureList",
 
 setReplaceMethod("end", "gbFeatureList",
                  function(x, value) {
-                   value <- recycle(x, value)
+                   value <- recycle(value, length(x))
                    new_x <- Map(function(Feature, val) { 
                      end(Feature) <- val
                      Feature
@@ -277,7 +277,7 @@ setReplaceMethod("end", "gbFeatureList",
 
 setReplaceMethod("strand", "gbFeatureList",
                  function(x, value) {
-                   value <- recycle(x, value)
+                   value <- recycle(value, length(x))
                    new_x <- Map(function(Feature, val) { 
                      strand(Feature) <- val
                      Feature

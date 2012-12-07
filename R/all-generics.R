@@ -1,15 +1,11 @@
 #' @include utils.r
 #' @include validate.r
-#' @importFrom IRanges "start<-"
-#' @importFrom IRanges "end<-"
-#' @importFrom IRanges elementMetadata
-#' @importFrom IRanges "elementMetadata<-"
 NULL
 
 
 # The biofiles API -------------------------------------------------------
 
-##    Basic geters/setters in
+##    Basic getters/setters in
 ##    gbLocation-class, gbRange-class, gbFeature-class, gbFeatureList-class
 ##      start, end, strand, width
 ##      start<-, end<-, strand<-
@@ -45,7 +41,7 @@ NULL
 
 # getter/setter generics -------------------------------------------------
 
-
+### The "start" and "end" generics are defined in the stats package.
 #' @rdname start
 #' @export
 #' @genericMethods
@@ -70,22 +66,20 @@ setGeneric("end")
 setGeneric("end<-")
 
 
+### The "strand" generic is defined in the BiocGenerics package.
 #' @rdname strand
 #' @export
 #' @genericMethods
-setGeneric("strand", signature="x", function (x, ...) {
-  standardGeneric("strand")
-})
+setGeneric("strand")
 
 
 #' @rdname strand
 #' @export
 #' @genericMethods
-setGeneric("strand<-", signature="x", function (x, value, ...) {
-  standardGeneric("strand<-")
-})
+setGeneric("strand<-")
 
-
+### The "width" generic is defined in the IRanges package. We need
+### to override it because they don't provide a dotdotdot interface.
 #' @rdname width
 #' @export
 #' @genericMethods

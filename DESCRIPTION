@@ -1,5 +1,5 @@
 Package: biofiles
-Version: 0.1-5
+Version: 0.1-6
 Title: Working with GenBank flat file records
 Authors@R: person("Gerhard", "Schöfl", role=c("aut","cre"),
     email="gschofl@yahoo.de")
@@ -9,11 +9,14 @@ Description: Parse GenBank records into R object and store the
 License: MIT
 Encoding: latin1
 Depends:
-    R (>= 2.15)
+    R (>= 2.15),
+    Rcpp (>= 0.10.1)
+LinkingTo: Rcpp
 Imports:
     methods,
     rmisc,
     filehash,
+    BiocGenerics,
     intervals,
     IRanges,
     Biostrings,
@@ -21,20 +24,21 @@ Imports:
     stringr,
     plyr
 Collate:
-    'utils.r'
-    'validate.r'
-    'all-generics.r'
-    'gbLocation-class.r'
-    'gbRange-class.r'
-    'gbFeature-class.r'
-    'gbFeatureList-class.r'
-    'gbRecord-class.r'
-    'flanking.r'
-    'parser.r'
-    'retrieve.r'
-    'revcomp.r'
-    'select.r'
-    'shift.r'
-    'write-feature-table.r'
-    'write-genbank.r'
+    'utils.R'
+    'validate.R'
+    'all-generics.R'
+    'gbLocation-class.R'
+    'gbRange-class.R'
+    'gbFeature-class.R'
+    'gbFeatureList-class.R'
+    'gbRecord-class.R'
+    'RcppExports.R'
+    'flanking.R'
+    'parser.R'
+    'retrieve.R'
+    'revcomp.R'
+    'select.R'
+    'shift.R'
+    'write-feature-table.R'
+    'write-genbank.R'
     'zzz.R'

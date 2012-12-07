@@ -68,20 +68,16 @@ setMethod("initialize", "gbRecord",
 #' @autoImports
 gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
   
-  # if gb is a path to a valid gbRecord database we initialise and return
   if (is_gbRecord_db(gb))
     return(init_db(gb, create = FALSE))
   
-  # otherwise we can parse efetch instances or a GenBank flat file.
   if (is(gb, "efetch")) {
-    # we can parse rettype = gbwithparts, gb, gp and retmode =  text
     if (gb@rettype %ni% c("gb", "gp") || gb@retmode != "text")
       stop("Must use efetch with rettype='gbwithparts','gb', or 'gp' and retmode='text'")
     
     split_gb <- unlist(strsplit(content(gb, "text"), "\n\n"))
     n <- length(split_gb)
     db_path <- replicate(n, tempfile(fileext=".db"))
-    
     parsed_data <- vector("list", n)
     for (i in seq_len(n)) {
       gb_data <- unlist(strsplit(split_gb[i], "\n"))
@@ -89,7 +85,8 @@ gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
                                    with_sequence=with_sequence,
                                    force=force)
     }
-  } else if (!isS4(gb) && (is(gb, "connection") || file.exists(gb))) {
+  }
+  else if (!isS4(gb) && (is(gb, "connection") || file.exists(gb))) {
     if (is(gb, "textConnection")) {
       con <- gb
       db_path <- tempfile(fileext=".db")
@@ -98,7 +95,7 @@ gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
       db_path <- paste0(gb, ".db")
     }
     on.exit(close(con))
-    parsed_data <- list(.parseGB(readLines(con), db_path, with_sequence, force))
+    parsed_data <- list(.parseGB(gb_data=readLines(con), db_path, with_sequence, force))
     
   } else {
     stop("'gb' must be a valid GenBank flat file or an 'efetch' object containing GenBank records")

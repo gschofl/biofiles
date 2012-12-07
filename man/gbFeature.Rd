@@ -29,6 +29,8 @@ for GenBank feature tables.
   \item \code{\link{show}}
   \item \code{\link{start}}
   \item \code{\link{start<-}}
+  \item \code{\link{strand}}
+  \item \code{\link{strand<-}}
   \item \code{\link{summary}}
 }
 

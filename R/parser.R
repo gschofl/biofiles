@@ -181,38 +181,6 @@
   
   }
 
-#' @autoImports
-.parseGbFeatures <- function (db_dir, accession, definition, gb_features) {
-  # where do all the features start
-  feature_start <- grep("^     \\S", gb_features)
-  # where do all the features end
-  feature_end <- c(feature_start[-1] - 1, length(gb_features))
-  # indeces for all features
-  feature_idx <- mapply(seq.int, feature_start, feature_end,
-                        SIMPLIFY=FALSE, USE.NAMES=FALSE)
-
-  message(sprintf("Parsing features into %s", dQuote(basename(db_dir))))
-
-#   f_list <- list()
-#   i <- 1
-#   for (i in seq_along(feature_idx)) {
-#     print(i)
-#     f_list[[i]] <- .parseFeatureTable(id=i, lines=gb_features[feature_idx[[i]]],
-#                                  db_dir=db_dir, accession=accession,
-#                                  definition=definition)
-#   }
-#   id <- 4
-#   lines <- gb_features[feature_idx[[id]]]
-  
-  f_list <- mcmapply(function (idx, n) {
-    .parseFeatureTable(id=n, lines=gb_features[idx], db_dir=db_dir,
-                       accession=accession, definition=definition)
-  }, idx=feature_idx, n=seq_along(feature_start),
-                     SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
-  
-  .gbFeatureList(.Data=f_list, .Dir=db_dir, .ACCN=accession, .DEF=definition) 
-}
-
 
 ## characters permitted to occur in feature table component names:
 ## [A-Z], [a-z], [0-9], [_'*-] --> [[:alnum]_'*\\-]
@@ -248,49 +216,36 @@
 ##   /citation=[number] e.g. /citation=[3]
 ##   /compare=[accession-number.sequence-version] e.g. /compare=AJ634337.1
 ##
+#' @autoImports
+.parseGbFeatures <- function (db_dir, accession, definition, gb_features) {
+  # where do all the features start
+  feature_start <- grep("^     \\S", gb_features)
+  # where do all the features end
+  feature_end <- c(feature_start[-1] - 1, length(gb_features))
+  # indeces for all features
+  feature_idx <- mapply(seq.int, feature_start, feature_end,
+                        SIMPLIFY=FALSE, USE.NAMES=FALSE)
 
-# id <- 1
-# db_dir="dir"
-# accession="accn"
-# definition="def"
-# lines <- readLines("test/feature1")
-# lines <- readLines("test/feature2")
-# lines <- readLines("test/feature3")
-# .parseFeatureTable(id, lines, db_dir, accession, definition)
-
-.parseFeatureTable <- function (id, lines, db_dir, accession, definition) {
+  message(sprintf("Parsing features into %s", dQuote(basename(db_dir))))
   
-  key <- loc <- qual <- NULL
+#     f_list <- list()
+#     i <- 302
+#     for (i in seq_along(feature_idx)) {
+#       print(i)
+#       f_list[[i]] <- .parseFeatureTable(id=i, lines=gb_features[feature_idx[[i]]],
+#                                          db_dir=db_dir, accession=accession,
+#                                          definition=definition)
+#     }
+#     id <- 1
+#     lines <- gb_features[feature_idx[[id]]]
   
-  # match qualifier positions
-  start <- c(1, grep("^\\s{21}/", lines))
-  end <- c(start[-1] - 1, length(lines))
-  idx <- Map(seq.int, start, end)
+  ftr <- mcmapply(function (idx, n) {
+    parse_feature_table(id=n, lines=gb_features[idx], db_dir=db_dir,
+                        accession=accession, definition=definition)
+  }, idx=feature_idx, n=seq_along(feature_start),
+     SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
   
-  # merge key/location/qualifier lines
-  llist <- lapply(idx, function (i) lines[i])
-  merged <- vapply(llist, merge_lines, character(1))
-
-  # match only the first occurrence of whitespace after the key
-  m <- regexpr("\\s+", merged[1])
-  key_loc <- unlist(regmatches(merged[1], m, invert=TRUE))
-  
-  qual_lines <- merged[-1]
-  if (not_empty(qual_lines)) {
-    qual <- setNames(trim(strsplitN(qual_lines, "=", 2), "\""),
-                     trim(strsplitN(qual_lines, "=", 1), "/"))
-    # cleanup: /pseudo tags are given NA as a qualifier value. Replace with TRUE
-    # remove whitspace from /translation
-    qual[is.na(qual)] <- TRUE
-    if (not.na(qual["translation"])) {
-      qual["translation"] <- gsub('\\s+', '', qual["translation"])
-    }
-  }
-  
-  .gbFeature(.Dir = db_dir, .ACCN = accession, .DEF = definition,
-             .ID = as.integer(id), key = key_loc[1],
-             location = .getLocation(gb_base_span=key_loc[2]),
-             qualifiers = qual)
+  new('gbFeatureList', .Data=ftr, .Dir=db_dir, .ACCN=accession, .DEF=definition) 
 }
 
 

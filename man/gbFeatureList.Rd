@@ -36,6 +36,8 @@ Super classes:
   \item \code{\link{show}}
   \item \code{\link{start}}
   \item \code{\link{start<-}}
+  \item \code{\link{strand}}
+  \item \code{\link{strand<-}}
   \item \code{\link{summary}}
   \item \code{\link{view}}
 }

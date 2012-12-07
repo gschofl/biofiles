@@ -1,15 +1,9 @@
-recycle <- function (x, val) {
-  lx <- length(x)
+recycle <- function (val, len) {
   lv <- length(val)
-  if (lx > lv) {
-    val <- c(rep(val, lx%/%lv), val[seq_len(lx%%lv)])
+  if (len > lv) {
+    val <- c(rep(val, len%/%lv), val[seq_len(len%%lv)])
   }
   val
-}
-
-
-"%||%" <- function (a, b) {
-  if (!a) b else a
 }
 
 
@@ -35,6 +29,7 @@ is_compound <- function (x) {
 }
 
 
+#' @autoImports
 getCompounds <- function (x) {
   x <- x[which(is_compound(x))]
   if (length(x) == 0) return(NA_real_) 
@@ -43,6 +38,7 @@ getCompounds <- function (x) {
 }
 
 
+#' @autoImports
 expandIds <- function (x) {
   cmp_pos <- Position(is_compound, x)
   if (is.na(cmp_pos)) {
@@ -65,6 +61,7 @@ expandIds <- function (x) {
 }
 
 
+#' @autoImports
 .qualAccess <- function (x, qual = "", fixed = FALSE) {
   
   .access <- function (q) {
@@ -106,6 +103,7 @@ expandIds <- function (x) {
 }
 
 
+#' @autoImports
 .simplify <- function (x, unlist = TRUE) {
   if (length(len <- unique(unlist(lapply(x, length)))) > 1L) {
     return(x)
@@ -151,6 +149,7 @@ expandIds <- function (x) {
     seq
   }
   
+  #' @autoImports
   if (is(x, "gbFeatureList")) {
     ## initiate empty XStringSet
     seq <- switch(type, 
