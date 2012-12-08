@@ -143,7 +143,7 @@ setMethod("range", "gbFeatureList",
             start <- as.integer(unlist(start(x, join = join)))
             width <- as.integer(unlist(end(x, join = join))) - start + 1L
             strand <- unlist(strand(x, join = join))
-            .gbRange(start, width, strand)
+            new('gbRange', start, width, strand)
           })
 
 

@@ -6,17 +6,6 @@ recycle <- function (val, len) {
   val
 }
 
-
-#' @autoImports
-merge_lines <- function (lines) {
-  if (length(lines) == 1L) {
-    trim(lines)
-  } else {
-    paste0(trim(lines), collapse=" ")
-  }
-}
-
-
 #' @autoImports
 is_compound <- function (x) {
   if (is(x, "gbFeatureList")) {

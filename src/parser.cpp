@@ -8,6 +8,12 @@
 using namespace Rcpp;
 using namespace std;
 
+void print( std::vector<std::string> &v ) {
+    for (size_t n = 0; n < v.size(); n++)
+        std::cout << "\"" << v[ n ] << "\"\n";
+    std::cout << std::endl;
+}
+
 // complement
 static const boost::regex COMPL("^complement");
 
@@ -203,7 +209,7 @@ Rcpp::List parse_simple_span(std::string base_span) {
     partial(0, 1) = m[0].matched;
   
     // get span
-    IntegerMatrix pos(1, 2);
+    NumericMatrix pos(1, 2);
     static const boost::regex P("<|>");
     pos(0, 0) = atoi( boost::regex_replace(start_pos, P, empty).c_str() );
     pos(0, 1) = atoi( boost::regex_replace(end_pos, P, empty).c_str() );
@@ -319,33 +325,36 @@ SEXP parse_gb_location(std::string gb_base_span) {
 }
 
 // [[Rcpp::export]]
-CharacterVector get_qual( std::vector<std::string> lines ) {
-  int n = lines.size();
-  Rcpp::CharacterVector quals = CharacterVector::create("");
-  std::string qual;
+Rcpp::CharacterVector get_qual( std::vector<std::string> lines ) {
+    Rcpp::CharacterVector quals;
+    std::vector<std::string> tag_qual;
+    std::string tag("");
+    std::string qual("");
+    int n = lines.size();
+    for(int i = 0; i < n; ++i) {
+        std::string line = lines[i];
+        boost::split_regex( tag_qual, line, boost::regex( "=" ) );
+        tag = tag_qual.at(0).erase(0,1);
+        try {
+            qual = tag_qual.at(1);
+            qual.erase(remove(qual.begin(), qual.end(), '\"'), qual.end());
+        }
+        catch(...) {
+            qual = "TRUE";
+        }
 
-  for(int i = 0; i < n; ++i) {
-    std::string line = lines[i];
-    int equalLoc = line.find('=');
-    std::string tag = line.substr(1, equalLoc - 1);
-    if (equalLoc < 0) {
-      qual = "TRUE";
-    } else {
-      qual = line.substr(equalLoc + 1, line.length() - equalLoc - 1);
-      qual.erase(remove(qual.begin(), qual.end(),'\"'), qual.end());
-    }
-    if (tag == "translation") {
-      qual.erase(remove(qual.begin(), qual.end(),' '), qual.end());
-    }
+        if (tag == "translation") {
+            qual.erase(remove(qual.begin(), qual.end(), ' '), qual.end());
+        }
     quals[tag] = qual;
-  }
-  
-  return quals; 
+    }
+
+    return quals; 
 }
 
 // [[Rcpp::export]]
 SEXP parse_feature_table(int id = 0,
-                         CharacterVector lines = CharacterVector::create(""),
+                         Rcpp::CharacterVector lines = Rcpp::CharacterVector::create(""),
                          std::string db_dir = "", std::string accession = "",
                          std::string definition = "") {
                            
@@ -357,9 +366,9 @@ SEXP parse_feature_table(int id = 0,
     obj.slot(".DEF") = definition;
     obj.slot(".ID") = id;
     
-    string::const_iterator s, e;
+    std::string::const_iterator s, e;
     boost::smatch m;
-    CharacterVector thisline;
+    Rcpp::CharacterVector thisline;
     
     // initialize idx
     vector<int> idx;
@@ -389,7 +398,7 @@ SEXP parse_feature_table(int id = 0,
             line += newline + " ";
             j++;
         }
-        // cout << line << endl;
+        boost::trim( line );
         merged_lines.push_back(line);
     }
     
@@ -397,11 +406,17 @@ SEXP parse_feature_table(int id = 0,
     std::vector<std::string> key_loc;
     boost::split_regex( key_loc, merged_lines[0], boost::regex( "\\s+" ) );
     merged_lines.erase( merged_lines.begin() );
-    // cout << key_loc[0] << "\n" << key_loc[1] << endl;
-    
-    obj.slot("key") = key_loc[0];
-    obj.slot("location") = parse_gb_location( key_loc[1] );
+
+    std::string key = key_loc[0];
+    std::string loc("");
+    for (int i = 1; i < key_loc.size(); ++i) {
+        loc += key_loc[i];
+    }
+    // cout << key << "\n" << loc << endl;
+    obj.slot("key") = key;
+    obj.slot("location") = parse_gb_location( loc );
     obj.slot("qualifiers") = get_qual(  merged_lines );
     
     return obj;
 }
+

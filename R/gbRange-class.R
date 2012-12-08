@@ -9,7 +9,7 @@ NULL
 #' @export
 #' @classHierarchy
 #' @classMethods
-.gbRange <- setClass("gbRange", contains="IRanges")
+setClass("gbRange", contains="IRanges")
 
 
 # initialize-method ------------------------------------------------------
@@ -22,7 +22,7 @@ setMethod("initialize", "gbRange",
             if (missing(start) || missing(width) || missing(strand)) {
               return( .Object )
             }
-            if (any(strand %ni% c(1,-1,NA))) {
+            if (any(strand %ni% c(1L,-1L,NA_integer_))) {
               stop("Strand must be encoded as 1 (plus strand), -1 (minus strand), or NA")
             }
             

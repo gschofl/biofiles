@@ -28,14 +28,14 @@ setClassUnion("charOrNull", c("character", "NULL"))
 #' @export
 #' @classHierarchy
 #' @classMethods
-.gbFeature <- setClass("gbFeature",
-                       representation(.Dir="character",
-                                      .ACCN="character",
-                                      .DEF="character",
-                                      .ID="integer",
-                                      key="character",
-                                      location="gbLocation",
-                                      qualifiers="charOrNull"))
+setClass("gbFeature",
+         representation(.Dir="character",
+                        .ACCN="character",
+                        .DEF="character",
+                        .ID="integer",
+                        key="character",
+                        location="gbLocation",
+                        qualifiers="character"))
 
 
 setValidity("gbFeature", function (object) {
@@ -56,7 +56,7 @@ setMethod("show", "gbFeature",
             loc <- linebreak(as(object@location, "character"),
                              offset=17, indent=0, split=",", FORCE=TRUE)
             
-            if (is.null(object@qualifiers)) {
+            if (is_empty(object@qualifiers)) {
               cat("Feature:         Location/Qualifiers:\n",
                   sprintf("%-16s%s\n", object@key, loc))
             } else {
@@ -330,10 +330,21 @@ setMethod("shift", "gbFeature",
 
 #' @export
 setMethod("[[", c("gbFeature", "character", "missing"),
-          function(x, i, j) slot(x, i))
-
+          function(x, i, j) {
+            if (i %in% c("key","location",".Dir",".ACCN",".DEF",".ID")) {
+              slot(x, i)
+            } else {
+              x@qualifiers[i]
+            }
+          })
 
 #' @export
 setMethod("$", "gbFeature",
-          function(x, name) slot(x, name))
+          function(x, name) {
+            if (name %in% c("key","location",".Dir",".ACCN",".DEF",".ID")) {
+              slot(x, name)
+            } else {
+              x@qualifiers[name]
+            }
+          })
 

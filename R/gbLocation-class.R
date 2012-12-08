@@ -122,9 +122,9 @@ setMethod("width", "gbLocation",
 setMethod("strand", "gbLocation",
           function (x, join = FALSE) {
             if (join || nrow(x) == 1L)
-              x@strand
+              unique(x@strand)
             else
-              rep(x@strand, nrow(x))       
+              x@strand     
           })
 
 
@@ -201,7 +201,6 @@ setReplaceMethod("strand", "gbLocation",
                    x
                  })
 
-
 # Coerce-methods ------------------------------------------------------
 
 
@@ -213,7 +212,7 @@ setAs("gbLocation", "character",
         if (nrow(from) == 0)
           return(character())
         else {
-          clo <- closed(from)
+          clo <- from@closed
           par <- partial(from)
           str <- strand(from)
           cmp <- from@compound
@@ -243,7 +242,7 @@ setAs("gbLocation", "character",
                          pos)
           
           res <- 
-            if (length(str) == 1) {
+            if (length(unique(str)) == 1) {
               paste0(
                 ifelse( identical(str, -1L), "complement(", ""),
                 ifelse( !is.na(cmp), paste0(cmp, "("), ""),
