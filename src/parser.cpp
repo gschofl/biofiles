@@ -148,8 +148,19 @@ static const boost::regex PCCL(
         "\\)"
     ")$");
 
-Rcpp::List parse_simple_span(std::string base_span) {
+class BaseSpan {
+public:
+    int strand;
+    std::string accn;
+    bool remote;
+    std::vector<bool> closed;
+    std::vector<bool> partial;
+    std::vector<int> position;
+};
 
+BaseSpan parse_simple_span(std::string base_span) {
+
+    BaseSpan res;
     std::string::const_iterator start, end;
     start = base_span.begin();
     end = base_span.end();
@@ -161,7 +172,7 @@ Rcpp::List parse_simple_span(std::string base_span) {
     if ( boost::regex_search(start, end, m, COMPL) ) {
         strand = -1;
     }
-  
+
     // get span string
     boost::regex_search(start, end, m, SL);
     string span = m[0];
@@ -169,11 +180,11 @@ Rcpp::List parse_simple_span(std::string base_span) {
     end = span.end();
 
     // get remote accession number
-    CharacterVector accn = CharacterVector::create(NA_STRING);
+    std::string accn("");
     bool remote(false);
     boost::regex_search(start, end, m, RA);
     if (m[0].matched) {
-        accn = CharacterVector::create(m[0]);
+        accn = m[0];
         remote = true;
     }
   
@@ -183,13 +194,10 @@ Rcpp::List parse_simple_span(std::string base_span) {
     end = span.end();
   
     // get closed
-    LogicalMatrix closed(1, 2);
+    std::vector<bool> closed(2);
     if( not boost::regex_search(start, end, m, boost::regex("\\d+\\.\\d+")) ) {
-        closed(0, 0) = true;
-        closed(0, 1) = true;
-    } else {
-        closed(0, 0) = false;
-        closed(0, 1) = false;
+        closed[0] = true;
+        closed[1] = true;
     }
   
     // split span
@@ -202,22 +210,26 @@ Rcpp::List parse_simple_span(std::string base_span) {
     }
   
     // get partial
-    LogicalMatrix partial(1, 2);
+    std::vector<bool> partial(2);
     boost::regex_match(start_pos, m, boost::regex("^(<|>)\\d+") );
-    partial(0, 0) = m[0].matched;
+    partial[0] = m[0].matched;
     boost::regex_match(end_pos, m, boost::regex("^(<|>)\\d+") );
-    partial(0, 1) = m[0].matched;
+    partial[1] = m[0].matched;
   
     // get span
-    NumericMatrix pos(1, 2);
+    std::vector<int> pos(2);
     static const boost::regex P("<|>");
-    pos(0, 0) = atoi( boost::regex_replace(start_pos, P, empty).c_str() );
-    pos(0, 1) = atoi( boost::regex_replace(end_pos, P, empty).c_str() );
+    pos[0] = atoi( boost::regex_replace(start_pos, P, empty).c_str() );
+    pos[1] = atoi( boost::regex_replace(end_pos, P, empty).c_str() );
     
-    return List::create(
-        _["position"] = pos, _["strand"] = strand, _["partial"] = partial,
-        _["accn"] = accn, _["remote"] = remote, _["closed"] = closed
-    );
+    res.strand = strand;
+    res.accn = accn;
+    res.remote = remote;
+    res.closed = closed;
+    res.partial = partial;
+    res.position = pos;
+
+    return res;
 }
 
 // [[Rcpp::export]]
@@ -226,7 +238,8 @@ SEXP parse_gb_location(std::string gb_base_span) {
     // clean up anny possible whitespace
     static const string empty("");
     gb_base_span = boost::regex_replace(gb_base_span, boost::regex("\\s+"), empty);
-    
+    // std::cout << gb_base_span << std::endl;
+
     // iterator over gb_base_span
     std::string::const_iterator start, end;
     start = gb_base_span.begin();
@@ -239,14 +252,26 @@ SEXP parse_gb_location(std::string gb_base_span) {
   
     // test for a possibly complemented simple location
     if ( boost::regex_match(start, end, m, PCSL) ) {
-        Rcpp::List locList = parse_simple_span(gb_base_span);
-        obj.slot("strand") = locList["strand"];
-        obj.slot("accession") = locList["accn"];
-        obj.slot("remote") = locList["remote"];
-        obj.slot("closed") = locList["closed"];
-        obj.slot("partial") = locList["partial"];
-        obj.slot(".Data") = locList["position"];
+        BaseSpan s = parse_simple_span(gb_base_span);
+        obj.slot("strand") = s.strand;
+        obj.slot("accession") = s.accn;
+        obj.slot("remote") = s.remote;
         
+        LogicalMatrix clo(1,2);
+        clo(0,0) = s.closed[0];
+        clo(0,1) = s.closed[1];
+        obj.slot("closed") = clo;
+
+        LogicalMatrix part(1,2);
+        part(0,0) = s.partial[0];
+        part(0,1) = s.partial[1];
+        obj.slot("partial") = part;
+
+        NumericMatrix pos(1,2);
+        pos(0,0) = s.position[0];
+        pos(0,1) = s.position[1];
+        obj.slot(".Data") = pos;
+
     } else if ( boost::regex_match( start, end, m, PCCL ) ) {
         // test for complementary strand
         int strand(1);
@@ -256,23 +281,23 @@ SEXP parse_gb_location(std::string gb_base_span) {
         
         // get compound span
         boost::regex_search( start, end, m, CL );
-        string cmpnd_span( m[0] );
+        std::string cmpnd_span( m[0] );
         start = cmpnd_span.begin();
         end = cmpnd_span.end();  
         
         // get compound type
         boost::regex_search(start, end, m, CMPND);
-        string compound( m[0] );
+        std::string compound( m[0] );
         
         // get span strings
         boost::regex_search( start, end, m, SLC );
-        string span_str( m[0] );
+        std::string span_str( m[0] );
         
         vector<string> spans;
         boost::split_regex( spans, span_str, boost::regex( "\\s*,\\s*" ) );
         
         int nrows = spans.size();
-        Rcpp::IntegerMatrix posMat( nrows, 2 );
+        Rcpp::NumericMatrix posMat( nrows, 2 );
         Rcpp::LogicalMatrix partialMat( nrows, 2 );
         Rcpp::LogicalMatrix closedMat( nrows, 2 );
         Rcpp::IntegerVector strandVec(nrows);
@@ -280,31 +305,29 @@ SEXP parse_gb_location(std::string gb_base_span) {
         Rcpp::LogicalVector remoteVec(nrows);
         
         for (int i = 0; i < nrows; ++i) {
-            string span =  spans[i];
-            Rcpp::List locList = parse_simple_span(span);
+            std::string span =  spans[i];
+            // std::cout << span << std::endl;
+
+            BaseSpan s = parse_simple_span(span);
             
             // get positions
-            Rcpp::IntegerMatrix pos = locList["position"];
-            posMat(i, 0) = pos(0, 0);
-            posMat(i, 1) = pos(0, 1);
+            posMat(i, 0) = s.position[0];
+            posMat(i, 1) = s.position[1];
             
             // get strand
-            strandVec[i] = locList["strand"];
+            strandVec[i] = s.strand;
             
             // get partial
-            Rcpp::LogicalMatrix part = locList["partial"];
-            partialMat(i, 0) = part(0, 0);
-            partialMat(i, 1) = part(0, 1);
+            partialMat(i, 0) = s.partial[0];
+            partialMat(i, 1) = s.partial[1];
             
             // get accession and remote
-            CharacterVector accn = locList["accn"];
-            accnVec[i] = accn[0];
-            remoteVec[i] = locList["remote"];
+            accnVec[i] = s.accn;
+            remoteVec[i] = s.remote;
             
             // get closed
-            Rcpp::LogicalMatrix clo = locList["closed"];
-            closedMat(i, 0) = clo(0, 0);
-            closedMat(i, 1) = clo(0, 1);
+            closedMat(i, 0) = s.closed[0];
+            closedMat(i, 1) = s.closed[1];
         }
         
         // if the whole span is complementary reset strandVec
@@ -320,7 +343,10 @@ SEXP parse_gb_location(std::string gb_base_span) {
         obj.slot("closed") = closedMat;
         obj.slot("partial") = partialMat;
         obj.slot(".Data") = posMat;
-    }    
+    } else {
+        std::cout << "Not a valid GenBank base span." << std::endl;
+    }
+    
     return obj;
 }
 
@@ -415,7 +441,7 @@ SEXP parse_feature_table(int id = 0,
     // cout << key << "\n" << loc << endl;
     obj.slot("key") = key;
     obj.slot("location") = parse_gb_location( loc );
-    obj.slot("qualifiers") = get_qual(  merged_lines );
+    obj.slot("qualifiers") = get_qual( merged_lines );
     
     return obj;
 }

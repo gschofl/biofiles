@@ -49,7 +49,7 @@ setClass("gbLocation",
 
 #' @keywords internal
 #' @autoImports
-setValidity("gbLocation",
+setValidity2("gbLocation",
             function (object) {  
               if (is_empty(object@strand) || !all(object@strand %in% c(1L, -1L, NA_integer_)))
                 return("The 'strand' slot can contain either -1, 1, or NA")         
@@ -244,11 +244,11 @@ setAs("gbLocation", "character",
           res <- 
             if (length(unique(str)) == 1) {
               paste0(
-                ifelse( identical(str, -1L), "complement(", ""),
+                ifelse( unique(str) == -1, "complement(", ""),
                 ifelse( !is.na(cmp), paste0(cmp, "("), ""),
                 paste0(pos, collapse=","),
                 ifelse( !is.na(cmp), ")", ""),
-                ifelse( identical(str, -1L), ")", "")
+                ifelse( unique(str) == -1, ")", "")
               )
             } else if (length(str) == nrow(from)) {
               paste0(

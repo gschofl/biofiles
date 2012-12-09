@@ -25,7 +25,7 @@
     f <- f[order(new_start)]
   }
   
-  f <- .gbFeatureList(.Data=f, .Dir=f@.Dir, .ACCN=f@.ACCN, .DEF=f@.DEF)
+  f <- new('gbFeatureList', .Data=f, .Dir=f@.Dir, .ACCN=f@.ACCN, .DEF=f@.DEF)
   
   if (updateDb) {
     db <- init_db(f@.Dir)

@@ -38,7 +38,7 @@ setClass("gbFeature",
                         qualifiers="character"))
 
 
-setValidity("gbFeature", function (object) {
+setValidity2("gbFeature", function (object) {
   # at the moment do nothing but the default checks
   TRUE
 })

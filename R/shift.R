@@ -74,8 +74,8 @@
     f <- f[order(mapply("[", new_start, 1))]
   }
   
-  f <- .gbFeatureList(.Data=c(src, f), .Dir=src@.Dir,
-                      .ACCN=src@.ACCN, .DEF=src@.DEF)
+  f <- new('gbFeatureList', .Data=c(src, f), .Dir=src@.Dir,
+           .ACCN=src@.ACCN, .DEF=src@.DEF)
   
   if (updateDb) {
     db <- init_db(src@.Dir, verbose=FALSE)

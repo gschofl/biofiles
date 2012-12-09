@@ -23,14 +23,14 @@ setOldClass("list")
 #' @export
 #' @classHierarchy
 #' @classMethods
-.gbFeatureList <- setClass("gbFeatureList", 
-                           representation(.Dir="character",
-                                          .ACCN="character",
-                                          .DEF="character"),
-                           contains="list")
+setClass("gbFeatureList", 
+         representation(.Dir="character",
+                        .ACCN="character",
+                        .DEF="character"),
+         contains="list")
 
 
-setValidity("gbFeatureList", function (object) {
+setValidity2("gbFeatureList", function (object) {
   if (any(vapply(object@.Data, class, character(1)) != "gbFeature")) {
     return("All elements in a 'gbFeatureList' must be 'gbFeature' instances")
   }
@@ -242,7 +242,7 @@ setMethod("sequence", "gbFeatureList",
           function (x, db = NULL) {
             stopifnot(hasValidDb(x))
             db <- init_db(x@.Dir, verbose=FALSE)
-            .seqAccess(dbFetch(db, "sequence"), x, dbFetch(db, "type"))
+            new('gbFeatureList', dbFetch(db, "sequence"), x, dbFetch(db, "type"))
           })
 
 
@@ -257,8 +257,8 @@ setReplaceMethod("start", "gbFeatureList",
                      Feature
                    }, Feature=x, val=value)
                    
-                   .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
-                                  .ACCN=x@.ACCN, .DEF=x@.DEF)
+                   new('gbFeatureList', .Data=new_x, .Dir=x@.Dir,
+                       .ACCN=x@.ACCN, .DEF=x@.DEF)
                  })
 
 
@@ -270,8 +270,8 @@ setReplaceMethod("end", "gbFeatureList",
                      Feature
                    }, Feature=x, val=value)
                    
-                   .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
-                                  .ACCN=x@.ACCN, .DEF=x@.DEF)
+                   new('gbFeatureList', .Data=new_x, .Dir=x@.Dir,
+                       .ACCN=x@.ACCN, .DEF=x@.DEF)
                  })
 
 
@@ -283,8 +283,8 @@ setReplaceMethod("strand", "gbFeatureList",
                      Feature
                    }, Feature=x, val=value)
                    
-                   .gbFeatureList(.Data=new_x, .Dir=x@.Dir,
-                                  .ACCN=x@.ACCN, .DEF=x@.DEF)
+                   new('gbFeatureList', .Data=new_x, .Dir=x@.Dir,
+                       .ACCN=x@.ACCN, .DEF=x@.DEF)
                  })
 
 
@@ -308,24 +308,24 @@ setMethod("hasQualif", "gbFeatureList",
 setMethod("[", c("gbFeatureList", "character", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
             idx <- vapply(x@.Data, function(f) f@key, character(1L)) == i       
-            .gbFeatureList(.Data=x@.Data[idx], .Dir=x@.Dir, .ACCN=x@.ACCN,
-                           .DEF=x@.DEF)
+            new('gbFeatureList', .Data=x@.Data[idx], .Dir=x@.Dir,
+                .ACCN=x@.ACCN, .DEF=x@.DEF)
           })
 
 
 #' @export
 setMethod("[", c("gbFeatureList", "numeric", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
-            .gbFeatureList(.Data=x@.Data[i], .Dir=x@.Dir, .ACCN=x@.ACCN,
-                           .DEF=x@.DEF)
+            new('gbFeatureList', .Data=x@.Data[i], .Dir=x@.Dir,
+                .ACCN=x@.ACCN, .DEF=x@.DEF)
           })
 
 
 #' @export
 setMethod("[", c("gbFeatureList", "logical", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
-            .gbFeatureList(.Data=x@.Data[i], .Dir=x@.Dir, .ACCN=x@.ACCN,
-                           .DEF=x@.DEF)
+            new('gbFeatureList', .Data=x@.Data[i], .Dir=x@.Dir,
+                .ACCN=x@.ACCN, .DEF=x@.DEF)
           })
 
 

@@ -39,7 +39,7 @@ expandIds <- function (x) {
   xTail <- if (cmp_pos + 1 <= L) {
     x[seq.int(cmp_pos +  1, L)]
   } else {
-    .gbFeatureList()
+    new('gbFeatureList')
   }
   id1 <- list(ids=index(xHead, FALSE), keys=key(xHead, FALSE))
   nC <- getCompounds(xCmp)

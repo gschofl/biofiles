@@ -225,19 +225,8 @@
   # indeces for all features
   feature_idx <- mapply(seq.int, feature_start, feature_end,
                         SIMPLIFY=FALSE, USE.NAMES=FALSE)
-
-  message(sprintf("Parsing features into %s", dQuote(basename(db_dir))))
   
-#     f_list <- list()
-#     i <- 302
-#     for (i in seq_along(feature_idx)) {
-#       print(i)
-#       f_list[[i]] <- .parseFeatureTable(id=i, lines=gb_features[feature_idx[[i]]],
-#                                          db_dir=db_dir, accession=accession,
-#                                          definition=definition)
-#     }
-#     id <- 1
-#     lines <- gb_features[feature_idx[[id]]]
+  message(sprintf("Parsing features into %s", dQuote(basename(db_dir))))
   
   ftr <- mcmapply(function (idx, n) {
     parse_feature_table(id=n, lines=gb_features[idx], db_dir=db_dir,
@@ -245,7 +234,8 @@
   }, idx=feature_idx, n=seq_along(feature_start),
      SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
   
-  new('gbFeatureList', .Data=ftr, .Dir=db_dir, .ACCN=accession, .DEF=definition) 
+  IRanges::new2('gbFeatureList', .Data=ftr, .Dir=db_dir,
+                .ACCN=accession, .DEF=definition, check=FALSE) 
 }
 
 
