@@ -112,7 +112,7 @@ setMethod("range", "gbRange",
 
 
 setMethod("annotation", "gbRange", 
-          function (x)  elementMetadata(x))
+          function (object)  elementMetadata(object))
 
 
 setMethod("sequence", "gbRange",

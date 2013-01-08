@@ -124,10 +124,7 @@ setGeneric("location", signature="x",
 #' @rdname annotation
 #' @export
 #' @genericMethods
-setGeneric("annotation", signature="x",
-           function (x, ...) {
-             standardGeneric("annotation")
-           })
+setGeneric("annotation")
 
 
 #' Return feature indices from a GenBank record
