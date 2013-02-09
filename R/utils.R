@@ -116,12 +116,15 @@ expandIds <- function (x) {
 }
 
 
-#' @autoImports
+#' @importFrom Biostrings DNAStringSet
+#' @importFrom Biostrings AAStringSet
+#' @importFrom Biostrings RNAStringSet
 .seqAccess <- function (s, x, type) {
   
   if (is.null(s))
-    stop("No sequence available")
+    stop("No sequence available", call.=FALSE)
   
+  type <- match.arg(type, c("DNA", "AA", "RNA"))
   SEQFUN <- match.fun(paste0(type, "StringSet"))
   
   # merge Sequences
