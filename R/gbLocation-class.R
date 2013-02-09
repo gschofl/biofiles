@@ -51,9 +51,9 @@ setClass("gbLocation",
 #' @autoImports
 setValidity2("gbLocation",
             function (object) {  
-              if (is_empty(object@strand) || !all(object@strand %in% c(1L, -1L, NA_integer_)))
+              if (all_empty(object@strand) || !all(object@strand %in% c(1L, -1L, NA_integer_)))
                 return("The 'strand' slot can contain either -1, 1, or NA")         
-              if (length(object@compound) > 1L || is_empty(object@compound) ||
+              if (length(object@compound) > 1L || all_empty(object@compound) ||
                    object@compound %ni% c("join", "order", NA_character_))
                 return("The 'compound' slot can contain either 'join', 'order', or NA")
               
@@ -270,7 +270,7 @@ setAs("gbLocation", "character",
 setAs("character", "gbLocation",
       function (from) {
         l <- parse_gb_location(from)
-        if (is_empty(l)) {
+        if (all_empty(l)) {
           err <- sprintf("The string %s cannot be parsed as a gbLocation.",
                          sQuote(from))
           stop(err)

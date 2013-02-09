@@ -230,7 +230,7 @@ setMethod("dbxref", "gbFeatureList",
             names(ans) <- lapply(x, function(f) sprintf("%s.%s", f@key, f@.ID))
             if (na.rm)
               ans <- ans[!is.na(ans)]
-            if (is_empty(ans)) {
+            if (all_empty(ans)) {
               return(NA_character_)
             }
             
@@ -242,7 +242,7 @@ setMethod("sequence", "gbFeatureList",
           function (x, db = NULL) {
             stopifnot(hasValidDb(x))
             db <- init_db(x@.Dir, verbose=FALSE)
-            new('gbFeatureList', dbFetch(db, "sequence"), x, dbFetch(db, "type"))
+            .seqAccess(dbFetch(db, "sequence"), x, dbFetch(db, "type"))
           })
 
 

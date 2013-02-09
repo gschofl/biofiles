@@ -56,7 +56,7 @@ setMethod("show", "gbFeature",
             loc <- linebreak(as(object@location, "character"),
                              offset=17, indent=0, split=",", FORCE=TRUE)
             
-            if (is_empty(object@qualifiers)) {
+            if (all_empty(object@qualifiers)) {
               cat("Feature:         Location/Qualifiers:\n",
                   sprintf("%-16s%s\n", object@key, loc))
             } else {
@@ -245,8 +245,7 @@ setMethod("sequence", "gbFeature",
           function (x) {
             stopifnot(hasValidDb(x))
             db <- init_db(x@.Dir, verbose=FALSE)
-            ans <- .seqAccess(dbFetch(db, "sequence"), x, dbFetch(db, "type"))
-            ans
+            .seqAccess(dbFetch(db, "sequence"), x, dbFetch(db, "type"))
           })
 
 

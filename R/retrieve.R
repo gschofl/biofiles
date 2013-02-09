@@ -2,7 +2,7 @@
 #' @autoImports
 .retrieve <- function (x, cols = NULL) {
   
-  if (is_empty(x) || is.null(cols))
+  if (all_empty(x) || is.null(cols))
     return(x)
   
   cols <- gsub("\n|\t", " ", cols)
@@ -13,14 +13,14 @@
   if (any(idx <- grepl("idx|index", cols, ignore.case=TRUE))) {
     i <- vapply(x, function (x) x@.ID, numeric(1))
     col_names <- c(col_names, cols[idx])
-    if (is_empty(cols <- cols[!idx]))
+    if (all_empty(cols <- cols[!idx]))
       return(.return(i, .Names=col_names))
   }
   
   if (any(idx <- grepl("key", cols, ignore.case=TRUE))) {
     k <- vapply(x, function (x) x@key, character(1))
     col_names <- c(col_names, cols[idx])
-    if (is_empty(cols <- cols[!idx]))
+    if (all_empty(cols <- cols[!idx]))
       return(.return(i, k, .Names=col_names))
   }
 
@@ -35,7 +35,7 @@
       })
     }
 
-    if (is_empty(cols <- cols[!idx]))
+    if (all_empty(cols <- cols[!idx]))
       return( .return(i, k, l, .Names=col_names) )
   }
 

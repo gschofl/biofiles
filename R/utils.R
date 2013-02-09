@@ -122,18 +122,17 @@ expandIds <- function (x) {
   if (is.null(s))
     stop("No sequence available")
   
+  SEQFUN <- match.fun(paste0(type, "StringSet"))
+  
   # merge Sequences
-  merge_seq <- function (s, x, type) {
+  merge_seq <- function (s, x, SEQFUN) {
     if (length(start(x)) == 1L) {
       seq <- subseq(s, start=start(x), end=end(x))
     } else {
       seq <- do.call(xscat, Map(Biostrings::subseq, s, 
                                 start=start(x), end=end(x)))
     }
-    seq <- switch(type,
-                  DNA=DNAStringSet(seq),
-                  AA=AAStringSet(seq),
-                  RNA=RNAStringSet(seq))
+    seq <- SEQFUN(seq)
     seq@ranges@NAMES <- sprintf("%s.%s.%s", x@.ACCN, x@key, x@.ID)
     seq
   }
@@ -141,15 +140,12 @@ expandIds <- function (x) {
   #' @autoImports
   if (is(x, "gbFeatureList")) {
     ## initiate empty XStringSet
-    seq <- switch(type, 
-                  DNA=DNAStringSet(),
-                  AA=AAStringSet(),
-                  RNA=RNAStringSet())
+    seq <- SEQFUN()
     for (i in seq_along(x)) {
-      seq[i] <- merge_seq(s, x[[i]], type)             
+      seq[i] <- merge_seq(s, x[[i]], SEQFUN)             
     }
   } else if (is(x, "gbFeature")) {
-    seq <- merge_seq(s, x, type)
+    seq <- merge_seq(s, x, SEQFUN)
   }
   
   seq@metadata <- list(definition=x@.DEF, database=x@.Dir)

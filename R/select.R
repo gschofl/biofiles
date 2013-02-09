@@ -8,13 +8,13 @@
     return(x)
   
   # restrict features to the selected indices
-  if (not_empty(args$idx)) {
+  if (!all_empty(args$idx)) {
     x <- x[matchIdx(x, args$idx)]
   }
 
   # for the selected indices restrict features to
   # the selected range
-  if (not_empty(args$range)) {
+  if (!all_empty(args$range)) {
     start <- args$range$start
     end <- args$range$end
     subject_range <- IntervalTree(range(x, join=TRUE))
@@ -27,7 +27,7 @@
   
   # for the selected range restrict features to
   # the selected keys 
-  if (not_empty(args$key)) {
+  if (!all_empty(args$key)) {
     key_idx <- which(grepl(args$key, key(x, attributes=FALSE)))
     x <- x[key_idx]
   }
@@ -108,12 +108,12 @@ parse_args <- function (..., keys) {
 #' @keywords internal
 #' @autoImports
 parse_tags <- function (keys) {
-  if (is_empty(keys))
+  if (all_empty(keys))
     return(NULL)
   
   x <- if (is.list(keys)) {
     keys <- compact(keys)
-    if (is_empty(names(keys))) {
+    if (all_empty(names(keys))) {
       stop("Require named arguments")
     }
     l_idx <- vapply(keys, Negate(is.logical), logical(1))
@@ -135,7 +135,7 @@ parse_tags <- function (keys) {
 #' @keywords internal
 #' @autoImports
 parse_index <- function (index) {
-  if (is_empty(index))
+  if (all_empty(index))
     return(NULL)
   idx <- vapply(strsplit(index, "="), "[", 2, FUN.VALUE=character(1))
   idx <- unlist(strsplit(idx, ","))
@@ -149,7 +149,7 @@ parse_index <- function (index) {
 #' @keywords internal
 #' @autoImports
 prepare_range <- function (range) {
-  if (is_empty(range))
+  if (all_empty(range))
     return(NULL)
   range <- vapply(strsplit(range, "="), "[", 2, FUN.VALUE=character(1))
   list(range = unique(unlist(strsplit(range, ","))))
@@ -159,7 +159,7 @@ prepare_range <- function (range) {
 #' @keywords internal
 #' @autoImports
 prepare_key <- function (key) {
-  if (is_empty(key))
+  if (all_empty(key))
     return(NULL)
   key <- vapply(strsplit(key, "="), "[", 2, FUN.VALUE=character(1))
   list(key = unique(unlist(strsplit(key, ","))))
@@ -169,7 +169,7 @@ prepare_key <- function (key) {
 #' @keywords internal
 #' @autoImports
 prepare_features <- function (feature) {
-  if (is_empty(feature))
+  if (all_empty(feature))
     return(NULL)
   tag_val <- strsplit(feature, "=")
   tags <- vapply(tag_val, "[", 1, FUN.VALUE=character(1))
@@ -183,7 +183,7 @@ prepare_features <- function (feature) {
 #' @keywords internal
 #' @autoImports
 parse_range <- function (range) {
-  if (is_empty(range))
+  if (all_empty(range))
     return(NULL)
   
   start <- end <- numeric(0)

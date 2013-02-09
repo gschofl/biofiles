@@ -2,28 +2,40 @@
 // Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #include <Rcpp.h>
-#include <string>
-#include <set>
 
 using namespace Rcpp;
 
+// parse_gb_location
 SEXP parse_gb_location(std::string gb_base_span);
-Rcpp::CharacterVector get_qual(std::vector<std::string> lines);
-SEXP parse_feature_table(int id = 0, Rcpp::CharacterVector lines = Rcpp::CharacterVector::create(""), std::string db_dir = "", std::string accession = "", std::string definition = "");
-
-static bool validateExported(const std::string& sig) {
-    static std::set<std::string> signatures;
-    if (signatures.empty()) {
-        signatures.insert("SEXP(*parse_gb_location)(std::string)");
-        signatures.insert("Rcpp::CharacterVector(*get_qual)(std::vector<std::string>)");
-        signatures.insert("SEXP(*parse_feature_table)(int,Rcpp::CharacterVector,std::string,std::string,std::string)");
-    }
-    return signatures.find(sig) != signatures.end();
+RcppExport SEXP biofiles_parse_gb_location(SEXP gb_base_spanSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    std::string gb_base_span = Rcpp::as<std::string >(gb_base_spanSEXP);
+    SEXP __result = parse_gb_location(gb_base_span);
+    return Rcpp::wrap(__result);
+END_RCPP
 }
-
-RCPP_MODULE(biofiles_RcppExports) {
-    Rcpp::function("parse_gb_location", &parse_gb_location, Rcpp::List::create(Rcpp::Named("gb_base_span")));
-    Rcpp::function("get_qual", &get_qual, Rcpp::List::create(Rcpp::Named("lines")));
-    Rcpp::function("parse_feature_table", &parse_feature_table, Rcpp::List::create(Rcpp::Named("id") = 0, Rcpp::Named("lines") = Rcpp::CharacterVector::create(""), Rcpp::Named("db_dir") = "", Rcpp::Named("accession") = "", Rcpp::Named("definition") = ""));
-    Rcpp::function("RcppExports_validateExported", &validateExported);
+// get_qual
+Rcpp::CharacterVector get_qual(std::vector<std::string> lines);
+RcppExport SEXP biofiles_get_qual(SEXP linesSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    std::vector<std::string> lines = Rcpp::as<std::vector<std::string> >(linesSEXP);
+    Rcpp::CharacterVector __result = get_qual(lines);
+    return Rcpp::wrap(__result);
+END_RCPP
+}
+// parse_feature_table
+SEXP parse_feature_table(int id = 0, Rcpp::CharacterVector lines = Rcpp::CharacterVector::create(""), std::string db_dir = "", std::string accession = "", std::string definition = "");
+RcppExport SEXP biofiles_parse_feature_table(SEXP idSEXP, SEXP linesSEXP, SEXP db_dirSEXP, SEXP accessionSEXP, SEXP definitionSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    int id = Rcpp::as<int >(idSEXP);
+    Rcpp::CharacterVector lines = Rcpp::as<Rcpp::CharacterVector >(linesSEXP);
+    std::string db_dir = Rcpp::as<std::string >(db_dirSEXP);
+    std::string accession = Rcpp::as<std::string >(accessionSEXP);
+    std::string definition = Rcpp::as<std::string >(definitionSEXP);
+    SEXP __result = parse_feature_table(id, lines, db_dir, accession, definition);
+    return Rcpp::wrap(__result);
+END_RCPP
 }
