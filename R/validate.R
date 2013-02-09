@@ -12,7 +12,7 @@ hasValidDb <- function (object, verbose=TRUE) {
   if (!file.exists(object@.Dir)) {
     if (verbose)
       message(sprintf("Directory %s does not exist.", sQuote(object@.Dir)))
-    return(FASLE)
+    return(FALSE)
   }
   
   if (any(idx <- is.na(match(.GBFIELDS, dir(object@.Dir))))) {
