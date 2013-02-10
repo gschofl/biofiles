@@ -20,7 +20,6 @@ Super classes:
 \section{Generics with methods for gbFeatureList}{
 \itemize{
   \item \code{\link{accession}}
-  \item \code{\link{coerce<-}}
   \item \code{\link{dbxref}}
   \item \code{\link{definition}}
   \item \code{\link{end}}

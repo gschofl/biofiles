@@ -30,9 +30,14 @@ NULL
 ##    Subsetting Methods
 ##      [, [[, $
 ##
+##    Genetic Write methods
+##      write.GenBank, write.FeatureTable
+##
 ##    The "start" and "end" generics are defined in the stats package.
+##    
 ##    The "shift", "start<-", and "end<-" generics are defined in the
 ##    IRanges package.
+##    
 ##    The "range" generic is defined in the base package
 ##
 ##    We need to override the "width" and "shift" generics from IRanges because
@@ -41,7 +46,8 @@ NULL
 
 # getter/setter generics -------------------------------------------------
 
-### The "start" and "end" generics are defined in the stats package.
+### "start" and "end" are defined as S3 generics in the stats package.
+### Here we explicitely set them S4.
 #' @rdname start
 #' @export
 #' @genericMethods
@@ -120,11 +126,17 @@ setGeneric("location", signature="x",
              standardGeneric("location")
            })
 
-
+### The "annotation" generic is defined in the BiocGenerics package.
 #' @rdname annotation
 #' @export
 #' @genericMethods
 setGeneric("annotation")
+
+
+#' @rdname summary
+#' @export
+#' @genericMethods
+setGeneric("summary")
 
 
 #' Return feature indices from a GenBank record
@@ -213,7 +225,7 @@ setGeneric("dbxref", signature="x",
 
 
 #' Get sequences of a GenBank records or features.
-#'
+#' 
 #' @param x A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeature}},
 #'  or \code{\linkS4class{gbFeatureList}} instance.
 #' @param ... Additional arguments passed to methods.
@@ -240,6 +252,49 @@ setGeneric("features", signature="x", function (x, ...) {
 })
 
 
+# write generics ---------------------------------------------------------
+
+
+#' Write GenBank records or features to file in GenBank format
+#'
+#' @details
+#' For a description of the GenBank format see
+#' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
+#' 
+#' @param x A \code{\linkS4class{gbRecord}} instance.
+#' @param file A connection or a character string naming the file to write to.
+#' @param header if \code{FALSE} exclude the Genbank header.
+#' @param append if \code{TRUE} the data is appended to the connection.
+#' @export
+#' @genericMethods
+setGeneric("write.GenBank", signature="x",
+           function(x, file, header = TRUE, append = FALSE, ...) {
+             standardGeneric("write.GenBank")
+           })
+
+
+#' Write GenBank records or features to file in Feature Table format
+#'
+#' Feature Tables are simple five-column tab-delimited tables specifying the
+#' location and type of each feature. They can be used as input for tbl2asn
+#' or Sequin to generate annotation.
+#' 
+#' @param x A \code{\linkS4class{gbRecord}} instance.
+#' @param file A connection or a character string naming the file to write to.
+#' @param tablename Optional table name to appear in the first line
+#' of the feature table.
+#' @param dbname Data base name associated with the CDS qualifier protein_id.
+#' @param sequence if \code{TRUE}, additionally autput fasta file
+#' @param append if \code{TRUE} the data is appended to the connection.
+#' @export
+#' @genericMethods
+setGeneric("write.FeatureTable", signature="x",
+           function(x, file, tablename = "", dbname = "",
+                    sequence = FALSE, append = FALSE, ...) {
+             standardGeneric("write.FeatureTable")
+           })
+
+
 # test-generics ----------------------------------------------------------
 
 
@@ -261,7 +316,6 @@ setGeneric("hasQualif", signature=c("x","qualifier"),
 
 
 # shift ------------------------------------------------------------------
-
 
 
 #' Shift location of features in a GenBank record

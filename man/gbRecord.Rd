@@ -56,6 +56,8 @@ Super classes:
   \item \code{\link{sequence}}
   \item \code{\link{show}}
   \item \code{\link{write}}
+  \item \code{\link{write.FeatureTable}}
+  \item \code{\link{write.GenBank}}
 }
 
 }

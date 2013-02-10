@@ -109,23 +109,17 @@ find_neighbors <- function (query, subject, n = 5,
 #' 
 #' @rdname upstream
 #' @export
-upstream <- 
-  # upstream ####
-  Curry(FUN = find_neighbors, direction = "upstream")
+upstream <- Curry("find_neighbors", direction = "upstream")
 
 
 #' @usage downstream(query, subject, n=5, include_key="all", exclude_key="none)
 #' @export
 #' @rdname upstream
-downstream <- 
-  # downstream ####
-  Curry(FUN = find_neighbors, direction = "downstream")
+downstream <- Curry("find_neighbors", direction = "downstream")
 
 
 #' @usage flanking(query, subject, n=5, include_key="all", exclude_key="none)
 #' @export
 #' @rdname upstream
-flanking <- 
-  # flanking ####
-  Curry(FUN = find_neighbors, direction = "flanking")
+flanking <- Curry("find_neighbors", direction = "flanking")
 

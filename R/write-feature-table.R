@@ -1,41 +1,11 @@
-#' General function for writing out NCBI feature tables
-#'
-#' Feature tables are simple five-column tab-delimited tables specifying the
-#' location and type of each feature. They can be used as input for tbl2asn
-#' or Sequin to generate annotation.
-#'
-#' @param db A \code{\linkS4class{gbRecord}} instance.
-#' @param tablename (Optional) Optional table name to appear in the first line
-#' of the feature table.
-#' @param dbname Data base name associated with the CDS qualifier protein_id.
-#' @param with_sequence Additionally autput fasta file 
-#' @param outfile Output file.
-#' @return NULL
-#' @export
 #' @autoImports
-write_feature_table <- function(db, tablename="", dbname="",
-                                with_sequence=TRUE, outfile="out.tbl") {
-  
-  if (missing(db)) {
-    stop("Provide a 'gbRecord' object to write to file")
-  }
-  
-  if (!is(db, "gbRecord")) {
-    stop("Not implemented for ", sQuote(class(db)), ". Provide a 'gbRecord' object")
-  }
-  
-  if (file.exists(outfile)) {
-    unlink(outfile)
-  }
-  
-  fasta_outfile <- sub("tbl$", "fna", outfile)
-  if (file.exists(fasta_outfile)) {
-    unlink(fasta_outfile)
-  }
+setMethod("write.FeatureTable", "gbRecord", 
+          function (x, file, tablename="", dbname="",
+                    sequence = TRUE, append = FALSE) {
   
   # write header
   header <- trim(sprintf(">Feature %s %s", db$accession, tablename))
-  cat(paste(header, "\n"), file=outfile)
+  cat(paste(header, "\n"), file=file)
   
   # kick out source if present
   features <- dbFetch(db, "features")
@@ -44,18 +14,20 @@ write_feature_table <- function(db, tablename="", dbname="",
   gene_idx <- index(features[key(features) == "gene"])
   # write features
   f_table <- unlist(lapply(features, .getTableFeature, gene_idx, dbname))
-  cat(paste(f_table, collapse="\n"), file=outfile, append=TRUE)
+  cat(paste(f_table, collapse="\n"), file=file, append=TRUE)
   
-  if (with_sequence) {
+  if (sequence) {
     seq <- db$sequence
     names(seq) <- db$accession
-    write.XStringSet(seq, filepath=fasta_outfile, format="fasta")
+    write.XStringSet(seq, filepath=replace_ext(file, "fna", level=1),
+                     format="fasta")
   }
-  
+
   invisible(NULL)
-}
+})
 
 
+#' @autoImports
 .getTableFeature <- function (f, gene_idx, dbname) {
   
   getLoc <- function (l, p, strand) {

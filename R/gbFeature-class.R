@@ -213,7 +213,7 @@ setMethod("dbxref", "gbFeature",
               } else {
                 db_pattern <- paste(wrap(db, "\\b"), collapse="|")
                 db_pos <- grep(db_pattern, dbs, ignore.case=TRUE)
-                if (is_empty(db_pos)) {
+                if (all_empty(db_pos)) {
                   return( NA_character_ )
                 } else {
                   structure(ids[db_pos], names = dbs[db_pos])

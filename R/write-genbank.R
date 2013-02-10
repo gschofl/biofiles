@@ -1,39 +1,28 @@
-#' General function for writing out GenBank flat files
-#'
-#' @details
-#' For a description of the GenBank format see
-#' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
-#'
-#' @param db A \code{\linkS4class{gbRecord}} object.
-#' @param outfile Output file.
-#' 
-#' @export
-write_genbank <- function(db, outfile = "out.gbk") {
-  
-  if (file.exists(outfile)) {
-    unlink(outfile)
-  }
-  
-  ## write header
-  h <- .writeHeader(db, outfile)
-  
-  ## write features
-  op <- options("useFancyQuotes")
-  options(useFancyQuotes=FALSE)
-  cat("Writing features\n")
-  f <- unlist(lapply(db$features, .writeFeature))
-  cat(paste(f, collapse="\n"), file=outfile, append=TRUE)
-  options(op)
-  
-  ## write origin
-  cat("Writing sequence\n")
-  s <- .writeSequence(db, outfile)
-  
-  invisible(list(header=h, features=f, sequence=s))
-  
-}
+#' @autoImports
+setMethod("write.GenBank", "gbRecord", 
+          function (x, file, header = TRUE, append = FALSE) {
+            # write header
+            if (header) {
+              h <- .writeHeader(x, file)
+            } else {
+              h <- ""
+            }
+            # write features
+            op <- options("useFancyQuotes")
+            options(useFancyQuotes=FALSE)
+            cat("Writing features\n")
+            f <- unlist(lapply(features(x), .writeFeature))
+            cat(paste(f, collapse="\n"), file=file, append=TRUE)
+            options(op)
+            # write origin
+            cat("Writing sequence\n")
+            s <- .writeSequence(x, file)
+            
+            invisible(list(header=h, features=f, sequence=s)) 
+          })
 
 
+#' @autoImports
 .writeHeader <- function (db, outfile = "out.gbk") {
   
   type <- if (db$type == "DNA") "bp" else "  "
@@ -83,8 +72,8 @@ write_genbank <- function(db, outfile = "out.gbk") {
 }
 
 
+#' @autoImports
 .writeFeature <- function (f) {
-  
   
   loc_line <- sprintf("%s%-16s%s",
                       blanks(5),
@@ -101,6 +90,7 @@ write_genbank <- function(db, outfile = "out.gbk") {
 }
 
 
+#' @autoImports
 .writeSequence <- function (db, outfile = "out.gbk") {
   
   if (not.null(db$sequence)) {
