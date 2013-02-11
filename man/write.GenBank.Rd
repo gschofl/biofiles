@@ -3,7 +3,8 @@
 \alias{write.GenBank}
 \title{Write GenBank records or features to file in GenBank format}
 \usage{
-  write.GenBank(x, file, header, append, ...)
+  write.GenBank(x, file, header = TRUE, append = FALSE,
+    ...)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbRecord}} instance.}

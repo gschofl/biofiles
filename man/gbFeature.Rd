@@ -21,6 +21,7 @@ for GenBank feature tables.
   \item \code{\link{index}}
   \item \code{\link{key}}
   \item \code{\link{key<-}}
+  \item \code{\link{listQualif}}
   \item \code{\link{partial}}
   \item \code{\link{qualif}}
   \item \code{\link{qualif<-}}

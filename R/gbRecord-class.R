@@ -261,6 +261,14 @@ setMethod("definition", "gbRecord",
           function (x) dbFetch(x, "definition"))
 
 
+# listers ----------------------------------------------------------------
+
+
+setMethod("listQualif", "gbRecord", 
+          function (x) {
+            lapply(dbFetch(x, "features"), listQualif)
+          })
+
 
 # subsetting ----------------------------------------------------------
 

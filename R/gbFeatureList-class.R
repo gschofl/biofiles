@@ -288,17 +288,28 @@ setReplaceMethod("strand", "gbFeatureList",
                  })
 
 
+# listers ----------------------------------------------------------------
+
+
+setMethod("listQualif", "gbFeatureList", 
+          function (x) {
+            lapply(x, listQualif)
+          })
+
+
 # testers ----------------------------------------------------------------
 
 
 setMethod("hasKey", "gbFeatureList", 
-          function (x, key)
-            vapply(x, hasKey, key, FUN.VALUE=logical(1)))
+          function (x, key) {
+            vapply(x, hasKey, key, FUN.VALUE=logical(1))
+          })
 
 
 setMethod("hasQualif", "gbFeatureList", 
-          function (x, qualifier)
-            vapply(x, hasQualif, qualifier, FUN.VALUE=logical(1)))
+          function (x, qualifier) {
+            vapply(x, hasQualif, qualifier, FUN.VALUE=logical(1))
+          })
 
 
 # subsetting ----------------------------------------------------------

@@ -295,6 +295,17 @@ setGeneric("write.FeatureTable", signature="x",
            })
 
 
+# list-generics ----------------------------------------------------------
+
+
+#' @rdname listQualif
+#' @export
+#' @genericMethods
+setGeneric("listQualif", signature="x", function(x, ...) {
+  standardGeneric("listQualif")
+})
+
+
 # test-generics ----------------------------------------------------------
 
 

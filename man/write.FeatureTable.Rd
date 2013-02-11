@@ -3,8 +3,8 @@
 \alias{write.FeatureTable}
 \title{Write GenBank records or features to file in Feature Table format}
 \usage{
-  write.FeatureTable(x, file, tablename, dbname, sequence,
-    append, ...)
+  write.FeatureTable(x, file, tablename = "", dbname = "",
+    sequence = FALSE, append = FALSE, ...)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbRecord}} instance.}

@@ -51,6 +51,7 @@ Super classes:
   \item \code{\link{definition}}
   \item \code{\link{features}}
   \item \code{\link{initialize}}
+  \item \code{\link{listQualif}}
   \item \code{\link{revcomp}}
   \item \code{\link{select}}
   \item \code{\link{sequence}}

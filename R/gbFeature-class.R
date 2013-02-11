@@ -300,18 +300,29 @@ setReplaceMethod("qualif", "gbFeature",
                  })
 
 
+# listers ----------------------------------------------------------------
+
+
+setMethod("listQualif", "gbFeature", 
+          function (x) {
+            names(x@qualifiers)
+          })
+
+
 # testers ----------------------------------------------------------------
 
 
 
 setMethod("hasKey", "gbFeature", 
-          function (x, key) 
-            not.na(charmatch(key, x@key)))
+          function (x, key) {
+            !is.na(charmatch(key, x@key))
+          })
 
 
 setMethod("hasQualif", "gbFeature",
-          function (x, qualifier)
-            not.na(charmatch(qualifier, names(x@qualifiers))))
+          function (x, qualifier) {
+            !is.na(charmatch(qualifier, names(x@qualifiers)))
+          })
 
 
 # shift ---------------------------------------------------------------
