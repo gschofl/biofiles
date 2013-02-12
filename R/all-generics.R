@@ -1,5 +1,5 @@
-#' @include utils.r
-#' @include validate.r
+#' @include utils.R
+#' @include validate.R
 NULL
 
 

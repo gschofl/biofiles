@@ -12,7 +12,6 @@ Super classes:
 \itemize{
   \item \linkS4class{list}
   \item \linkS4class{vector}
-  \item \linkS4class{listOrDataFrame}
   \item \linkS4class{vectorORfactor}
 }
 
@@ -49,14 +48,7 @@ Super classes:
 \keyword{classes}
 \section{Slots}{
 \describe{
-  \item{.Dir}{The path to the database file containing the GenBank
-record the feature list is part of.}
-
-  \item{.ACCN}{Accession number of the GenBank record that the
-feature list is part of.}
-
-  \item{.DEF}{The definition line (brief description of the sequence)
-of the GenBank record the feature list is part of.}
+  \item{.Info}{A \code{\linkS4class{gbInfo}} instance.}
 
   \item{.Data}{A list of \dQuote{\code{gbFeature}} instances.}
 

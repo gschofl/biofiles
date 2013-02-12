@@ -1,7 +1,7 @@
 
 # gbFeatureList-class -------------------------------------------------
 
-#' @include gbFeature-class.r
+#' @include gbFeature-class.R
 NULL
 
 setOldClass("list")
@@ -11,12 +11,7 @@ setOldClass("list")
 #' \dQuote{gbFeatureList} is an S4 class that provides a container for
 #' \dQuote{\linkS4class{gbFeature}}s retrived from GenBank flat files.
 #'
-#' @slot .Dir The path to the database file containing the GenBank
-#' record the feature list is part of.
-#' @slot .ACCN Accession number of the GenBank record that the
-#' feature list is part of.
-#' @slot .DEF The definition line (brief description of the sequence)
-#' of the GenBank record the feature list is part of.
+#' @slot .Info A \code{\linkS4class{gbInfo}} instance.
 #' @slot .Data A list of \dQuote{\code{gbFeature}} instances.
 #' 
 #' @rdname gbFeatureList
@@ -41,16 +36,17 @@ setValidity2("gbFeatureList", function (object) {
 
 setMethod("show", "gbFeatureList", 
           function (object) {
-            n_f <- length(object)
-            cat(sprintf("'%s' with %i features:\n\n", 
-                        class(object), n_f))
-            if (n_f > 0L) {
-              show(object[[1L]])
-              if (n_f > 1L) {
-                cat("\n...\n")
-                show(object[[n_f]])
+            lo <- length(object)
+            cat(sprintf("%s with %i features:\n",  sQuote(class(object)), lo))
+            if (lo > 0L) {
+              .showGbFeature(object[[1L]], showInfo=FALSE)
+              if (lo > 1L) {
+                cat("...\n")
+                .showGbFeature(object[[lo]], showInfo=FALSE)
               }
             }
+            cat("Seqinfo:\n")
+            showInfo(object@.Info)
             return(invisible(object))
           })
 
@@ -305,29 +301,25 @@ setMethod("hasQualif", "gbFeatureList",
 
 # subsetting ----------------------------------------------------------
 
-
+i <- "CDS"
 #' @export
 setMethod("[", c("gbFeatureList", "character", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
-            idx <- vapply(x@.Data, function(f) f@key, character(1L)) == i       
-            new('gbFeatureList', .Data=x@.Data[idx], .Dir=x@.Dir,
-                .ACCN=x@.ACCN, .DEF=x@.DEF)
+            idx <- which(vapply(x@.Data, function(f) f@key, character(1L)) == i)
+            new('gbFeatureList', .Data=x@.Data[idx], .Info=x@.Info)
           })
-
 
 #' @export
 setMethod("[", c("gbFeatureList", "numeric", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
-            new('gbFeatureList', .Data=x@.Data[i], .Dir=x@.Dir,
-                .ACCN=x@.ACCN, .DEF=x@.DEF)
+            new('gbFeatureList', .Data=x@.Data[i], .Info=x@.Info)
           })
 
 
 #' @export
 setMethod("[", c("gbFeatureList", "logical", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
-            new('gbFeatureList', .Data=x@.Data[i], .Dir=x@.Dir,
-                .ACCN=x@.ACCN, .DEF=x@.DEF)
+            new('gbFeatureList', .Data=x@.Data[i], .Info=x@.Info)
           })
 
 

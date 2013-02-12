@@ -40,16 +40,9 @@ for GenBank feature tables.
 \keyword{classes}
 \section{Slots}{
 \describe{
-  \item{.Dir}{The path to the database file containing the GenBank
-record the feature is part of.}
+  \item{.Info}{A \code{\linkS4class{gbInfo}} instance.}
 
-  \item{.ACCN}{Accession number of the GenBank record that the
-feature is part of.}
-
-  \item{.DEF}{The definition line (brief description of the sequence)
-of the GenBank record the feature is part of.}
-
-  \item{.ID}{Identifier (sequential index) of the feature in the
+  \item{.Id}{Identifier (sequential index) of the feature in the
 GenBank record the feature is part of.}
 
   \item{key}{The feature key.}

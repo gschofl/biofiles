@@ -31,7 +31,7 @@
 }
 
 \value{
-A \code{\linkS4class{gbRange}} object including the feature key
+A \code{\linkS4class{GRanges}} object including the feature key
 and the feature index.
 
 A \code{\linkS4class{gbRange}} object including feature keys

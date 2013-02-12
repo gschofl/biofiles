@@ -1,7 +1,7 @@
 
 # gbFeature-class -----------------------------------------------------
 
-#' @include gbRange-class.r
+#' @include gbInfo-class.R
 NULL
 
 setClassUnion("charOrNull", c("character", "NULL"))
@@ -11,13 +11,8 @@ setClassUnion("charOrNull", c("character", "NULL"))
 #' \dQuote{gbFeature} is an S4 class that provides a container
 #' for GenBank feature tables.
 #' 
-#' @slot .Dir The path to the database file containing the GenBank
-#' record the feature is part of.
-#' @slot .ACCN Accession number of the GenBank record that the
-#' feature is part of.
-#' @slot .DEF The definition line (brief description of the sequence)
-#' of the GenBank record the feature is part of.
-#' @slot .ID Identifier (sequential index) of the feature in the
+#' @slot .Info A \code{\linkS4class{gbInfo}} instance.
+#' @slot .Id Identifier (sequential index) of the feature in the
 #' GenBank record the feature is part of.
 #' @slot key The feature key.
 #' @slot location The feature location.
@@ -40,37 +35,38 @@ setValidity2("gbFeature", function (object) {
   TRUE
 })
 
-
-str(new("gbFeature"))
-
-
 # show -------------------------------------------------------------------
+
+
+.showGbFeature <- function(object, showInfo=TRUE) {
+  op <- options("useFancyQuotes")
+  options(useFancyQuotes=FALSE)
+  loc <- linebreak(as(object@location, "character"),
+                   offset=17, indent=0, split=",", FORCE=TRUE)
+  if (all_empty(object@qualifiers)) {
+    cat("Feature:         Location/Qualifiers:\n",
+        sprintf("%-16s%s\n", object@key, loc))
+  } else {
+    qua <- names(object@qualifiers)
+    val <- linebreak(dQuote(object@qualifiers), offset=17, 
+                     indent=-(nchar(qua) + 2), FORCE=TRUE)
+    
+    cat("Feature:         Location/Qualifiers:\n",
+        sprintf("%-16s%s\n", object@key, loc),
+        sprintf("%+17s%s=%s\n", "/", qua, val))
+  }
+  if (showInfo) {
+    cat("Seqinfo:\n")
+    showInfo(object@.Info)
+  }
+  options(op)
+}
 
 
 #' @autoImports
 setMethod("show", "gbFeature",
           function (object) {
-            op <- options("useFancyQuotes")
-            options(useFancyQuotes=FALSE)
-
-            loc <- linebreak(as(object@location, "character"),
-                             offset=17, indent=0, split=",", FORCE=TRUE)
-            
-            if (all_empty(object@qualifiers)) {
-              cat("Feature:         Location/Qualifiers:\n",
-                  sprintf("%-16s%s\n", object@key, loc))
-            } else {
-              qua <- names(object@qualifiers)
-              val <- linebreak(dQuote(object@qualifiers), offset=17, 
-                               indent=-(nchar(qua) + 2), FORCE=TRUE)
-              
-              cat("Feature:         Location/Qualifiers:\n",
-                  sprintf("%-16s%s\n", object@key, loc),
-                  sprintf("%+17s%s=%s\n", "/", qua, val))
-            }
-
-            options(op)
-            invisible(object)
+            .showGbFeature(object, showInfo=TRUE)
           })
 
 
@@ -80,7 +76,7 @@ setMethod("show", "gbFeature",
 setMethod("summary", "gbFeature",
     function (object, ...) {
         showme <- sprintf("%-6s%-20s%-32s\n",
-                          object@.ID, object@key, as(object@location, "character"))
+                          object@.Id, object@key, as(object@location, "character"))
         cat(showme)
         return(invisible(TRUE))
     })

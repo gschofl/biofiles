@@ -351,11 +351,12 @@ SEXP parse_gb_location(std::string gb_base_span) {
 
 // [[Rcpp::export]]
 Rcpp::CharacterVector get_qual( std::vector<std::string> lines ) {
-    Rcpp::CharacterVector quals;
     std::vector<std::string> tag_qual;
     std::string tag("");
     std::string qual("");
     int n = lines.size();
+    Rcpp::CharacterVector quals(n);
+    Rcpp::CharacterVector tags(n);
     for(int i = 0; i < n; ++i) {
         std::string line = lines[i];
         boost::split_regex( tag_qual, line, boost::regex( "=" ) );
@@ -371,9 +372,11 @@ Rcpp::CharacterVector get_qual( std::vector<std::string> lines ) {
         if (tag == "translation") {
             qual.erase(remove(qual.begin(), qual.end(), ' '), qual.end());
         }
-    quals[tag] = qual;
+    quals[i] = qual;
+    tags[i] = tag;
     }
-
+    
+    quals.names() = tags;
     return quals; 
 }
 

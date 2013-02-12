@@ -1,8 +1,24 @@
-#' @include gbLocation-class.r
+#' @include gbLocation-class.R
 NULL
 
+#' gbInfo
+#' 
+#' \dQuote{gbInfo} is an S4 class that provides basic infomation
+#' about a genomic sequence. It extends the \linkS4class{Seqinfo}.
+#' 
+#' @slot db A \code{\linkS4class{filehashRDS}} instance.
+#' @slot seqnames Identifier of the sequence. Usually the Accession number.
+#' @slot seqlengths Length of the sequence.
+#' @slot is_circular Is the sequence circular.
+#' @slot genome The definition of the sequence data.       
+#' 
+#' @rdname gbInfo
+#' @export
+#' @classHierarchy
+#' @classMethods
 setClass(Class="gbInfo", representation(db = "filehashRDS"),
          contains="Seqinfo")
+
 
 gbInfo <- function (object) {
   if (is(object, "gbRecord") && isValidDb(object)) {
@@ -15,6 +31,7 @@ gbInfo <- function (object) {
     stop("Need a valid 'gbRecord' instance to initialize 'gbInfo'")
   }
 }
+
 
 setValidity2("gbInfo", function (object) {
   if (!is(object@db, "gbRecord")) {

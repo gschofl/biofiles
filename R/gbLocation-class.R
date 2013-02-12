@@ -1,7 +1,6 @@
-#' @include utils.r
-#' @include validate.r
-#' @include all-generics.r
-#' @importClassesFrom intervals Intervals_full
+#' @include utils.R
+#' @include validate.R
+#' @include all-generics.R
 NULL
 
 

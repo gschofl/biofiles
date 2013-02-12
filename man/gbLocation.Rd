@@ -34,7 +34,6 @@ Super classes:
   \item \code{\link{end<-}}
   \item \code{\link{initialize}}
   \item \code{\link{partial}}
-  \item \code{\link{range}}
   \item \code{\link{show}}
   \item \code{\link{start}}
   \item \code{\link{start<-}}

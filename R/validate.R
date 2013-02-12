@@ -5,18 +5,18 @@ hasValidDb <- function (object, verbose=TRUE) {
   
   if (!.hasSlot(object, "db") && !is(object@db, "gbRecord")) {
     if (verbose) {
-      message("Object has no '.Dir' slot")
+      message("Object has no 'db' slot")
     }
     return(FALSE)
   }
   
-  if (!file.exists(object@.Dir)) {
+  if (!file.exists(object@db@dir)) {
     if (verbose)
-      message(sprintf("Directory %s does not exist.", sQuote(object@.Dir)))
+      message(sprintf("Directory %s does not exist.", sQuote(object@db@name)))
     return(FALSE)
   }
   
-  if (any(idx <- is.na(match(.GBFIELDS, dir(object@.Dir))))) {
+  if (any(idx <- is.na(match(.GBFIELDS, dir(object@db@dir))))) {
     if (verbose)
       message(sprintf("Field(s) %s are missing from database.",
                       sQuote(paste(.GBFIELDS[-idx], collapse=","))))
@@ -45,7 +45,7 @@ isValidDb <- function (object, verbose=TRUE) {
 # check if the db directory has been moved from the location
 # where it was instantiated
 hasNewPath <- function (x) {
-  !identical(x@dir, x$features@.Dir) 
+  !identical(x@dir, x$features@.Info@db@dir) 
 }
 
 # if yes update the gbFeatureList@.Dir and gbFeature@.Dir
@@ -65,12 +65,10 @@ updateDirectory <- function (db) {
 }
 
 
-is_gbRecord_db <- function (object) {
-  if (!is.atomic(object) || is(object, "connection")) {
-    return(FALSE)
-  }
-  if (file.exists(object) && file.info(object)[["isdir"]]) {
-    all(not.na(match(.GBFIELDS, dir(object))))
+is.gbRecordDb <- function (gb) {
+  if (tryCatch(file.exists(gb), error = function(e) FALSE) &&
+      file.info(gb)[["isdir"]]) {
+    all(not.na(charmatch(.GBFIELDS, dir(gb))))
   } else {
     FALSE
   }

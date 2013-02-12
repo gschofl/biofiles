@@ -1,7 +1,9 @@
 
 # gbRecord-Class ------------------------------------------------------
 
-#' @include gbFeatureList-class.r
+#' @include gbFeatureList-class.R
+#' @importClassesFrom filehash filehashRDS
+#' @importClassesFrom filehash filehash
 NULL
 
 #' gbRecord
@@ -68,7 +70,7 @@ setMethod("initialize", "gbRecord",
 #' @autoImports
 gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
   
-  if (is_gbRecord_db(gb)) {
+  if (is.gbRecordDb(gb)) {
     return( init_db(gb, create = FALSE) )
   }
   

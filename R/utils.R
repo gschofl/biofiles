@@ -6,6 +6,29 @@ recycle <- function (val, len) {
   val
 }
 
+
+#' @autoImports
+showInfo <- function(object) {
+  sn <- object@seqnames
+  sl <- paste(object@seqlengths, names(object@seqlengths))
+  g <- object@genome
+  seqname <- pad(sn, nchar(sn) + 2, "right")
+  seqlen <- pad(sl, nchar(sl) + 2, "right")
+  genome <- ellipsize(g, width=getOption("width") - nchar(seqname) - nchar(seqlen))
+  cat(sprintf("%s%s%s", seqname, seqlen, genome))
+}
+
+
+#' @autoImports
+ellipsize <- function(obj, width = getOption("width"), ellipsis = "...") {
+  str <- encodeString(obj)
+  if (nchar(str) > width - 1) {
+    str <- paste0(substring(str, 1, width - nchar(ellipsis) - 1), ellipsis)
+  }
+  str
+}
+
+
 #' @autoImports
 is_compound <- function (x) {
   if (is(x, "gbFeatureList")) {
@@ -154,4 +177,3 @@ expandIds <- function (x) {
   seq@metadata <- list(definition=x@.DEF, database=x@.Dir)
   seq
 }
-

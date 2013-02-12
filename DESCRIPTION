@@ -19,16 +19,18 @@ Imports:
     BiocGenerics,
     intervals,
     IRanges,
+    GenomicRanges,
     Biostrings,
     parallel,
     stringr,
     plyr
 Collate:
+    'aaa.R'
     'utils.R'
     'validate.R'
     'all-generics.R'
     'gbLocation-class.R'
-    'gbRange-class.R'
+    'gbInfo-class.R'
     'gbFeature-class.R'
     'gbFeatureList-class.R'
     'gbRecord-class.R'
@@ -41,4 +43,5 @@ Collate:
     'shift.R'
     'write-feature-table.R'
     'write-genbank.R'
+    'misc-functions.R'
     'zzz.R'
