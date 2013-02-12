@@ -128,15 +128,6 @@ setMethod("strand", "gbLocation",
           })
 
 
-setMethod("range", "gbLocation",
-          function (x, join = FALSE) {
-            start <- as.integer(start(x, join = join))
-            width <- as.integer(end(x, join = join)) - start + 1L
-            strand <- strand(x, join = join)
-            new('gbRange', start, width, strand)
-          })
-
-
 setMethod("partial", "gbLocation",
           function (x) x@partial)
 

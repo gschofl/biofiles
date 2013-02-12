@@ -26,16 +26,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // parse_feature_table
-SEXP parse_feature_table(int id = 0, Rcpp::CharacterVector lines = Rcpp::CharacterVector::create(""), std::string db_dir = "", std::string accession = "", std::string definition = "");
-RcppExport SEXP biofiles_parse_feature_table(SEXP idSEXP, SEXP linesSEXP, SEXP db_dirSEXP, SEXP accessionSEXP, SEXP definitionSEXP) {
+SEXP parse_feature_table(int id = 0, Rcpp::CharacterVector lines = Rcpp::CharacterVector::create(""), Rcpp::S4 seqinfo = Rcpp::S4("gbInfo"));
+RcppExport SEXP biofiles_parse_feature_table(SEXP idSEXP, SEXP linesSEXP, SEXP seqinfoSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope __rngScope;
     int id = Rcpp::as<int >(idSEXP);
     Rcpp::CharacterVector lines = Rcpp::as<Rcpp::CharacterVector >(linesSEXP);
-    std::string db_dir = Rcpp::as<std::string >(db_dirSEXP);
-    std::string accession = Rcpp::as<std::string >(accessionSEXP);
-    std::string definition = Rcpp::as<std::string >(definitionSEXP);
-    SEXP __result = parse_feature_table(id, lines, db_dir, accession, definition);
+    Rcpp::S4 seqinfo = Rcpp::as<Rcpp::S4 >(seqinfoSEXP);
+    SEXP __result = parse_feature_table(id, lines, seqinfo);
     return Rcpp::wrap(__result);
 END_RCPP
 }

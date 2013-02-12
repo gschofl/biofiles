@@ -29,19 +29,19 @@ setClassUnion("charOrNull", c("character", "NULL"))
 #' @classHierarchy
 #' @classMethods
 setClass("gbFeature",
-         representation(.Dir="character",
-                        .ACCN="character",
-                        .DEF="character",
-                        .ID="integer",
+         representation(.Info="gbInfo",
+                        .Id="integer",
                         key="character",
                         location="gbLocation",
                         qualifiers="character"))
 
 
 setValidity2("gbFeature", function (object) {
-  # at the moment do nothing but the default checks
   TRUE
 })
+
+
+str(new("gbFeature"))
 
 
 # show -------------------------------------------------------------------
@@ -134,16 +134,19 @@ setMethod("partial", "gbFeature",
 
 
 setMethod("accession", "gbFeature",
-          function (x) x@.ACCN)
+          function (x) seqnames(x@.Info))
 
 
 setMethod("definition", "gbFeature",
-          function (x) x@.DEF)
+          function (x) genome(x@.Info))
 
 
 setMethod("range", "gbFeature",
-          function (x, join = FALSE)
-            range(x@location, join = join))
+          function (x, join = FALSE) {
+            GRanges(seqnames=Rle(accession(x)),
+                    ranges=IRanges(start(x, join=join), end(x, join=join), names=x@.Id),
+                    strand=strand(x, join = join))
+          })
 
 
 #' Get genomic locations of features
@@ -152,19 +155,20 @@ setMethod("range", "gbFeature",
 #' @param attributes Include the \code{accession}, \code{definition},
 #' \code{database} attributes of the feature.
 #' @param join Join compound genomic locations into a single range.
-#' @return A \code{\linkS4class{gbRange}} object including the feature key
+#' @return A \code{\linkS4class{GRanges}} object including the feature key
 #' and the feature index.
 #' @rdname location
 setMethod("location", "gbFeature",
           function (x, attributes = FALSE, join = FALSE) {     
-            ans <- range(x@location, join = join)
-            ans@elementMetadata$feature <- x@key
-            ans@elementMetadata$id <- x@.ID
+            ans <- range(x, join = join)
+            elementMetadata(ans) <- DataFrame(feature = x@key)
             if (attributes) {
-              structure(ans,
-                        accession=x@.ACCN,
-                        definition=x@.DEF,
-                        database=x@.Dir)
+              seqinfo(ans) <- new("gbInfo", dbpath=x@.Dir, seqnames=x@.ACCN, seqlengths=20L,
+                    is_circular=TRUE, genome=x@.DEF)
+              str(n)
+              
+              ans@metadata <- list(.Dir = x@.Dir)
+              ans
             } else {
               ans
             }

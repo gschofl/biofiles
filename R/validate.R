@@ -3,9 +3,10 @@
 #' @keywords internal
 hasValidDb <- function (object, verbose=TRUE) {
   
-  if (!.hasSlot(object, ".Dir")) {
-    if (verbose) 
+  if (!.hasSlot(object, "db") && !is(object@db, "gbRecord")) {
+    if (verbose) {
       message("Object has no '.Dir' slot")
+    }
     return(FALSE)
   }
   
@@ -25,19 +26,20 @@ hasValidDb <- function (object, verbose=TRUE) {
   TRUE
 }
 
+
 #' validate a gbRecord database (i.e. check if the db directory contains
 #' all fields).
 #' @keywords internal
 isValidDb <- function (object, verbose=TRUE) {
-  
-  if (any(idx <- is.na(match(.GBFIELDS, dir(object@dir))))) {
-    if (verbose)
-      message(sprintf("Field(s) %s are missing from database.",
-                      sQuote(paste(.GBFIELDS[-idx], collapse=", "))))
+  idx <- is.na(charmatch(.GBFIELDS, dir(object@dir)))
+  if (any(idx)) {
+    if (verbose) {
+      message(sprintf("%s are missing from database.",
+                      sQuote(paste(.GBFIELDS[idx], collapse=", "))))
+    }
     return(FALSE)
-  }
-  
-  TRUE
+  } 
+  return(TRUE)
 }
 
 # check if the db directory has been moved from the location

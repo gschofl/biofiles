@@ -9,7 +9,7 @@ get_qual <- function(lines) {
     .Call('biofiles_get_qual', PACKAGE = 'biofiles', lines)
 }
 
-parse_feature_table <- function(id = 0L, lines = character(""), db_dir = "", accession = "", definition = "") {
-    .Call('biofiles_parse_feature_table', PACKAGE = 'biofiles', id, lines, db_dir, accession, definition)
+parse_feature_table <- function(id = 0L, lines = character(""), seqinfo) {
+    .Call('biofiles_parse_feature_table', PACKAGE = 'biofiles', id, lines, seqinfo)
 }
 

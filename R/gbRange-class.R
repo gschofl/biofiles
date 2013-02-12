@@ -1,121 +1,73 @@
 #' @include gbLocation-class.r
 NULL
 
-# gbRange-class ----------------------------------------------------------
+setClass(Class="gbInfo", representation(db = "filehashRDS"),
+         contains="Seqinfo")
 
-#' gbRange class
-#' 
-#' @rdname gbRange
-#' @export
-#' @classHierarchy
-#' @classMethods
-setClass("gbRange", contains="IRanges")
+gbInfo <- function (object) {
+  if (is(object, "gbRecord") && isValidDb(object)) {
+    new("gbInfo", db = object, 
+        seqnames = dbFetch(object, 'accession'),
+        seqlengths = as.integer(dbFetch(object, 'length')),
+        is_circular = dbFetch(object, 'topology') == "circular",
+        genome = dbFetch(object, 'definition'))
+  } else {
+    stop("Need a valid 'gbRecord' instance to initialize 'gbInfo'")
+  }
+}
 
-
-# initialize-method ------------------------------------------------------
-
-
-#' @keywords internal
-#' @autoImports
-setMethod("initialize", "gbRange",
-          function (.Object, start, width, strand, ...) {
-            if (missing(start) || missing(width) || missing(strand)) {
-              return( .Object )
-            }
-            if (any(strand %ni% c(1L,-1L,NA_integer_))) {
-              stop("Strand must be encoded as 1 (plus strand), -1 (minus strand), or NA")
-            }
-            
-            anno <- list(...) 
-            z <- vapply(c(list(start, width, strand), anno), length, numeric(1))
-            if (length(unique(z)) != 1L) {
-              stop("Arguments have unequal length")
-            }
-            
-            r <- callNextMethod(.Object, start = start, width = width,
-                                NAMES = anno[["names"]])
-            
-            anno[["names"]] <- NULL
-            r@elementMetadata <- if (length(anno) > 0) {
-              DataFrame(strand, anno)
-            } else {
-              DataFrame(strand)
-            }
-            r
-          })
+setValidity2("gbInfo", function (object) {
+  if (!is(object@db, "gbRecord")) {
+    return(FALSE)
+  }
+  if (!isValidDb(object@db)) {
+    return(FALSE)
+  }
+  if (dbFetch(object@db, 'accession') != object@seqnames) {
+    return(FALSE)
+  }
+  if (dbFetch(object@db, 'length') != object@seqlengths) {
+    return(FALSE)
+  }
+  if ((dbFetch(object@db, 'topology') == "circular") != object@is_circular) {
+    return(FALSE)
+  }
+  if (dbFetch(object@db, 'definition') != object@genome) {
+    return(FALSE)
+  }
+  
+  return(TRUE)
+})
 
 
-# show-method ------------------------------------------------------------
+createGRanges <- function (x, include_qual = "none", exclude_qual = "") {
+  if (!hasValidDb(x)) {
+    stop("Is no valid gbRecord")
+  }  
+  db <- init_db(x@.Dir, verbose=FALSE)
+  seqid <- dbFetch(db, "accession")
+  seqinfo <- Seqinfo(seqnames = seqid,
+                     seqlengths = unname(dbFetch(db, "length")),
+                     isCircular = dbFetch(db, "topology") == "circular",
+                     genome = dbFetch(db, "definition"))
+  
+  qual <- DataFrame(key = key(x))
+  if (include_qual != "none") {
+    which <- if (include_qual == "all") {
+      setdiff(listUniqueQualifs(x), exclude_qual)
+    } else {
+      which <- setdiff(include_qual, exclude_qual)
+    }
+    qual <- cbind(qual, DataFrame(qualif(x, which, attributes=FALSE)))
+  }
+
+  GRanges(seqnames=Rle(seqid),
+          ranges=IRanges(start = start(x), end = end(x), names = index(x)),
+          strand=Rle(strand(x)), qual, seqinfo = seqinfo)
+}
 
 
-#' @autoImports
-setMethod("show", "gbRange",
-          function (object) {
-            lo <- length(object)
-            cat(sprintf("%s of length %s\n", class(object), lo))
-            if (lo == 0L){
-              return(NULL)
-            } 
-            if (lo < 20L) {
-              showme <- 
-                as.data.frame(as(object, "data.frame"),
-                              row.names = paste0("[", seq_len(lo), "]"))
-            } else {
-              n <- 8
-              headshow <- as(head(object, n), "data.frame")
-              tailshow <- as(tail(object, n), "data.frame")
-              rows <- c(paste0("[", c(1:n), "]"),
-                        "---",
-                        paste0("[", (lo - n + 1):lo, "]"))
-              showme <- as.data.frame(rbind(headshow, "---", tailshow),
-                                      row.names = rows)
-            }
-            show(showme)
-          })
-
-
-#' @export
-setAs("gbRange", "data.frame",
-      function (from) {
-        # there is no proper setAs() method defined for coercion from
-        # IRanges to data.frames in IRanges, only as.data.frame.
-        # So we can't use callNextMethod() here.
-        op <- options(stringsAsFactors = FALSE)
-        df <- data.frame(IRanges::as.data.frame(from),
-                         as(from@elementMetadata, "data.frame"))
-        options(op)
-        df
-      })
-
-
-# getters ----------------------------------------------------------------
-
-
-setMethod("start", "gbRange", function (x) callNextMethod(x))
-
-
-setMethod("end", "gbRange", function (x) callNextMethod(x))
-
-
-setMethod("width", "gbRange", function (x) IRanges::width(x))
-
-
-setMethod("strand", "gbRange", 
-          function (x) elementMetadata(x)[["strand"]])
-
-
-setMethod("range", "gbRange", 
-          function (x) {
-            elementMetadata(x) <- NULL
-            x
-          })
-
-
-setMethod("annotation", "gbRange", 
-          function (object)  elementMetadata(object))
-
-
-setMethod("sequence", "gbRange",
+setMethod("sequence", "GRanges",
           function (x, seq, ...) {
             
             if (is(seq, "gbRecord")) {
@@ -144,36 +96,4 @@ setMethod("sequence", "gbRange",
           })
 
 
-# shift ------------------------------------------------------------------
-
-
-setMethod("shift", "gbRange",
-    function (x, shift = 0L, use.names = TRUE) {
-        IRanges::shift(x=x, shift=shift, use.names=use.names)
-    })
-
-
-# subsetting -------------------------------------------------------------
-
-
-#' @export
-setMethod("$", "gbRange",
-          function (x, name) as(x, "data.frame")[[name]])
-
-
-#' @export
-setMethod("[", "gbRange",
-          function (x, i, j, ..., drop=TRUE) {
-            if (missing(j) && length(list(...)) == 0L)
-              callNextMethod(x=x, i=i)
-            else
-              as(x, "data.frame")[i, j, ..., drop=FALSE]
-          })
-
-
-#' @export
-setMethod("[[", "gbRange",
-          function (x, i, j, ...)  {
-            as(x, "data.frame")[[i]]
-          })
 

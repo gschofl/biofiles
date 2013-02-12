@@ -68,8 +68,9 @@ setMethod("initialize", "gbRecord",
 #' @autoImports
 gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
   
-  if (is_gbRecord_db(gb))
-    return(init_db(gb, create = FALSE))
+  if (is_gbRecord_db(gb)) {
+    return( init_db(gb, create = FALSE) )
+  }
   
   if (is(gb, "efetch")) {
     if (gb@rettype %ni% c("gb", "gp") || gb@retmode != "text")
@@ -81,31 +82,34 @@ gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
     parsed_data <- vector("list", n)
     for (i in seq_len(n)) {
       gb_data <- unlist(strsplit(split_gb[i], "\n"))
-      parsed_data[[i]] <- .parseGB(gb_data, db_path[i],
+      parsed_data[[i]] <- .parseGB(gb_data,
+                                   db_path=db_path[i],
                                    with_sequence=with_sequence,
                                    force=force)
     }
-  }
-  else if (!isS4(gb) && (is(gb, "connection") || file.exists(gb))) {
-    if (is(gb, "textConnection")) {
-      con <- gb
-      db_path <- tempfile(fileext=".db")
-    } else {
-      con <- file(gb, open="rt")
-      db_path <- paste0(gb, ".db")
-    }
+  } else if (is(gb, "textConnection")) {
+    con <- gb
     on.exit(close(con))
-    parsed_data <- list(.parseGB(gb_data=readLines(con), db_path, with_sequence, force))
-    
+    db_path <- tempfile(fileext=".db")
+    parsed_data <- list(.parseGB(gb_data=readLines(con),
+                                 db_path=db_path,
+                                 with_sequence=with_sequence,
+                                 force=force))
+  } else if (tryCatch(file.exists(gb), error = function() FALSE)) {
+    con <- file(gb, open="rt")
+    on.exit(close(con))
+    db_path <- paste0(gb, ".db")
+    parsed_data <- list(.parseGB(gb_data=readLines(con),
+                                 db_path=db_path,
+                                 with_sequence=with_sequence,
+                                 force=force))
   } else {
     stop("'gb' must be a valid GenBank flat file or an 'efetch' object containing GenBank records")
-  }
-  
+  } 
+
   gbk_list <- list()
   accn <- character()
   for (gbk in parsed_data) {
-    db <- init_db(gbk[["db_dir"]], create = TRUE)
-    
     if (is.null(gbk[["header"]][["accession"]]))
       stop("No accession number available")
     if (is.null(gbk[["header"]][["definition"]]))
@@ -113,29 +117,31 @@ gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
     if (!is(gbk[["features"]], "gbFeatureList"))
       stop("Features must be a 'gbFeatureList' instance")
     
-    dbInsert(db, "locus", gbk[["header"]][["locus"]])
-    dbInsert(db, "length", gbk[["header"]][["length"]])
-    dbInsert(db, "type", gbk[["header"]][["type"]])
-    dbInsert(db, "topology", gbk[["header"]][["topology"]])
-    dbInsert(db, "division", gbk[["header"]][["division"]])
-    dbInsert(db, "date", gbk[["header"]][["date"]])
-    dbInsert(db, "definition", gbk[["header"]][["definition"]]) # mandatory
-    dbInsert(db, "accession", gbk[["header"]][["accession"]])   # mandatory
-    dbInsert(db, "version", gbk[["header"]][["version"]])
-    dbInsert(db, "GI", gbk[["header"]][["GI"]])
-    dbInsert(db, "dblink", gbk[["header"]][["dblink"]])
-    dbInsert(db, "dbsource", gbk[["header"]][["dbsource"]])
-    dbInsert(db, "keywords", gbk[["header"]][["keywords"]])
-    dbInsert(db, "source", gbk[["header"]][["source"]])
-    dbInsert(db, "organism", gbk[["header"]][["organism"]])
-    dbInsert(db, "lineage", gbk[["header"]][["lineage"]])
-    dbInsert(db, "references", gbk[["header"]][["references"]])
-    dbInsert(db, "comment", gbk[["header"]][["comment"]])
-    dbInsert(db, "features", gbk[["features"]]) # mandatory
-    dbInsert(db, "sequence", gbk[["sequence"]])
-    
-    gbk_list <- c(gbk_list, db)
-    accn <- c(accn, gbk[["header"]][["accession"]])
+    with(gbk, {
+      dbInsert(db, "locus", header[["locus"]])
+      dbInsert(db, "length", header[["length"]])
+      dbInsert(db, "type", header[["type"]])
+      dbInsert(db, "topology", header[["topology"]])
+      dbInsert(db, "division", header[["division"]])
+      dbInsert(db, "date", header[["date"]])
+      dbInsert(db, "definition", header[["definition"]]) # mandatory
+      dbInsert(db, "accession", header[["accession"]])   # mandatory
+      dbInsert(db, "version", header[["version"]])
+      dbInsert(db, "GI", header[["GI"]])
+      dbInsert(db, "dblink", header[["dblink"]])
+      dbInsert(db, "dbsource", header[["dbsource"]])
+      dbInsert(db, "keywords", header[["keywords"]])
+      dbInsert(db, "source", header[["source"]])
+      dbInsert(db, "organism", header[["organism"]])
+      dbInsert(db, "lineage", header[["lineage"]])
+      dbInsert(db, "references", header[["references"]])
+      dbInsert(db, "comment", header[["comment"]])
+      dbInsert(db, "features", features) # mandatory
+      dbInsert(db, "sequence", sequence)
+    })
+    v <- validObject(gbk$db)
+    gbk_list <- c(gbk_list, gbk$db)
+    accn <- c(accn, gbk$header[["accession"]])
   }
   
   if (length(gbk_list) == 1L) 
@@ -145,7 +151,6 @@ gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
  
   gbk_list
 }
-
 
 
 #' @keywords internal

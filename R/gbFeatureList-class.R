@@ -24,9 +24,7 @@ setOldClass("list")
 #' @classHierarchy
 #' @classMethods
 setClass("gbFeatureList", 
-         representation(.Dir="character",
-                        .ACCN="character",
-                        .DEF="character"),
+         representation(.Info="gbInfo"),
          contains="list")
 
 
@@ -34,13 +32,6 @@ setValidity2("gbFeatureList", function (object) {
   if (any(vapply(object@.Data, class, character(1)) != "gbFeature")) {
     return("All elements in a 'gbFeatureList' must be 'gbFeature' instances")
   }
-  if (any(vapply(object@.Data, function(x) x@.Dir, character(1)) != object@.Dir)) {
-    return("All elements in a 'gbFeatureList' must stem from a valid 'gbRecord' instance")
-  }
-  if (any(vapply(object@.Data, function(x) x@.ACCN, character(1)) != object@.ACCN)) {
-    return("All elements in a 'gbFeatureList' must stem from the same 'gbRecord' instance")
-  }
-  
   TRUE
 })
 

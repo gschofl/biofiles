@@ -37,42 +37,46 @@
       unlink(db_path, recursive=TRUE)
   }
   
-  ## parse HEADER, FEATURES, and ORIGIN and construct 'gbData' object
-  header <- .parseGbHeader(gb_header, gbf)
+  # set up filehash db
+  db <- init_db(db_path, create = TRUE)
   
-  features <- .parseGbFeatures(db_dir=db_path,
-                               accession=header$accession, 
-                               definition=header$definition, 
-                               gb_features=gb_features)
+  ## parse HEADER, FEATURES, and ORIGIN and construct 'gbData' object
+  header <- .parseGbHeader(gb_header, gb_fields=gbf)
+  seqinfo <- IRanges::new2("gbInfo", db=db,
+                           seqnames=header[["accession"]],
+                           seqlengths=header[["length"]],
+                           is_circular=header[["topology"]] == "circurlar", 
+                           genome=header[["definition"]],
+                           check=FALSE)
+  features <- .parseGbFeatures(seqinfo=seqinfo, gb_features=gb_features)
   
   sequence <- .parseGbSequence(gb_sequence=gb_sequence,
                                accession_no=header$accession,
                                seq_type=header$type)
   
-  list(db_dir=db_path, header=header, features=features, sequence=sequence)
+  list(db=db, header=header, features=features, sequence=sequence)
 }
 
 
 .parseGbHeader <- function (gb_header, gb_fields) {
   #### LOCUS
-  locus_line <- strsplit(gb_header[gb_fields[names(gb_fields) == "LOCUS"]], " +")[[1]]
-  
+  locus_line <- strsplit(gb_header[gb_fields[names(gb_fields) == "LOCUS"]], "\\s+")[[1]]
   # if split by whitespace the LOCUS field seems to be made up of up to 8
   # different elements, 6 of which are data: LOCUS (1), locus name (2)
   # sequence length (3), bp or aa (4), molecule type (5, not given if protein,
   # GenBank division (6), topology (7, optional?), and modification date (8)
   if (length(locus_line) == 8 || 
-    (length(locus_line) == 7 && locus_line[4] == "aa")) {
+     (length(locus_line) == 7 && locus_line[4] == "aa")) {
     locus <- locus_line[2]
-    length <- as.numeric(locus_line[3])
-    names(length) <- locus_line[4]
-    if (locus_line[4] == 'aa') {
+    length <- setNames(as.integer(locus_line[3]), locus_line[4])
+    
+    if (names(length) == 'aa') {
       # these are GenPept files; they don't have a 'molecule type' but we set it 'AA'
       type <- 'AA'
       topology <- locus_line[5]
       division <- locus_line[6]
       date <- locus_line[7]
-    } else {
+    } else if (names(length) == 'bp') {
       type <- locus_line[5]
       topology <- locus_line[6]
       division <- locus_line[7]
@@ -81,14 +85,13 @@
   } else {
     # some GenBank files just don't seem to have topology or division
     locus <- locus_line[2]
-    length <- as.numeric(locus_line[3])
-    names(length) <- locus_line[4]
-    if (locus_line[4] == 'aa') {
+    length <- setNames(as.integer(locus_line[3]), locus_line[4])
+    if (names(length) == 'aa') {
       type <- 'AA'
       topology <- locus_line[5]
       division <- NULL
       date <- as.POSIXlt(locus_line[6], format="%d-%b-%Y")
-    } else {
+    } else if (names(length) == 'bp') {
       type <- locus_line[5]
       topology <- NULL
       division <- locus_line[6]
@@ -98,7 +101,7 @@
   
   #### DEFINITION
   def_idx <- which(names(gb_fields) == "DEFINITION")
-  def_line <-gb_header[seq.int(gb_fields[def_idx], gb_fields[def_idx + 1] - 1)]
+  def_line <- gb_header[seq.int(gb_fields[def_idx], gb_fields[def_idx + 1] - 1)]
   definition <- paste(gsub(" +", " ", sub("DEFINITION  ", "", def_line)), collapse=" ")
   
   #### ACCESSION
@@ -217,7 +220,7 @@
 ##   /compare=[accession-number.sequence-version] e.g. /compare=AJ634337.1
 ##
 #' @autoImports
-.parseGbFeatures <- function (db_dir, accession, definition, gb_features) {
+.parseGbFeatures <- function (seqinfo, gb_features) {
   # where do all the features start
   feature_start <- grep("^     \\S", gb_features)
   # where do all the features end
@@ -226,16 +229,14 @@
   feature_idx <- mapply(seq.int, feature_start, feature_end,
                         SIMPLIFY=FALSE, USE.NAMES=FALSE)
   
-  message(sprintf("Parsing features into %s", dQuote(basename(db_dir))))
+  message("Parsing features into ", dQuote(seqinfo@db@name))
   
   ftr <- mcmapply(function (idx, n) {
-    parse_feature_table(id=n, lines=gb_features[idx], db_dir=db_dir,
-                        accession=accession, definition=definition)
+    parse_feature_table(id=n, lines=gb_features[idx], seqinfo=seqinfo)
   }, idx=feature_idx, n=seq_along(feature_start),
      SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
   
-  IRanges::new2('gbFeatureList', .Data=ftr, .Dir=db_dir,
-                .ACCN=accession, .DEF=definition, check=FALSE) 
+  IRanges::new2('gbFeatureList', .Data=ftr, .Info=seqinfo, check=FALSE) 
 }
 
 

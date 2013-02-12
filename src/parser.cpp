@@ -247,8 +247,7 @@ SEXP parse_gb_location(std::string gb_base_span) {
     boost::smatch m;
   
     // use Rcpp::Language to create and assign a 'gbLocation' object
-    Rcpp::Language loc("new", "gbLocation");
-    Rcpp::S4 obj( loc.eval() );
+    Rcpp::S4 obj = Rcpp::S4("gbLocation");
   
     // test for a possibly complemented simple location
     if ( boost::regex_match(start, end, m, PCSL) ) {
@@ -381,16 +380,11 @@ Rcpp::CharacterVector get_qual( std::vector<std::string> lines ) {
 // [[Rcpp::export]]
 SEXP parse_feature_table(int id = 0,
                          Rcpp::CharacterVector lines = Rcpp::CharacterVector::create(""),
-                         std::string db_dir = "", std::string accession = "",
-                         std::string definition = "") {
-                           
-    // use Rcpp::Language to create and assign a 'gbFeature' object
-    Rcpp::Language ftr("new", "gbFeature");
-    Rcpp::S4 obj( ftr.eval() );
-    obj.slot(".Dir") = db_dir;
-    obj.slot(".ACCN") = accession;
-    obj.slot(".DEF") = definition;
-    obj.slot(".ID") = id;
+                         Rcpp::S4 seqinfo = Rcpp::S4("gbInfo") ) {
+    
+    Rcpp::S4 obj = Rcpp::S4("gbFeature");
+    obj.slot(".Info") = seqinfo;
+    obj.slot(".Id") = id;
     
     std::string::const_iterator s, e;
     boost::smatch m;
