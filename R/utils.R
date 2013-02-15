@@ -14,7 +14,8 @@ showInfo <- function(object) {
   g <- object@genome
   seqname <- pad(sn, nchar(sn) + 2, "right")
   seqlen <- pad(sl, nchar(sl) + 2, "right")
-  genome <- ellipsize(g, width=getOption("width") - nchar(seqname) - nchar(seqlen))
+  genome <- ellipsize(g, width=getOption("width") - 
+                        nchar(seqname) - nchar(seqlen) - 3)
   cat(sprintf("%s%s%s", seqname, seqlen, genome))
 }
 
@@ -95,7 +96,7 @@ expandIds <- function (x) {
       if (any(idx))
         q[idx]
       else
-        structure(NA_character_, names=trim(qual, "\\\\b"))
+        structure(NA_character_, names=rmisc::trim(qual, "\\\\b"))
     } else {
       ans <- lapply(seq.int(n_col), function (i) q[ idx[ ,i]])
       if (any(na_idx <- !apply(idx, 2, any))) {
@@ -159,7 +160,7 @@ expandIds <- function (x) {
                                 start=start(x), end=end(x)))
     }
     seq <- SEQFUN(seq)
-    seq@ranges@NAMES <- sprintf("%s.%s.%s", x@.ACCN, x@key, x@.ID)
+    seq@ranges@NAMES <- sprintf("%s.%s.%s", accession(x), key(x), index(x))
     seq
   }
   
@@ -174,6 +175,6 @@ expandIds <- function (x) {
     seq <- merge_seq(s, x, SEQFUN)
   }
   
-  seq@metadata <- list(definition=x@.DEF, database=x@.Dir)
+  seq@metadata <- list(seqinfo(x))
   seq
 }

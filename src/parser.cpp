@@ -246,7 +246,7 @@ SEXP parse_gb_location(std::string gb_base_span) {
     end = gb_base_span.end();
     boost::smatch m;
   
-    // use Rcpp::Language to create and assign a 'gbLocation' object
+    // create and assign a 'gbLocation' object
     Rcpp::S4 obj = Rcpp::S4("gbLocation");
   
     // test for a possibly complemented simple location

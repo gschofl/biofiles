@@ -31,17 +31,18 @@ setMethod("initialize", "gbRecord",
               stop("No database directory provided")
             if (missing(name))
               stop("No database name provided")
-            
-            .Object@dir <- dir
-            .Object@name <- name
-            
-            if (isValidDb(.Object, verbose=FALSE)) {
+            if (isValidDb(dir, verbose=FALSE)) {
               if (verbose) message("Intializing gbRecord")
+              
+              .Object@dir <- dir
+              .Object@name <- name
               
               if (hasNewPath(.Object)) {
                 if (verbose) message("Updating db directory location ...")
                 updateDirectory(.Object)
               }
+            } else {
+              stop("No valid database directory provided")
             }
             
             .Object
@@ -71,7 +72,7 @@ setMethod("initialize", "gbRecord",
 gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
   
   if (is.gbRecordDb(gb)) {
-    return( init_db(gb, create = FALSE) )
+    return( init_db(db_dir=gb, create = FALSE) )
   }
   
   if (is(gb, "efetch")) {
@@ -266,6 +267,16 @@ setMethod("accession", "gbRecord",
 
 setMethod("definition", "gbRecord", 
           function (x) dbFetch(x, "definition"))
+
+
+setMethod("seqinfo", "gbRecord", 
+          function (x) {
+            new("gbInfo", db = x, 
+                seqnames = dbFetch(x, 'accession'),
+                seqlengths = as.integer(dbFetch(x, 'length')),
+                is_circular = dbFetch(x, 'topology') == "circular",
+                genome = dbFetch(x, 'definition'))
+            })
 
 
 # listers ----------------------------------------------------------------

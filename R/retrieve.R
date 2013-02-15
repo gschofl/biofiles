@@ -90,12 +90,12 @@
   }
 }
 
-hasList <- function (x) vapply(x, typeof, character(1L)) == "list"
+hasList <- function (x) vapply(x, typeof, character(1)) == "list"
 
 hasListOfLists <- function (x) unlist(lapply(x[hasList(x)], hasList))
 
 matchIdx <- function (x, idx) {
-  x_idx <- vapply(x, function (f) f@.ID, numeric(1))
+  x_idx <- vapply(x, function (f) f@.Id, numeric(1))
   which(x_idx %in% idx)  
 }
 

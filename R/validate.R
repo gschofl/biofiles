@@ -1,37 +1,29 @@
-#' validate a gbRecord database which if referenced by gbFeature or
-#' gbFeatureList objects by their '.Dir' slot. 
 #' @keywords internal
 hasValidDb <- function (object, verbose=TRUE) {
   
-  if (!.hasSlot(object, "db") && !is(object@db, "gbRecord")) {
-    if (verbose) {
-      message("Object has no 'db' slot")
+  if (is(object, "gbFeature") || is(object, "gbFeatureList")) {
+    db <- slot(slot(seqinfo(object), "db"), "dir")
+  } else if (!isS4(object)) {
+    attr <- attributes(object)
+    if (!all(c("accession", "definition", "dir") %in% names(attr))) {
+      return(FALSE)
     }
-    return(FALSE)
+    db <- attr$dir
   }
-  
-  if (!file.exists(object@db@dir)) {
+
+  if (!tryCatch(file.exists(db), error=function(e) TRUE)) {
     if (verbose)
-      message(sprintf("Directory %s does not exist.", sQuote(object@db@name)))
+      message(sprintf("Directory %s does not exist.", sQuote(db)))
     return(FALSE)
   }
   
-  if (any(idx <- is.na(match(.GBFIELDS, dir(object@db@dir))))) {
-    if (verbose)
-      message(sprintf("Field(s) %s are missing from database.",
-                      sQuote(paste(.GBFIELDS[-idx], collapse=","))))
-    return(FALSE)
-  }
-  
-  TRUE
+  isValidDb(db, verbose = verbose)
 }
 
 
-#' validate a gbRecord database (i.e. check if the db directory contains
-#' all fields).
 #' @keywords internal
-isValidDb <- function (object, verbose=TRUE) {
-  idx <- is.na(charmatch(.GBFIELDS, dir(object@dir)))
+isValidDb <- function (db, verbose=TRUE) {
+  idx <- is.na(charmatch(.GBFIELDS, dir(db)))
   if (any(idx)) {
     if (verbose) {
       message(sprintf("%s are missing from database.",
@@ -42,10 +34,11 @@ isValidDb <- function (object, verbose=TRUE) {
   return(TRUE)
 }
 
+
 # check if the db directory has been moved from the location
 # where it was instantiated
-hasNewPath <- function (x) {
-  !identical(x@dir, x$features@.Info@db@dir) 
+hasNewPath <- function (object) {
+  !identical(object@dir, seqinfo(features(object))@db@dir)
 }
 
 # if yes update the gbFeatureList@.Dir and gbFeature@.Dir

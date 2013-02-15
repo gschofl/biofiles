@@ -9,7 +9,7 @@
 }
 \description{
 \dQuote{gbInfo} is an S4 class that provides basic infomation
-about a genomic sequence. It extends the \linkS4class{Seqinfo}.
+about a genomic sequence.
 }
 \section{Class hierarchy for gbInfo}{
 Super classes:

@@ -25,7 +25,9 @@ for GenBank feature tables.
   \item \code{\link{partial}}
   \item \code{\link{qualif}}
   \item \code{\link{qualif<-}}
-  \item \code{\link{range}}
+  \item \code{\link{ranges}}
+  \item \code{\link{seqinfo}}
+  \item \code{\link{seqlengths}}
   \item \code{\link{sequence}}
   \item \code{\link{show}}
   \item \code{\link{start}}
@@ -40,16 +42,16 @@ for GenBank feature tables.
 \keyword{classes}
 \section{Slots}{
 \describe{
-  \item{.Info}{A \code{\linkS4class{gbInfo}} instance.}
+  \item{.Info}{A \code{\linkS4class{gbInfo}} object.}
 
-  \item{.Id}{Identifier (sequential index) of the feature in the
+  \item{.Id}{Identifier (index) of the feature in the
 GenBank record the feature is part of.}
 
   \item{key}{The feature key.}
 
-  \item{location}{The feature location.}
+  \item{location}{A \code{\linkS4class{gbLocation}} object.}
 
-  \item{qualifiers}{Named character vector. Name attributes
+  \item{qualifiers}{A named character vector. Name attributes
 correspond to GenBank qualifier tags.}
 
 }

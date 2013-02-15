@@ -3,7 +3,7 @@
   
   if (is(x, "gbRecord")) {
     len <- x$length
-    features <-x$features
+    features <- x$features
   } else if (is(x, "gbFeatureList")) {
     if (!any(hasKey(x, "source"))) {
       stop("No source key in this gbFeatureList")

@@ -23,8 +23,8 @@ locations.}
 }
 
 \value{
-A \code{\link{gbLocation-class}}, \code{\link{gbFeature-class}},
-or\code{\link{gbFeatureList-class}} object
+A \code{\linkS4class{gbLocation}}, \code{\linkS4class{gbFeature}},
+or\code{\linkS4class{gbFeatureList}} object
 }
 \description{
 Shift location of features in a GenBank record

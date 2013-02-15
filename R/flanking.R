@@ -10,8 +10,7 @@ find_neighbors <- function (query, subject, n = 5,
   
   direction <- match.arg(direction, c("flanking","downstream","upstream"))
   
-  if (!(is(query, "Ranges") || is(query, "gbFeatureList") ||
-    is(query, "gbFeature"))) {
+  if (!(is(query, "gbFeatureList") || is(query, "gbFeature"))) {
     stop("class ", sQuote(class(query)), " no supported query")
   }
   
@@ -20,7 +19,7 @@ find_neighbors <- function (query, subject, n = 5,
   }
   
   if (is(query, "gbFeatureList") || is(query, "gbFeature")) {
-    query <- range(query)
+    query <- ranges(ranges(query))
   }
   
   if (is(subject, "gbRecord")) {
@@ -51,8 +50,8 @@ find_neighbors <- function (query, subject, n = 5,
     return(NULL)
   }
   
-  subject_range <- range(subject)
-  subject_idx <- vapply(subject, function (f) f@.ID, integer(1))
+  subject_range <- ranges(ranges(subject))
+  subject_idx <- vapply(subject, function (f) f@.Id, integer(1))
   
   FUN <- switch(direction,
                 upstream=list(IRanges::follow),
@@ -70,8 +69,8 @@ find_neighbors <- function (query, subject, n = 5,
       new_query <- IRanges()
       for (k in seq_along(split_hits)) {
         hit_idx <- subjectHits(split_hits[[k]])
-        new_range <- range(subject_range[hit_idx,])
-        UID[[k]] <- c(UID[[k]], subject_idx[hit_idx])
+        new_range <- subject_range[hit_idx,]
+        UID[[K]] <- c(UID[[k]], subject_idx[hit_idx])
         new_query <- c(new_query, new_range)
       }
       query <- new_query

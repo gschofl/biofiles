@@ -1,7 +1,7 @@
 % Built by roxygen3 0.1
 \name{sequence}
 \alias{sequence}
-\title{Get sequences of a GenBank records or features.}
+\title{Get sequences of GenBank features}
 \usage{
   sequence(x, ...)
 }
@@ -16,14 +16,13 @@
 An \code{\linkS4class{XStringSet}} object.
 }
 \description{
-Get sequences of a GenBank records or features.
+Get sequences of GenBank features
 }
 \section{Method signatures for generic sequence}{
 \itemize{
   \item \linkS4class{gbFeature}
   \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
-  \item \linkS4class{GRanges}
 }
 
 }

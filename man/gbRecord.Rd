@@ -54,6 +54,7 @@ Super classes:
   \item \code{\link{listQualif}}
   \item \code{\link{revcomp}}
   \item \code{\link{select}}
+  \item \code{\link{seqinfo}}
   \item \code{\link{sequence}}
   \item \code{\link{show}}
   \item \code{\link{write}}

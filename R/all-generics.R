@@ -11,11 +11,11 @@ NULL
 ##      start<-, end<-, strand<-
 ##
 ##    Getters/setters in gbLocation-class
-##      range, partial, accession
+##      ranges, partial, accession
 ##
 ##    Getters/setters in gbFeature-class, gbFeatureList-class
-##      index, key, range, location, qualif, dbxref, sequence,
-##      accession, definition
+##      index, key, location, ranges, sequence, seqinfo
+##      qualif, dbxref, locusTag, product, proteinId, note, translation
 ##      key<-, qualif<-
 ##
 ##    Getters/setters in gbRecord-class
@@ -35,10 +35,8 @@ NULL
 ##
 ##    The "start" and "end" generics are defined in the stats package.
 ##    
-##    The "shift", "start<-", and "end<-" generics are defined in the
+##    The "shift", "start<-", "end<-", and "ranges" generics are defined in the
 ##    IRanges package.
-##    
-##    The "range" generic is defined in the base package
 ##
 ##    We need to override the "width" and "shift" generics from IRanges because
 ##    they don't provide a ... argument.
@@ -48,6 +46,13 @@ NULL
 
 ### "start" and "end" are defined as S3 generics in the stats package.
 ### Here we explicitely set them S4.
+#' Get or set the start of genomic features
+#' 
+#' @usage start(x, join=FALSE, ...)
+#' @param x A \code{gbFeature} or \code{gbFeatureList} object.
+#' @param join Join compound genomic locations into a single range.
+#' @param ... Further arguments passed to methods.
+#' @return An integer vector
 #' @rdname start
 #' @export
 #' @genericMethods
@@ -60,6 +65,13 @@ setGeneric("start")
 setGeneric("start<-")
 
 
+#' Get or set the end of genomic features
+#' 
+#' @usage start(x, join=FALSE, ...)
+#' @param x A \code{gbFeature} or \code{gbFeatureList} object.
+#' @param join Join compound genomic locations into a single range.
+#' @param ... Further arguments passed to methods.
+#' @return An integer vector
 #' @rdname end
 #' @export
 #' @genericMethods
@@ -73,6 +85,14 @@ setGeneric("end<-")
 
 
 ### The "strand" generic is defined in the BiocGenerics package.
+#' Get or set the strand of genomic features
+#'
+#' @usage strand(x, join=FALSE, ...)
+#' @param x A \code{gbFeature} or \code{gbFeatureList}object.
+#' @param join Join compound genomic locations into a single range.
+#' @param ... Further arguments passed to methods.
+#' @return An integer vector of 1 (plus strand), -1 (minus strand), or
+#' \code{NA}
 #' @rdname strand
 #' @export
 #' @genericMethods
@@ -86,12 +106,39 @@ setGeneric("strand<-")
 
 ### The "width" generic is defined in the IRanges package. We need
 ### to override it because they don't provide a dotdotdot interface.
+#' Get the width of genomic features
+#'
+#' @usage width(x, ...)
+#' @param x A \code{gbFeature} or \code{gbFeatureList}object.
+#' @param ... Further arguments passed to methods.
+#' @return An integer vector.
 #' @rdname width
 #' @export
 #' @genericMethods
 setGeneric("width", signature="x", function (x, ...) {
   standardGeneric("width")
 })
+
+
+### The "ranges" generic is defined in the IRanges package.
+#' Get or set the range of genomic features
+#' 
+#' @usage ranges(x, join=FALSE, with_qual="none", without_qual="")
+#' @param x A \code{gbFeature} or \code{gbFeatureList} object.
+#' @param join Join compound genomic locations into a single range.
+#' @param with_qual Include qualifiers as metadata columns. Can be "none",
+#' "all", or a character vector of qualifier tags.
+#' @param without_qual Exclude specific qualifiers.
+#' @param ... Further arguments passed to methods.
+#' @return A \code{\linkS4class{GRanges}} object.
+#' @rdname ranges
+#' @export
+setGeneric("ranges")
+
+
+#' @rdname ranges
+#' @export
+setGeneric("ranges<-")
 
 
 #' @rdname partial
@@ -102,7 +149,18 @@ setGeneric("partial", signature="x", function (x, ...) {
 })
 
 
-#' @rdname accession
+### The "seqinfo" generic is defined in the BiocGenerics package.
+#' Get sequence information about genomic features
+#' 
+#' @usage seqinfo(x)
+#' @rdname seqinfo
+#' @export
+#' @genericMethods
+setGeneric("seqinfo")
+
+
+#' @usage accession(x)
+#' @rdname seqinfo
 #' @export
 #' @genericMethods
 setGeneric("accession", signature="x", function (x, ...) {
@@ -110,7 +168,8 @@ setGeneric("accession", signature="x", function (x, ...) {
 })
 
 
-#' @rdname definition
+#' @usage definition(x)
+#' @rdname seqinfo
 #' @export
 #' @genericMethods
 setGeneric("definition", signature="x", function (x, ...) {
@@ -118,13 +177,12 @@ setGeneric("definition", signature="x", function (x, ...) {
 })
 
 
-#' @rdname location
+#' @usage seqlengths(x)
+#' @rdname seqinfo
 #' @export
 #' @genericMethods
-setGeneric("location", signature="x",
-           function (x, attributes = FALSE, join = FALSE, ...) {
-             standardGeneric("location")
-           })
+setGeneric("seqlengths")
+
 
 ### The "annotation" generic is defined in the BiocGenerics package.
 #' @rdname annotation
@@ -139,35 +197,49 @@ setGeneric("annotation")
 setGeneric("summary")
 
 
-#' Return feature indices from a GenBank record
+#' Get indices of GenBank features
 #'
 #' @param x A \code{\linkS4class{gbFeature}} or
 #' \code{\linkS4class{gbFeatureList}} instance.
-#' @param attributes Set the \code{accession}, \code{definition},
-#' \code{database} attributes.
+#' @param seqinfo Include the \code{\linkS4class{gbInfo}} for the the feature.
 #' @param ... Additional arguments passed to methods.
 #' @return A numeric vector of feature indeces.
 #' @rdname index
 #' @export
 #' @genericMethods
 setGeneric("index", signature="x",
-           function (x, attributes = FALSE, ...) {
+           function (x, seqinfo = FALSE, ...) {
              standardGeneric("index")
            })
 
 
-#' Get/set feature keys from a GenBank Record
+#' Get genomic locations of GenBank features
 #'
 #' @param x A \code{\linkS4class{gbFeature}} or
 #' \code{\linkS4class{gbFeatureList}} instance.
-#' @param attributes Set the \code{accession}, \code{definition},
-#' \code{database} attributes.
+#' @param seqinfo Include the \code{\linkS4class{gbInfo}} for the the feature.
+#' @param ... Additional arguments passed to methods.
+#' @return A list of \code{\linkS4class{gbLocation}} objects
+#' @rdname location
+#' @export
+#' @genericMethods
+setGeneric("location", signature="x",
+           function (x, seqinfo = FALSE, ...) {
+             standardGeneric("location")
+           })
+
+
+#' Get/set keys of GenBank features
+#'
+#' @param x A \code{\linkS4class{gbFeature}} or
+#' \code{\linkS4class{gbFeatureList}} instance.
+#' @param seqinfo Include the \code{\linkS4class{gbInfo}} for the the feature.
 #' @param ... Additional arguments passed to methods.
 #' @rdname key
 #' @export
 #' @genericMethods
 setGeneric("key", signature="x",
-           function(x, attributes = FALSE, ...) {
+           function(x, seqinfo = FALSE, ...) {
              standardGeneric("key")
              })
 
@@ -181,20 +253,19 @@ setGeneric("key<-", signature="x",
            })
 
 
-#' Get/set feature qualifiers from a GenBank record
+#' Get/set qualifiers of GenBank features
 #' 
 #' @param x A \code{\linkS4class{gbFeature}} or
 #' \code{\linkS4class{gbFeatureList}} instance.
 #' @param which (Optional) A character vector giving the name(s) of the
 #' qualifiers to retrieve.
-#' @param attributes Set the \code{accession}, \code{definition},
-#' \code{database} attributes.
+#' @param seqinfo Include the \code{\linkS4class{gbInfo}} for the the feature.
 #' @param ... Additional arguments passed to methods.
 #' @rdname qualif
 #' @export
 #' @genericMethods
 setGeneric("qualif", signature=c("x", "which"),
-           function(x, which, attributes = FALSE, ...) {
+           function(x, which, seqinfo = FALSE, ...) {
              standardGeneric("qualif")
            })
 
@@ -208,12 +279,12 @@ setGeneric("qualif<-", signature=c("x", "which"),
            })
 
 
-#' Get/set db_xref from a GenBank record
+#' Get the \code{db_xref}s of GenBank features
 #' 
 #' @param x A \code{\linkS4class{gbFeature}} or
 #' \code{\linkS4class{gbFeatureList}} instance.
 #' @param db (Optional) A character vector giving the database names of the
-#' desired db_xrefs.
+#' desired \code{db_xref}s.
 #' @param ... Additional arguments passed to methods.
 #' @rdname dbxref
 #' @export
@@ -224,7 +295,7 @@ setGeneric("dbxref", signature="x",
            })
 
 
-#' Get sequences of a GenBank records or features.
+#' Get sequences of GenBank features
 #' 
 #' @param x A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeature}},
 #'  or \code{\linkS4class{gbFeatureList}} instance.
@@ -343,8 +414,8 @@ setGeneric("hasQualif", signature=c("x","qualifier"),
 #' @param updateDb Should filehash database be updated with new feature
 #' locations.
 #'
-#' @return A \code{\link{gbLocation-class}}, \code{\link{gbFeature-class}},
-#' or\code{\link{gbFeatureList-class}} object
+#' @return A \code{\linkS4class{gbLocation}}, \code{\linkS4class{gbFeature}},
+#' or\code{\linkS4class{gbFeatureList}} object
 #' @rdname shift
 #' @export
 #' @genericMethods
@@ -380,12 +451,11 @@ setGeneric("revcomp", signature="x",
 # view -------------------------------------------------------------------
 
 
-#' View all features in a gbFeatureList
+#' View all features in a \code{gbFeatureList}
 #' 
 #' @param x A \code{\linkS4class{gbFeatureList}} instance.
 #' @param n How many features to show (Default: all).
 #' @param ... Additional arguments passed to methods.
-#' @return NULL
 #' @rdname view
 #' @export
 #' @genericMethods

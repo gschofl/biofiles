@@ -4,7 +4,7 @@ NULL
 #' gbInfo
 #' 
 #' \dQuote{gbInfo} is an S4 class that provides basic infomation
-#' about a genomic sequence. It extends the \linkS4class{Seqinfo}.
+#' about a genomic sequence.
 #' 
 #' @slot db A \code{\linkS4class{filehashRDS}} instance.
 #' @slot seqnames Identifier of the sequence. Usually the Accession number.
@@ -20,6 +20,7 @@ setClass(Class="gbInfo", representation(db = "filehashRDS"),
          contains="Seqinfo")
 
 
+#' @export
 gbInfo <- function (object) {
   if (is(object, "gbRecord") && isValidDb(object)) {
     new("gbInfo", db = object, 
@@ -27,6 +28,15 @@ gbInfo <- function (object) {
         seqlengths = as.integer(dbFetch(object, 'length')),
         is_circular = dbFetch(object, 'topology') == "circular",
         genome = dbFetch(object, 'definition'))
+  } else if (!isS4(object) && hasValidDb(object)) {
+    db_dir <- attr(object, "dir")
+    db <- new("gbRecord", dir=normalizePath(db_dir),
+              name=basename(db_dir), verbose=FALSE)
+    new("gbInfo", db = db, 
+        seqnames = dbFetch(db, 'accession'),
+        seqlengths = as.integer(dbFetch(db, 'length')),
+        is_circular = dbFetch(db, 'topology') == "circular",
+        genome = dbFetch(db, 'definition'))
   } else {
     stop("Need a valid 'gbRecord' instance to initialize 'gbInfo'")
   }
@@ -37,7 +47,7 @@ setValidity2("gbInfo", function (object) {
   if (!is(object@db, "gbRecord")) {
     return(FALSE)
   }
-  if (!isValidDb(object@db)) {
+  if (!isValidDb(object@db@dir)) {
     return(FALSE)
   }
   if (dbFetch(object@db, 'accession') != object@seqnames) {
@@ -57,60 +67,24 @@ setValidity2("gbInfo", function (object) {
 })
 
 
-createGRanges <- function (x, include_qual = "none", exclude_qual = "") {
+.make_GRanges <- function (x, join = TRUE, with_qual = "none", without_qual = "") {
   if (!hasValidDb(x)) {
-    stop("Is no valid gbRecord")
+    stop("Is no valid gbFeature")
   }  
-  db <- init_db(x@.Dir, verbose=FALSE)
-  seqid <- dbFetch(db, "accession")
-  seqinfo <- Seqinfo(seqnames = seqid,
-                     seqlengths = unname(dbFetch(db, "length")),
-                     isCircular = dbFetch(db, "topology") == "circular",
-                     genome = dbFetch(db, "definition"))
   
   qual <- DataFrame(key = key(x))
-  if (include_qual != "none") {
-    which <- if (include_qual == "all") {
-      setdiff(listUniqueQualifs(x), exclude_qual)
+  
+  if (any(with_qual != "none")) {
+    if (all(with_qual == "all")) {
+      which <- setdiff(listUniqueQualifs(x), without_qual)
     } else {
-      which <- setdiff(include_qual, exclude_qual)
+      which <- setdiff(with_qual, without_qual)
     }
-    qual <- cbind(qual, DataFrame(qualif(x, which, attributes=FALSE)))
+    qual <- cbind(qual, DataFrame(as.list(qualif(x, which))))
   }
 
-  GRanges(seqnames=Rle(seqid),
-          ranges=IRanges(start = start(x), end = end(x), names = index(x)),
-          strand=Rle(strand(x)), qual, seqinfo = seqinfo)
+  GRanges(seqnames=Rle(accession(x)),
+          ranges=IRanges(start(x, join=join), end(x, join=join), names=index(x)),
+          strand=strand(x, join = join), qual, seqinfo = seqinfo(x))
 }
-
-
-setMethod("sequence", "GRanges",
-          function (x, seq, ...) {
-            
-            if (is(seq, "gbRecord")) {
-              seq <- sequence(seq)
-            }
-            
-            if (is(seq, "DNAStringSet")) {
-              if (length(seq) > 1) {
-                warning("'seq' contains multiple sequences. Only the first will be used")
-              }
-              seq <- seq[[1]]
-            }
-            
-            if (!is(seq, "DNAString")) {
-              stop("'seq' must be a 'DNAString' object")
-            }
-            
-            start <- biofiles::start(x)
-            end <- biofiles::end(x)
-            strand <- biofiles::strand(x)
-            seqs <- as(Views(seq, start, end), "DNAStringSet")
-            o <- c(seq_along(seqs)[strand == -1],
-                   seq_along(seqs)[strand == 1])
-            append(reverseComplement(seqs[strand == -1]),
-                   seqs[strand == 1])[order(o)]
-          })
-
-
 

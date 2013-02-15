@@ -11,12 +11,12 @@ setClassUnion("charOrNull", c("character", "NULL"))
 #' \dQuote{gbFeature} is an S4 class that provides a container
 #' for GenBank feature tables.
 #' 
-#' @slot .Info A \code{\linkS4class{gbInfo}} instance.
-#' @slot .Id Identifier (sequential index) of the feature in the
+#' @slot .Info A \code{\linkS4class{gbInfo}} object.
+#' @slot .Id Identifier (index) of the feature in the
 #' GenBank record the feature is part of.
 #' @slot key The feature key.
-#' @slot location The feature location.
-#' @slot qualifiers Named character vector. Name attributes
+#' @slot location A \code{\linkS4class{gbLocation}} object.
+#' @slot qualifiers A named character vector. Name attributes
 #' correspond to GenBank qualifier tags.       
 #' 
 #' @rdname gbFeature
@@ -42,22 +42,24 @@ setValidity2("gbFeature", function (object) {
   op <- options("useFancyQuotes")
   options(useFancyQuotes=FALSE)
   loc <- linebreak(as(object@location, "character"),
+                   width=getOption("width") - 4,
                    offset=17, indent=0, split=",", FORCE=TRUE)
   if (all_empty(object@qualifiers)) {
     cat("Feature:         Location/Qualifiers:\n",
-        sprintf("%-16s%s\n", object@key, loc))
+        sprintf("%-16s%s\n", key(object), loc))
   } else {
     qua <- names(object@qualifiers)
-    val <- linebreak(dQuote(object@qualifiers), offset=17, 
+    val <- linebreak(dQuote(object@qualifiers),
+                     width=getOption("width") - 4, offset=17, 
                      indent=-(nchar(qua) + 2), FORCE=TRUE)
     
     cat("Feature:         Location/Qualifiers:\n",
-        sprintf("%-16s%s\n", object@key, loc),
+        sprintf("%-16s%s\n", key(object), loc),
         sprintf("%+17s%s=%s\n", "/", qua, val))
   }
   if (showInfo) {
     cat("Seqinfo:\n")
-    showInfo(object@.Info)
+    showInfo(seqinfo(object))
   }
   options(op)
 }
@@ -74,46 +76,31 @@ setMethod("show", "gbFeature",
 
 
 setMethod("summary", "gbFeature",
-    function (object, ...) {
-        showme <- sprintf("%-6s%-20s%-32s\n",
-                          object@.Id, object@key, as(object@location, "character"))
-        cat(showme)
-        return(invisible(TRUE))
-    })
+          function (object, ...) {
+            idx <- pad(index(object), 8, "right")
+            key <- pad(key(object), 10, "right")
+            loc <- as(location(object)[[1]], "character")
+            prod <- ellipsize(product(object), width=getOption("width") - 
+                                nchar(idx) - nchar(key) - nchar(loc) - 5)
+            showme <- sprintf("%s%s%s  %s\n", idx, key, loc, prod)
+            cat(showme)
+            return(invisible(NULL))
+          })
 
 
 # getters ----------------------------------------------------------------
 
 
-#' Get the start of genomic features
-#' 
-#' @param x A \code{gbFeature} object.
-#' @param join Join compound genomic locations into a single range.
-#' @param ... Further arguments passed to methods.
-#' @return An integer vector
 setMethod("start", "gbFeature",
           function (x, join = FALSE, drop = TRUE) 
             start(x@location, join = join, drop = drop))
 
 
-#' Get the end of genomic features
-#' 
-#' @param x A \code{gbFeature} object.
-#' @param join Join compound genomic locations into a single range.
-#' @param ... Further arguments passed to methods.
-#' @return An integer vector
 setMethod("end", "gbFeature",
           function (x, join = FALSE, drop = TRUE) 
             end(x@location, join = join, drop = drop))
 
 
-#' Get the strand of genomic features
-#' 
-#' @param x A \code{gbFeature} object.
-#' @param join Join compound genomic locations into a single range.
-#' @param ... Further arguments passed to methods.
-#' @return An integer vector of 1 (plus strand), -1 (minus strand), or
-#' \code{NA}
 setMethod("strand", "gbFeature",
           function (x, join = FALSE)
             strand(x@location, join = join))
@@ -129,42 +116,38 @@ setMethod("partial", "gbFeature",
             partial(x@location))
 
 
+setMethod("seqinfo", "gbFeature",
+          function (x) x@.Info)
+
+
+setMethod("seqlengths", "gbFeature",
+          function (x) seqlengths(seqinfo(x)))
+
+
 setMethod("accession", "gbFeature",
-          function (x) seqnames(x@.Info))
+          function (x) seqnames(seqinfo(x)))
 
 
 setMethod("definition", "gbFeature",
-          function (x) genome(x@.Info))
+          function (x) genome(seqinfo(x)))
 
 
-setMethod("range", "gbFeature",
-          function (x, join = FALSE) {
-            GRanges(seqnames=Rle(accession(x)),
-                    ranges=IRanges(start(x, join=join), end(x, join=join), names=x@.Id),
-                    strand=strand(x, join = join))
+setMethod("ranges", "gbFeature",
+          function (x, with_qual = "none", without_qual = "", join = FALSE) {
+            .make_GRanges(x, with_qual = with_qual,
+                          without_qual = without_qual,
+                          join = join)
           })
 
 
-#' Get genomic locations of features
-#'
-#' @param x A \code{\linkS4class{gbFeature}} instance.
-#' @param attributes Include the \code{accession}, \code{definition},
-#' \code{database} attributes of the feature.
-#' @param join Join compound genomic locations into a single range.
-#' @return A \code{\linkS4class{GRanges}} object including the feature key
-#' and the feature index.
-#' @rdname location
 setMethod("location", "gbFeature",
-          function (x, attributes = FALSE, join = FALSE) {     
-            ans <- range(x, join = join)
-            elementMetadata(ans) <- DataFrame(feature = x@key)
-            if (attributes) {
-              seqinfo(ans) <- new("gbInfo", dbpath=x@.Dir, seqnames=x@.ACCN, seqlengths=20L,
-                    is_circular=TRUE, genome=x@.DEF)
-              str(n)
-              
-              ans@metadata <- list(.Dir = x@.Dir)
-              ans
+          function (x, seqinfo = FALSE) {     
+            ans <- x@location
+            if (seqinfo) {
+              structure(list(ans),
+                        accession=accession(x),
+                        definition=unname(definition(x)),
+                        dir=seqinfo(x)@db@dir)
             } else {
               ans
             }
@@ -172,13 +155,13 @@ setMethod("location", "gbFeature",
 
 
 setMethod("index", "gbFeature",
-          function (x, attributes = FALSE) {
-            ans <- x@.ID
-            if (attributes) {
+          function (x, seqinfo = FALSE) {
+            ans <- x@.Id
+            if (seqinfo) {
               structure(ans,
-                        accession=x@.ACCN,
-                        definition=x@.DEF,
-                        database=x@.Dir)
+                        accession=accession(x),
+                        definition=unname(definition(x)),
+                        dir=seqinfo(x)@db@dir)
             } else {
               ans
             }
@@ -186,15 +169,33 @@ setMethod("index", "gbFeature",
 
 
 setMethod("key", "gbFeature", 
-          function (x, attributes = FALSE) {
+          function (x, seqinfo = FALSE) {
             ans <- structure(x@key, names=NULL)
-            if (attributes) {
-              structure(ans, id=x@.ID,
-                        accession=x@.ACCN,
-                        definition=x@.DEF,
-                        database=x@.Dir)
+            if (seqinfo) {
+              structure(ans,
+                        accession=accession(x),
+                        definition=unname(definition(x)),
+                        dir=seqinfo(x)@db@dir)
             }
             else {
+              ans
+            }
+          })
+
+
+setMethod("qualif", "gbFeature", 
+          function (x, which, seqinfo = FALSE, fixed = FALSE) {
+            if (missing(which)) {
+              ans <- x@qualifiers
+            } else {
+              ans <- .qualAccess(x, which, fixed)
+            }
+            if (seqinfo) {
+              structure(ans,
+                        accession=accession(x),
+                        definition=unname(definition(x)),
+                        dir=seqinfo(x)@db@dir)
+            } else {
               ans
             }
           })
@@ -223,29 +224,11 @@ setMethod("dbxref", "gbFeature",
           })
 
 
-setMethod("qualif", "gbFeature", 
-          function (x, which, attributes = FALSE, fixed = FALSE) {
-            if (missing(which)) {
-              ans <- x@qualifiers
-            } else {
-              ans <- .qualAccess(x, which, fixed)
-            }
-            if (attributes) {
-              structure(ans, id=x@.ID,
-                        accession=x@.ACCN,
-                        definition=x@.DEF,
-                        database=x@.Dir)
-            } else {
-              ans
-            }
-          })
-
-
 setMethod("sequence", "gbFeature",
           function (x) {
             stopifnot(hasValidDb(x))
-            db <- init_db(x@.Dir, verbose=FALSE)
-            .seqAccess(dbFetch(db, "sequence"), x, dbFetch(db, "type"))
+            db <- slot(seqinfo(x), "db")
+            .seqAccess(s=dbFetch(db, "sequence"), x, type=dbFetch(db, "type"))
           })
 
 
@@ -280,8 +263,8 @@ setReplaceMethod("key", "gbFeature",
                  function (x, value, updateDb = FALSE) {
                    x <- initialize(x, key=value)
                    if (updateDb) {
-                     db <- dbInit(x@.Dir, "RDS")
-                     db$features[x@.ID] <- x
+                     db <- slot(seqinfo(x), "db")
+                     db$features[x@.Id] <- x
                    }
                    validObject(x)
                    x
@@ -292,8 +275,8 @@ setReplaceMethod("qualif", "gbFeature",
                  function (x, which, value, updateDb = FALSE) {
                    x@qualifiers[which] <- value
                    if (updateDb) {
-                     db <- dbInit(x@.Dir, "RDS")
-                     db$features[x@.ID] <- x
+                     db <- slot(seqinfo(x), "db")
+                     db$features[x@.Id] <- x
                    }
                    validObject(x)
                    x
@@ -341,7 +324,7 @@ setMethod("shift", "gbFeature",
 #' @export
 setMethod("[[", c("gbFeature", "character", "missing"),
           function(x, i, j) {
-            if (i %in% c("key","location",".Dir",".ACCN",".DEF",".ID")) {
+            if (i %in% c("key","location", ".Id")) {
               slot(x, i)
             } else {
               x@qualifiers[i]
@@ -351,7 +334,7 @@ setMethod("[[", c("gbFeature", "character", "missing"),
 #' @export
 setMethod("$", "gbFeature",
           function(x, name) {
-            if (name %in% c("key","location",".Dir",".ACCN",".DEF",".ID")) {
+            if (name %in% c("key","location",".Id")) {
               slot(x, name)
             } else {
               x@qualifiers[name]

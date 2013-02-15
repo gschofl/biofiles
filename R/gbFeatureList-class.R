@@ -12,7 +12,7 @@ setOldClass("list")
 #' \dQuote{\linkS4class{gbFeature}}s retrived from GenBank flat files.
 #'
 #' @slot .Info A \code{\linkS4class{gbInfo}} instance.
-#' @slot .Data A list of \dQuote{\code{gbFeature}} instances.
+#' @slot .Data A list of \code{\linkS4class{gbFeature}} objects.
 #' 
 #' @rdname gbFeatureList
 #' @export
@@ -46,7 +46,7 @@ setMethod("show", "gbFeatureList",
               }
             }
             cat("Seqinfo:\n")
-            showInfo(object@.Info)
+            showInfo(seqinfo(object))
             return(invisible(object))
           })
 
@@ -105,7 +105,6 @@ setMethod("strand", "gbFeatureList",
           })
 
 
-
 setMethod("width", "gbFeatureList",
           function (x, join = FALSE) {
             ans <- lapply(x, width, join = join)
@@ -117,50 +116,38 @@ setMethod("width", "gbFeatureList",
           })
 
 
+setMethod("seqinfo", "gbFeatureList",
+          function (x) x@.Info)
+
+
+setMethod("seqlengths", "gbFeatureList",
+          function (x) seqlengths(seqinfo(x)))
+
+
 setMethod("accession", "gbFeatureList",
-          function (x) x@.ACCN)
+          function (x) seqnames(seqinfo(x)))
 
 
 setMethod("definition", "gbFeatureList",
-          function (x) x@.DEF)
+          function (x) genome(seqinfo(x)))
 
 
-setMethod("range", "gbFeatureList",
-          function (x, join = FALSE) {
-            start <- as.integer(unlist(start(x, join = join)))
-            width <- as.integer(unlist(end(x, join = join))) - start + 1L
-            strand <- unlist(strand(x, join = join))
-            new('gbRange', start, width, strand)
+setMethod("ranges", "gbFeatureList",
+          function (x, join = TRUE, with_qual = "none", without_qual = "") {
+            .make_GRanges(x, join = join, with_qual = with_qual,
+                          without_qual = without_qual)
           })
 
 
-#' Get genomic locations of features
-#'
-#' @param x A \code{\linkS4class{gbFeatureList}} instance.
-#' @param attributes Include the \code{accession}, \code{definition},
-#' \code{database} attributes of the feature.
-#' @param join Join compound genomic locations into a single range.
-#' @return A \code{\linkS4class{gbRange}} object including feature keys
-#' and feature indices.
-#' @rdname location
+
 setMethod("location", "gbFeatureList",
-          function (x, attributes = FALSE, join = FALSE) {
-            ans <- range(x, join = join)
-            keys <- key(x, attributes=FALSE)
-            ids <- index(x, attributes=FALSE)
-            if (join || length(ans) == length(keys)) {
-              ans@elementMetadata$feature <- keys
-              ans@elementMetadata$id <- ids
-            } else {
-              exp <- expandIds(x)
-              ans@elementMetadata$feature <- exp$keys
-              ans@elementMetadata$id <- exp$ids
-            }
-            if (attributes) {
+          function (x, seqinfo = FALSE, join = FALSE) {
+            ans <- lapply(x, location)
+            if (seqinfo) {
               structure(ans,
-                        accession=x@.ACCN,
-                        definition=x@.DEF, 
-                        database=x@.Dir)
+                        accession=accession(x),
+                        definition=unname(definition(x)),
+                        dir=seqinfo(x)@db@dir)
             }
             else {
               ans
@@ -169,54 +156,54 @@ setMethod("location", "gbFeatureList",
 
 
 setMethod("index", "gbFeatureList",
-          function (x, attributes = FALSE) { 
-            ans <- vapply(x, function(f) f@.ID, numeric(1))
-            if (attributes) {
-              ans <- structure(ans, accession=x@.ACCN,
-                               definition=x@.DEF,
-                               database=x@.Dir)
+          function (x, seqinfo = FALSE) { 
+            ans <- vapply(x, function(f) f@.Id, numeric(1))
+            if (seqinfo) {
+              structure(ans,
+                        accession=accession(x),
+                        definition=unname(definition(x)),
+                        dir=seqinfo(x)@db@dir)
+            } else {
+              ans
             }
-            ans
           })
 
 
 setMethod("key", "gbFeatureList",
-          function (x, attributes = FALSE) {
+          function (x, seqinfo = FALSE) {
             ans <- vapply(x, function(f) f@key, character(1))
-            if (attributes) {
-              ans <- structure(ans,
-                               id=vapply(x, function(f) f@.ID, numeric(1)),
-                               accession=x@.ACCN,
-                               definition=x@.DEF,
-                               database=x@.Dir)
+            if (seqinfo) {
+              structure(ans,
+                        accession=accession(x),
+                        definition=unname(definition(x)),
+                        dir=seqinfo(x)@db@dir)
+            } else {
+              ans  
             }
-            ans
           })
 
 
 setMethod("qualif", "gbFeatureList",
-          function (x, which, attributes = FALSE, fixed = FALSE) {
-            if (missing(which))
-              which <- ""
+          function (x, which = "", seqinfo = FALSE, fixed = FALSE) {
             ans <- .qualAccess(x, which, fixed) %@% .simplify(unlist=FALSE)
-            if (attributes) {
+            if (seqinfo) {
               ans <- structure(ans, 
-                               id=vapply(x, function(f) f@.ID, numeric(1)),
-                               accession=x@.ACCN,
-                               definition=x@.DEF,
-                               database=x@.Dir)
+                               id=vapply(x, function(f) f@.Id, numeric(1)),
+                               accession=accession(x),
+                               definition=unname(definition(x)),
+                               dir=seqinfo(x)@db@dir)
+            } else {
+              ans            
             }
-            
-            ans
           })
 
 
 setMethod("dbxref", "gbFeatureList",
           function (x, db = NULL, na.rm = TRUE, ...) {     
             ans <- lapply(x, dbxref, db=db)
-            names(ans) <- lapply(x, function(f) sprintf("%s.%s", f@key, f@.ID))
+            names(ans) <- lapply(x, function(f) sprintf("%s.%s", f@key, f@.Id))
             if (na.rm)
-              ans <- ans[!is.na(ans)]
+              ans <- compactNA(ans)
             if (all_empty(ans)) {
               return(NA_character_)
             }
@@ -228,7 +215,7 @@ setMethod("dbxref", "gbFeatureList",
 setMethod("sequence", "gbFeatureList",
           function (x, db = NULL) {
             stopifnot(hasValidDb(x))
-            db <- init_db(x@.Dir, verbose=FALSE)
+            db <- slot(seqinfo(x), "db")
             .seqAccess(dbFetch(db, "sequence"), x, dbFetch(db, "type"))
           })
 
@@ -244,8 +231,7 @@ setReplaceMethod("start", "gbFeatureList",
                      Feature
                    }, Feature=x, val=value)
                    
-                   new('gbFeatureList', .Data=new_x, .Dir=x@.Dir,
-                       .ACCN=x@.ACCN, .DEF=x@.DEF)
+                   new('gbFeatureList', .Data=new_x, .Info=seqinfo(x))
                  })
 
 
@@ -257,8 +243,7 @@ setReplaceMethod("end", "gbFeatureList",
                      Feature
                    }, Feature=x, val=value)
                    
-                   new('gbFeatureList', .Data=new_x, .Dir=x@.Dir,
-                       .ACCN=x@.ACCN, .DEF=x@.DEF)
+                   new('gbFeatureList', .Data=new_x, .Info=seqinfo(x))
                  })
 
 
@@ -270,8 +255,7 @@ setReplaceMethod("strand", "gbFeatureList",
                      Feature
                    }, Feature=x, val=value)
                    
-                   new('gbFeatureList', .Data=new_x, .Dir=x@.Dir,
-                       .ACCN=x@.ACCN, .DEF=x@.DEF)
+                   new('gbFeatureList', .Data=new_x, .Info=seqinfo(x))
                  })
 
 
@@ -301,25 +285,25 @@ setMethod("hasQualif", "gbFeatureList",
 
 # subsetting ----------------------------------------------------------
 
-i <- "CDS"
+
 #' @export
 setMethod("[", c("gbFeatureList", "character", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
             idx <- which(vapply(x@.Data, function(f) f@key, character(1L)) == i)
-            new('gbFeatureList', .Data=x@.Data[idx], .Info=x@.Info)
+            new('gbFeatureList', .Data=x@.Data[idx], .Info=seqinfo(x))
           })
 
 #' @export
 setMethod("[", c("gbFeatureList", "numeric", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
-            new('gbFeatureList', .Data=x@.Data[i], .Info=x@.Info)
+            new('gbFeatureList', .Data=x@.Data[i], .Info=seqinfo(x))
           })
 
 
 #' @export
 setMethod("[", c("gbFeatureList", "logical", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
-            new('gbFeatureList', .Data=x@.Data[i], .Info=x@.Info)
+            new('gbFeatureList', .Data=x@.Data[i], .Info=seqinfo(x))
           })
 
 

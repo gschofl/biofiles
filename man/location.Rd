@@ -1,46 +1,24 @@
 % Built by roxygen3 0.1
-\docType{methods}
 \name{location}
 \alias{location}
-\alias{location,gbFeature-method}
-\alias{location,gbFeatureList-method}
-\title{Get genomic locations of features}
+\title{Get genomic locations of GenBank features}
 \usage{
-  location(x, attributes = FALSE, join = FALSE, ...)
-
-  \S4method{location}{gbFeature}(x, attributes = FALSE,
-    join = FALSE, ...)
-
-  \S4method{location}{gbFeatureList}(x, attributes = FALSE,
-    join = FALSE, ...)
+  location(x, seqinfo = FALSE, ...)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeature}} instance.}
+  \item{x}{A \code{\linkS4class{gbFeature}} or
+\code{\linkS4class{gbFeatureList}} instance.}
 
-  \item{attributes}{Include the \code{accession}, \code{definition},
-\code{database} attributes of the feature.}
+  \item{seqinfo}{Include the \code{\linkS4class{gbInfo}} for the the feature.}
 
-  \item{join}{Join compound genomic locations into a single range.}
-
-  \item{x}{A \code{\linkS4class{gbFeatureList}} instance.}
-
-  \item{attributes}{Include the \code{accession}, \code{definition},
-\code{database} attributes of the feature.}
-
-  \item{join}{Join compound genomic locations into a single range.}
+  \item{...}{Additional arguments passed to methods.}
 }
 
 \value{
-A \code{\linkS4class{GRanges}} object including the feature key
-and the feature index.
-
-A \code{\linkS4class{gbRange}} object including feature keys
-and feature indices.
+A list of \code{\linkS4class{gbLocation}} objects
 }
 \description{
-Get genomic locations of features
-
-Get genomic locations of features
+Get genomic locations of GenBank features
 }
 \section{Method signatures for generic location}{
 \itemize{

@@ -1,7 +1,7 @@
 % Built by roxygen3 0.1
 \name{view}
 \alias{view}
-\title{View all features in a gbFeatureList}
+\title{View all features in a \code{gbFeatureList}}
 \usage{
   view(x, n, ...)
 }
@@ -13,11 +13,8 @@
   \item{...}{Additional arguments passed to methods.}
 }
 
-\value{
-NULL
-}
 \description{
-View all features in a gbFeatureList
+View all features in a \code{gbFeatureList}
 }
 \section{Method signatures for generic view}{
 \itemize{

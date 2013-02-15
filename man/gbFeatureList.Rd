@@ -30,9 +30,11 @@ Super classes:
   \item \code{\link{key}}
   \item \code{\link{listQualif}}
   \item \code{\link{qualif}}
-  \item \code{\link{range}}
+  \item \code{\link{ranges}}
   \item \code{\link{revcomp}}
   \item \code{\link{select}}
+  \item \code{\link{seqinfo}}
+  \item \code{\link{seqlengths}}
   \item \code{\link{sequence}}
   \item \code{\link{show}}
   \item \code{\link{start}}
@@ -50,7 +52,7 @@ Super classes:
 \describe{
   \item{.Info}{A \code{\linkS4class{gbInfo}} instance.}
 
-  \item{.Data}{A list of \dQuote{\code{gbFeature}} instances.}
+  \item{.Data}{A list of \code{\linkS4class{gbFeature}} objects.}
 
 }
 }

@@ -2,9 +2,9 @@
 \name{key}
 \alias{key}
 \alias{key<-}
-\title{Get/set feature keys from a GenBank Record}
+\title{Get/set keys of GenBank features}
 \usage{
-  key(x, attributes = FALSE, ...)
+  key(x, seqinfo = FALSE, ...)
 
   key(x, value, ...) <- value
 }
@@ -12,14 +12,13 @@
   \item{x}{A \code{\linkS4class{gbFeature}} or
 \code{\linkS4class{gbFeatureList}} instance.}
 
-  \item{attributes}{Set the \code{accession}, \code{definition},
-\code{database} attributes.}
+  \item{seqinfo}{Include the \code{\linkS4class{gbInfo}} for the the feature.}
 
   \item{...}{Additional arguments passed to methods.}
 }
 
 \description{
-Get/set feature keys from a GenBank Record
+Get/set keys of GenBank features
 }
 \section{Method signatures for generic key}{
 \itemize{
