@@ -78,8 +78,8 @@ setMethod("show", "gbFeature",
 setMethod("summary", "gbFeature",
           function (object, ...) {
             idx <- pad(index(object), 8, "right")
-            key <- pad(key(object), 10, "right")
-            loc <- as(location(object)[[1]], "character")
+            key <- pad(key(object), 14, "right")
+            loc <- as(location(object), "character")
             prod <- ellipsize(product(object), width=getOption("width") - 
                                 nchar(idx) - nchar(key) - nchar(loc) - 5)
             showme <- sprintf("%s%s%s  %s\n", idx, key, loc, prod)
@@ -236,49 +236,54 @@ setMethod("sequence", "gbFeature",
 
 
 setReplaceMethod("start", "gbFeature",
-                 function(x, value) {
-                   start(x@location) <- value
-                   validObject(x)
-                   x 
+                 function(x, check=TRUE, value) {
+                   start(x@location, check=check) <- value
+                   if (check)
+                     validObject(x)
+                   x
                  })
 
 
 setReplaceMethod("end", "gbFeature",
-                 function(x, value) {
-                   end(x@location) <- value
-                   validObject(x)
+                 function(x, check=TRUE, value) {
+                   end(x@location, check=check) <- value
+                   if (check)
+                     validObject(x)
                    x
                  })
 
 
 setReplaceMethod("strand", "gbFeature",
-                 function(x, value) { 
-                   strand(x@location) <- value
-                   validObject(x)
+                 function(x, check=TRUE, value) { 
+                   strand(x@location, check=check) <- value
+                   if (check)
+                     validObject(x)
                    x
                  })
 
 
 setReplaceMethod("key", "gbFeature",
-                 function (x, value, updateDb = FALSE) {
+                 function (x, value, check=TRUE, updateDb = FALSE) {
                    x <- initialize(x, key=value)
                    if (updateDb) {
                      db <- slot(seqinfo(x), "db")
                      db$features[x@.Id] <- x
                    }
-                   validObject(x)
+                   if (check)
+                     validObject(x)
                    x
                  })
 
 
 setReplaceMethod("qualif", "gbFeature",
-                 function (x, which, value, updateDb = FALSE) {
+                 function (x, which, value, check=TRUE, updateDb = FALSE) {
                    x@qualifiers[which] <- value
                    if (updateDb) {
                      db <- slot(seqinfo(x), "db")
                      db$features[x@.Id] <- x
                    }
-                   validObject(x)
+                   if (check)
+                     validObject(x)
                    x
                  })
 

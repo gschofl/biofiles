@@ -1,11 +1,11 @@
 .shift_features <- function (x, shift=0L, split=FALSE, order=FALSE,
                              updateDb=FALSE) {
-  
+
   if (is(x, "gbRecord")) {
-    len <- x$length
-    features <- x$features
+    len <- dbFetch(x, "length")
+    features <- dbFetch(x, "features")
   } else if (is(x, "gbFeatureList")) {
-    if (!any(hasKey(x, "source"))) {
+    if (all_empty(x["source"])) {
       stop("No source key in this gbFeatureList")
     }
     len <- end(x["source"])
@@ -25,32 +25,45 @@
     x
   }
   
-  src <- features[1]
-  f <- features[-1]
+  merge_split <- function(x) {
+    lapply(x, function(x) {
+      ld <- location(x)@.Data
+      if (ld[-nrow(ld),2] - ld[-1,1] < 1) {
+        x@location@.Data <- matrix(range(ld), ncol=2)
+        x@location@compound <- NA_character_
+        x@location@partial <- matrix(c(FALSE, FALSE), ncol=2)
+        x@location@accession <- x@location@accession[1]
+        x@location@remote <- x@location@remote[1]
+        x@location@closed <- x@location@closed[1,,drop=FALSE]
+      }
+      x
+    })
+  }
+  
+  src <- features["source"]
+  if (all_empty(src)) {
+    stop("No source key available")
+  }
+  f <- features[-index(src)]
   
   start_pos <- start(f)
   end_pos <- end(f)
-  
   new_start <- Map("+", start_pos, shift)
   new_end <- Map("+", end_pos, shift)
   
-  exceeds_len_start <- which(mapply(function (x) any(x > len), new_start) |
-    mapply(function (x) any(x < 0L), new_start)) 
-  exceeds_len_end <-  which(mapply(function (x) any(x > len), new_end) |
-    mapply(function (x) any(x < 0L), new_end))
+  exceeds <- function(x) any(x > len) | any(x <= 0)
+  exceeds_len_start <- which(mapply(exceeds, new_start)) 
+  exceeds_len_end <-  which(mapply(exceeds, new_end))
   
   if (length(exceeds_len_start) > 0L || length(exceeds_len_end) > 0L) {
-    
     start_end <- intersect(exceeds_len_start, exceeds_len_end)
-    
     if (length(start_end) > 0L) {
-      get_len <- function (x, len) ifelse(x > len, x - len, ifelse(x < 0L, len + x, x))
+      get_len <- function (x, len) ifelse(x > len, x - len, ifelse(x <= 0L, len + x, x))
       new_start[start_end] <- Map(get_len, new_start[start_end], len)
       new_end[start_end] <- Map(get_len, new_end[start_end], len)
     }
-
-    end_only <- setdiff(exceeds_len_end, exceeds_len_start)
     
+    end_only <- setdiff(exceeds_len_end, exceeds_len_start)
     if (length(end_only) > 0L) {
       if (split) {
         ss <- mapply("-", new_start[end_only], len)
@@ -61,26 +74,28 @@
         new_start[end_only] <- Map(function(x) x[,1], sm)
         new_end[end_only] <- Map(function(x) x[,2], sm)
       } else {
-        stop("This shiftwidth would split feature(s) ", paste(end_only, collapse=", "))
+        stop("This shiftwidth would split features ", paste(end_only, collapse=", "))
       }
     }
-    
   }
   
-  start(f) <- new_start
-  end(f) <- new_end
+  start(f, check=FALSE) <- new_start
+  end(f, check=FALSE) <- new_end
+
+  cmpnd <- which(is_compound(f))
+  if (length(cmpnd) > 0) {
+    f[cmpnd] <- merge_split(f[cmpnd])  
+  }
   
   if (order) {
     f <- f[order(mapply("[", new_start, 1))]
   }
   
-  f <- new('gbFeatureList', .Data=c(src, f), .Dir=src@.Dir,
-           .ACCN=src@.ACCN, .DEF=src@.DEF)
-  
+  f <- new('gbFeatureList', .Data=c(src, f), .Info=seqinfo(f))
+
   if (updateDb) {
-    db <- init_db(src@.Dir, verbose=FALSE)
+    db <- slot(seqinfo(f), "db")
     dbInsert(db, key="features", value=f)
-    
     seq <- dbFetch(db, "sequence")
     
     if (shift > 0) {
@@ -95,6 +110,6 @@
     dbInsert(db, key="sequence", value=new_seq)
   }
   
-  return( f )
+  return(f)
 }
 

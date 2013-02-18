@@ -139,7 +139,7 @@ setMethod("accession", "gbLocation",
 
 
 setReplaceMethod("start", "gbLocation",
-                 function (x, value) {
+                 function (x, check=TRUE, value) {
                    if (!is.numeric(value))
                      stop("replacement 'value' must be numeric")
                    if (length(value) != nrow(x)) {
@@ -151,13 +151,14 @@ setReplaceMethod("start", "gbLocation",
                    } else {
                      x@.Data[,1] <- value
                    }
-                   validObject(x)
+                   if (check)
+                     validObject(x)
                    x
                  })
 
 
 setReplaceMethod("end", "gbLocation",
-                 function (x, value) {
+                 function (x, check=TRUE, value) {
                    if (!is.numeric(value))
                      stop("replacement 'value' must be numeric")
                    if (length(value) != nrow(x)) {
@@ -169,13 +170,14 @@ setReplaceMethod("end", "gbLocation",
                    } else {
                      x@.Data[,2] <- value
                    }
-                   validObject(x)
+                   if (check)
+                     validObject(x)
                    x
                  })
 
 
 setReplaceMethod("strand", "gbLocation",
-                 function (x, value) {
+                 function (x, check=TRUE, value) {
                    if (length(value) > nrow(x)) {
                      value <- value[seq_len(nrow(x))]
                    }
@@ -187,7 +189,8 @@ setReplaceMethod("strand", "gbLocation",
                                      "NA" = NA_integer_, FUN.VALUE=integer(1))
                    }
                    x@strand <- as.integer(value)
-                   validObject(x)
+                   if (check)
+                     validObject(x)
                    x
                  })
 

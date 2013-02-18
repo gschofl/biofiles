@@ -404,18 +404,16 @@ setGeneric("hasQualif", signature=c("x","qualifier"),
 #'
 #' @usage shift(x, shift=0L, split=FALSE, order=FALSE, updateDb=FALSE)
 #'
-#' @param x A gbLocation, gbFeature, gbFeatureList, or gbRecord instance
-#' (gbFeatureLists must include a 'source' field).
+#' @param x A \code{\linkS4class{gbFeatureList}} or
+#' \code{\linkS4class{gbRecord}} instance (gbFeatureLists must 
+#' be complete and include a 'source' field).
 #' @param shift Number of basepairs (or aa residues) to shift.
-#' @param split (For gbFeatureList and gbRecord objects) Should a feature
-#' that spans across the end of the sequence be split.
-#' @param order (For gbFeatureList and gbRecord objects) Should the
-#' resulting gbFeatureList be reordered.
-#' @param updateDb Should filehash database be updated with new feature
-#' locations.
+#' @param split Split features that after the shift extends across the end of
+#' the sequence.
+#' @param order Reorder features after the shift.
+#' @param updateDb Update the filehash DB after the shift
 #'
-#' @return A \code{\linkS4class{gbLocation}}, \code{\linkS4class{gbFeature}},
-#' or\code{\linkS4class{gbFeatureList}} object
+#' @return A \code{\linkS4class{gbFeatureList}} object.
 #' @rdname shift
 #' @export
 #' @genericMethods

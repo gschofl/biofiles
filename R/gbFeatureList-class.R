@@ -55,9 +55,18 @@ setMethod("show", "gbFeatureList",
 
 
 setMethod("summary", "gbFeatureList",
-          function (object, ...) {
-            x <- lapply(object, summary)
-            return(invisible(x))
+          function (object, n=8, ...) {
+            if (length(object) > 2*n) {
+              head <- head(object, n=n)
+              tail <- tail(object, n=n)
+              x <- lapply(head, summary)
+              cat("...\n")
+              x <- lapply(tail, summary)  
+            } else  {
+              x <- lapply(object, summary)
+            }
+
+            return(invisible(NULL))
           })
 
 
@@ -203,7 +212,7 @@ setMethod("dbxref", "gbFeatureList",
             ans <- lapply(x, dbxref, db=db)
             names(ans) <- lapply(x, function(f) sprintf("%s.%s", f@key, f@.Id))
             if (na.rm)
-              ans <- compactNA(ans)
+              ans <- compact(ans, filter=function(x) all(is.na(x)))
             if (all_empty(ans)) {
               return(NA_character_)
             }
@@ -224,36 +233,36 @@ setMethod("sequence", "gbFeatureList",
 
 
 setReplaceMethod("start", "gbFeatureList",
-                 function (x, value) {
+                 function (x, check=TRUE, value) {
                    value <- recycle(value, length(x))
-                   new_x <- Map(function(Feature, val) { 
-                     start(Feature) <- val
+                   new_x <- Map(function(Feature, check, val) { 
+                     start(Feature, check=check) <- val
                      Feature
-                   }, Feature=x, val=value)
+                   }, Feature=x, check=list(check), val=value)
                    
                    new('gbFeatureList', .Data=new_x, .Info=seqinfo(x))
                  })
 
 
 setReplaceMethod("end", "gbFeatureList",
-                 function(x, value) {
+                 function(x, check=TRUE, value) {
                    value <- recycle(value, length(x))
-                   new_x <- Map(function(Feature, val) { 
-                     end(Feature) <- val
+                   new_x <- Map(function(Feature, check, val) { 
+                     end(Feature, check=check) <- val
                      Feature
-                   }, Feature=x, val=value)
+                   }, Feature=x, check=list(check), val=value)
                    
                    new('gbFeatureList', .Data=new_x, .Info=seqinfo(x))
                  })
 
 
 setReplaceMethod("strand", "gbFeatureList",
-                 function(x, value) {
+                 function(x, check=TRUE, value) {
                    value <- recycle(value, length(x))
-                   new_x <- Map(function(Feature, val) { 
-                     strand(Feature) <- val
+                   new_x <- Map(function(Feature, check, val) { 
+                     strand(Feature, check=check) <- val
                      Feature
-                   }, Feature=x, val=value)
+                   }, Feature=x, check=list(check), val=value)
                    
                    new('gbFeatureList', .Data=new_x, .Info=seqinfo(x))
                  })

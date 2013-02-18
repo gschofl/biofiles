@@ -26,23 +26,30 @@ setValidity("gbRecord", function (object) {
 
 
 setMethod("initialize", "gbRecord",
-          function (.Object, dir=character(0), name=character(0), verbose=TRUE) {
+          function (.Object, dir=character(0), name=character(0), verbose=TRUE,
+                    .check=FALSE) {
             if (missing(dir))
               stop("No database directory provided")
             if (missing(name))
               stop("No database name provided")
-            if (isValidDb(dir, verbose=FALSE)) {
-              if (verbose) message("Intializing gbRecord")
-              
+            
+            if (.check) {
+              if (isValidDb(dir, verbose=FALSE)) {
+                if (verbose) message("Intializing gbRecord")
+                
+                .Object@dir <- dir
+                .Object@name <- name
+                
+                if (hasNewPath(.Object)) {
+                  if (verbose) message("Updating db directory location ...")
+                  updateDirectory(.Object)
+                }
+              } else {
+                stop("No valid database directory provided")
+              }
+            } else  {
               .Object@dir <- dir
               .Object@name <- name
-              
-              if (hasNewPath(.Object)) {
-                if (verbose) message("Updating db directory location ...")
-                updateDirectory(.Object)
-              }
-            } else {
-              stop("No valid database directory provided")
             }
             
             .Object
@@ -160,14 +167,17 @@ gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
 #' @autoImports
 init_db <- function(db_dir, create = FALSE, ...) {
   db_dir <- sub("/$", "", db_dir, perl=TRUE)
+  .check <- TRUE
   if (create) {
     dbCreate(db_dir, "RDS")
+    .check <- FALSE
   }
   if (!file.exists(db_dir)) {
     stop(sprintf("Database directory %s does not exist",
                  sQuote(db_dir)))
   }
-  new("gbRecord", dir=normalizePath(db_dir), name=basename(db_dir), ...)
+  new("gbRecord", dir=normalizePath(db_dir), name=basename(db_dir), ...,
+      .check = .check)
 }
 
 
@@ -176,75 +186,80 @@ init_db <- function(db_dir, create = FALSE, ...) {
 
 setMethod("show", "gbRecord",
           function (object) {
-            if(length(object@name) == 0)
+            if (length(object@name) == 0)
               stop("database does not have a name")
             
-            Seq <- dbFetch(object, "sequence")
-            W <- getOption("width")
-            showme <- paste0(
-              sprintf("%s database %s with %i features\n", 
-                      sQuote(class(object)), sQuote(object@name),
-                      length(dbFetch(object, "features"))),
-              
-              sprintf("LOCUS       %s\n",
-                      linebreak(paste(dbFetch(object, "locus"),
-                                      dbFetch(object, "length"),
-                                      names(dbFetch(object, "length")),
-                                      dbFetch(object, "type"),
-                                      dbFetch(object, "topology"),
-                                      dbFetch(object, "division"),
-                                      dbFetch(object, "date")),
-                                offset=13, FORCE=TRUE)),
-              
-              sprintf("DEFINITION  %s\n",
-                      linebreak(dbFetch(object, "definition"), offset=13,
-                                FORCE=TRUE)),
-              
-              sprintf("ACCESSION   %s\n", dbFetch(object, "accession")),
-              
-              sprintf("VERSION     %s GI:%s\n",
-                      dbFetch(object, "version"), dbFetch(object, "GI")),
-              
-              sprintf("DBLINK      Project: %s\n", dbFetch(object, "dblink")),
-              
-              if (dbFetch(object, "type") == "AA") {
-                sprintf("DBSOURCE    %s\n",
-                        linebreak(dbFetch(object, "dbsource"), offset=13,
-                                  FORCE=TRUE))
-              },
-              
-              sprintf("KEYWORDS    %s\n",
-                      linebreak(dbFetch(object, "keywords"), offset=13,
-                                FORCE=TRUE)),
-              
-              sprintf("SOURCE      %s\n",
-                      linebreak(dbFetch(object, "source"), offset=13,
-                                FORCE=TRUE)),
-              
-              sprintf("  ORGANISM  %s\n",
-                      linebreak(dbFetch(object, "organism"), offset=13,
-                                FORCE=TRUE)),
-              
-              sprintf("            %s\n",
-                      linebreak(dbFetch(object, "lineage"), offset=13,
-                                FORCE=TRUE)),
-              
-              sprintf("REFERENCE   %s\n", dbFetch(object, "references")),
-              
-              sprintf("COMMENT     %s\n",
-                      linebreak(dbFetch(object, "comment"), offset=13,
-                                FORCE=TRUE)),
-              
-              if (not.null(Seq)) {
-                if (Seq@ranges@width[1L] < W - 14)
-                  sprintf("ORIGIN      %s\n", toString(Seq))
-                else
-                  sprintf("ORIGIN      %s\n             ...\n             %s\n",
-                          toString(subseq(Seq, start=1, end=W - 14)),
-                          toString(subseq(Seq,
-                                          start=length(Seq[[1L]]) -  W + 15,
-                                          end=length(Seq[[1L]]))))
-              })
+            if (is.logical(tryCatch(dbFetch(object, "accession"), error=function(e) TRUE))) {
+              showme <- sprintf("%s database %s with no features\n", 
+                                sQuote(class(object)), sQuote(object@name))
+            } else {
+              Seq <- dbFetch(object, "sequence")
+              W <- getOption("width")
+              showme <- paste0(
+                sprintf("%s database %s with %i features\n", 
+                        sQuote(class(object)), sQuote(object@name),
+                        length(dbFetch(object, "features"))),
+                
+                sprintf("LOCUS       %s\n",
+                        linebreak(paste(dbFetch(object, "locus"),
+                                        dbFetch(object, "length"),
+                                        names(dbFetch(object, "length")),
+                                        dbFetch(object, "type"),
+                                        dbFetch(object, "topology"),
+                                        dbFetch(object, "division"),
+                                        dbFetch(object, "date")),
+                                  offset=13, FORCE=TRUE)),
+                
+                sprintf("DEFINITION  %s\n",
+                        linebreak(dbFetch(object, "definition"), offset=13,
+                                  FORCE=TRUE)),
+                
+                sprintf("ACCESSION   %s\n", dbFetch(object, "accession")),
+                
+                sprintf("VERSION     %s GI:%s\n",
+                        dbFetch(object, "version"), dbFetch(object, "GI")),
+                
+                sprintf("DBLINK      Project: %s\n", dbFetch(object, "dblink")),
+                
+                if (dbFetch(object, "type") == "AA") {
+                  sprintf("DBSOURCE    %s\n",
+                          linebreak(dbFetch(object, "dbsource"), offset=13,
+                                    FORCE=TRUE))
+                },
+                
+                sprintf("KEYWORDS    %s\n",
+                        linebreak(dbFetch(object, "keywords"), offset=13,
+                                  FORCE=TRUE)),
+                
+                sprintf("SOURCE      %s\n",
+                        linebreak(dbFetch(object, "source"), offset=13,
+                                  FORCE=TRUE)),
+                
+                sprintf("  ORGANISM  %s\n",
+                        linebreak(dbFetch(object, "organism"), offset=13,
+                                  FORCE=TRUE)),
+                
+                sprintf("            %s\n",
+                        linebreak(dbFetch(object, "lineage"), offset=13,
+                                  FORCE=TRUE)),
+                
+                sprintf("REFERENCE   %s\n", dbFetch(object, "references")),
+                
+                sprintf("COMMENT     %s\n",
+                        linebreak(dbFetch(object, "comment"), offset=13,
+                                  FORCE=TRUE)),
+                
+                if (not.null(Seq)) {
+                  if (Seq@ranges@width[1L] < W - 14)
+                    sprintf("ORIGIN      %s\n", toString(Seq))
+                  else
+                    sprintf("ORIGIN      %s\n             ...\n             %s\n",
+                            toString(subseq(Seq, start=1, end=W - 14)),
+                            toString(subseq(Seq,
+                                            start=length(Seq[[1L]]) -  W + 15,
+                                            end=length(Seq[[1L]]))))
+                })
+            }
             
             cat(showme)
           })

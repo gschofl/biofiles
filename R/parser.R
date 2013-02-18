@@ -1,12 +1,12 @@
 .parseGB <- function (gb_data, db_path, with_sequence = TRUE, force = FALSE) {
   # get a vector with the positions of the main GenBank fields
   gbf <- grep("^[A-Z//]+", gb_data)
-  names(gbf) <- regmatches(gb_data[gbf], regexpr("^.[^ ]+", gb_data[gbf]))
-  gbf_names <- names(gbf)
+  gbf_names <- strsplitN(gb_data[gbf], split=" +", 1)
+  names(gbf) <- gbf_names
   
   # Check the presence of a number of the absolutely essential data fields
   essential <- c("DEFINITION", "ACCESSION", "FEATURES")
-  if (length(match(essential, gbf_names)) < 3L)
+  if (any(is.na(charmatch(essential, gbf_names))))
     stop("Some fields seem to be missing from the GenBank file")
   
   # Split the GenBank file into HEADER, FEATURES, ORIGIN
@@ -45,14 +45,14 @@
   seqinfo <- IRanges::new2("gbInfo", db=db,
                            seqnames=header[["accession"]],
                            seqlengths=header[["length"]],
-                           is_circular=header[["topology"]] == "circurlar", 
+                           is_circular=header[["topology"]] == "circular", 
                            genome=header[["definition"]],
                            check=FALSE)
   features <- .parseGbFeatures(seqinfo=seqinfo, gb_features=gb_features)
   
   sequence <- .parseGbSequence(gb_sequence=gb_sequence,
-                               accession_no=header$accession,
-                               seq_type=header$type)
+                               accession_no=header[["accession"]],
+                               seq_type=header[["type"]])
   
   list(db=db, header=header, features=features, sequence=sequence)
 }
@@ -252,7 +252,7 @@
   } else {
     tmp <- tempfile()
     on.exit(unlink(tmp))
-    writeLines(text=.joinSeq(gb_sequence, accession_no), con=tmp)
+    writeLines(text=.joinSeq(gb_sequence, accession_no), tmp)
     origin <- switch(seq_type,
                      AA=readAAStringSet(tmp, format="fasta"),
                      readDNAStringSet(tmp, format="fasta"))
