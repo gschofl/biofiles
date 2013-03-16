@@ -142,11 +142,10 @@ setMethod("definition", "gbFeatureList",
 
 
 setMethod("ranges", "gbFeatureList",
-          function (x, join = TRUE, with_qual = "none", without_qual = "") {
-            .make_GRanges(x, join = join, with_qual = with_qual,
-                          without_qual = without_qual)
+          function (x, join = FALSE, key = TRUE, include = "none", exclude = "") {
+            .make_GRanges(x, join = join, include = include,
+                          exclude = exclude, key = key)
           })
-
 
 
 setMethod("location", "gbFeatureList",
@@ -194,7 +193,7 @@ setMethod("key", "gbFeatureList",
 
 setMethod("qualif", "gbFeatureList",
           function (x, which = "", seqinfo = FALSE, fixed = FALSE) {
-            ans <- .qualAccess(x, which, fixed) %@% .simplify(unlist=FALSE)
+            ans <- .simplify(.qualAccess(x, which, fixed), unlist=FALSE)
             if (seqinfo) {
               ans <- structure(ans, 
                                id=vapply(x, function(f) f@.Id, numeric(1)),

@@ -222,7 +222,7 @@
 #' @autoImports
 .parseGbFeatures <- function (seqinfo, gb_features) {
   # where do all the features start
-  feature_start <- grep("^     \\S", gb_features)
+  feature_start <- which(substr(gb_features, 6, 6) != " ")
   # where do all the features end
   feature_end <- c(feature_start[-1] - 1, length(gb_features))
   # indeces for all features

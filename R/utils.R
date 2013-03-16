@@ -75,44 +75,62 @@ expandIds <- function (x) {
 
 
 #' @autoImports
-.qualAccess <- function (x, qual = "", fixed = FALSE) {
-  
-  .access <- function (q) {
-    q <- q@qualifiers
-    if (fixed) qual <- wrap(qual, "\\b") 
-    n <- length(q)
-    
-    if (n == 0) {
-      return(structure(rep(NA_character_, length(qual)),
-                       names=trim(qual, "\\\\b")))
-    }
-    
-    idx <- matrix(
-      vapply(qual, grepl, names(q),
-             USE.NAMES=FALSE, FUN.VALUE=logical(n)),
-      nrow=n)
-    n_col <- dim(idx)[2]
-    if (n_col == 1L) {
-      if (any(idx))
-        q[idx]
-      else
-        structure(NA_character_, names=rmisc::trim(qual, "\\\\b"))
-    } else {
-      ans <- lapply(seq.int(n_col), function (i) q[ idx[ ,i]])
-      if (any(na_idx <- !apply(idx, 2, any))) {
-        for (na in which(na_idx)) {
-          ans[[na]] <- structure(NA_character_, names=trim(qual, "\\\\b")[na])
-        }
-      }
-      unlist(ans)
-    }
+.qualAccess <- function (x, which = "", fixed = FALSE) {
+  dbxrefs <- NULL
+  dbx <- grepl('db_xref:.+', which)
+  if (any(dbx)) {
+    dbxrefs <- strsplitN(which[dbx], ':', 2)
+    which <- c(which[!dbx], 'db_xref')
   }
-  
+  if (fixed) {
+    which <- wrap(which, "\\b")
+  }
   if (is(x, "gbFeature")) {
-    .access(x)
+    .access(x, which, dbxrefs)
   } else if (is(x, "gbFeatureList")) {
-    lapply(x, .access)
+    lapply(x, .access, which, dbxrefs)
   }
+}
+
+
+#' @autoImports
+.access <- function (x, which, dbxrefs) {
+  q <- x@qualifiers
+  n <- length(q)
+  els <- c(which[which != 'db_xref' & which != '\\bdb_xref\\b'], dbxrefs)
+  
+  if (n == 0) {
+    return(setNames(rep(NA_character_, length(els)),
+                    nm=rmisc::trim(els, "\\\\b")))
+  }
+  
+  if (length(which) == 1) {
+    idx <- grepl(which, names(q))
+    if (any(idx))
+      ans <- q[idx]
+    else
+      ans <- setNames(rep(NA_character_, length(els)),
+                      nm=rmisc::trim(which, "\\\\b"))
+  } else {
+    idx <- lapply(which, grepl, names(q))
+    ans <- lapply(idx, function(i) q[i])
+    na <- which(vapply(ans, length, numeric(1)) == 0)
+    if (length(na) > 0) {
+      for (i in na) {
+        ans[[i]] <- setNames(NA_character_, nm=trim(which, "\\\\b")[i])
+      }
+    }
+  }
+  ans <- unlist(ans)
+  if (length(dbxrefs) > 0) {
+    dbx_ <- names(ans) == 'db_xref'
+    dbx <- strsplit(ans[dbx_], ':')
+    dbx_nm <- vapply(dbx, `[`, 1, FUN.VALUE=character(1))
+    dbx_val <- vapply(dbx, `[`, 2, FUN.VALUE=character(1))
+    ans <- c(ans[!dbx_], setNames(dbx_val[match(dbxrefs, dbx_nm)], nm=dbxrefs))
+  }
+  
+  return(ans)
 }
 
 

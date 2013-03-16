@@ -30,10 +30,10 @@ product <- Curry("qualif", which="product")
 note <- Curry("qualif", which="note")
 
 
-#' @usage proteinId(x)
+#' @usage proteinID(x)
 #' @rdname qualif
 #' @export
-proteinId <- Curry("qualif", which="protein_id")
+proteinID <- Curry("qualif", which="protein_id")
 
 
 #' @usage translation(x)

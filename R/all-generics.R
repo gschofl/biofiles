@@ -15,7 +15,7 @@ NULL
 ##
 ##    Getters/setters in gbFeature-class, gbFeatureList-class
 ##      index, key, location, ranges, sequence, seqinfo
-##      qualif, dbxref, locusTag, product, proteinId, note, translation
+##      qualif, dbxref, locusTag, product, proteinID, note, translation
 ##      key<-, qualif<-
 ##
 ##    Getters/setters in gbRecord-class
@@ -123,12 +123,13 @@ setGeneric("width", signature="x", function (x, ...) {
 ### The "ranges" generic is defined in the IRanges package.
 #' Get or set the range of genomic features
 #' 
-#' @usage ranges(x, join=FALSE, with_qual="none", without_qual="")
+#' @usage ranges(x, join=FALSE, include="none", exclude="")
 #' @param x A \code{gbFeature} or \code{gbFeatureList} object.
 #' @param join Join compound genomic locations into a single range.
-#' @param with_qual Include qualifiers as metadata columns. Can be "none",
+#' @param key Include feature keys with ranges.
+#' @param include Include qualifiers as metadata columns. Can be "none",
 #' "all", or a character vector of qualifier tags.
-#' @param without_qual Exclude specific qualifiers.
+#' @param exclude Exclude specific qualifiers.
 #' @param ... Further arguments passed to methods.
 #' @return A \code{\linkS4class{GRanges}} object.
 #' @rdname ranges
