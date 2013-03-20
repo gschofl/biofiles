@@ -151,20 +151,20 @@ static const boost::regex PCCL(
 class BaseSpan {
 public:
     int strand;
-    string accn;
+    std::string accn;
     bool remote;
-    vector<bool> closed;
-    vector<bool> partial;
-    vector<int> position;
+    std::vector<bool> closed;
+    std::vector<bool> partial;
+    std::vector<int> position;
 };
 
-void parse_simple_span(const string &base_span, BaseSpan &bs) {
+void parse_simple_span(const std::string &base_span, BaseSpan &bs) {
 
-    string::const_iterator start, end;
+    std::string::const_iterator start, end;
     start = base_span.begin();
     end = base_span.end();
     boost::smatch m;
-    const string empty("");
+    const std::string empty("");
   
     // test for strand
     int strand(1);
@@ -174,12 +174,12 @@ void parse_simple_span(const string &base_span, BaseSpan &bs) {
 
     // get span string
     boost::regex_search(start, end, m, SL);
-    string span = m[0];
+    std::string span = m[0];
     start = span.begin();
     end = span.end();
 
     // get remote accession number
-    string accn("");
+    std::string accn("");
     bool remote(false);
     boost::regex_search(start, end, m, RA);
     if (m[0].matched) {
@@ -193,14 +193,14 @@ void parse_simple_span(const string &base_span, BaseSpan &bs) {
     end = span.end();
   
     // get closed
-    vector<bool> closed(2);
+    std::vector<bool> closed(2);
     if( not boost::regex_search(start, end, m, boost::regex("\\d+\\.\\d+")) ) {
         closed[0] = true;
         closed[1] = true;
     }
   
     // split span
-    string start_pos, end_pos;
+    std::string start_pos, end_pos;
     boost::regex_search(start, end, m, BASESPLIT);
     start_pos = m[1];
     end_pos = m[1];
@@ -209,14 +209,14 @@ void parse_simple_span(const string &base_span, BaseSpan &bs) {
     }
   
     // get partial
-    vector<bool> partial(2);
+    std::vector<bool> partial(2);
     boost::regex_match(start_pos, m, boost::regex("^(<|>)\\d+") );
     partial[0] = m[0].matched;
     boost::regex_match(end_pos, m, boost::regex("^(<|>)\\d+") );
     partial[1] = m[0].matched;
   
     // get span
-    vector<int> pos(2);
+    std::vector<int> pos(2);
     static const boost::regex P("<|>");
     pos[0] = atoi( boost::regex_replace(start_pos, P, empty).c_str() );
     pos[1] = atoi( boost::regex_replace(end_pos, P, empty).c_str() );
@@ -230,15 +230,15 @@ void parse_simple_span(const string &base_span, BaseSpan &bs) {
 }
 
 // [[Rcpp::export]]
-SEXP parse_gb_location(string gb_base_span) {
+SEXP parse_gb_location(std::string gb_base_span) {
     
     // clean up anny possible whitespace
-    static const string empty("");
+    static const std::string empty("");
     gb_base_span = boost::regex_replace(gb_base_span, boost::regex("\\s+"), empty);
     // cout << gb_base_span << endl;
 
     // iterator over gb_base_span
-    string::const_iterator start, end;
+    std::string::const_iterator start, end;
     start = gb_base_span.begin();
     end = gb_base_span.end();
     boost::smatch m;
@@ -280,17 +280,17 @@ SEXP parse_gb_location(string gb_base_span) {
         
         // get compound span
         boost::regex_search( start, end, m, CL );
-        string cmpnd_span( m[0] );
+        std::string cmpnd_span( m[0] );
         start = cmpnd_span.begin();
         end = cmpnd_span.end();  
         
         // get compound type
         boost::regex_search(start, end, m, CMPND);
-        string compound( m[0] );
+        std::string compound( m[0] );
         
         // get span strings
         boost::regex_search( start, end, m, SLC );
-        string span_str( m[0] );
+        std::string span_str( m[0] );
         
         vector<string> spans;
         boost::split_regex( spans, span_str, boost::regex( "\\s*,\\s*" ) );
@@ -305,10 +305,10 @@ SEXP parse_gb_location(string gb_base_span) {
         
         
         for (int i = 0; i < nrows; ++i) {
-            string span =  spans[i];
+            std::string span =  spans[i];
             // std::cout << span << std::endl;
 
-           parse_simple_span(span, bs);
+            parse_simple_span(span, bs);
             
             // get positions
             posMat(i, 0) = bs.position[0];
