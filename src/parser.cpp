@@ -151,17 +151,16 @@ static const boost::regex PCCL(
 class BaseSpan {
 public:
     int strand;
-    std::string accn;
+    string accn;
     bool remote;
-    std::vector<bool> closed;
-    std::vector<bool> partial;
-    std::vector<int> position;
+    vector<bool> closed;
+    vector<bool> partial;
+    vector<int> position;
 };
 
-BaseSpan parse_simple_span(std::string base_span) {
+void parse_simple_span(const string &base_span, BaseSpan &bs) {
 
-    BaseSpan res;
-    std::string::const_iterator start, end;
+    string::const_iterator start, end;
     start = base_span.begin();
     end = base_span.end();
     boost::smatch m;
@@ -180,7 +179,7 @@ BaseSpan parse_simple_span(std::string base_span) {
     end = span.end();
 
     // get remote accession number
-    std::string accn("");
+    string accn("");
     bool remote(false);
     boost::regex_search(start, end, m, RA);
     if (m[0].matched) {
@@ -194,7 +193,7 @@ BaseSpan parse_simple_span(std::string base_span) {
     end = span.end();
   
     // get closed
-    std::vector<bool> closed(2);
+    vector<bool> closed(2);
     if( not boost::regex_search(start, end, m, boost::regex("\\d+\\.\\d+")) ) {
         closed[0] = true;
         closed[1] = true;
@@ -210,65 +209,66 @@ BaseSpan parse_simple_span(std::string base_span) {
     }
   
     // get partial
-    std::vector<bool> partial(2);
+    vector<bool> partial(2);
     boost::regex_match(start_pos, m, boost::regex("^(<|>)\\d+") );
     partial[0] = m[0].matched;
     boost::regex_match(end_pos, m, boost::regex("^(<|>)\\d+") );
     partial[1] = m[0].matched;
   
     // get span
-    std::vector<int> pos(2);
+    vector<int> pos(2);
     static const boost::regex P("<|>");
     pos[0] = atoi( boost::regex_replace(start_pos, P, empty).c_str() );
     pos[1] = atoi( boost::regex_replace(end_pos, P, empty).c_str() );
     
-    res.strand = strand;
-    res.accn = accn;
-    res.remote = remote;
-    res.closed = closed;
-    res.partial = partial;
-    res.position = pos;
-
-    return res;
+    bs.strand = strand;
+    bs.accn = accn;
+    bs.remote = remote;
+    bs.closed = closed;
+    bs.partial = partial;
+    bs.position = pos;
 }
 
 // [[Rcpp::export]]
-SEXP parse_gb_location(std::string gb_base_span) {
+SEXP parse_gb_location(string gb_base_span) {
     
     // clean up anny possible whitespace
     static const string empty("");
     gb_base_span = boost::regex_replace(gb_base_span, boost::regex("\\s+"), empty);
-    // std::cout << gb_base_span << std::endl;
+    // cout << gb_base_span << endl;
 
     // iterator over gb_base_span
-    std::string::const_iterator start, end;
+    string::const_iterator start, end;
     start = gb_base_span.begin();
     end = gb_base_span.end();
     boost::smatch m;
   
     // create and assign a 'gbLocation' object
     Rcpp::S4 obj = Rcpp::S4("gbLocation");
+    
+    // initialise a BaseSpan
+    BaseSpan bs;
   
     // test for a possibly complemented simple location
     if ( boost::regex_match(start, end, m, PCSL) ) {
-        BaseSpan s = parse_simple_span(gb_base_span);
-        obj.slot("strand") = s.strand;
-        obj.slot("accession") = s.accn;
-        obj.slot("remote") = s.remote;
+        parse_simple_span(gb_base_span, bs);
+        obj.slot("strand") = bs.strand;
+        obj.slot("accession") = bs.accn;
+        obj.slot("remote") = bs.remote;
         
         LogicalMatrix clo(1,2);
-        clo(0,0) = s.closed[0];
-        clo(0,1) = s.closed[1];
+        clo(0,0) = bs.closed[0];
+        clo(0,1) = bs.closed[1];
         obj.slot("closed") = clo;
 
         LogicalMatrix part(1,2);
-        part(0,0) = s.partial[0];
-        part(0,1) = s.partial[1];
+        part(0,0) = bs.partial[0];
+        part(0,1) = bs.partial[1];
         obj.slot("partial") = part;
 
         NumericMatrix pos(1,2);
-        pos(0,0) = s.position[0];
-        pos(0,1) = s.position[1];
+        pos(0,0) = bs.position[0];
+        pos(0,1) = bs.position[1];
         obj.slot(".Data") = pos;
 
     } else if ( boost::regex_match( start, end, m, PCCL ) ) {
@@ -280,17 +280,17 @@ SEXP parse_gb_location(std::string gb_base_span) {
         
         // get compound span
         boost::regex_search( start, end, m, CL );
-        std::string cmpnd_span( m[0] );
+        string cmpnd_span( m[0] );
         start = cmpnd_span.begin();
         end = cmpnd_span.end();  
         
         // get compound type
         boost::regex_search(start, end, m, CMPND);
-        std::string compound( m[0] );
+        string compound( m[0] );
         
         // get span strings
         boost::regex_search( start, end, m, SLC );
-        std::string span_str( m[0] );
+        string span_str( m[0] );
         
         vector<string> spans;
         boost::split_regex( spans, span_str, boost::regex( "\\s*,\\s*" ) );
@@ -303,30 +303,31 @@ SEXP parse_gb_location(std::string gb_base_span) {
         Rcpp::CharacterVector accnVec(nrows);
         Rcpp::LogicalVector remoteVec(nrows);
         
+        
         for (int i = 0; i < nrows; ++i) {
-            std::string span =  spans[i];
+            string span =  spans[i];
             // std::cout << span << std::endl;
 
-            BaseSpan s = parse_simple_span(span);
+           parse_simple_span(span, bs);
             
             // get positions
-            posMat(i, 0) = s.position[0];
-            posMat(i, 1) = s.position[1];
+            posMat(i, 0) = bs.position[0];
+            posMat(i, 1) = bs.position[1];
             
             // get strand
-            strandVec[i] = s.strand;
+            strandVec[i] = bs.strand;
             
             // get partial
-            partialMat(i, 0) = s.partial[0];
-            partialMat(i, 1) = s.partial[1];
+            partialMat(i, 0) = bs.partial[0];
+            partialMat(i, 1) = bs.partial[1];
             
             // get accession and remote
-            accnVec[i] = s.accn;
-            remoteVec[i] = s.remote;
+            accnVec[i] = bs.accn;
+            remoteVec[i] = bs.remote;
             
             // get closed
-            closedMat(i, 0) = s.closed[0];
-            closedMat(i, 1) = s.closed[1];
+            closedMat(i, 0) = bs.closed[0];
+            closedMat(i, 1) = bs.closed[1];
         }
         
         // if the whole span is complementary reset strandVec
