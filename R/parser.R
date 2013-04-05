@@ -231,6 +231,9 @@
   
   message("Parsing features into ", dQuote(seqinfo@db@name))
   
+#   idx <- feature_idx[[1]]
+#   n <- 1
+  
   ftr <- mcmapply(function (idx, n) {
     parse_feature_table(id=n, lines=gb_features[idx], seqinfo=seqinfo)
   }, idx=feature_idx, n=seq_along(feature_start),

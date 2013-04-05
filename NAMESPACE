@@ -135,7 +135,6 @@ importFrom(filehash,dbInsert)
 
 importFrom(intervals,closed)
 
-importFrom(methods,"@<-")
 importFrom(methods,"slot<-")
 importFrom(methods,as)
 importFrom(methods,is)

@@ -235,12 +235,11 @@ SEXP parse_gb_location(std::string gb_base_span) {
     // clean up anny possible whitespace
     static const std::string empty("");
     gb_base_span = boost::regex_replace(gb_base_span, boost::regex("\\s+"), empty);
-    // cout << gb_base_span << endl;
+    // std::cout << gb_base_span << std::endl;
 
     // iterator over gb_base_span
-    std::string::const_iterator start, end;
-    start = gb_base_span.begin();
-    end = gb_base_span.end();
+    std::string::const_iterator start = gb_base_span.begin();
+    std::string::const_iterator end = gb_base_span.end();
     boost::smatch m;
   
     // create and assign a 'gbLocation' object
