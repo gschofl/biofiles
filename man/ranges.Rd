@@ -4,7 +4,7 @@
 \alias{ranges<-}
 \title{Get or set the range of genomic features}
 \usage{
-  ranges(x, join=FALSE, with_qual="none", without_qual="")
+  ranges(x, join=FALSE, include="none", exclude="")
 
   ranges(x, ..., value) <- value
 }
@@ -13,10 +13,12 @@
 
   \item{join}{Join compound genomic locations into a single range.}
 
-  \item{with_qual}{Include qualifiers as metadata columns. Can be "none",
+  \item{key}{Include feature keys with ranges.}
+
+  \item{include}{Include qualifiers as metadata columns. Can be "none",
 "all", or a character vector of qualifier tags.}
 
-  \item{without_qual}{Exclude specific qualifiers.}
+  \item{exclude}{Exclude specific qualifiers.}
 
   \item{...}{Further arguments passed to methods.}
 }

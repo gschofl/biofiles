@@ -1,10 +1,6 @@
-
-# gbFeature-class -----------------------------------------------------
-
-#' @include gbInfo-class.R
+#' @include gbLocation-class.R
 NULL
 
-setClassUnion("charOrNull", c("character", "NULL"))
 
 #' gbFeature
 #' 
@@ -24,7 +20,7 @@ setClassUnion("charOrNull", c("character", "NULL"))
 #' @classHierarchy
 #' @classMethods
 setClass("gbFeature",
-         representation(.Info="gbInfo",
+         representation(.Info="Seqinfo",
                         .Id="integer",
                         key="character",
                         location="gbLocation",
@@ -38,6 +34,7 @@ setValidity2("gbFeature", function (object) {
 # show -------------------------------------------------------------------
 
 
+#' @autoImports
 .showGbFeature <- function(object, showInfo=TRUE) {
   op <- options("useFancyQuotes")
   options(useFancyQuotes=FALSE)
@@ -75,9 +72,10 @@ setMethod("show", "gbFeature",
 # summary ----------------------------------------------------------------
 
 
+#' @autoImports
 setMethod("summary", "gbFeature",
           function (object, ...) {
-            idx <- pad(index(object), 8, "right")
+            idx <- pad(pad(index(object), 8, "right"), 10)
             key <- pad(key(object), 14, "right")
             loc <- as(location(object), "character")
             prod <- ellipsize(product(object), width=getOption("width") - 
@@ -111,96 +109,59 @@ setMethod("width", "gbFeature",
             width(x@location, join = join))
 
 
-setMethod("partial", "gbFeature",
+setMethod("fuzzy", "gbFeature",
           function (x)
-            partial(x@location))
+            fuzzy(x@location))
 
 
 setMethod("seqinfo", "gbFeature",
           function (x) x@.Info)
 
 
+#' @autoImports
 setMethod("seqlengths", "gbFeature",
           function (x) seqlengths(seqinfo(x)))
 
 
+#' @autoImports
 setMethod("accession", "gbFeature",
           function (x) seqnames(seqinfo(x)))
 
 
+#' @autoImports
 setMethod("definition", "gbFeature",
           function (x) genome(seqinfo(x)))
 
 
 setMethod("ranges", "gbFeature",
-          function (x, with_qual = "none", without_qual = "", join = FALSE) {
-            .make_GRanges(x, with_qual = with_qual,
-                          without_qual = without_qual,
-                          join = join)
+          function (x, include = "none", exclude = "", join = FALSE) {
+            .make_GRanges(x, include = include, exclude = exclude, join = join)
           })
 
 
 setMethod("location", "gbFeature",
-          function (x, seqinfo = FALSE) {     
-            ans <- x@location
-            if (seqinfo) {
-              structure(list(ans),
-                        accession=accession(x),
-                        definition=unname(definition(x)),
-                        dir=seqinfo(x)@db@dir)
-            } else {
-              ans
-            }
-          })
+          function (x) x@location)
 
 
 setMethod("index", "gbFeature",
-          function (x, seqinfo = FALSE) {
-            ans <- x@.Id
-            if (seqinfo) {
-              structure(ans,
-                        accession=accession(x),
-                        definition=unname(definition(x)),
-                        dir=seqinfo(x)@db@dir)
-            } else {
-              ans
-            }
-          })
+          function (x) x@.Id)
 
 
 setMethod("key", "gbFeature", 
-          function (x, seqinfo = FALSE) {
-            ans <- structure(x@key, names=NULL)
-            if (seqinfo) {
-              structure(ans,
-                        accession=accession(x),
-                        definition=unname(definition(x)),
-                        dir=seqinfo(x)@db@dir)
-            }
-            else {
-              ans
-            }
-          })
+          function (x) structure(x@key, names=NULL) )
 
 
 setMethod("qualif", "gbFeature", 
-          function (x, which, seqinfo = FALSE, fixed = FALSE) {
+          function (x, which, fixed = FALSE) {
             if (missing(which)) {
-              ans <- x@qualifiers
+              x@qualifiers
             } else {
-              ans <- .qualAccess(x, which, fixed)
-            }
-            if (seqinfo) {
-              structure(ans,
-                        accession=accession(x),
-                        definition=unname(definition(x)),
-                        dir=seqinfo(x)@db@dir)
-            } else {
-              ans
+              .qualAccess(x, which, fixed)
             }
           })
 
 
+#' @autoImports
 setMethod("dbxref", "gbFeature",
           function (x, db = NULL, ...) {     
             ans <- .qualAccess(x, "db_xref")
@@ -225,10 +186,17 @@ setMethod("dbxref", "gbFeature",
 
 
 setMethod("sequence", "gbFeature",
-          function (x) {
-            stopifnot(hasValidDb(x))
-            db <- slot(seqinfo(x), "db")
-            .seqAccess(s=dbFetch(db, "sequence"), x, type=dbFetch(db, "type"))
+          function (x, gbk) {
+            
+            if (missing(gbk)) {
+              stop("Matching gbRecord is missing")
+            }
+            
+            if (!identical(seqinfo(x), seqinfo(gbk))) {
+              stop("Seqinfo of gbFeature and gbRecord not matching.")
+            }
+            
+            .seqAccess(sequence(gbk), x, gbk@type)
           })
 
 
@@ -263,12 +231,8 @@ setReplaceMethod("strand", "gbFeature",
 
 
 setReplaceMethod("key", "gbFeature",
-                 function (x, value, check=TRUE, updateDb = FALSE) {
+                 function (x, check=TRUE, value) {
                    x <- initialize(x, key=value)
-                   if (updateDb) {
-                     db <- slot(seqinfo(x), "db")
-                     db$features[x@.Id] <- x
-                   }
                    if (check)
                      validObject(x)
                    x
@@ -276,12 +240,8 @@ setReplaceMethod("key", "gbFeature",
 
 
 setReplaceMethod("qualif", "gbFeature",
-                 function (x, which, value, check=TRUE, updateDb = FALSE) {
+                 function (x, which, check=TRUE, value) {
                    x@qualifiers[which] <- value
-                   if (updateDb) {
-                     db <- slot(seqinfo(x), "db")
-                     db$features[x@.Id] <- x
-                   }
                    if (check)
                      validObject(x)
                    x

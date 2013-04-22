@@ -23,6 +23,7 @@ Get sequences of GenBank features
   \item \linkS4class{gbFeature}
   \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
 }
 
 }

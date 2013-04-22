@@ -9,9 +9,9 @@ recycle <- function (val, len) {
 
 #' @autoImports
 showInfo <- function(object) {
-  sn <- object@seqnames
-  sl <- paste(object@seqlengths, names(object@seqlengths))
-  g <- object@genome
+  sn <- seqnames(object)
+  sl <- paste(seqlengths(object), names(seqlengths(object)))
+  g <- genome(object)
   seqname <- pad(sn, nchar(sn) + 2, "right")
   seqlen <- pad(sl, nchar(sl) + 2, "right")
   genome <- ellipsize(g, width=getOption("width") - 
@@ -23,21 +23,20 @@ showInfo <- function(object) {
 #' @autoImports
 ellipsize <- function(obj, width = getOption("width"), ellipsis = "...") {
   str <- encodeString(obj)
-  if (nchar(str) > width - 1) {
-    str <- paste0(substring(str, 1, width - nchar(ellipsis) - 1), ellipsis)
-  }
-  str
+  ifelse(nchar(str) > width - 1,
+         paste0(substring(str, 1, width - nchar(ellipsis) - 1), ellipsis),
+         str)
 }
 
 
 #' @autoImports
 is_compound <- function (x) {
   if (is(x, "gbFeatureList")) {
-    return(vapply(x, function (f) not.na(f@location@compound), logical(1)))
+    return(vapply(x, function (f) !is.na(f@location@compound), logical(1)))
   } else if (is(x, "gbFeature")) {
-    return(not.na(x@location@compound))
+    return(!is.na(x@location@compound))
   } else if (is(x, "gbLocation")) {
-    return(not.na(x@compound))
+    return(!is.na(x@compound))
   }
 }
 
@@ -46,7 +45,7 @@ is_compound <- function (x) {
 getCompounds <- function (x) {
   x <- x[which(is_compound(x))]
   if (length(x) == 0) return(NA_real_) 
-  cL <- vapply(x, function (f) nrow(f@location@.Data), numeric(1))
+  cL <- vapply(x, function (f) nrow(f@location@range), integer(1))
   cL
 }
 

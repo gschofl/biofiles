@@ -1,0 +1,213 @@
+#include "gb_regex.h"
+#include <boost/algorithm/string_regex.hpp>
+
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+SEXP gbLocation(
+    std::string gb_base_span,
+    std::string accession = "" ) 
+{
+    // create and assign a 'gbLocation' object
+    Rcpp::S4 gb_location = Rcpp::S4("gbLocation");
+    parse_gb_location( gb_location, gb_base_span, accession );
+    return gb_location; 
+}
+
+void parse_gb_location(
+    Rcpp::S4 &gb_location,
+    std::string &gb_base_span,
+    std::string &accession )
+{
+    // clean up possible whitespace
+    gb_base_span = boost::regex_replace(gb_base_span, WHITESPACE, EMPTY);
+
+    // iterator over the complete gb_base_span
+    std::string::const_iterator b_it, e_it; 
+    b_it = gb_base_span.begin();
+    e_it = gb_base_span.end();
+    boost::smatch m;
+  
+    // initialise a BaseSpan
+    BaseSpan bs;
+  
+    // test for a possibly complemented simple location
+    try {
+      if ( boost::regex_match(b_it, e_it, m, PCSL) ) {
+        
+          parse_simple_span(bs, gb_base_span, accession);
+          
+          // fill gbLocation@range
+          // guarantied integer Matrix/two columns 
+          IntegerMatrix range(1,2);
+          range(0,0) = bs.range[0];
+          range(0,1) = bs.range[1];
+          gb_location.slot("range") = range;
+          
+          // fill gbLocation@fuzzy
+          // guarantied logical Matrix/two columns 
+          LogicalMatrix fuzzy(1,2);
+          fuzzy(0,0) = bs.fuzzy[0];
+          fuzzy(0,1) = bs.fuzzy[1];
+          gb_location.slot("fuzzy") = fuzzy;
+          
+          gb_location.slot("strand") = bs.strand;
+          gb_location.slot("accession") = bs.accession;
+          gb_location.slot("remote") = bs.remote;
+          gb_location.slot("type") = bs.type;
+          
+      // test for a possibly complemented compound location
+      } else if ( boost::regex_match( b_it, e_it, m, PCCL ) ) {
+          // test for complementary strand
+          int strand(1);
+          if ( boost::regex_search( b_it, e_it, m, COMPL ) ) {
+              strand = -1;
+          }  
+          
+          // get compound span
+          boost::regex_search( b_it, e_it, m, CL );
+          b_it = m[0].first;
+          e_it = m[0].second;  
+          
+          // get compound type
+          boost::regex_search( b_it, e_it, m, CMPND );
+          std::string compound( m[0] );
+          
+          // get span strings
+          boost::regex_search( b_it, e_it, m, SLC );
+          std::string span_str( m[0] );
+          
+          std::vector<std::string > spans;
+          boost::split_regex( spans, span_str, boost::regex("\\s*,\\s*") );
+          
+          int nrows = spans.size();
+          Rcpp::IntegerMatrix   rangeMat( nrows, 2 );
+          Rcpp::LogicalMatrix   fuzzyMat( nrows, 2 );
+          Rcpp::IntegerVector   strandVec(nrows);
+          Rcpp::CharacterVector accessionVec(nrows);
+          Rcpp::LogicalVector   remoteVec(nrows);
+          Rcpp::CharacterVector typeVec(nrows);
+            
+          for (int i = 0; i < nrows; ++i) {
+              std::string span = spans[i];
+              parse_simple_span( bs, span, accession );
+              
+              // get positions
+              rangeMat(i, 0) = bs.range[0];
+              rangeMat(i, 1) = bs.range[1];
+              // get fuzzy
+              fuzzyMat(i, 0) = bs.fuzzy[0];
+              fuzzyMat(i, 1) = bs.fuzzy[1];
+              // get strand, accession, remote and type
+              strandVec[i] = bs.strand;
+              accessionVec[i] = bs.accession;
+              remoteVec[i] = bs.remote;
+              typeVec[i] = bs.type;
+          }
+          
+          // if the whole span is complementary reset strandVec
+          if (strand == -1) {
+              for (int i = 0; i < nrows; ++i)
+                  strandVec[i] = -1;
+          }
+          
+          gb_location.slot("range") = rangeMat;
+          gb_location.slot("fuzzy") = fuzzyMat;
+          gb_location.slot("strand") = strandVec;
+          gb_location.slot("compound") = compound;
+          gb_location.slot("accession") = accessionVec;
+          gb_location.slot("remote") = remoteVec;
+          gb_location.slot("type") = typeVec;
+      } else {
+        throw std::range_error("Cannot parse location descriptor.");
+      }
+    } catch (std::exception &ex) {
+      forward_exception_to_r(ex);
+    }
+}
+
+void parse_simple_span(
+    BaseSpan &bs,
+    std::string &simple_span,
+    std::string &accession )
+{
+    std::string::const_iterator b_it, e_it;
+    b_it = simple_span.begin();
+    e_it = simple_span.end();
+    boost::smatch m;
+    //Rcpp::Rcout << *b_it << " ... " << *e_it << std::endl;
+    
+    // initialize and set defaults
+    std::string start, end;
+    std::vector<int> range(2);
+    std::vector<bool> fuzzy(2, false);
+    int strand(1);
+    bool remote(false);
+    char type = 'R';
+  
+    // test for complement
+    if ( boost::regex_search(b_it, e_it, m, COMPL) ) {
+        strand = -1;
+    }
+    
+    // match remote accession (capture group 1) and
+    // genomic span (capture group 4)
+    boost::regex_search(b_it, e_it, m, RASL);
+    if (m[1].matched) {
+        remote = true;
+        accession = m[2];  // remote accession without colon
+        b_it = m[4].first;
+        e_it = m[4].second;
+    } else {
+        b_it = m[0].first;
+        e_it = m[0].second;
+    }
+    //Rcpp::Rcout << accn << std::endl;
+    //Rcpp::Rcout << *b_it << " ... " << *e_it << std::endl;
+
+    // get type
+    if( boost::regex_search(b_it, e_it, m, BETWEEN_BASES) ) {
+        type = 'B';
+    }
+  
+    // split span
+    boost::regex_search(b_it, e_it, m, BASESPLIT);
+    start = m[1];
+    if ( m[3].matched ) {
+        end = m[3];
+    } else {
+        end = start;
+    }
+  
+    // get fuzzy
+    static const boost::regex FUZZY_START("^<\\d+$");
+    static const boost::regex FUZZY_END("^<\\d+$");
+    fuzzy[0] = boost::regex_match(start, m, FUZZY_START );
+    fuzzy[1] = boost::regex_match(end, m, FUZZY_END );
+  
+    // get range
+    static const boost::regex FUZZY("<|>");
+    range[0] = atoi( boost::regex_replace(start, FUZZY, EMPTY).c_str() );
+    range[1] = atoi( boost::regex_replace(end, FUZZY, EMPTY).c_str() );
+    
+    try {
+      // throw error if the end point comes before the start point.
+      if (range[0] > range[1])
+        throw std::range_error("Inadmissible range: start point is larger than end point.");
+      // throw error if type = 'B' and end point is not adjacent to start point.
+      if ((type == 'B') & (range[1] - range[0] != 1))
+        throw std::range_error("Inadmissible range: For span of type '36^37', start and end positions must be adjacent");
+      
+      bs.range = range;
+      bs.fuzzy = fuzzy;
+      bs.strand = strand;
+      bs.accession = accession;
+      bs.remote = remote;
+      bs.type = type;
+      
+    } catch (std::exception &ex) {
+      forward_exception_to_r(ex);
+    }
+}
+
+

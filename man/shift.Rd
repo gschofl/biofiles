@@ -3,8 +3,7 @@
 \alias{shift}
 \title{Shift location of features in a GenBank record}
 \usage{
-  shift(x, shift=0L, split=FALSE, order=FALSE,
-    updateDb=FALSE)
+  shift(x, shift=0L, split=FALSE, order=FALSE)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbFeatureList}} or
@@ -17,8 +16,6 @@ be complete and include a 'source' field).}
 the sequence.}
 
   \item{order}{Reorder features after the shift.}
-
-  \item{updateDb}{Update the filehash DB after the shift}
 }
 
 \value{

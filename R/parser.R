@@ -1,8 +1,9 @@
-.parseGB <- function (gb_data, db_path, with_sequence = TRUE, force = FALSE) {
+.parseGB <- function (gb_data, with_sequence = TRUE) {
   # get a vector with the positions of the main GenBank fields
   gbf <- grep("^[A-Z//]+", gb_data)
   gbf_names <- strsplitN(gb_data[gbf], split=" +", 1)
   names(gbf) <- gbf_names
+  gb_contig <- gb_sequence <-  NULL
   
   # Check the presence of a number of the absolutely essential data fields
   essential <- c("DEFINITION", "ACCESSION", "FEATURES")
@@ -21,40 +22,29 @@
   if (length(gb_features) < 2L) 
     stop("No features in the GenBank file")
   
-  seq_idx <- seq.int(gbf["ORIGIN"] + 1, gbf["//"] - 1)
-  if (length(seq_idx) > 1L && seq_idx[2] < seq_idx[1]) {
-    # happens if "//" is next after "ORIGIN", i.e. no  sequence is present
-    gb_sequence <- NULL
-  } else {
-    gb_sequence <- gb_data[seq_idx]
+  if (!is.na(origin <- gbf["ORIGIN"])) {
+    seq_idx <- seq.int(origin + 1, gbf["//"] - 1)
+    if (length(seq_idx) > 1L && seq_idx[2] < seq_idx[1]) {
+      # happens if "//" is next after "ORIGIN", i.e. no  sequence is present
+      gb_sequence <- NULL
+    } else {
+      gb_sequence <- gb_data[seq_idx]
+    }
+  } else if (!is.na(contig <- gbf["CONTIG"])) {
+    gb_contig <- gbLocation(strsplitN(gb_data[contig], "CONTIG", 2))
   }
-  
-  # prepare setting up a filehash db
-  if (file.exists(db_path)) {
-    if (!force && readline("Target directory exists. Do you want to overwrite (y/n): ") != "y")
-      stop(gettextf("Aborted creation of db directory '%s'", db_path))
-    else
-      unlink(db_path, recursive=TRUE)
-  }
-  
-  # set up filehash db
-  db <- init_db(db_path, create = TRUE)
-  
+
   ## parse HEADER, FEATURES, and ORIGIN and construct 'gbData' object
-  header <- .parseGbHeader(gb_header, gb_fields=gbf)
-  seqinfo <- IRanges::new2("gbInfo", db=db,
-                           seqnames=header[["accession"]],
-                           seqlengths=header[["length"]],
-                           is_circular=header[["topology"]] == "circular", 
-                           genome=header[["definition"]],
-                           check=FALSE)
-  features <- .parseGbFeatures(seqinfo=seqinfo, gb_features=gb_features)
-  
+  header <- .parseGbHeader(gb_header=gb_header,
+                           gb_fields=gbf)
+  seqinfo <- header[["seqinfo"]]
+  features <- .parseGbFeatures(seqinfo=seqinfo,
+                               gb_features=gb_features)
   sequence <- .parseGbSequence(gb_sequence=gb_sequence,
-                               accession_no=header[["accession"]],
+                               accession_no=seqnames(seqinfo),
                                seq_type=header[["type"]])
   
-  list(db=db, header=header, features=features, sequence=sequence)
+  list(header=header, features=features, sequence=sequence, contig=gb_contig)
 }
 
 
@@ -68,15 +58,14 @@
   if (length(locus_line) == 8 || 
      (length(locus_line) == 7 && locus_line[4] == "aa")) {
     locus <- locus_line[2]
-    length <- setNames(as.integer(locus_line[3]), locus_line[4])
-    
-    if (names(length) == 'aa') {
+    length <- as.integer(locus_line[3])
+    if (locus_line[4] == 'aa') {
       # these are GenPept files; they don't have a 'molecule type' but we set it 'AA'
       type <- 'AA'
       topology <- locus_line[5]
       division <- locus_line[6]
-      date <- locus_line[7]
-    } else if (names(length) == 'bp') {
+      date <- as.POSIXlt(locus_line[7], format="%d-%b-%Y")
+    } else if (locus_line[4] == 'bp') {
       type <- locus_line[5]
       topology <- locus_line[6]
       division <- locus_line[7]
@@ -85,15 +74,15 @@
   } else {
     # some GenBank files just don't seem to have topology or division
     locus <- locus_line[2]
-    length <- setNames(as.integer(locus_line[3]), locus_line[4])
-    if (names(length) == 'aa') {
+    length <- as.integer(locus_line[3])
+    if (locus_line[4] == 'aa') {
       type <- 'AA'
       topology <- locus_line[5]
-      division <- NULL
+      division <- NA_character_
       date <- as.POSIXlt(locus_line[6], format="%d-%b-%Y")
-    } else if (names(length) == 'bp') {
+    } else if (locus_line[4] == 'bp') {
       type <- locus_line[5]
-      topology <- NULL
+      topology <- NA_character_
       division <- locus_line[6]
       date <- as.POSIXlt(locus_line[7], format="%d-%b-%Y")
     }
@@ -118,7 +107,7 @@
   if (length(db_line <- gb_header[gb_fields[names(gb_fields) == "DBLINK"]]) > 0L) {
     dblink <- strsplit(db_line, "Project: ")[[1]][2]
   } else {
-    dblink <- NULL
+    dblink <- NA_character_
   }
   
   #### DBSOURCE (only in GenPept files)
@@ -128,7 +117,7 @@
       gb_header[seq.int(gb_fields[dbsrc_idx], gb_fields[dbsrc_idx + 1] - 1)]
     dbsource <- paste(gsub("^ +", "", sub("DBSOURCE", "", dbs_lines)), collapse="\n")
   } else {
-    dbsource <- NULL
+    dbsource <- NA_character_
   }
   
   #### KEYWORDS
@@ -160,13 +149,17 @@
                         length(gb_header))]
     comment <- paste(gsub("^ +", "", sub("COMMENT", "", com_lines)), collapse="\n")
   } else {
-    comment <- NULL
+    comment <- NA_character_
   }
 
+  #### Seqinfo
+  seqinfo <- Seqinfo(seqnames=accession, seqlengths=length,
+                     isCircular=topology == 'circular',
+                     genome=definition)
+
   # References are assigned to the 'gb_reference' class
-  list(locus=locus, length=length, type=type, topology=topology,
-       division=division, date=date, definition=definition,
-       accession=accession, version=version, GI=GI, dblink=dblink,
+  list(seqinfo=seqinfo, locus=locus, type=type, topology=topology,
+       division=division, date=date, version=version, GI=GI, dblink=dblink,
        dbsource=dbsource, keywords=keywords, source=source,
        organism=organism, lineage=lineage, references=references,
        comment=comment)
@@ -228,14 +221,8 @@
   # indeces for all features
   feature_idx <- mapply(seq.int, feature_start, feature_end,
                         SIMPLIFY=FALSE, USE.NAMES=FALSE)
-  
-  message("Parsing features into ", dQuote(seqinfo@db@name))
-  
-#   idx <- feature_idx[[1]]
-#   n <- 1
-  
   ftr <- mcmapply(function (idx, n) {
-    parse_feature_table(id=n, lines=gb_features[idx], seqinfo=seqinfo)
+    gbFeature(gb_features[idx], seqinfo, n)
   }, idx=feature_idx, n=seq_along(feature_start),
      SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
   

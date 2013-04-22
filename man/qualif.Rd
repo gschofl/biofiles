@@ -3,13 +3,13 @@
 \alias{locusTag}
 \alias{note}
 \alias{product}
-\alias{proteinId}
+\alias{proteinID}
 \alias{qualif}
 \alias{qualif<-}
 \alias{translation}
 \title{Get/set qualifiers of GenBank features}
 \usage{
-  qualif(x, which, seqinfo = FALSE, ...)
+  qualif(x, which, ...)
 
   qualif(x, which, value, ...) <- value
 
@@ -19,7 +19,7 @@
 
   note(x)
 
-  proteinId(x)
+  proteinID(x)
 
   translation(x)
 }
@@ -29,8 +29,6 @@
 
   \item{which}{(Optional) A character vector giving the name(s) of the
 qualifiers to retrieve.}
-
-  \item{seqinfo}{Include the \code{\linkS4class{gbInfo}} for the the feature.}
 
   \item{...}{Additional arguments passed to methods.}
 }

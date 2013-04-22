@@ -1,44 +1,41 @@
 Package: biofiles
-Version: 0.1-8
+Version: 0.2-0
 Title: Working with GenBank flat file records
 Authors@R: person("Gerhard", "Schöfl", role=c("aut","cre"),
     email="gschofl@yahoo.de")
-Description: Parse GenBank records into R object and store the
-    as an external hash table. Easy access to the sequence and
-    annotation information contained in GenBank records.
+Description: Parse GenBank records into native R objects to easily access
+    the sequence and annotation information.
 License: MIT
 Encoding: latin1
 Depends:
     R (>= 2.15),
-    Rcpp (>= 0.10.1)
+    Rcpp (>= 0.10.1),
+    methods
 LinkingTo: Rcpp
 Imports:
-    methods,
     rmisc,
-    filehash,
     BiocGenerics,
-    intervals,
     IRanges,
     GenomicRanges,
     Biostrings,
     parallel,
     stringr,
     plyr
+Suggests:
+    Rentrez
 Collate:
-    'aaa.R'
     'utils.R'
-    'validate.R'
     'all-generics.R'
     'gbLocation-class.R'
-    'gbInfo-class.R'
     'gbFeature-class.R'
     'gbFeatureList-class.R'
     'gbRecord-class.R'
+    'gbRecordList-class.R'
     'RcppExports.R'
+    'make-granges.R'
     'flanking.R'
     'parser.R'
     'retrieve.R'
-    'revcomp.R'
     'select.R'
     'shift.R'
     'write-feature-table.R'

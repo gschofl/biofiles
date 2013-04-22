@@ -1,22 +1,37 @@
-
-# gbRecord-Class ------------------------------------------------------
-
 #' @include gbFeatureList-class.R
-#' @importClassesFrom filehash filehashRDS
-#' @importClassesFrom filehash filehash
 NULL
+
+setClassUnion("XStringSetOrNull", members=c("XStringSet", "NULL"))
+setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
 
 #' gbRecord
 #' 
 #' \dQuote{gbRecord} is an S4 class that provides a container for data
-#' parsed from a GenBank record. It is implemented as a
-#' \code{\linkS4class{filehashRDS}} database.
+#' parsed from a GenBank record.
 #'
 #' @rdname gbRecord
 #' @export
 #' @classHierarchy
 #' @classMethods
-setClass("gbRecord", contains="filehashRDS")
+setClass("gbRecord", representation(seqinfo = "Seqinfo",
+                                    locus = "character",
+                                    type = "character",
+                                    topology = "character",
+                                    division = "character",
+                                    date = "POSIXlt",
+                                    version = "character",
+                                    GI = "character",
+                                    dblink = "character",
+                                    dbsource = "character",
+                                    keywords = "character",
+                                    source = "character",
+                                    organism = "character",
+                                    lineage = "character",
+                                    references = "character",
+                                    comment = "character",
+                                    features = "gbFeatureList",
+                                    sequence = "XStringSetOrNull",
+                                    contig = "gbLocationOrNull"))
 
 
 setValidity("gbRecord", function (object) {
@@ -25,159 +40,94 @@ setValidity("gbRecord", function (object) {
 })
 
 
-setMethod("initialize", "gbRecord",
-          function (.Object, dir=character(0), name=character(0), verbose=TRUE,
-                    .check=FALSE) {
-            if (missing(dir))
-              stop("No database directory provided")
-            if (missing(name))
-              stop("No database name provided")
-            
-            if (.check) {
-              if (isValidDb(dir, verbose=FALSE)) {
-                if (verbose) message("Intializing gbRecord")
-                
-                .Object@dir <- dir
-                .Object@name <- name
-                
-                if (hasNewPath(.Object)) {
-                  if (verbose) message("Updating db directory location ...")
-                  updateDirectory(.Object)
-                }
-              } else {
-                stop("No valid database directory provided")
-              }
-            } else  {
-              .Object@dir <- dir
-              .Object@name <- name
-            }
-            
-            .Object
-          })
-
-
 # constructor ------------------------------------------------------------
 
 
-#' \code{gbRecord} instances can be construced by parsing a GenBank flat
-#' file or an \code{\linkS4class{efetch}} instance containing one or more
-#' GenBank records.
-#' If \code{gb} points to a valid \code{gbRecord} database, a \code{gbRecord}
-#' object is initialised in the global environment.  
+#' \code{gbRecord} or \code{\linkS4class{gbRecordList}} objects can be
+#' construced by parsing GenBank flat files or an \code{\linkS4class{efetch}}
+#' object containing one or more GenBank records.
 #'
 #' @details
 #' For a description of the GenBank format see
 #' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
 #'
-#' @param gb Path to a valid \code{gbRecord} database, a GenBank flat file or
-#' an \code{\linkS4class{efetch}} object containing GenBank record(s).
-#' @param with_sequence Parse with sequence information if avaliable.
-#' @param force Overwrite existing database directories without prompting.
-#' @return A (list of) \code{\linkS4class{gbRecord}} object(s).
+#' @param gb A vector of paths to GenBank record files,
+#' an \code{\linkS4class{efetch}} object containing GenBank record(s), or
+#' a \code{textConnection} to a character vector that can be parsed as
+#' a Genbank record.
+#' @param with_sequence Include sequence information if avaliable.
+#' @return A \code{\linkS4class{gbRecord}} or
+#' \code{\linkS4class{gbRecordList}} 
 #' @export
 #' @autoImports
-gbRecord <- function (gb, with_sequence = TRUE, force = FALSE) {
-  
-  if (is.gbRecordDb(gb)) {
-    return( init_db(db_dir=gb, create = FALSE) )
-  }
-  
+gbRecord <- function (gb, with_sequence = TRUE) {
+  ##
+  ## Parse 'efetch' objects
+  ##
   if (is(gb, "efetch")) {
     if (gb@rettype %ni% c("gb", "gp") || gb@retmode != "text")
       stop("Must use efetch with rettype='gbwithparts','gb', or 'gp' and retmode='text'")
     
     split_gb <- unlist(strsplit(content(gb, "text"), "\n\n"))
     n <- length(split_gb)
-    db_path <- replicate(n, tempfile(fileext=".db"))
     parsed_data <- vector("list", n)
     for (i in seq_len(n)) {
       gb_data <- unlist(strsplit(split_gb[i], "\n"))
-      parsed_data[[i]] <- .parseGB(gb_data,
-                                   db_path=db_path[i],
-                                   with_sequence=with_sequence,
-                                   force=force)
+      parsed_data[[i]] <- .parseGB(gb_data, with_sequence=with_sequence)
     }
+  ##
+  ## Parse random textConnections
+  ##
   } else if (is(gb, "textConnection")) {
     con <- gb
     on.exit(close(con))
-    db_path <- tempfile(fileext=".db")
-    parsed_data <- list(.parseGB(gb_data=readLines(con),
-                                 db_path=db_path,
-                                 with_sequence=with_sequence,
-                                 force=force))
-  } else if (tryCatch(file.exists(gb), error = function() FALSE)) {
-    con <- file(gb, open="rt")
-    on.exit(close(con))
-    db_path <- paste0(gb, ".db")
-    parsed_data <- list(.parseGB(gb_data=readLines(con),
-                                 db_path=db_path,
-                                 with_sequence=with_sequence,
-                                 force=force))
+    parsed_data <- list(.parseGB(readLines(con), with_sequence))
+  ##
+  ## Parse GeneBank flat files  
+  ##
+  } else if (tryCatch(all(file.exists(gb)), error = function() FALSE)) {
+    n <- length(gb)
+    parsed_data <- vector("list", n)
+    for (i in seq_len(n)) {
+      con <- file(gb[i], open="rt")
+      parsed_data[[i]] <- .parseGB(gb_data=readLines(con), with_sequence)
+      close(con)
+    }
   } else {
-    stop("'gb' must be a valid GenBank flat file or an 'efetch' object containing GenBank records")
+    stop("'gb' must be the path to a GenBank flat file or an 'efetch' object containing GenBank records")
   } 
 
-  gbk_list <- list()
-  accn <- character()
+  gbr_list <- list()
   for (gbk in parsed_data) {
-    if (is.null(gbk[["header"]][["accession"]]))
-      stop("No accession number available")
-    if (is.null(gbk[["header"]][["definition"]]))
-      stop("No sequence definition available")
-    if (!is(gbk[["features"]], "gbFeatureList"))
-      stop("Features must be a 'gbFeatureList' instance")
-    
-    with(gbk, {
-      dbInsert(db, "locus", header[["locus"]])
-      dbInsert(db, "length", header[["length"]])
-      dbInsert(db, "type", header[["type"]])
-      dbInsert(db, "topology", header[["topology"]])
-      dbInsert(db, "division", header[["division"]])
-      dbInsert(db, "date", header[["date"]])
-      dbInsert(db, "definition", header[["definition"]]) # mandatory
-      dbInsert(db, "accession", header[["accession"]])   # mandatory
-      dbInsert(db, "version", header[["version"]])
-      dbInsert(db, "GI", header[["GI"]])
-      dbInsert(db, "dblink", header[["dblink"]])
-      dbInsert(db, "dbsource", header[["dbsource"]])
-      dbInsert(db, "keywords", header[["keywords"]])
-      dbInsert(db, "source", header[["source"]])
-      dbInsert(db, "organism", header[["organism"]])
-      dbInsert(db, "lineage", header[["lineage"]])
-      dbInsert(db, "references", header[["references"]])
-      dbInsert(db, "comment", header[["comment"]])
-      dbInsert(db, "features", features) # mandatory
-      dbInsert(db, "sequence", sequence)
-    })
-    v <- validObject(gbk$db)
-    gbk_list <- c(gbk_list, gbk$db)
-    accn <- c(accn, gbk$header[["accession"]])
+    gbr <- with(gbk, 
+                new("gbRecord",
+                    seqinfo = header[["seqinfo"]],
+                    locus = header[["locus"]],
+                    type = header[["type"]],
+                    topology = header[["topology"]],
+                    division = header[["division"]],
+                    date = header[["date"]],
+                    version = header[["version"]],
+                    GI = header[["GI"]],
+                    dblink = header[["dblink"]],
+                    dbsource = header[["dbsource"]],
+                    keywords = header[["keywords"]],
+                    source = header[["source"]],
+                    organism = header[["organism"]],
+                    lineage = header[["lineage"]],
+                    references = header[["references"]],
+                    comment = header[["comment"]],
+                    features = features,
+                    sequence = sequence,
+                    contig = contig)
+    )
+    gbr_list <- c(gbr_list, gbr)
   }
   
-  if (length(gbk_list) == 1L) 
-    gbk_list <- gbk_list[[1L]]
+  if (length(gbr_list) == 1L) 
+    gbr_list[[1L]]
   else
-    names(gbk_list) <- accn
- 
-  gbk_list
-}
-
-
-#' @keywords internal
-#' @autoImports
-init_db <- function(db_dir, create = FALSE, ...) {
-  db_dir <- sub("/$", "", db_dir, perl=TRUE)
-  .check <- TRUE
-  if (create) {
-    dbCreate(db_dir, "RDS")
-    .check <- FALSE
-  }
-  if (!file.exists(db_dir)) {
-    stop(sprintf("Database directory %s does not exist",
-                 sQuote(db_dir)))
-  }
-  new("gbRecord", dir=normalizePath(db_dir), name=basename(db_dir), ...,
-      .check = .check)
+    gbRecordList(gbr_list)
 }
 
 
@@ -185,79 +135,53 @@ init_db <- function(db_dir, create = FALSE, ...) {
 
 
 setMethod("show", "gbRecord",
-          function (object) {
-            if (length(object@name) == 0)
-              stop("database does not have a name")
-            
-            if (is.logical(tryCatch(dbFetch(object, "accession"), error=function(e) TRUE))) {
-              showme <- sprintf("%s database %s with no features\n", 
-                                sQuote(class(object)), sQuote(object@name))
+          function (object) { 
+            if (is.na(accession(object))) {
+              showme <- sprintf("%s instance with no features\n", sQuote(class(object)))
             } else {
-              Seq <- dbFetch(object, "sequence")
+              S <- sequence(object)
               W <- getOption("width")
               showme <- paste0(
-                sprintf("%s database %s with %i features\n", 
-                        sQuote(class(object)), sQuote(object@name),
-                        length(dbFetch(object, "features"))),
-                
+                sprintf("%s instance with %i features\n", 
+                        sQuote(class(object)), length(features(object))),
                 sprintf("LOCUS       %s\n",
-                        linebreak(paste(dbFetch(object, "locus"),
-                                        dbFetch(object, "length"),
-                                        names(dbFetch(object, "length")),
-                                        dbFetch(object, "type"),
-                                        dbFetch(object, "topology"),
-                                        dbFetch(object, "division"),
-                                        dbFetch(object, "date")),
+                        linebreak(paste(object@locus, seqlengths(object),
+                                        if (object@type == 'AA') 'aa' else 'bp',
+                                        object@type, object@topology,
+                                        object@division, object@date),
                                   offset=13, FORCE=TRUE)),
-                
                 sprintf("DEFINITION  %s\n",
-                        linebreak(dbFetch(object, "definition"), offset=13,
-                                  FORCE=TRUE)),
-                
-                sprintf("ACCESSION   %s\n", dbFetch(object, "accession")),
-                
-                sprintf("VERSION     %s GI:%s\n",
-                        dbFetch(object, "version"), dbFetch(object, "GI")),
-                
-                sprintf("DBLINK      Project: %s\n", dbFetch(object, "dblink")),
-                
-                if (dbFetch(object, "type") == "AA") {
+                        linebreak(definition(object), offset=13, FORCE=TRUE)),
+                sprintf("ACCESSION   %s\n", accession(object)),
+                sprintf("VERSION     %s GI:%s\n", object@version, object@GI),
+                sprintf("DBLINK      Project: %s\n", object@dblink),
+                if (object@type == "AA") {
                   sprintf("DBSOURCE    %s\n",
-                          linebreak(dbFetch(object, "dbsource"), offset=13,
-                                    FORCE=TRUE))
+                          linebreak(object@dbsource, offset=13, FORCE=TRUE))
                 },
-                
                 sprintf("KEYWORDS    %s\n",
-                        linebreak(dbFetch(object, "keywords"), offset=13,
-                                  FORCE=TRUE)),
-                
+                        linebreak(object@keywords, offset=13, FORCE=TRUE)),
                 sprintf("SOURCE      %s\n",
-                        linebreak(dbFetch(object, "source"), offset=13,
-                                  FORCE=TRUE)),
-                
+                        linebreak(object@source, offset=13, FORCE=TRUE)),
                 sprintf("  ORGANISM  %s\n",
-                        linebreak(dbFetch(object, "organism"), offset=13,
-                                  FORCE=TRUE)),
-                
+                        linebreak(object@organism, offset=13, FORCE=TRUE)),
                 sprintf("            %s\n",
-                        linebreak(dbFetch(object, "lineage"), offset=13,
-                                  FORCE=TRUE)),
-                
-                sprintf("REFERENCE   %s\n", dbFetch(object, "references")),
-                
+                        linebreak(object@lineage, offset=13, FORCE=TRUE)),
+                sprintf("REFERENCE   %s\n", object@references),
                 sprintf("COMMENT     %s\n",
-                        linebreak(dbFetch(object, "comment"), offset=13,
-                                  FORCE=TRUE)),
-                
-                if (not.null(Seq)) {
-                  if (Seq@ranges@width[1L] < W - 14)
-                    sprintf("ORIGIN      %s\n", toString(Seq))
+                        linebreak(object@comment, offset=13, FORCE=TRUE)),
+                if (!is.null(S)) {
+                  if (S@ranges@width[1L] < W - 14)
+                    sprintf("ORIGIN      %s\n", toString(S))
                   else
-                    sprintf("ORIGIN      %s\n             ...\n             %s\n",
-                            toString(subseq(Seq, start=1, end=W - 14)),
-                            toString(subseq(Seq,
-                                            start=length(Seq[[1L]]) -  W + 15,
-                                            end=length(Seq[[1L]]))))
+                    sprintf("ORIGIN      %s\n            ...\n            %s\n",
+                            toString(subseq(S, start=1, end=W - 14)),
+                            toString(subseq(S, start=length(S[[1L]]) -  W + 15,
+                                            end=length(S[[1L]]))))
+                },
+                if (!is.null(object@contig)) {
+                  sprintf("CONTIG      %s\n", linebreak(as(object@contig, "character"),
+                                                        offset=13, split=",", FORCE=TRUE))
                 })
             }
             
@@ -265,33 +189,84 @@ setMethod("show", "gbRecord",
           })
 
 
+# summary ----------------------------------------------------------------
+
+
+setMethod("summary", "gbRecord",
+          function (object, n=7, ...) {
+            si <- seqinfo(object)
+            acc <- seqnames(si)
+            len <- unname(seqlengths(si))
+            type <- if (object@type == 'AA') 'aa' else 'bp'
+            def <- 
+              ellipsize(obj=unname(genome(si)),
+                        width=getOption("width") - nchar(len) - nchar(type) - 8)
+            cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def))
+            obj.features <- features(object)
+            if (length(obj.features) > 2*n) {
+              head <- head(obj.features, n=n)
+              tail <- tail(obj.features, n=n)
+              x <- lapply(head, summary)
+              cat("...\n")
+              x <- lapply(tail, summary)  
+            } else  {
+              x <- lapply(obj.features, summary)
+            }
+            
+            return(invisible(NULL))
+          })
+
+
 # getters ----------------------------------------------------------------
 
 
-setMethod("features", "gbRecord", 
-          function (x) dbFetch(x, "features"))
+setMethod("seqinfo", "gbRecord",
+          function (x) x@seqinfo)
 
 
-setMethod("sequence", "gbRecord", 
-          function (x) dbFetch(x, "sequence"))
+setMethod("seqlengths", "gbRecord",
+          function (x) seqlengths(seqinfo(x)))
 
 
 setMethod("accession", "gbRecord", 
-          function (x) dbFetch(x, "accession"))
+          function (x) seqnames(x@seqinfo))
 
 
 setMethod("definition", "gbRecord", 
-          function (x) dbFetch(x, "definition"))
+          function (x) genome(x@seqinfo))
 
 
-setMethod("seqinfo", "gbRecord", 
-          function (x) {
-            new("gbInfo", db = x, 
-                seqnames = dbFetch(x, 'accession'),
-                seqlengths = as.integer(dbFetch(x, 'length')),
-                is_circular = dbFetch(x, 'topology') == "circular",
-                genome = dbFetch(x, 'definition'))
-            })
+setMethod("features", "gbRecord", 
+          function (x) x@features)
+
+
+setMethod("sequence", "gbRecord", 
+          function (x) x@sequence)
+
+
+setMethod("ranges", "gbRecord",
+          function (x, join = FALSE, key = TRUE, include = "none", exclude = "") {
+            .make_GRanges(x@features, join = join, include = include,
+                          exclude = exclude, key = key)
+          })
+
+
+setMethod("start", "gbRecord",
+          function (x, join = FALSE, drop = TRUE) {
+            start(features(x), join = join, drop = drop)
+          })
+
+
+setMethod("end", "gbRecord",
+          function (x, join = FALSE, drop = TRUE) {
+            end(features(x), join = join, drop = drop)
+          })
+
+
+setMethod("strand", "gbRecord",
+          function (x, join = FALSE, drop = TRUE) {
+            strand(features(x), join = join, drop = drop)
+          })
 
 
 # listers ----------------------------------------------------------------
@@ -299,7 +274,7 @@ setMethod("seqinfo", "gbRecord",
 
 setMethod("listQualif", "gbRecord", 
           function (x) {
-            lapply(dbFetch(x, "features"), listQualif)
+            lapply(x@features, listQualif)
           })
 
 
@@ -307,11 +282,11 @@ setMethod("listQualif", "gbRecord",
 
 
 setMethod("[[", c("gbRecord", "character", "missing"),
-          function(x, i) dbFetch(x, i))
+          function(x, i) slot(object=x, name=i))
 
 
 setMethod("$", "gbRecord",
-          function(x, name) dbFetch(x, name))
+          function(x, name) slot(object=x, name=name))
 
 
 # select -----------------------------------------------------------------
@@ -319,35 +294,10 @@ setMethod("$", "gbRecord",
 
 setMethod("select", "gbRecord",
           function (x, ..., keys = NULL, cols = NULL) {
-            ans <- dbFetch(x, "features")
+            ans <- x@features
             ans <- .select(ans, ..., keys = keys)
             ans <- .retrieve(ans, cols = cols)
             ans
-          })
-
-
-# write ------------------------------------------------------------------
-
-
-setMethod("write", "gbRecord",
-          function (x, file = "data") {
-            if (file.exists(x@dir)) {
-              if (file == "data") {
-                file <- file.path(getwd(), paste0(dbFetch(x, "accession"), ".db"))
-              }
-              dir.create(path=file)
-              right <- file.copy(from=Sys.glob(file.path(x@dir, "*")),
-                                 to=file, recursive=TRUE)
-              
-              if (all(right)) {
-                cat(paste("Record written to", sQuote(file)))
-              }
-              
-              return(invisible(file))
-              
-            } else {
-              stop(paste("Database file", sQuote(x@dir), "does not exist"))
-            }
           })
 
 
@@ -356,15 +306,5 @@ setMethod("write", "gbRecord",
 
 setMethod("shift", "gbRecord",
           function(x, shift, split=FALSE, order=FALSE, updateDb=FALSE)
-            .shift_features(x=x, shift=shift, split=split, order=order, 
-                            updateDb=updateDb))
-
-
-# revcomp ----------------------------------------------------------------
-
-
-setMethod("revcomp", "gbRecord",
-          function(x, order=FALSE, updateDb=FALSE)
-            .revcomp_features(x=x, order=order,
-                              updateDb=updateDb))
+            .shift_features(x=x, shift=shift, split=split, order=order))
 

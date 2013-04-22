@@ -1,8 +1,12 @@
 % Built by roxygen3 0.1
 \docType{class}
 \name{gbFeature-class}
+\alias{gbFeature}
 \alias{gbFeature-class}
 \title{gbFeature}
+\usage{
+  gbFeature(feature, seqinfo, id = 0L)
+}
 \description{
 \dQuote{gbFeature} is an S4 class that provides a container
 for GenBank feature tables.
@@ -16,13 +20,13 @@ for GenBank feature tables.
   \item \code{\link{definition}}
   \item \code{\link{end}}
   \item \code{\link{end<-}}
+  \item \code{\link{fuzzy}}
   \item \code{\link{hasKey}}
   \item \code{\link{hasQualif}}
   \item \code{\link{index}}
   \item \code{\link{key}}
   \item \code{\link{key<-}}
   \item \code{\link{listQualif}}
-  \item \code{\link{partial}}
   \item \code{\link{qualif}}
   \item \code{\link{qualif<-}}
   \item \code{\link{ranges}}

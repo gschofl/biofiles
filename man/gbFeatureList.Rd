@@ -31,7 +31,6 @@ Super classes:
   \item \code{\link{listQualif}}
   \item \code{\link{qualif}}
   \item \code{\link{ranges}}
-  \item \code{\link{revcomp}}
   \item \code{\link{select}}
   \item \code{\link{seqinfo}}
   \item \code{\link{seqlengths}}
@@ -50,7 +49,7 @@ Super classes:
 \keyword{classes}
 \section{Slots}{
 \describe{
-  \item{.Info}{A \code{\linkS4class{gbInfo}} instance.}
+  \item{.Info}{A \code{\linkS4class{Seqnfo}} instance.}
 
   \item{.Data}{A list of \code{\linkS4class{gbFeature}} objects.}
 

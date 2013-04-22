@@ -1,13 +1,15 @@
 % Built by roxygen3 0.1
 \docType{class}
 \name{gbLocation-class}
+\alias{gbLocation}
 \alias{gbLocation-class}
 \title{gbLocation}
+\usage{
+  gbLocation(gb_base_span, accession = "")
+}
 \description{
 \dQuote{gbLocation} is an S4 class that provides a container for
-GenBank feature locations.
-It extends \code{\linkS4class{Intervals_full}} and provides 5
-additional Slots.
+GenBank feature location descriptors.
 }
 \details{
 For more information see the 
@@ -16,13 +18,7 @@ For more information see the
 \section{Class hierarchy for gbLocation}{
 Super classes:
 \itemize{
-  \item \linkS4class{Intervals_full}
-  \item \linkS4class{Intervals_virtual}
-  \item \linkS4class{matrix}
-  \item \linkS4class{Intervals_virtual_or_numeric}
-  \item \linkS4class{array}
-  \item \linkS4class{structure}
-  \item \linkS4class{vector}
+  \item \linkS4class{gbLocationOrNull}
 }
 
 }
@@ -32,8 +28,7 @@ Super classes:
   \item \code{\link{accession}}
   \item \code{\link{end}}
   \item \code{\link{end<-}}
-  \item \code{\link{initialize}}
-  \item \code{\link{partial}}
+  \item \code{\link{fuzzy}}
   \item \code{\link{show}}
   \item \code{\link{start}}
   \item \code{\link{start<-}}
@@ -46,18 +41,25 @@ Super classes:
 \keyword{classes}
 \section{Slots}{
 \describe{
-  \item{strand}{A single integer -1 or 1 (for minus or plus strand,
-  respectively)}
+  \item{range}{An integer matrix indicating the base numbers delimiting a
+sequence span.}
 
-  \item{compound}{A character code specifying how multiple segments
-  are joined. One of \sQuote{join} or \sQuote{order}.}
+  \item{fuzzy}{A logical matrix indicating fuzzy start and/or end
+(e.g. <1..200).}
 
-  \item{partial}{A logical matrix specifying whether residues are
-  missing from the 5' and 3' ends respectively.}
+  \item{strand}{An integer vector containing -1, 1, or NA.}
 
-  \item{accession}{An object of class \linkS4class{character}}
+  \item{compound}{A character code specifying how multiple ranges
+are joined. One of \sQuote{join}, \sQuote{order}, or \sQuote{bond}.}
 
-  \item{remote}{An object of class \linkS4class{logical}}
+  \item{accession}{A character vector; the accession number of the sequence
+of the feature this location lives on.}
+
+  \item{remote}{A logical vector}
+
+  \item{type}{A character vector describing the type of the position. Normally
+an "R" for \sQuote{range} (e.g., 1..200 or point position 200) and "B"
+for \sQuote{between bases} (e.g., 36^37).}
 
 }
 }

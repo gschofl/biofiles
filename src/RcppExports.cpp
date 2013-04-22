@@ -5,35 +5,26 @@
 
 using namespace Rcpp;
 
-// parse_gb_location
-SEXP parse_gb_location(std::string gb_base_span);
-RcppExport SEXP biofiles_parse_gb_location(SEXP gb_base_spanSEXP) {
+// gbFeature
+SEXP gbFeature(std::vector<std::string> feature, Rcpp::S4 seqinfo, int id = 0);
+RcppExport SEXP biofiles_gbFeature(SEXP featureSEXP, SEXP seqinfoSEXP, SEXP idSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    std::vector<std::string> feature = Rcpp::as<std::vector<std::string> >(featureSEXP);
+    Rcpp::S4 seqinfo = Rcpp::as<Rcpp::S4 >(seqinfoSEXP);
+    int id = Rcpp::as<int >(idSEXP);
+    SEXP __result = gbFeature(feature, seqinfo, id);
+    return Rcpp::wrap(__result);
+END_RCPP
+}
+// gbLocation
+SEXP gbLocation(std::string gb_base_span, std::string accession = "");
+RcppExport SEXP biofiles_gbLocation(SEXP gb_base_spanSEXP, SEXP accessionSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope __rngScope;
     std::string gb_base_span = Rcpp::as<std::string >(gb_base_spanSEXP);
-    SEXP __result = parse_gb_location(gb_base_span);
-    return Rcpp::wrap(__result);
-END_RCPP
-}
-// get_qual
-Rcpp::CharacterVector get_qual(std::vector<std::string> lines);
-RcppExport SEXP biofiles_get_qual(SEXP linesSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope __rngScope;
-    std::vector<std::string> lines = Rcpp::as<std::vector<std::string> >(linesSEXP);
-    Rcpp::CharacterVector __result = get_qual(lines);
-    return Rcpp::wrap(__result);
-END_RCPP
-}
-// parse_feature_table
-SEXP parse_feature_table(int id = 0, Rcpp::CharacterVector lines = Rcpp::CharacterVector::create(""), Rcpp::S4 seqinfo = Rcpp::S4("gbInfo"));
-RcppExport SEXP biofiles_parse_feature_table(SEXP idSEXP, SEXP linesSEXP, SEXP seqinfoSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope __rngScope;
-    int id = Rcpp::as<int >(idSEXP);
-    Rcpp::CharacterVector lines = Rcpp::as<Rcpp::CharacterVector >(linesSEXP);
-    Rcpp::S4 seqinfo = Rcpp::as<Rcpp::S4 >(seqinfoSEXP);
-    SEXP __result = parse_feature_table(id, lines, seqinfo);
+    std::string accession = Rcpp::as<std::string >(accessionSEXP);
+    SEXP __result = gbLocation(gb_base_span, accession);
     return Rcpp::wrap(__result);
 END_RCPP
 }

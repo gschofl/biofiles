@@ -3,13 +3,11 @@
 \alias{index}
 \title{Get indices of GenBank features}
 \usage{
-  index(x, seqinfo = FALSE, ...)
+  index(x, ...)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbFeature}} or
 \code{\linkS4class{gbFeatureList}} instance.}
-
-  \item{seqinfo}{Include the \code{\linkS4class{gbInfo}} for the the feature.}
 
   \item{...}{Additional arguments passed to methods.}
 }

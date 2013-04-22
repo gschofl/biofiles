@@ -11,7 +11,7 @@ setOldClass("list")
 #' \dQuote{gbFeatureList} is an S4 class that provides a container for
 #' \dQuote{\linkS4class{gbFeature}}s retrived from GenBank flat files.
 #'
-#' @slot .Info A \code{\linkS4class{gbInfo}} instance.
+#' @slot .Info A \code{\linkS4class{Seqnfo}} instance.
 #' @slot .Data A list of \code{\linkS4class{gbFeature}} objects.
 #' 
 #' @rdname gbFeatureList
@@ -19,14 +19,14 @@ setOldClass("list")
 #' @classHierarchy
 #' @classMethods
 setClass("gbFeatureList", 
-         representation(.Info="gbInfo"),
+         representation(.Info="Seqinfo"),
          contains="list")
 
 
 setValidity2("gbFeatureList", function (object) {
-  if (any(vapply(object@.Data, class, character(1)) != "gbFeature")) {
+  if (!all(vapply(object@.Data, is, 'gbFeature', FUN.VALUE=logical(1))))
     return("All elements in a 'gbFeatureList' must be 'gbFeature' instances")
-  }
+
   TRUE
 })
 
@@ -143,66 +143,31 @@ setMethod("definition", "gbFeatureList",
 
 setMethod("ranges", "gbFeatureList",
           function (x, join = FALSE, key = TRUE, include = "none", exclude = "") {
-            .make_GRanges(x, join = join, include = include,
-                          exclude = exclude, key = key)
+            .make_GRanges(x, join = join, include = include, exclude = exclude, key = key)
           })
 
 
 setMethod("location", "gbFeatureList",
-          function (x, seqinfo = FALSE, join = FALSE) {
-            ans <- lapply(x, location)
-            if (seqinfo) {
-              structure(ans,
-                        accession=accession(x),
-                        definition=unname(definition(x)),
-                        dir=seqinfo(x)@db@dir)
-            }
-            else {
-              ans
-            }
+          function (x, join = FALSE) {
+            lapply(x, location)
           })
 
 
 setMethod("index", "gbFeatureList",
-          function (x, seqinfo = FALSE) { 
-            ans <- vapply(x, function(f) f@.Id, numeric(1))
-            if (seqinfo) {
-              structure(ans,
-                        accession=accession(x),
-                        definition=unname(definition(x)),
-                        dir=seqinfo(x)@db@dir)
-            } else {
-              ans
-            }
+          function (x) {
+            vapply(x, function(f) f@.Id, numeric(1))
           })
 
 
 setMethod("key", "gbFeatureList",
-          function (x, seqinfo = FALSE) {
-            ans <- vapply(x, function(f) f@key, character(1))
-            if (seqinfo) {
-              structure(ans,
-                        accession=accession(x),
-                        definition=unname(definition(x)),
-                        dir=seqinfo(x)@db@dir)
-            } else {
-              ans  
-            }
+          function (x) {
+            vapply(x, function(f) f@key, character(1))
           })
 
 
 setMethod("qualif", "gbFeatureList",
-          function (x, which = "", seqinfo = FALSE, fixed = FALSE) {
-            ans <- .simplify(.qualAccess(x, which, fixed), unlist=FALSE)
-            if (seqinfo) {
-              ans <- structure(ans, 
-                               id=vapply(x, function(f) f@.Id, numeric(1)),
-                               accession=accession(x),
-                               definition=unname(definition(x)),
-                               dir=seqinfo(x)@db@dir)
-            } else {
-              ans            
-            }
+          function (x, which = "", fixed = FALSE) {
+            .simplify(.qualAccess(x, which, fixed), unlist=FALSE)
           })
 
 
@@ -221,10 +186,17 @@ setMethod("dbxref", "gbFeatureList",
 
 
 setMethod("sequence", "gbFeatureList",
-          function (x, db = NULL) {
-            stopifnot(hasValidDb(x))
-            db <- slot(seqinfo(x), "db")
-            .seqAccess(dbFetch(db, "sequence"), x, dbFetch(db, "type"))
+          function (x, gbk) {
+            
+            if (missing(gbk)) {
+              stop("Matching gbRecord is missing")
+            }
+            
+            if (!identical(seqinfo(x), seqinfo(gbk))) {
+              stop("Seqinfo of gbFeatureList and gbRecord not matching.")
+            }
+            
+            .seqAccess(sequence(gbk), x, gbk@type)
           })
 
 
@@ -348,18 +320,7 @@ setMethod("view", "gbFeatureList",
 
 
 setMethod("shift", "gbFeatureList",
-          function(x, shift=0L, split=FALSE, order=FALSE, updateDb=FALSE) {
-            .shift_features(x=x, shift=shift, split=split,
-                            order=order, updateDb=updateDb)
+          function(x, shift=0L, split=FALSE, order=FALSE) {
+            .shift_features(x=x, shift=shift, split=split, order=order)
           })
-
-
-# revcomp ----------------------------------------------------------------
-
-
-setMethod("revcomp", "gbFeatureList",
-          function(x, order=FALSE, updateDb=FALSE) {
-            .revcomp_features(x=x, order=order, updateDb=updateDb)
-          })
-
 

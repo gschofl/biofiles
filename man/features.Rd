@@ -21,6 +21,7 @@ Retrieve features of a GenBank record.
 \section{Method signatures for generic features}{
 \itemize{
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
 }
 
 }

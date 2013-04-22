@@ -1,5 +1,4 @@
 #' @include utils.R
-#' @include validate.R
 NULL
 
 
@@ -11,7 +10,7 @@ NULL
 ##      start<-, end<-, strand<-
 ##
 ##    Getters/setters in gbLocation-class
-##      ranges, partial, accession
+##      ranges, fuzzy, accession
 ##
 ##    Getters/setters in gbFeature-class, gbFeatureList-class
 ##      index, key, location, ranges, sequence, seqinfo
@@ -142,11 +141,11 @@ setGeneric("ranges")
 setGeneric("ranges<-")
 
 
-#' @rdname partial
+#' @rdname fuzzy
 #' @export
 #' @genericMethods
-setGeneric("partial", signature="x", function (x, ...) {
-  standardGeneric("partial")
+setGeneric("fuzzy", signature="x", function (x, ...) {
+  standardGeneric("fuzzy")
 })
 
 
@@ -202,14 +201,13 @@ setGeneric("summary")
 #'
 #' @param x A \code{\linkS4class{gbFeature}} or
 #' \code{\linkS4class{gbFeatureList}} instance.
-#' @param seqinfo Include the \code{\linkS4class{gbInfo}} for the the feature.
 #' @param ... Additional arguments passed to methods.
 #' @return A numeric vector of feature indeces.
 #' @rdname index
 #' @export
 #' @genericMethods
 setGeneric("index", signature="x",
-           function (x, seqinfo = FALSE, ...) {
+           function (x, ...) {
              standardGeneric("index")
            })
 
@@ -218,14 +216,13 @@ setGeneric("index", signature="x",
 #'
 #' @param x A \code{\linkS4class{gbFeature}} or
 #' \code{\linkS4class{gbFeatureList}} instance.
-#' @param seqinfo Include the \code{\linkS4class{gbInfo}} for the the feature.
 #' @param ... Additional arguments passed to methods.
 #' @return A list of \code{\linkS4class{gbLocation}} objects
 #' @rdname location
 #' @export
 #' @genericMethods
 setGeneric("location", signature="x",
-           function (x, seqinfo = FALSE, ...) {
+           function (x, ...) {
              standardGeneric("location")
            })
 
@@ -234,13 +231,12 @@ setGeneric("location", signature="x",
 #'
 #' @param x A \code{\linkS4class{gbFeature}} or
 #' \code{\linkS4class{gbFeatureList}} instance.
-#' @param seqinfo Include the \code{\linkS4class{gbInfo}} for the the feature.
 #' @param ... Additional arguments passed to methods.
 #' @rdname key
 #' @export
 #' @genericMethods
 setGeneric("key", signature="x",
-           function(x, seqinfo = FALSE, ...) {
+           function(x, ...) {
              standardGeneric("key")
              })
 
@@ -260,13 +256,12 @@ setGeneric("key<-", signature="x",
 #' \code{\linkS4class{gbFeatureList}} instance.
 #' @param which (Optional) A character vector giving the name(s) of the
 #' qualifiers to retrieve.
-#' @param seqinfo Include the \code{\linkS4class{gbInfo}} for the the feature.
 #' @param ... Additional arguments passed to methods.
 #' @rdname qualif
 #' @export
 #' @genericMethods
 setGeneric("qualif", signature=c("x", "which"),
-           function(x, which, seqinfo = FALSE, ...) {
+           function(x, which, ...) {
              standardGeneric("qualif")
            })
 
@@ -403,7 +398,7 @@ setGeneric("hasQualif", signature=c("x","qualifier"),
 
 #' Shift location of features in a GenBank record
 #'
-#' @usage shift(x, shift=0L, split=FALSE, order=FALSE, updateDb=FALSE)
+#' @usage shift(x, shift=0L, split=FALSE, order=FALSE)
 #'
 #' @param x A \code{\linkS4class{gbFeatureList}} or
 #' \code{\linkS4class{gbRecord}} instance (gbFeatureLists must 
@@ -412,7 +407,6 @@ setGeneric("hasQualif", signature=c("x","qualifier"),
 #' @param split Split features that after the shift extends across the end of
 #' the sequence.
 #' @param order Reorder features after the shift.
-#' @param updateDb Update the filehash DB after the shift
 #'
 #' @return A \code{\linkS4class{gbFeatureList}} object.
 #' @rdname shift
@@ -421,29 +415,6 @@ setGeneric("hasQualif", signature=c("x","qualifier"),
 setGeneric("shift", signature="x",
            function(x, shift=0L, use.names=TRUE, ...) {
              standardGeneric("shift")
-           })
-
-
-# revcomp ----------------------------------------------------------------
-
-
-#' reverse complement features in a GenBank record
-#'
-#' @param x A \code{\linkS4class{gbRecord}} or
-#' \code{\linkS4class{gbFeatureList}} or instance.
-#' (\code{gbFeatureList} instances must include a \sQuote{source} field).
-#' @param order Should the resulting gbFeatureList be reordered.
-#' @param update_db Should the sequence and the new feature locations be
-#' updated in the underlying filehash database?
-#' @param ... Additional arguments passed to methods.
-#' 
-#' @return A \code{\linkS4class{gbFeatureList}} instance
-#' @rdname revcomp
-#' @export
-#' @genericMethods
-setGeneric("revcomp", signature="x",
-           function (x, order=FALSE, updateDb=FALSE, ...){
-             standardGeneric("revcomp") 
            })
 
 

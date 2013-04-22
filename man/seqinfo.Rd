@@ -19,17 +19,10 @@ Get sequence information about genomic features
 }
 \section{Method signatures for generic seqinfo}{
 \itemize{
-  \item \linkS4class{GappedAlignmentPairs}
-  \item \linkS4class{GappedAlignments}
   \item \linkS4class{gbFeature}
   \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
-  \item \linkS4class{GRanges}
-  \item \linkS4class{GRangesList}
-  \item \linkS4class{List}
-  \item \linkS4class{RangedData}
-  \item \linkS4class{RangesList}
-  \item \linkS4class{SummarizedExperiment}
+  \item \linkS4class{gbRecordList}
 }
 
 }
@@ -40,6 +33,7 @@ Get sequence information about genomic features
   \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbLocation}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
 }
 
 }
@@ -49,6 +43,7 @@ Get sequence information about genomic features
   \item \linkS4class{gbFeature}
   \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
 }
 
 }
@@ -58,7 +53,8 @@ Get sequence information about genomic features
   \item \linkS4class{ANY}
   \item \linkS4class{gbFeature}
   \item \linkS4class{gbFeatureList}
-  \item \linkS4class{Seqinfo}
+  \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
 }
 
 }

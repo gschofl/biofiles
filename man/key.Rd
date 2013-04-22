@@ -4,15 +4,13 @@
 \alias{key<-}
 \title{Get/set keys of GenBank features}
 \usage{
-  key(x, seqinfo = FALSE, ...)
+  key(x, ...)
 
   key(x, value, ...) <- value
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbFeature}} or
 \code{\linkS4class{gbFeatureList}} instance.}
-
-  \item{seqinfo}{Include the \code{\linkS4class{gbInfo}} for the the feature.}
 
   \item{...}{Additional arguments passed to methods.}
 }

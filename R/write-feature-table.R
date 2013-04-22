@@ -48,11 +48,11 @@ setMethod("write.FeatureTable", "gbRecord",
   }  
 
   l <- f@location  
-  loc <- getLoc(l@.Data[1,,drop=FALSE], l@partial[1,,drop=FALSE], l@strand)
+  loc <- getLoc(l@.Data[1,,drop=FALSE], l@fuzzy[1,,drop=FALSE], l@strand)
   loc_line <- sprintf("%s%s\t%s%s\t%s\n", loc[[1]], loc[[2]], loc[[3]],
                       loc[[4]], f@key)
   loc_line2 <- if (nrow(l@.Data) > 1) {
-    loc <- getLoc(l=l@.Data[-1,,drop=FALSE], p=l@partial[-1,,drop=FALSE],
+    loc <- getLoc(l=l@.Data[-1,,drop=FALSE], p=l@fuzzy[-1,,drop=FALSE],
                   strand=l@strand)
     sprintf("%s%s\t%s%s\n", loc[[1]], loc[[2]], loc[[3]],
             loc[[4]])

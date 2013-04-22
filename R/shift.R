@@ -1,9 +1,8 @@
-.shift_features <- function (x, shift=0L, split=FALSE, order=FALSE,
-                             updateDb=FALSE) {
+.shift_features <- function (x, shift=0L, split=FALSE, order=FALSE) {
 
   if (is(x, "gbRecord")) {
-    len <- dbFetch(x, "length")
-    features <- dbFetch(x, "features")
+    len <- seqlengths(x)
+    features <- features(x)
   } else if (is(x, "gbFeatureList")) {
     if (all_empty(x["source"])) {
       stop("No source key in this gbFeatureList")
@@ -16,9 +15,9 @@
     if (not.na(x@location@compound)) {
       stop("Cannot split a compound location")
     }
-    x@location@.Data <- split_matrix
+    x@location@range <- split_matrix
     x@location@compound <- "join"
-    x@location@partial <- matrix(c(FALSE, TRUE, TRUE, FALSE), ncol=2)
+    x@location@fuzzy <- matrix(c(FALSE, TRUE, TRUE, FALSE), ncol=2)
     x@location@accession <- rep(x@location@accession, 2)
     x@location@remote <- rep(x@location@remote, 2)
     x@location@closed <- matrix(rep(x@location@closed, 2), ncol=2)
@@ -91,25 +90,6 @@
     f <- f[order(mapply("[", new_start, 1))]
   }
   
-  f <- new('gbFeatureList', .Data=c(src, f), .Info=seqinfo(f))
-
-  if (updateDb) {
-    db <- slot(seqinfo(f), "db")
-    dbInsert(db, key="features", value=f)
-    seq <- dbFetch(db, "sequence")
-    
-    if (shift > 0) {
-      shift_point <- seq@ranges@width - shift + 1L
-    } else {
-      shift_point <- 0L - shift + 1L
-    }
-    
-    new_seq <- xscat(subseq(seq, start = shift_point), 
-                     subseq(seq, start = 1L, end = shift_point - 1L))
-    names(new_seq) <- names(seq)
-    dbInsert(db, key="sequence", value=new_seq)
-  }
-  
-  return(f)
+  new('gbFeatureList', .Data=c(src, f), .Info=seqinfo(f))
 }
 

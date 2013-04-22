@@ -3,13 +3,11 @@
 \alias{location}
 \title{Get genomic locations of GenBank features}
 \usage{
-  location(x, seqinfo = FALSE, ...)
+  location(x, ...)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbFeature}} or
 \code{\linkS4class{gbFeatureList}} instance.}
-
-  \item{seqinfo}{Include the \code{\linkS4class{gbInfo}} for the the feature.}
 
   \item{...}{Additional arguments passed to methods.}
 }
