@@ -11,7 +11,9 @@ setOldClass("list")
 #' \dQuote{gbFeatureList} is an S4 class that provides a container for
 #' \dQuote{\linkS4class{gbFeature}}s retrived from GenBank flat files.
 #'
-#' @slot .Info A \code{\linkS4class{Seqnfo}} instance.
+#' @slot .seqinfo An \code{environment} containing the genome sequence as
+#' an \code{\linkS4class{XStringSet}} object and sequence metadata
+#' as a \code{\linkS4class{Seqinfo}} object.
 #' @slot .Data A list of \code{\linkS4class{gbFeature}} objects.
 #' 
 #' @rdname gbFeatureList
@@ -19,14 +21,20 @@ setOldClass("list")
 #' @classHierarchy
 #' @classMethods
 setClass("gbFeatureList", 
-         representation(.Info="Seqinfo"),
+         representation(.seqinfo="environment"),
+         prototype(.seqinfo=new.env(parent=emptyenv())),
          contains="list")
 
 
 setValidity2("gbFeatureList", function (object) {
   if (!all(vapply(object@.Data, is, 'gbFeature', FUN.VALUE=logical(1))))
     return("All elements in a 'gbFeatureList' must be 'gbFeature' instances")
-
+  seq <- get("sequence", object@.seqinfo)
+  if (names(seq) != accession(object))
+    return("Names of 'seqinfo' and 'sequence' do not match")
+  if (seq@ranges@width != unname(seqlengths(x)))
+    return("Length of 'seqinfo' and 'sequence' do not match")
+                 
   TRUE
 })
 
@@ -126,7 +134,8 @@ setMethod("width", "gbFeatureList",
 
 
 setMethod("seqinfo", "gbFeatureList",
-          function (x) x@.Info)
+          function (x) tryCatch(get("seqinfo", x@.seqinfo),
+                                error = function (e) Seqinfo() ))
 
 
 setMethod("seqlengths", "gbFeatureList",
@@ -155,7 +164,7 @@ setMethod("location", "gbFeatureList",
 
 setMethod("index", "gbFeatureList",
           function (x) {
-            vapply(x, function(f) f@.Id, numeric(1))
+            vapply(x, function(f) f@.id, numeric(1))
           })
 
 
@@ -186,18 +195,7 @@ setMethod("dbxref", "gbFeatureList",
 
 
 setMethod("sequence", "gbFeatureList",
-          function (x, gbk) {
-            
-            if (missing(gbk)) {
-              stop("Matching gbRecord is missing")
-            }
-            
-            if (!identical(seqinfo(x), seqinfo(gbk))) {
-              stop("Seqinfo of gbFeatureList and gbRecord not matching.")
-            }
-            
-            .seqAccess(sequence(gbk), x, gbk@type)
-          })
+          function (x) .seqAccess(x))
 
 
 # setters ----------------------------------------------------------------

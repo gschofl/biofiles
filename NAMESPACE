@@ -104,6 +104,7 @@ importFrom(Biostrings,AAStringSet)
 importFrom(Biostrings,DNAStringSet)
 importFrom(Biostrings,readAAStringSet)
 importFrom(Biostrings,readDNAStringSet)
+importFrom(Biostrings,xscat)
 
 importFrom(GenomicRanges,Seqinfo)
 importFrom(GenomicRanges,GRanges)

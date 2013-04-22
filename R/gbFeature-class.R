@@ -7,8 +7,10 @@ NULL
 #' \dQuote{gbFeature} is an S4 class that provides a container
 #' for GenBank feature tables.
 #' 
-#' @slot .Info A \code{\linkS4class{gbInfo}} object.
-#' @slot .Id Identifier (index) of the feature in the
+#' @slot .seqinfo An \code{environment} containing the genome sequence as
+#' an \code{\linkS4class{XStringSet}} object and sequence metadata
+#' as a \code{\linkS4class{Seqinfo}} object.
+#' @slot .id Identifier (index) of the feature in the
 #' GenBank record the feature is part of.
 #' @slot key The feature key.
 #' @slot location A \code{\linkS4class{gbLocation}} object.
@@ -20,11 +22,12 @@ NULL
 #' @classHierarchy
 #' @classMethods
 setClass("gbFeature",
-         representation(.Info="Seqinfo",
-                        .Id="integer",
+         representation(.seqinfo="environment",
+                        .id="integer",
                         key="character",
                         location="gbLocation",
-                        qualifiers="character"))
+                        qualifiers="character"),
+         prototype(.seqinfo=new.env(parent=emptyenv())))
 
 
 setValidity2("gbFeature", function (object) {
@@ -115,7 +118,8 @@ setMethod("fuzzy", "gbFeature",
 
 
 setMethod("seqinfo", "gbFeature",
-          function (x) x@.Info)
+          function (x) tryCatch(get("seqinfo", x@.seqinfo),
+                                error = function (e) Seqinfo() ))
 
 
 #' @autoImports
@@ -144,7 +148,7 @@ setMethod("location", "gbFeature",
 
 
 setMethod("index", "gbFeature",
-          function (x) x@.Id)
+          function (x) x@.id)
 
 
 setMethod("key", "gbFeature", 
@@ -186,18 +190,7 @@ setMethod("dbxref", "gbFeature",
 
 
 setMethod("sequence", "gbFeature",
-          function (x, gbk) {
-            
-            if (missing(gbk)) {
-              stop("Matching gbRecord is missing")
-            }
-            
-            if (!identical(seqinfo(x), seqinfo(gbk))) {
-              stop("Seqinfo of gbFeature and gbRecord not matching.")
-            }
-            
-            .seqAccess(sequence(gbk), x, gbk@type)
-          })
+          function (x) .seqAccess(x))
 
 
 # setters ----------------------------------------------------------------

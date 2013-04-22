@@ -34,17 +34,21 @@
     gb_contig <- gbLocation(strsplitN(gb_data[contig], "CONTIG", 2))
   }
 
-  ## parse HEADER, FEATURES, and ORIGIN and construct 'gbData' object
-  header <- .parseGbHeader(gb_header=gb_header,
-                           gb_fields=gbf)
-  seqinfo <- header[["seqinfo"]]
-  features <- .parseGbFeatures(seqinfo=seqinfo,
-                               gb_features=gb_features)
-  sequence <- .parseGbSequence(gb_sequence=gb_sequence,
-                               accession_no=seqnames(seqinfo),
-                               seq_type=header[["type"]])
+  # generate the seqenv environment that will hold the Seqinfo and Sequence
+  # information. Set "seqinfo" and "sequence" to NULL
+  seqenv = new.env(parent=emptyenv())
   
-  list(header=header, features=features, sequence=sequence, contig=gb_contig)
+  ## parse HEADER, FEATURES, and ORIGIN and construct 'gbData' object
+  header <- .parseGbHeader(gb_header=gb_header, gb_fields=gbf)
+  seqenv[["seqinfo"]] <- header[["seqinfo"]]
+  
+  sequence <- .parseGbSequence(gb_sequence=gb_sequence,
+                               accession_no=seqnames(header[["seqinfo"]]),
+                               seq_type=header[["type"]])
+  seqenv[["sequence"]] <- sequence
+  
+  features <- .parseGbFeatures(gb_features=gb_features, seqenv=seqenv)
+  list(header=header, features=features, contig=gb_contig, seqenv=seqenv)
 }
 
 
@@ -213,7 +217,7 @@
 ##   /compare=[accession-number.sequence-version] e.g. /compare=AJ634337.1
 ##
 #' @autoImports
-.parseGbFeatures <- function (seqinfo, gb_features) {
+.parseGbFeatures <- function (gb_features, seqenv) {
   # where do all the features start
   feature_start <- which(substr(gb_features, 6, 6) != " ")
   # where do all the features end
@@ -222,11 +226,11 @@
   feature_idx <- mapply(seq.int, feature_start, feature_end,
                         SIMPLIFY=FALSE, USE.NAMES=FALSE)
   ftr <- mcmapply(function (idx, n) {
-    gbFeature(gb_features[idx], seqinfo, n)
+    gbFeature(gb_features[idx], seqenv, n)
   }, idx=feature_idx, n=seq_along(feature_start),
      SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
   
-  IRanges::new2('gbFeatureList', .Data=ftr, .Info=seqinfo, check=FALSE) 
+  IRanges::new2('gbFeatureList', .Data=ftr, .seqinfo=seqenv, check=FALSE) 
 }
 
 
@@ -238,8 +242,8 @@
   # DNAStringSet (mRNA etc seems to be encoded with Ts rather then Us,
   # so we use DNAStringSets for RNA)
   if (is.null(gb_sequence)) {
-    return(NULL)
-  } else {
+    return( BStringSet() )
+    } else {
     tmp <- tempfile()
     on.exit(unlink(tmp))
     writeLines(text=.joinSeq(gb_sequence, accession_no), tmp)

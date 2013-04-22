@@ -1,7 +1,6 @@
 #' @include gbFeatureList-class.R
 NULL
 
-setClassUnion("XStringSetOrNull", members=c("XStringSet", "NULL"))
 setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
 
 #' gbRecord
@@ -13,8 +12,7 @@ setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
 #' @export
 #' @classHierarchy
 #' @classMethods
-setClass("gbRecord", representation(seqinfo = "Seqinfo",
-                                    locus = "character",
+setClass("gbRecord", representation(locus = "character",
                                     type = "character",
                                     topology = "character",
                                     division = "character",
@@ -30,8 +28,8 @@ setClass("gbRecord", representation(seqinfo = "Seqinfo",
                                     references = "character",
                                     comment = "character",
                                     features = "gbFeatureList",
-                                    sequence = "XStringSetOrNull",
-                                    contig = "gbLocationOrNull"))
+                                    contig = "gbLocationOrNull",
+                                    seqinfo = "environment"))
 
 
 setValidity("gbRecord", function (object) {
@@ -101,7 +99,6 @@ gbRecord <- function (gb, with_sequence = TRUE) {
   for (gbk in parsed_data) {
     gbr <- with(gbk, 
                 new("gbRecord",
-                    seqinfo = header[["seqinfo"]],
                     locus = header[["locus"]],
                     type = header[["type"]],
                     topology = header[["topology"]],
@@ -118,8 +115,8 @@ gbRecord <- function (gb, with_sequence = TRUE) {
                     references = header[["references"]],
                     comment = header[["comment"]],
                     features = features,
-                    sequence = sequence,
-                    contig = contig)
+                    contig = contig,
+                    seqinfo = seqenv)
     )
     gbr_list <- c(gbr_list, gbr)
   }
@@ -221,7 +218,7 @@ setMethod("summary", "gbRecord",
 
 
 setMethod("seqinfo", "gbRecord",
-          function (x) x@seqinfo)
+          function (x) get("seqinfo", envir=x@seqinfo))
 
 
 setMethod("seqlengths", "gbRecord",
@@ -229,11 +226,11 @@ setMethod("seqlengths", "gbRecord",
 
 
 setMethod("accession", "gbRecord", 
-          function (x) seqnames(x@seqinfo))
+          function (x) seqnames(seqinfo(x)))
 
 
 setMethod("definition", "gbRecord", 
-          function (x) genome(x@seqinfo))
+          function (x) genome(seqinfo(x)))
 
 
 setMethod("features", "gbRecord", 
@@ -241,12 +238,12 @@ setMethod("features", "gbRecord",
 
 
 setMethod("sequence", "gbRecord", 
-          function (x) x@sequence)
+          function (x) get("sequence", envir=x@seqinfo))
 
 
 setMethod("ranges", "gbRecord",
           function (x, join = FALSE, key = TRUE, include = "none", exclude = "") {
-            .make_GRanges(x@features, join = join, include = include,
+            .make_GRanges(features(x), join = join, include = include,
                           exclude = exclude, key = key)
           })
 
@@ -274,7 +271,7 @@ setMethod("strand", "gbRecord",
 
 setMethod("listQualif", "gbRecord", 
           function (x) {
-            lapply(x@features, listQualif)
+            lapply(features(x), listQualif)
           })
 
 
@@ -294,7 +291,7 @@ setMethod("$", "gbRecord",
 
 setMethod("select", "gbRecord",
           function (x, ..., keys = NULL, cols = NULL) {
-            ans <- x@features
+            ans <- features(x)
             ans <- .select(ans, ..., keys = keys)
             ans <- .retrieve(ans, cols = cols)
             ans

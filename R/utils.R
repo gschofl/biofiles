@@ -9,13 +9,17 @@ recycle <- function (val, len) {
 
 #' @autoImports
 showInfo <- function(object) {
-  sn <- seqnames(object)
-  sl <- paste(seqlengths(object), names(seqlengths(object)))
-  g <- genome(object)
-  seqname <- pad(sn, nchar(sn) + 2, "right")
-  seqlen <- pad(sl, nchar(sl) + 2, "right")
-  genome <- ellipsize(g, width=getOption("width") - 
-                        nchar(seqname) - nchar(seqlen) - 3)
+  if (length(object) == 0) {
+    seqname <- seqlen <- genome <- ""
+  } else {
+    sn <- seqnames(object)
+    sl <- paste(seqlengths(object), names(seqlengths(object)))
+    g <- genome(object)
+    seqname <- pad(sn, nchar(sn) + 2, "right")
+    seqlen <- pad(sl, nchar(sl) + 2, "right")
+    genome <- ellipsize(g, width=getOption("width") - 
+                          nchar(seqname) - nchar(seqlen) - 3)
+  }
   cat(sprintf("%s%s%s", seqname, seqlen, genome))
 }
 
@@ -160,14 +164,18 @@ expandIds <- function (x) {
 #' @importFrom Biostrings DNAStringSet
 #' @importFrom Biostrings AAStringSet
 #' @importFrom Biostrings RNAStringSet
-.seqAccess <- function (s, x, type) {
+.seqAccess <- function (x) {
   
-  if (is.null(s))
+  if (exists("sequence", envir=x@.seqinfo))
+    s <- get("sequence", x@.seqinfo)
+  else
     stop("No sequence available", call.=FALSE)
-  
-  type <- match.arg(type, c("DNA", "AA", "RNA"))
-  SEQFUN <- match.fun(paste0(type, "StringSet"))
-  
+
+  if (length(s) == 0)
+    stop("No sequence available", call.=FALSE)
+
+  SEQFUN <- match.fun(class(s))
+
   # merge Sequences
   merge_seq <- function (s, x, SEQFUN) {
     if (length(start(x)) == 1L) {
