@@ -10,12 +10,12 @@ setMethod("write.GenBank", "gbRecord",
             # write features
             op <- options("useFancyQuotes")
             options(useFancyQuotes=FALSE)
-            cat("Writing features\n")
+            #cat("Writing features\n")
             f <- unlist(lapply(features(x), .writeFeature))
             cat(paste(f, collapse="\n"), file=file, append=TRUE)
             options(op)
             # write origin
-            cat("Writing sequence\n")
+            #cat("Writing sequence\n")
             s <- .writeSequence(x, file)
             
             invisible(list(header=h, features=f, sequence=s)) 
@@ -23,39 +23,39 @@ setMethod("write.GenBank", "gbRecord",
 
 
 #' @autoImports
-.writeHeader <- function (db, outfile = "out.gbk") {
+.writeHeader <- function (x, outfile = "out.gbk") {
   
-  type <- if (db$type == "DNA") "bp" else "  "
+  type <- if (x@type == "DNA") "bp" else "  "
   loc_line <- sprintf("%-12s%-17s %+10s %s    %-6s  %-8s %s %s",
-                      "LOCUS", db$locus, db$length, type, db$type, db$topology,
-                      db$division, toupper(format(db$date, "%d-%b-%Y")))
+                      "LOCUS", x@locus, seqlengths(x), type, x@type, x@topology,
+                      x@division, toupper(format(x@date, "%d-%b-%Y")))
   def_line <- sprintf("%-12s%s", "DEFINITION", 
-                      linebreak(db$definition, width=79, offset=12))
-  acc_line <- sprintf("%-12s%s", "ACCESSION", db$accession)
-  ver_line <- sprintf("%-12s%-12s%s%s", "VERSION", db$version, "GI:", db$GI)
+                      linebreak(definition(x), width=79, offset=12))
+  acc_line <- sprintf("%-12s%s", "ACCESSION", accession(x))
+  ver_line <- sprintf("%-12s%-12s%s%s", "VERSION", x@version, "GI:", x@GI)
   
-  dbl_line <- if (not.null(db$dblink)) {
-    sprintf("%-12s%s%s", "DBLINK", "Project: ", db$dblink)
+  dbl_line <- if (!is.null(x@dblink)) {
+    sprintf("%-12s%s%s", "DBLINK", "Project: ", x@dblink)
   } else {
     character()
   }
   
   key_line <- sprintf("%-12s%s", "KEYWORDS",
-                      linebreak(db$keywords, width=79, offset=12))
+                      linebreak(x@keywords, width=79, offset=12))
   src_line <- sprintf("%-12s%s", "SOURCE",
-                      linebreak(db$source, width=79, offset=12))
+                      linebreak(x@source, width=79, offset=12))
   org_line <- sprintf("%-12s%s", "  ORGANISM",
-                      paste(db$organism,
-                            linebreak(db$lineage, width=79, indent=12, offset=12),
+                      paste(x@organism,
+                            linebreak(x@lineage, width=79, indent=12, offset=12),
                             sep="\n"))
   ref_line <- sprintf("%-12s%-3s(bases %s to %s)\n%-12s%s\n%-12s%s\n%-12s%s",
-                      "REFERENCE", 1, 1, db$length,
+                      "REFERENCE", 1, 1, seqlengths(x),
                       "  AUTHORS", "authors",
                       "  TITLE", "title",
                       "  JOURNAL", "journal")
   
-  com_line <- if (not.null(db$comment)) {
-    sprintf("%-12s%s", "COMMENTS", linebreak(db$comment, width=79, offset=12))
+  com_line <- if (!is.null(x@comment)) {
+    sprintf("%-12s%s", "COMMENTS", linebreak(x@comment, width=79, offset=12))
   } else {
     character()
   }
@@ -74,7 +74,6 @@ setMethod("write.GenBank", "gbRecord",
 
 #' @autoImports
 .writeFeature <- function (f) {
-  
   loc_line <- sprintf("%s%-16s%s",
                       blanks(5),
                       f@key,
@@ -91,19 +90,19 @@ setMethod("write.GenBank", "gbRecord",
 
 
 #' @autoImports
-.writeSequence <- function (db, outfile = "out.gbk") {
+.writeSequence <- function (x, outfile = "out.gbk") {
   
-  if (not.null(db$sequence)) {
-    sequence <- db$sequence
-    lineno <- seq(from=1, to=sequence@ranges@width, by=60)
+  if (exists("sequence", envir=x@seqinfo)) {
+    seq <- sequence(x)
+    lineno <- seq(from=1, to=seq@ranges@width, by=60)
     lines <- seq_along(lineno)
     n_lines <- length(lines)
     s <- character(n_lines)
     
     for (i in lines) {
-      seqw <- ifelse(i <  n_lines, i*60, sequence@ranges@width)
-      seq <- toString(subseq(sequence, 1 + (i - 1)*60, seqw))
-      s[i] <- paste0(strsplit(seq, "(?<=.{10})(?=.)", perl=TRUE)[[1]], collapse=" ")     
+      seqw <- ifelse(i <  n_lines, i*60, seq@ranges@width)
+      seqs <- toString(subseq(seq, 1 + (i - 1)*60, seqw))
+      s[i] <- paste0(strsplit(seqs, "(?<=.{10})(?=.)", perl=TRUE)[[1]], collapse=" ")     
     }
     
     s <- sprintf("%+9s %s", lineno, s)

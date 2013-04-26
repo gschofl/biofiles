@@ -12,24 +12,23 @@ setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
 #' @export
 #' @classHierarchy
 #' @classMethods
-setClass("gbRecord", representation(locus = "character",
-                                    type = "character",
-                                    topology = "character",
-                                    division = "character",
-                                    date = "POSIXlt",
-                                    version = "character",
-                                    GI = "character",
-                                    dblink = "character",
-                                    dbsource = "character",
-                                    keywords = "character",
-                                    source = "character",
-                                    organism = "character",
-                                    lineage = "character",
-                                    references = "character",
-                                    comment = "character",
-                                    features = "gbFeatureList",
-                                    contig = "gbLocationOrNull",
-                                    seqinfo = "environment"))
+setClass("gbRecord",
+         representation(
+           locus = "character", type = "character", topology = "character",
+           division = "character", date = "POSIXlt", version = "character",
+           GI = "character", dblink = "character", dbsource = "character",
+           keywords = "character", source = "character", organism = "character",
+           lineage = "character", references = "character", comment = "character",
+           features = "gbFeatureList", contig = "gbLocationOrNull", seqinfo = "environment"),
+         prototype(
+           locus=NA_character_, type=NA_character_, topology=NA_character_,
+           division=NA_character_, date=as.POSIXlt(NA), version=NA_character_,
+           GI=NA_character_, dblink=NA_character_, dbsource=NA_character_,
+           keywords=NA_character_, source=NA_character_, organism=NA_character_,
+           lineage=NA_character_, references=NA_character_, comment=NA_character_,
+           seqinfo=new.env(parent=emptyenv())
+         )
+)
 
 
 setValidity("gbRecord", function (object) {
@@ -198,17 +197,8 @@ setMethod("summary", "gbRecord",
             def <- 
               ellipsize(obj=unname(genome(si)),
                         width=getOption("width") - nchar(len) - nchar(type) - 8)
-            cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def))
-            obj.features <- features(object)
-            if (length(obj.features) > 2*n) {
-              head <- head(obj.features, n=n)
-              tail <- tail(obj.features, n=n)
-              x <- lapply(head, summary)
-              cat("...\n")
-              x <- lapply(tail, summary)  
-            } else  {
-              x <- lapply(obj.features, summary)
-            }
+            cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep="")
+            summary(object=features(object), n=n, setoff=2)
             
             return(invisible(NULL))
           })
@@ -218,7 +208,10 @@ setMethod("summary", "gbRecord",
 
 
 setMethod("seqinfo", "gbRecord",
-          function (x) get("seqinfo", envir=x@seqinfo))
+          function (x)  {
+            tryCatch(get("seqinfo", x@seqinfo),
+                     error = function (e) Seqinfo() )
+          })
 
 
 setMethod("seqlengths", "gbRecord",
@@ -237,8 +230,17 @@ setMethod("features", "gbRecord",
           function (x) x@features)
 
 
+#' @autoImport
 setMethod("sequence", "gbRecord", 
-          function (x) get("sequence", envir=x@seqinfo))
+          function (x) {
+            if (exists("sequence", envir=x@seqinfo))
+              seq <- get("sequence", x@seqinfo)
+            else {
+              warning("No sequence associated with this record", call.=FALSE)
+              seq <- BStringSet()
+            }
+            seq
+          })
 
 
 setMethod("ranges", "gbRecord",
@@ -261,8 +263,14 @@ setMethod("end", "gbRecord",
 
 
 setMethod("strand", "gbRecord",
-          function (x, join = FALSE, drop = TRUE) {
-            strand(features(x), join = join, drop = drop)
+          function (x, join = FALSE) {
+            strand(features(x), join = join)
+          })
+
+
+setMethod("width", "gbRecord",
+          function (x, join = FALSE) {
+            width(features(x), join = join)
           })
 
 

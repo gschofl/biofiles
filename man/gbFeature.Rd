@@ -5,7 +5,7 @@
 \alias{gbFeature-class}
 \title{gbFeature}
 \usage{
-  gbFeature(feature, seqinfo, id = 0L)
+  gbFeature(feature, seqenv, id = 0L)
 }
 \description{
 \dQuote{gbFeature} is an S4 class that provides a container
@@ -46,9 +46,11 @@ for GenBank feature tables.
 \keyword{classes}
 \section{Slots}{
 \describe{
-  \item{.Info}{A \code{\linkS4class{gbInfo}} object.}
+  \item{.seqinfo}{An \code{environment} containing the genome sequence as
+an \code{\linkS4class{XStringSet}} object and sequence metadata
+as a \code{\linkS4class{Seqinfo}} object.}
 
-  \item{.Id}{Identifier (index) of the feature in the
+  \item{.id}{Identifier (index) of the feature in the
 GenBank record the feature is part of.}
 
   \item{key}{The feature key.}

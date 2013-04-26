@@ -164,42 +164,50 @@ expandIds <- function (x) {
 #' @importFrom Biostrings DNAStringSet
 #' @importFrom Biostrings AAStringSet
 #' @importFrom Biostrings RNAStringSet
+#' @importFrom Biostrings BStringSet
+#' @importFrom Biostrings xscat
+#' @autoImports
 .seqAccess <- function (x) {
   
   if (exists("sequence", envir=x@.seqinfo))
-    s <- get("sequence", x@.seqinfo)
-  else
-    stop("No sequence available", call.=FALSE)
-
-  if (length(s) == 0)
-    stop("No sequence available", call.=FALSE)
-
-  SEQFUN <- match.fun(class(s))
-
-  # merge Sequences
-  merge_seq <- function (s, x, SEQFUN) {
-    if (length(start(x)) == 1L) {
-      seq <- subseq(s, start=start(x), end=end(x))
-    } else {
-      seq <- do.call(xscat, Map(Biostrings::subseq, s, 
-                                start=start(x), end=end(x)))
-    }
-    seq <- SEQFUN(seq)
-    seq@ranges@NAMES <- sprintf("%s.%s.%s", accession(x), key(x), index(x))
-    seq
+    seq <- get("sequence", x@.seqinfo)
+  else {
+    warning("No sequence associated with this feature", call.=FALSE)
+    return(BStringSet())
   }
-  
-  #' @autoImports
-  if (is(x, "gbFeatureList")) {
-    ## initiate empty XStringSet
-    seq <- SEQFUN()
-    for (i in seq_along(x)) {
-      seq[i] <- merge_seq(s, x[[i]], SEQFUN)             
-    }
-  } else if (is(x, "gbFeature")) {
-    seq <- merge_seq(s, x, SEQFUN)
+
+  if (length(seq) == 0) {
+    warning("No sequence associated with this feature", call.=FALSE)
+    if (is(seq, "XStringSet"))
+      return(seq)
+    else
+      return(BStringSet())
+  }
+
+  SEQF <- match.fun(class(seq))
+  if (is(x, "gbFeature")) {
+    seq <- merge_seq(seq, x, SEQF)
+  } else if (is(x, "gbFeatureList")) {
+    seq <- Reduce(append, lapply(x, merge_seq, seq=seq, SEQF=SEQF))
   }
   
   seq@metadata <- list(seqinfo(x))
   seq
 }
+
+# merge Sequences
+#' @autoImports
+merge_seq <- function (seq, x, SEQF) {
+  if (length(start(x)) == 1L) {
+    outseq <- subseq(x=seq, start=start(x), end=end(x))
+  } else {
+    outseq <- do.call(xscat, Map(subseq, x=seq, start=start(x), end=end(x)))
+  }
+  outseq <- SEQF(outseq)
+  outseq@ranges@NAMES <- sprintf("%s.%s.%s", accession(x), key(x), index(x))
+  outseq
+}
+
+
+
+

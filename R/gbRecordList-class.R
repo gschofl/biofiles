@@ -25,7 +25,7 @@ gbRecordList <- function (...) {
       listData <- listData[[1L]]
     if (!all(vapply(listData, is, "gbRecord", FUN.VALUE=logical(1)))) 
       stop("All elements in '...' must be gbRecord objects")
-    names(listData) <- vapply(listData, accession, FUN.VALUE=character(1))
+    names(listData) <- sapply(listData, accession)
     return( new('gbRecordList', .Data = listData) )
   }
 }
@@ -62,8 +62,8 @@ setMethod("show", "gbRecordList",
 
 
 setMethod("summary", "gbRecordList",
-          function (object, n=3, ...) {
-            x <- lapply(gb, summary, n=n)
+          function (object, n=2, ...) {
+            x <- lapply(object, summary, n=n, ...=...)
             invisible(NULL)
           })
 
@@ -92,11 +92,13 @@ setMethod("definition", "gbRecordList",
 
 
 setMethod("features", "gbRecordList", 
-          function (x) lapply(x, features))
+          function (x) Map(features, x))
 
 
 setMethod("sequence", "gbRecordList", 
-          function (x) lapply(x, sequence))
+          function (x) {
+            Reduce(append, Map(sequence, x))
+            })
 
 
 setMethod("ranges", "gbRecordList",
@@ -119,8 +121,13 @@ setMethod("end", "gbRecordList",
 
 
 setMethod("strand", "gbRecordList",
-          function (x, join = FALSE, drop = TRUE) {
-            lapply(x, strand, join = join, drop = drop)
+          function (x, join = FALSE) {
+            lapply(x, strand, join = join)
           })
 
+
+setMethod("width", "gbRecordList",
+          function (x, join = FALSE) {
+            lapply(x, width, join = join)
+          })
 

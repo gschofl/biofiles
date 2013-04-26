@@ -49,7 +49,9 @@ Super classes:
 \keyword{classes}
 \section{Slots}{
 \describe{
-  \item{.Info}{A \code{\linkS4class{Seqnfo}} instance.}
+  \item{.seqinfo}{An \code{environment} containing the genome sequence as
+an \code{\linkS4class{XStringSet}} object and sequence metadata
+as a \code{\linkS4class{Seqinfo}} object.}
 
   \item{.Data}{A list of \code{\linkS4class{gbFeature}} objects.}
 

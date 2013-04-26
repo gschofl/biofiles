@@ -25,20 +25,40 @@ Get or set the strand of genomic features
 }
 \section{Method signatures for generic strand}{
 \itemize{
+  \item \linkS4class{character}
+  \item \linkS4class{DataTable}
+  \item factor (S3)
+  \item \linkS4class{GAlignmentPairs}
+  \item \linkS4class{GAlignments}
+  \item \linkS4class{GAlignmentsList}
   \item \linkS4class{gbFeature}
   \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbLocation}
   \item \linkS4class{gbRecord}
   \item \linkS4class{gbRecordList}
+  \item \linkS4class{GRanges}
+  \item \linkS4class{GRangesList}
+  \item \linkS4class{integer}
+  \item \linkS4class{logical}
+  \item \linkS4class{missing}
+  \item \linkS4class{Rle}
+  \item \linkS4class{SummarizedExperiment}
 }
 
 }
 
 \section{Method signatures for generic strand<-}{
 \itemize{
+  \item \linkS4class{DataTable}
+  \item \linkS4class{GAlignmentPairs}
+  \item \linkS4class{GAlignments}
+  \item \linkS4class{GAlignmentsList}
   \item \linkS4class{gbFeature}
   \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbLocation}
+  \item \linkS4class{GenomicRanges}
+  \item \linkS4class{GRangesList}
+  \item \linkS4class{SummarizedExperiment}
 }
 
 }

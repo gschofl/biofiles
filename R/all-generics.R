@@ -103,6 +103,7 @@ setGeneric("strand")
 #' @genericMethods
 setGeneric("strand<-")
 
+
 ### The "width" generic is defined in the IRanges package. We need
 ### to override it because they don't provide a dotdotdot interface.
 #' Get the width of genomic features

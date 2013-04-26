@@ -196,4 +196,4 @@ static const boost::regex PCCL(
         "\\)"
     ")$");
 
-#endif __BIOFILES__
+#endif // __BIOFILES__

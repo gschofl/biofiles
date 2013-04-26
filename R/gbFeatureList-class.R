@@ -32,7 +32,7 @@ setValidity2("gbFeatureList", function (object) {
   seq <- get("sequence", object@.seqinfo)
   if (names(seq) != accession(object))
     return("Names of 'seqinfo' and 'sequence' do not match")
-  if (seq@ranges@width != unname(seqlengths(x)))
+  if (seq@ranges@width != unname(seqlengths(object)))
     return("Length of 'seqinfo' and 'sequence' do not match")
                  
   TRUE
@@ -64,16 +64,32 @@ setMethod("show", "gbFeatureList",
 
 setMethod("summary", "gbFeatureList",
           function (object, n=8, ...) {
-            if (length(object) > 2*n) {
-              head <- head(object, n=n)
-              tail <- tail(object, n=n)
-              x <- lapply(head, summary)
-              cat("...\n")
-              x <- lapply(tail, summary)  
-            } else  {
-              x <- lapply(object, summary)
+            olen <- length(object)
+            if (olen > 2*n) {
+              hd <- object[seq_len(n), check=FALSE]
+              tl <- object[seq.int(to = olen, length.out = min(n, olen)), check=FALSE]
+              idx <- c("N", index(hd), "...", index(tl))
+              key <- c("Key", key(hd), "...", key(tl))
+              loc <- c(location(hd), "...", location(tl))
+              loc <- c("Location", unlist(lapply(loc, as, "character")))
+              prod <- c("Product", unlist(product(hd), use.names=FALSE),
+                        "...", unlist(product(tl), use.names=FALSE))
+            } else {
+              idx <- c("N", index(object))
+              key <- c("Key", key(object))
+              loc <- c("Location", unlist(lapply(location(object), as, "character")))
+              prod <- c("Product", unlist(product(object), use.names=FALSE))
             }
-
+            setoff <- rep(dup(" ", list(...)$setoff %||% 0), length(idx))
+            max_idx_len <- max(nchar(idx))
+            max_key_len <- max(nchar(key))
+            max_loc_len <- max(nchar(loc))
+            idx <- pad(idx, max_idx_len + 1, "right")
+            key <- pad(key, max_key_len + 1, "right")
+            loc <- pad(loc, max_loc_len + 1, "right")
+            showme <- ellipsize(sprintf("%s%s%s%s%s", setoff, idx, key, loc, prod),
+                                width=getOption("width") - 1)
+            cat(showme, sep="\n")
             return(invisible(NULL))
           })
 
@@ -209,7 +225,7 @@ setReplaceMethod("start", "gbFeatureList",
                      Feature
                    }, Feature=x, check=list(check), val=value)
                    
-                   new('gbFeatureList', .Data=new_x, .Info=seqinfo(x))
+                   new('gbFeatureList', .Data=new_x, .seqinfo=x@.seqinfo)
                  })
 
 
@@ -221,7 +237,7 @@ setReplaceMethod("end", "gbFeatureList",
                      Feature
                    }, Feature=x, check=list(check), val=value)
                    
-                   new('gbFeatureList', .Data=new_x, .Info=seqinfo(x))
+                   new('gbFeatureList', .Data=new_x, .seqinfo=x@.seqinfo)
                  })
 
 
@@ -233,7 +249,7 @@ setReplaceMethod("strand", "gbFeatureList",
                      Feature
                    }, Feature=x, check=list(check), val=value)
                    
-                   new('gbFeatureList', .Data=new_x, .Info=seqinfo(x))
+                   new('gbFeatureList', .Data=new_x, .seqinfo=x@.seqinfo)
                  })
 
 
@@ -267,21 +283,27 @@ setMethod("hasQualif", "gbFeatureList",
 #' @export
 setMethod("[", c("gbFeatureList", "character", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
+            check <- list(...)$check %||% TRUE
             idx <- which(vapply(x@.Data, function(f) f@key, character(1L)) == i)
-            new('gbFeatureList', .Data=x@.Data[idx], .Info=seqinfo(x))
+            new2('gbFeatureList', .Data=x@.Data[idx], .seqinfo=x@.seqinfo,
+                 check=check)
           })
 
 #' @export
 setMethod("[", c("gbFeatureList", "numeric", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
-            new('gbFeatureList', .Data=x@.Data[i], .Info=seqinfo(x))
+            check <- list(...)$check %||% TRUE
+            new2('gbFeatureList', .Data=x@.Data[i], .seqinfo=x@.seqinfo,
+                 check=check)
           })
 
 
 #' @export
 setMethod("[", c("gbFeatureList", "logical", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
-            new('gbFeatureList', .Data=x@.Data[i], .Info=seqinfo(x))
+            check <- list(...)$check %||% TRUE
+            new2('gbFeatureList', .Data=x@.Data[i], .seqinfo=x@.seqinfo, 
+                 check=check)
           })
 
 

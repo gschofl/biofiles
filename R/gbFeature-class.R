@@ -78,13 +78,19 @@ setMethod("show", "gbFeature",
 #' @autoImports
 setMethod("summary", "gbFeature",
           function (object, ...) {
-            idx <- pad(pad(index(object), 8, "right"), 10)
-            key <- pad(key(object), 14, "right")
-            loc <- as(location(object), "character")
-            prod <- ellipsize(product(object), width=getOption("width") - 
-                                nchar(idx) - nchar(key) - nchar(loc) - 5)
-            showme <- sprintf("%s%s%s  %s\n", idx, key, loc, prod)
-            cat(showme)
+            idx <- c("N", index(object))
+            key <- c("Key", key(object))
+            loc <- c("Location", as(location(object), "character"))
+            prod <- c("Product", product(object))
+            idx_len <-max(nchar(idx))
+            key_len <- max(nchar(key))
+            loc_len <- max(nchar(loc))
+            idx <- pad(idx, idx_len + 2, "right")
+            key <- pad(key, key_len + 3, "right")
+            loc <- pad(loc, loc_len + 3, "right")
+            showme <- ellipsize(sprintf("%s%s%s%s", idx, key, loc, prod),
+                                width=getOption("width") - 1)
+            cat(showme, sep="\n")
             return(invisible(NULL))
           })
 
@@ -118,8 +124,10 @@ setMethod("fuzzy", "gbFeature",
 
 
 setMethod("seqinfo", "gbFeature",
-          function (x) tryCatch(get("seqinfo", x@.seqinfo),
-                                error = function (e) Seqinfo() ))
+          function (x) {
+            tryCatch(get("seqinfo", x@.seqinfo),
+                     error = function (e) Seqinfo() )
+          })
 
 
 #' @autoImports
