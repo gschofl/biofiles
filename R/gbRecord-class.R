@@ -31,7 +31,7 @@ setClass("gbRecord",
 )
 
 
-setValidity("gbRecord", function (object) {
+setValidity2("gbRecord", function (object) {
   # at the moment do nothing but the default checks
   TRUE
 })
@@ -57,65 +57,77 @@ setValidity("gbRecord", function (object) {
 #' \code{\linkS4class{gbRecordList}} 
 #' @export
 #' @autoImports
-gbRecord <- function (gb, with_sequence = TRUE) {
+gbRecord <- function (gb, with_sequence = TRUE)
+{
   ##
   ## Parse 'efetch' objects
   ##
-  if (is(gb, "efetch")) {
+  if (is(gb, "efetch"))
+  {
     if (gb@rettype %ni% c("gb", "gp") || gb@retmode != "text")
       stop("Must use efetch with rettype='gbwithparts','gb', or 'gp' and retmode='text'")
     
-    split_gb <- unlist(strsplit(content(gb, "text"), "\n\n"))
+    split_gb <- base::unlist(
+      strsplit(Rentrez::content(gb, "text"), "\n\n")
+    )
     n <- length(split_gb)
-    parsed_data <- vector("list", n)
-    for (i in seq_len(n)) {
-      gb_data <- unlist(strsplit(split_gb[i], "\n"))
-      parsed_data[[i]] <- .parseGB(gb_data, with_sequence=with_sequence)
+    parsed_gb_data <- vector("list", n)
+    for (i in seq_len(n))
+    {
+      gb_data <- base::unlist(strsplit(split_gb[i], "\n"))
+      parsed_dg_data[[i]] <- .parseGB( gb_data, with_sequence )
     }
   ##
   ## Parse random textConnections
   ##
-  } else if (is(gb, "textConnection")) {
+  }
+  else if (is(gb, "textConnection"))
+  {
     con <- gb
     on.exit(close(con))
-    parsed_data <- list(.parseGB(readLines(con), with_sequence))
+    parsed_gb_data <- list( .parseGB(readLines(con), with_sequence) )
   ##
   ## Parse GeneBank flat files  
   ##
-  } else if (tryCatch(all(file.exists(gb)), error = function() FALSE)) {
+  }
+  else if (tryCatch(all(file.exists(gb)), error = function() FALSE))
+  {
     n <- length(gb)
-    parsed_data <- vector("list", n)
-    for (i in seq_len(n)) {
+    parsed_gb_data <- vector("list", n)
+    for (i in seq_len(n))
+    {
       con <- file(gb[i], open="rt")
-      parsed_data[[i]] <- .parseGB(gb_data=readLines(con), with_sequence)
+      parsed_gb_data[[i]] <- .parseGB( readLines(con), with_sequence )
       close(con)
     }
-  } else {
-    stop("'gb' must be the path to a GenBank flat file or an 'efetch' object containing GenBank records")
-  } 
-
+  }
+  else
+    stop(paste0("'gb' must be the path to a GenBank flat file or an 'efetch' ",
+                "object containing GenBank records"))
+  
   gbr_list <- list()
-  for (gbk in parsed_data) {
-    gbr <- with(gbk, 
-                new("gbRecord",
-                    locus = header[["locus"]],
-                    type = header[["type"]],
-                    topology = header[["topology"]],
-                    division = header[["division"]],
-                    date = header[["date"]],
-                    version = header[["version"]],
-                    GI = header[["GI"]],
-                    dblink = header[["dblink"]],
-                    dbsource = header[["dbsource"]],
-                    keywords = header[["keywords"]],
-                    source = header[["source"]],
-                    organism = header[["organism"]],
-                    lineage = header[["lineage"]],
-                    references = header[["references"]],
-                    comment = header[["comment"]],
-                    features = features,
-                    contig = contig,
-                    seqinfo = seqenv)
+  for (gbk in parsed_gb_data)
+  {
+    gbr <- base::with(gbk, 
+                      new("gbRecord",
+                          locus = header[["locus"]],
+                          type = header[["type"]],
+                          topology = header[["topology"]],
+                          division = header[["division"]],
+                          date = header[["date"]],
+                          version = header[["version"]],
+                          GI = header[["GI"]],
+                          dblink = header[["dblink"]],
+                          dbsource = header[["dbsource"]],
+                          keywords = header[["keywords"]],
+                          source = header[["source"]],
+                          organism = header[["organism"]],
+                          lineage = header[["lineage"]],
+                          references = header[["references"]],
+                          comment = header[["comment"]],
+                          features = features,
+                          contig = contig,
+                          seqinfo = seqenv)
     )
     gbr_list <- c(gbr_list, gbr)
   }
@@ -130,6 +142,8 @@ gbRecord <- function (gb, with_sequence = TRUE) {
 # show -------------------------------------------------------------------
 
 
+#' @importFrom XVector toString
+#' @importFrom XVector subseq
 setMethod("show", "gbRecord",
           function (object) { 
             if (is.na(accession(object))) {
@@ -168,12 +182,17 @@ setMethod("show", "gbRecord",
                         linebreak(object@comment, offset=13, FORCE=TRUE)),
                 if (!is.null(S)) {
                   if (S@ranges@width[1L] < W - 14)
-                    sprintf("ORIGIN      %s\n", toString(S))
+                    sprintf("ORIGIN      %s\n", XVector::toString(S))
                   else
                     sprintf("ORIGIN      %s\n            ...\n            %s\n",
-                            toString(subseq(S, start=1, end=W - 14)),
-                            toString(subseq(S, start=length(S[[1L]]) -  W + 15,
-                                            end=length(S[[1L]]))))
+                            XVector::toString(
+                              XVector::subseq(S, start=1, end=W - 14)
+                            ),
+                            XVector::toString(
+                              subseq(S, start=length(S[[1L]]) -  W + 15,
+                                     end=length(S[[1L]]))
+                            )
+                    )
                 },
                 if (!is.null(object@contig)) {
                   sprintf("CONTIG      %s\n", linebreak(as(object@contig, "character"),
@@ -188,6 +207,7 @@ setMethod("show", "gbRecord",
 # summary ----------------------------------------------------------------
 
 
+#' @autoImports
 setMethod("summary", "gbRecord",
           function (object, n=7, ...) {
             si <- seqinfo(object)
@@ -196,7 +216,7 @@ setMethod("summary", "gbRecord",
             type <- if (object@type == 'AA') 'aa' else 'bp'
             def <- 
               ellipsize(obj=unname(genome(si)),
-                        width=getOption("width") - nchar(len) - nchar(type) - 8)
+                        width=getOption("width") - base::nchar(len) - base::nchar(type) - 8)
             cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep="")
             summary(object=features(object), n=n, setoff=2)
             
@@ -230,11 +250,11 @@ setMethod("features", "gbRecord",
           function (x) x@features)
 
 
-#' @autoImport
+#' @autoImports
 setMethod("sequence", "gbRecord", 
           function (x) {
             if (exists("sequence", envir=x@seqinfo))
-              seq <- get("sequence", x@seqinfo)
+              seq <- base::get("sequence", x@seqinfo)
             else {
               warning("No sequence associated with this record", call.=FALSE)
               seq <- BStringSet()

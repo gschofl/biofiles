@@ -3,7 +3,6 @@
 
 using namespace Rcpp;
 
-//' @internal
 // [[Rcpp::export]]
 SEXP gbFeature(
     std::vector<std::string> feature,
@@ -48,7 +47,7 @@ void parse_gb_feature_table(
     static const boost::regex QUAL_POS("^(FT)?\\s*/");
     static const boost::regex TRANS("^translation=");
     std::vector<std::string>::const_iterator s_it = feature_string.begin();
-    for ( s_it; s_it != feature_string.end(); s_it++ ) {
+    for ( ; s_it != feature_string.end(); s_it++ ) {
         boost::regex_search( s_it->begin(), s_it->end(), m, QUAL_POS ); 
         if ( m[0].matched ) {
             merged.push_back( this_line );
@@ -90,7 +89,7 @@ Rcpp::CharacterVector parse_gb_qualifiers(
     names.reserve( qualifiers.size() );
     values.reserve( qualifiers.size() );
     std::vector<std::string>::const_iterator s_it = qualifiers.begin();
-    for ( s_it; s_it != qualifiers.end(); s_it++ ) {
+    for ( ; s_it != qualifiers.end(); s_it++ ) {
         begin_ = s_it->find_first_not_of("=");
         end_ = s_it->find_first_of("=", begin_);
         names.push_back( s_it->substr(begin_, end_) );

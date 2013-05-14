@@ -42,6 +42,7 @@ Super classes:
   \item \code{\link{strand<-}}
   \item \code{\link{summary}}
   \item \code{\link{view}}
+  \item \code{\link{width}}
 }
 
 }

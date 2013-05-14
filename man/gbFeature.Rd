@@ -39,6 +39,7 @@ for GenBank feature tables.
   \item \code{\link{strand}}
   \item \code{\link{strand<-}}
   \item \code{\link{summary}}
+  \item \code{\link{width}}
 }
 
 }

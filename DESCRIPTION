@@ -9,18 +9,20 @@ License: MIT
 Encoding: latin1
 Depends:
     R (>= 2.15),
-    Rcpp (>= 0.10.1),
-    methods
+    Rcpp (>= 0.10.1)
 LinkingTo: Rcpp
 Imports:
-    rmisc,
     BiocGenerics,
-    IRanges,
-    GenomicRanges,
     Biostrings,
+    GenomicRanges,
+    IRanges,
+    methods,
     parallel,
+    plyr,
+    rmisc,
+    stats,
     stringr,
-    plyr
+    XVector
 Suggests:
     Rentrez
 Collate:

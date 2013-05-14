@@ -39,6 +39,7 @@ Super classes:
   \item \code{\link{start}}
   \item \code{\link{strand}}
   \item \code{\link{summary}}
+  \item \code{\link{width}}
 }
 
 }

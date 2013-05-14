@@ -13,12 +13,12 @@ showInfo <- function(object) {
     seqname <- seqlen <- genome <- ""
   } else {
     sn <- seqnames(object)
-    sl <- paste(seqlengths(object), names(seqlengths(object)))
+    sl <- paste0(seqlengths(object), " ", names(seqlengths(object)))
     g <- genome(object)
-    seqname <- pad(sn, nchar(sn) + 2, "right")
-    seqlen <- pad(sl, nchar(sl) + 2, "right")
+    seqname <- rmisc::pad(sn, base::nchar(sn) + 2, "right")
+    seqlen <- rmisc::pad(sl, base::nchar(sl) + 2, "right")
     genome <- ellipsize(g, width=getOption("width") - 
-                          nchar(seqname) - nchar(seqlen) - 3)
+                        base::nchar(seqname) - base::nchar(seqlen) - 3)
   }
   cat(sprintf("%s%s%s", seqname, seqlen, genome))
 }
@@ -27,9 +27,9 @@ showInfo <- function(object) {
 #' @autoImports
 ellipsize <- function(obj, width = getOption("width"), ellipsis = "...") {
   str <- encodeString(obj)
-  ifelse(nchar(str) > width - 1,
-         paste0(substring(str, 1, width - nchar(ellipsis) - 1), ellipsis),
-         str)
+  base::ifelse(base::nchar(str) > width - 1,
+               paste0(base::substring(str, 1, width - base::nchar(ellipsis) - 1), ellipsis),
+               str)
 }
 
 
@@ -47,16 +47,16 @@ is_compound <- function (x) {
 
 #' @autoImports
 getCompounds <- function (x) {
-  x <- x[which(is_compound(x))]
+  x <- x[base::which(is_compound(x))]
   if (length(x) == 0) return(NA_real_) 
-  cL <- vapply(x, function (f) nrow(f@location@range), integer(1))
+  cL <- vapply(x, function (f) base::nrow(f@location@range), integer(1))
   cL
 }
 
 
 #' @autoImports
 expandIds <- function (x) {
-  cmp_pos <- Position(is_compound, x)
+  cmp_pos <- base::Position(is_compound, x)
   if (is.na(cmp_pos)) {
     return(list(ids=index(x, FALSE), keys=key(x, FALSE)))
   }
@@ -73,29 +73,11 @@ expandIds <- function (x) {
   id2 <- list(ids=rep(index(xCmp, FALSE), nC),
               keys=rep(key(xCmp, FALSE), nC))
   id3 <- list(ids=index(xTail, FALSE), keys=key(xTail, FALSE))
-  Map(function(a, b, c) c(a, b, c), a=id1, b=id2, c=Recall(xTail))
+  base::Map(function(a, b, c) c(a, b, c), a=id1, b=id2, c=Recall(xTail))
 }
 
 
-#' @autoImports
-.qualAccess <- function (x, which = "", fixed = FALSE) {
-  dbxrefs <- NULL
-  dbx <- grepl('db_xref:.+', which)
-  if (any(dbx)) {
-    dbxrefs <- strsplitN(which[dbx], ':', 2)
-    which <- c(which[!dbx], 'db_xref')
-  }
-  if (fixed) {
-    which <- wrap(which, "\\b")
-  }
-  if (is(x, "gbFeature")) {
-    .access(x, which, dbxrefs)
-  } else if (is(x, "gbFeatureList")) {
-    lapply(x, .access, which, dbxrefs)
-  }
-}
-
-
+#' @importFrom stats setNames
 #' @autoImports
 .access <- function (x, which, dbxrefs) {
   q <- x@qualifiers
@@ -115,22 +97,22 @@ expandIds <- function (x) {
       ans <- setNames(rep(NA_character_, length(els)),
                       nm=rmisc::trim(which, "\\\\b"))
   } else {
-    idx <- lapply(which, grepl, names(q))
-    ans <- lapply(idx, function(i) q[i])
+    idx <- base::lapply(which, grepl, names(q))
+    ans <- base::lapply(idx, function(i) q[i])
     na <- which(vapply(ans, length, numeric(1)) == 0)
     if (length(na) > 0) {
       for (i in na) {
-        ans[[i]] <- setNames(NA_character_, nm=trim(which, "\\\\b")[i])
+        ans[[i]] <- setNames(NA_character_, nm=rmisc::trim(which, "\\\\b")[i])
       }
     }
   }
-  ans <- unlist(ans)
+  ans <- base::unlist(ans)
   if (length(dbxrefs) > 0) {
     dbx_ <- names(ans) == 'db_xref'
     dbx <- strsplit(ans[dbx_], ':')
     dbx_nm <- vapply(dbx, `[`, 1, FUN.VALUE=character(1))
     dbx_val <- vapply(dbx, `[`, 2, FUN.VALUE=character(1))
-    ans <- c(ans[!dbx_], setNames(dbx_val[match(dbxrefs, dbx_nm)], nm=dbxrefs))
+    ans <- c(ans[!dbx_], setNames(dbx_val[base::match(dbxrefs, dbx_nm)], nm=dbxrefs))
   }
   
   return(ans)
@@ -138,15 +120,34 @@ expandIds <- function (x) {
 
 
 #' @autoImports
+.qualAccess <- function (x, which = "", fixed = FALSE) {
+  dbxrefs <- NULL
+  dbx <- grepl('db_xref:.+', which)
+  if (any(dbx)) {
+    dbxrefs <- strsplitN(which[dbx], ':', 2)
+    which <- c(which[!dbx], 'db_xref')
+  }
+  if (fixed) {
+    which <- rmisc::wrap(which, "\\b")
+  }
+  if (is(x, "gbFeature")) {
+    .access(x, which, dbxrefs)
+  } else if (is(x, "gbFeatureList")) {
+    base::lapply(x, .access, which, dbxrefs)
+  }
+}
+
+
+#' @autoImports
 .simplify <- function (x, unlist = TRUE) {
-  if (length(len <- unique(unlist(lapply(x, length)))) > 1L) {
+  if (length(len <- base::unique(unlist(base::lapply(x, length)))) > 1L) {
     return(x)
   }
   if (len == 1L && unlist) {
     unlist(x, recursive=FALSE)
   } else if (len >= 1L) {
     n <- length(x)
-    r <- as.vector(unlist(x, recursive=FALSE))
+    r <- base::as.vector(unlist(x, recursive=FALSE))
     if (prod(d <- c(len, n)) == length(r)) {
       return(data.frame(stringsAsFactors=FALSE,
                         matrix(r, nrow=n, byrow=TRUE,
@@ -161,16 +162,11 @@ expandIds <- function (x) {
 }
 
 
-#' @importFrom Biostrings DNAStringSet
-#' @importFrom Biostrings AAStringSet
-#' @importFrom Biostrings RNAStringSet
-#' @importFrom Biostrings BStringSet
-#' @importFrom Biostrings xscat
 #' @autoImports
 .seqAccess <- function (x) {
   
   if (exists("sequence", envir=x@.seqinfo))
-    seq <- get("sequence", x@.seqinfo)
+    seq <- base::get("sequence", x@.seqinfo)
   else {
     warning("No sequence associated with this feature", call.=FALSE)
     return(BStringSet())
@@ -188,7 +184,7 @@ expandIds <- function (x) {
   if (is(x, "gbFeature")) {
     seq <- merge_seq(seq, x, SEQF)
   } else if (is(x, "gbFeatureList")) {
-    seq <- Reduce(append, lapply(x, merge_seq, seq=seq, SEQF=SEQF))
+    seq <- base::Reduce(append, base::lapply(x, merge_seq, seq=seq, SEQF=SEQF))
   }
   
   seq@metadata <- list(seqinfo(x))
@@ -199,15 +195,14 @@ expandIds <- function (x) {
 #' @autoImports
 merge_seq <- function (seq, x, SEQF) {
   if (length(start(x)) == 1L) {
-    outseq <- subseq(x=seq, start=start(x), end=end(x))
+    outseq <- XVector::subseq(x=seq, start=start(x), end=end(x))
   } else {
-    outseq <- do.call(xscat, Map(subseq, x=seq, start=start(x), end=end(x)))
+    outseq <- do.call(Biostrings::xscat,
+                      base::Map(XVector::subseq, x=seq, start=start(x), end=end(x))
+                      )
   }
   outseq <- SEQF(outseq)
   outseq@ranges@NAMES <- sprintf("%s.%s.%s", accession(x), key(x), index(x))
   outseq
 }
-
-
-
 

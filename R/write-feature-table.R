@@ -1,21 +1,20 @@
 #' @importFrom Biostrings writeXStringSet
-#' @autoImports
 setMethod("write.FeatureTable", "gbRecord", 
           function (x, file, tablename="", dbname="",
                     sequence = TRUE, append = FALSE) {
   
   # write header
-  header <- trim(sprintf(">Feature %s %s", accession(x), tablename))
-  cat(paste(header, "\n"), file=file)
+  header <- rmisc::trim(sprintf(">Feature %s %s", accession(x), tablename))
+  cat(paste0(header, sep="\n"), file=file)
   
   # kick out source if present
-  f <- features(x)
-  f <- f[key(f) != "source"]
+  FeatureList <- features(x)
+  FeatureList <- FeatureList[key(FeatureList) != "source"]
   # get index of genes
-  gene_idx <- index(f[key(f) == "gene"])
+  gene_idx <- index(FeatureList[key(FeatureList) == "gene"])
   # write features
-  f_table <- unlist(lapply(f, .getTableFeature, gene_idx, dbname))
-  cat(paste(f_table, collapse="\n"), file=file, append=TRUE)
+  FeatureTable <- unlist(lapply(FeatureList, .getTableFeature, gene_idx, dbname))
+  cat(paste0(FeatureTable, collapse="\n"), file=file, append=TRUE)
   
   if (sequence) {
     seq <- sequence(x)
@@ -27,8 +26,7 @@ setMethod("write.FeatureTable", "gbRecord",
   invisible(NULL)
 })
 
-
-#' @autoImports
+ 
 .getTableFeature <- function (f, gene_idx, dbname) {
   
   getLoc <- function (l, p, strand) {
@@ -53,14 +51,13 @@ setMethod("write.FeatureTable", "gbRecord",
   loc_line <- sprintf("%s%s\t%s%s\t%s\n", loc[[1]], loc[[2]], loc[[3]],
                       loc[[4]], f@key)
   loc_line2 <- if (nrow(l@range) > 1) {
-    loc <- getLoc(l=l@range[-1,,drop=FALSE], p=l@fuzzy[-1,,drop=FALSE],
+    loc <- getLoc(l@range[-1,,drop=FALSE], p=l@fuzzy[-1,,drop=FALSE],
                   strand=l@strand)
-    sprintf("%s%s\t%s%s\n", loc[[1]], loc[[2]], loc[[3]],
-            loc[[4]])
+    sprintf("%s%s\t%s%s\n", loc[[1]], loc[[2]], loc[[3]], loc[[4]])
   } else { 
     "" 
   }
-  loc_line <- sprintf("%s%s", loc_line, paste(loc_line2, collapse=""))
+  loc_line <- sprintf("%s%s", loc_line, paste0(loc_line2, collapse=""))
   qua <- names(f@qualifiers)
   val <- unname(f@qualifiers)
 
@@ -70,8 +67,8 @@ setMethod("write.FeatureTable", "gbRecord",
     if (!is.na(locus_tag_idx)) {
       locus_tag <- val[locus_tag_idx]
     } else {
-      previous_gene_idx <- max(gene_idx[gene_idx < f@.ID])
-      previous_gene <- dbFetch(db, "features")[previous_gene_idx]
+      previous_gene_idx <- max(gene_idx[gene_idx < f@.id])
+      previous_gene <- FeatureList[previous_gene_idx]
       locus_tag <- unname(select(previous_gene, cols="locus_tag"))
     }
     prot_id_line <- paste0("\t\t\tprotein_id\tgnl|", dbname, "|", locus_tag)
@@ -120,9 +117,6 @@ setMethod("write.FeatureTable", "gbRecord",
   val <- val[qual_to_retain]
   
   qua_line <- c(sprintf("\t\t\t%s\t%s", qua, val), prot_id_line)
-  feature <- paste0(loc_line, paste0(qua_line, collapse="\n"))
+  feature <- paste0(loc_line, paste0(qua_line, collapse="\n"), sep=" ")
   feature 
 }
-
-
-

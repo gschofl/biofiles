@@ -180,7 +180,7 @@ setMethod("location", "gbFeatureList",
 
 setMethod("index", "gbFeatureList",
           function (x) {
-            vapply(x, function(f) f@.id, numeric(1))
+            vapply(x, function(x) x@.id, numeric(1))
           })
 
 
@@ -199,7 +199,7 @@ setMethod("qualif", "gbFeatureList",
 setMethod("dbxref", "gbFeatureList",
           function (x, db = NULL, na.rm = TRUE, ...) {     
             ans <- lapply(x, dbxref, db=db)
-            names(ans) <- lapply(x, function(f) sprintf("%s.%s", f@key, f@.Id))
+            names(ans) <- lapply(x, function(f) sprintf("%s.%s", f@key, f@.id))
             if (na.rm)
               ans <- compact(ans, filter=function(x) all(is.na(x)))
             if (all_empty(ans)) {
@@ -285,16 +285,16 @@ setMethod("[", c("gbFeatureList", "character", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
             check <- list(...)$check %||% TRUE
             idx <- which(vapply(x@.Data, function(f) f@key, character(1L)) == i)
-            new2('gbFeatureList', .Data=x@.Data[idx], .seqinfo=x@.seqinfo,
-                 check=check)
+            IRanges::new2('gbFeatureList', .Data=x@.Data[idx], .seqinfo=x@.seqinfo,
+                          check=check)
           })
 
 #' @export
 setMethod("[", c("gbFeatureList", "numeric", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
             check <- list(...)$check %||% TRUE
-            new2('gbFeatureList', .Data=x@.Data[i], .seqinfo=x@.seqinfo,
-                 check=check)
+            IRanges::new2('gbFeatureList', .Data=x@.Data[i], .seqinfo=x@.seqinfo,
+                          check=check)
           })
 
 
@@ -302,8 +302,8 @@ setMethod("[", c("gbFeatureList", "numeric", "missing", "ANY"),
 setMethod("[", c("gbFeatureList", "logical", "missing", "ANY"),
           function (x, i, j, ..., drop = TRUE) {
             check <- list(...)$check %||% TRUE
-            new2('gbFeatureList', .Data=x@.Data[i], .seqinfo=x@.seqinfo, 
-                 check=check)
+            IRanges::new2('gbFeatureList', .Data=x@.Data[i], .seqinfo=x@.seqinfo, 
+                          check=check)
           })
 
 

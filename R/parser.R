@@ -60,7 +60,8 @@
   # sequence length (3), bp or aa (4), molecule type (5, not given if protein,
   # GenBank division (6), topology (7, optional?), and modification date (8)
   if (length(locus_line) == 8 || 
-     (length(locus_line) == 7 && locus_line[4] == "aa")) {
+     (length(locus_line) == 7 && locus_line[4] == "aa"))
+  {
     locus <- locus_line[2]
     length <- as.integer(locus_line[3])
     if (locus_line[4] == 'aa') {
@@ -75,7 +76,9 @@
       division <- locus_line[7]
       date <- as.POSIXlt(locus_line[8], format="%d-%b-%Y")
     }
-  } else {
+  } 
+  else
+  {
     # some GenBank files just don't seem to have topology or division
     locus <- locus_line[2]
     length <- as.integer(locus_line[3])
@@ -177,9 +180,7 @@
   ref <- ref_lines[idx[[1]]]
   auth_line <- grep("^  AUTHORS", ref, value=TRUE)
   .parseAuthors <- function (auth_line) {}
-  
-  
-  }
+}
 
 
 ## characters permitted to occur in feature table component names:
@@ -216,7 +217,9 @@
 ##   /citation=[number] e.g. /citation=[3]
 ##   /compare=[accession-number.sequence-version] e.g. /compare=AJ634337.1
 ##
-#' @autoImports
+#' @importFrom IRanges new2
+#' @importFrom parallel mcmapply
+#' @importFrom parallel detectCores
 .parseGbFeatures <- function (gb_features, seqenv) {
   # where do all the features start
   feature_start <- which(substr(gb_features, 6, 6) != " ")
@@ -228,12 +231,24 @@
   ftr <- mcmapply(function (idx, n) {
     gbFeature(gb_features[idx], seqenv, n)
   }, idx=feature_idx, n=seq_along(feature_start),
-     SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
+                  SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
   
   IRanges::new2('gbFeatureList', .Data=ftr, .seqinfo=seqenv, check=FALSE) 
 }
 
 
+#' @importFrom parallel mclapply
+.joinSeq <- function (seq, accession_no) {
+  mc_cores <- detectCores()
+  s <- unlist(mclapply(seq, function(x) {
+    paste0(strsplit(substr(x, 11, 75), " ")[[1L]], collapse="")
+  }, mc.cores=mc_cores))
+  s <- c(paste0(">", accession_no), s)
+  s
+}
+
+
+#' @importFrom Biostrings DNAStringSet
 #' @autoImports
 .parseGbSequence <- function (gb_sequence, accession_no, seq_type) {
   # read.BStringSet() does not support connections and
@@ -246,22 +261,11 @@
     } else {
     tmp <- tempfile()
     on.exit(unlink(tmp))
-    writeLines(text=.joinSeq(gb_sequence, accession_no), tmp)
+    writeLines(text=.joinSeq( gb_sequence, accession_no ), tmp)
     origin <- switch(seq_type,
                      AA=readAAStringSet(tmp, format="fasta"),
                      readDNAStringSet(tmp, format="fasta"))
     origin
   }
-}
-
-
-#' @autoImports
-.joinSeq <- function (seq, accession_no) {
-  mc_cores <- detectCores()
-  s <- unlist(mclapply(seq, function(x) {
-    paste0(strsplit(substr(x, 11, 75), " ")[[1L]], collapse="")
-  }, mc.cores=mc_cores))
-  s <- c(paste0(">", accession_no), s)
-  s
 }
 

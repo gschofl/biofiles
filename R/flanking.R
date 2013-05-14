@@ -1,8 +1,11 @@
 #' @importFrom rmisc Curry
-NULL
-
+#' @importFrom IRanges follow
+#' @importFrom IRanges precede
+#' @importFrom IRanges IRanges
+#' @importFrom IRanges split
+#' @importFrom IRanges queryHits
+#' @importFrom IRanges subjectHits
 #' @keywords internal
-#' @autoImports
 find_neighbors <- function (query, subject, n = 5, 
                             direction = 'flanking',
                             include_key = 'any',
@@ -29,7 +32,7 @@ find_neighbors <- function (query, subject, n = 5,
   if (include_key != "any") {
     subject <- select(subject, key=include_key)
     if (length(subject) == 0L) {
-      message("Include key ", sQuote(paste(include_key, collapse=",")), " returns no features")
+      message("Include key ", sQuote(paste0(include_key, collapse=",")), " returns no features")
       return(NULL)
     }
   }
@@ -46,12 +49,12 @@ find_neighbors <- function (query, subject, n = 5,
   }, logical(1))]
   
   if (length(subject) == 0L) {
-    message("Exclude key ", sQuote(paste(exclude_key, collapse=",")), " returns no features")
+    message("Exclude key ", sQuote(paste0(exclude_key, collapse=",")), " returns no features")
     return(NULL)
   }
   
   subject_range <- ranges(ranges(subject))
-  subject_idx <- vapply(subject, function (f) f@.Id, integer(1))
+  subject_idx <- vapply(subject, function (x) x@.id, numeric(1))
   
   FUN <- switch(direction,
                 upstream=list(IRanges::follow),
@@ -65,7 +68,7 @@ find_neighbors <- function (query, subject, n = 5,
   for (i in seq_along(FUN)) {
     for (j in seq_len(n)) {
       hits <- FUN[[i]](query, subject_range, select="all")
-      split_hits <- split(hits, queryHits(hits))
+      split_hits <- IRanges::split(hits, queryHits(hits))
       new_query <- IRanges()
       for (k in seq_along(split_hits)) {
         hit_idx <- subjectHits(split_hits[[k]])

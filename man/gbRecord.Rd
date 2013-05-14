@@ -50,6 +50,7 @@ For a description of the GenBank format see
   \item \code{\link{start}}
   \item \code{\link{strand}}
   \item \code{\link{summary}}
+  \item \code{\link{width}}
   \item \code{\link{write.FeatureTable}}
   \item \code{\link{write.GenBank}}
 }

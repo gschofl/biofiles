@@ -15,7 +15,6 @@ setClass("gbRecordList", contains="list")
 
 #' @param ... \dQuote{\linkS4class{gbRecord}} elements.
 #' @export
-#' @autoImports
 gbRecordList <- function (...) {
   listData <- list(...)
   if (length(listData) == 0L) {
@@ -31,7 +30,7 @@ gbRecordList <- function (...) {
 }
 
 
-setValidity("gbRecordList", function (object) {
+setValidity2("gbRecordList", function (object) {
   if (!all(vapply(object@.Data, is, "gbRecord", FUN.VALUE=logical(1))))
     return("All elements in a gbRecordList must be gbRecord objects")
   
@@ -50,13 +49,14 @@ setMethod("show", "gbRecordList",
               si <- seqinfo(object)
               acc <- seqnames(si)
               len <- unname(seqlengths(si))
-              type <- ifelse(vapply(object, slot, name='type',
-                                    FUN.VALUE=character(1)) == 'AA',
-                             'aa', 'bp')
+              type <- base::ifelse(
+                vapply(object, slot, name='type', FUN.VALUE=character(1)) == 'AA',
+                'aa', 'bp'
+              )
               def <- 
                 ellipsize(obj=unname(genome(si)),
-                          width=getOption("width") - nchar(len) - nchar(type) - 8)
-              cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def))
+                          width=getOption("width") - base::nchar(len) - base::nchar(type) - 8)
+              cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep="")
             }
           })
 
@@ -74,8 +74,11 @@ setMethod("summary", "gbRecordList",
 #' @autoImports
 setMethod("seqinfo", "gbRecordList",
           function (x) {
-            l <- lapply(x, seqinfo)
-            suppressWarnings(Reduce(GenomicRanges::merge, l))
+            suppressWarnings(
+              base::Reduce(
+                GenomicRanges::merge, base::lapply(x, seqinfo)
+              )
+            )
           })
 
 

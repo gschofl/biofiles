@@ -48,7 +48,7 @@ setClass("gbLocation",
 
 
 #' @keywords internal
-#' @autoImports
+#' @importFrom IRanges setValidity2
 setValidity2("gbLocation",
             function (object) {
               # check range matrix

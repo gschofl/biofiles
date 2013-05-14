@@ -39,5 +39,6 @@ proteinID <- Curry("qualif", which="protein_id")
 #' @usage translation(x)
 #' @rdname qualif
 #' @export
+#' @importFrom Biostrings AAStringSet
 translation <- AAStringSet %.% Curry("qualif", which="translation")
 

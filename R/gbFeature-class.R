@@ -1,7 +1,6 @@
 #' @include gbLocation-class.R
 NULL
 
-
 #' gbFeature
 #' 
 #' \dQuote{gbFeature} is an S4 class that provides a container
@@ -37,11 +36,10 @@ setValidity2("gbFeature", function (object) {
 # show -------------------------------------------------------------------
 
 
-#' @autoImports
 .showGbFeature <- function(object, showInfo=TRUE) {
   op <- options("useFancyQuotes")
   options(useFancyQuotes=FALSE)
-  loc <- linebreak(as(object@location, "character"),
+  loc <- linebreak(as(location(object), "character"),
                    width=getOption("width") - 4,
                    offset=17, indent=0, split=",", FORCE=TRUE)
   if (all_empty(object@qualifiers)) {
@@ -65,7 +63,6 @@ setValidity2("gbFeature", function (object) {
 }
 
 
-#' @autoImports
 setMethod("show", "gbFeature",
           function (object) {
             .showGbFeature(object, showInfo=TRUE)
@@ -82,9 +79,9 @@ setMethod("summary", "gbFeature",
             key <- c("Key", key(object))
             loc <- c("Location", as(location(object), "character"))
             prod <- c("Product", product(object))
-            idx_len <-max(nchar(idx))
-            key_len <- max(nchar(key))
-            loc_len <- max(nchar(loc))
+            idx_len <-max(base::nchar(idx))
+            key_len <- max(base::nchar(key))
+            loc_len <- max(base::nchar(loc))
             idx <- pad(idx, idx_len + 2, "right")
             key <- pad(key, key_len + 3, "right")
             loc <- pad(loc, loc_len + 3, "right")
@@ -123,9 +120,10 @@ setMethod("fuzzy", "gbFeature",
             fuzzy(x@location))
 
 
+#' @autoImports
 setMethod("seqinfo", "gbFeature",
           function (x) {
-            tryCatch(get("seqinfo", x@.seqinfo),
+            tryCatch(base::get("seqinfo", x@.seqinfo),
                      error = function (e) Seqinfo() )
           })
 
@@ -185,7 +183,7 @@ setMethod("dbxref", "gbFeature",
               if (is.null(db)) {
                 structure(ids, names = dbs)
               } else {
-                db_pattern <- paste(wrap(db, "\\b"), collapse="|")
+                db_pattern <- paste0(wrap(db, "\\b"), collapse="|")
                 db_pos <- grep(db_pattern, dbs, ignore.case=TRUE)
                 if (all_empty(db_pos)) {
                   return( NA_character_ )
@@ -290,17 +288,18 @@ setMethod("shift", "gbFeature",
 #' @export
 setMethod("[[", c("gbFeature", "character", "missing"),
           function(x, i, j) {
-            if (i %in% c("key","location", ".Id")) {
+            if (i %in% c("key","location",".id")) {
               slot(x, i)
             } else {
               x@qualifiers[i]
             }
           })
 
+
 #' @export
 setMethod("$", "gbFeature",
           function(x, name) {
-            if (name %in% c("key","location",".Id")) {
+            if (name %in% c("key","location",".id")) {
               slot(x, name)
             } else {
               x@qualifiers[name]

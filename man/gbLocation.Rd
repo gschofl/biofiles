@@ -34,6 +34,7 @@ Super classes:
   \item \code{\link{start<-}}
   \item \code{\link{strand}}
   \item \code{\link{strand<-}}
+  \item \code{\link{width}}
 }
 
 }

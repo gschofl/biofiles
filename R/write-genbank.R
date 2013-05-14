@@ -12,7 +12,7 @@ setMethod("write.GenBank", "gbRecord",
             options(useFancyQuotes=FALSE)
             #cat("Writing features\n")
             f <- unlist(lapply(features(x), .writeFeature))
-            cat(paste(f, collapse="\n"), file=file, append=TRUE)
+            cat(paste0(f, collapse="\n"), file=file, append=TRUE)
             options(op)
             # write origin
             #cat("Writing sequence\n")
@@ -28,7 +28,7 @@ setMethod("write.GenBank", "gbRecord",
   type <- if (x@type == "DNA") "bp" else "  "
   loc_line <- sprintf("%-12s%-17s %+10s %s    %-6s  %-8s %s %s",
                       "LOCUS", x@locus, seqlengths(x), type, x@type, x@topology,
-                      x@division, toupper(format(x@date, "%d-%b-%Y")))
+                      x@division, base::toupper(format(x@date, "%d-%b-%Y")))
   def_line <- sprintf("%-12s%s", "DEFINITION", 
                       linebreak(definition(x), width=79, offset=12))
   acc_line <- sprintf("%-12s%s", "ACCESSION", accession(x))
@@ -45,9 +45,9 @@ setMethod("write.GenBank", "gbRecord",
   src_line <- sprintf("%-12s%s", "SOURCE",
                       linebreak(x@source, width=79, offset=12))
   org_line <- sprintf("%-12s%s", "  ORGANISM",
-                      paste(x@organism,
-                            linebreak(x@lineage, width=79, indent=12, offset=12),
-                            sep="\n"))
+                      paste0(x@organism,
+                             linebreak(x@lineage, width=79, indent=12, offset=12),
+                             sep="\n"))
   ref_line <- sprintf("%-12s%-3s(bases %s to %s)\n%-12s%s\n%-12s%s\n%-12s%s",
                       "REFERENCE", 1, 1, seqlengths(x),
                       "  AUTHORS", "authors",
@@ -62,10 +62,10 @@ setMethod("write.GenBank", "gbRecord",
   
   f_line <- sprintf("%-21s%s", "FEATURES", "Location/Qualifiers\n")
   
-  header <- paste(loc_line, def_line, acc_line, ver_line, dbl_line,
-                  key_line, src_line, org_line, ref_line, com_line,
-                  f_line, sep="\n")
-  header <- gsub("\n{2,}", "\n", header)
+  header <- paste0(loc_line, def_line, acc_line, ver_line, dbl_line,
+                   key_line, src_line, org_line, ref_line, com_line,
+                   f_line, sep="\n")
+  header <- base::gsub("\n{2,}", "\n", header)
   cat(header, file=outfile)
   
   invisible(header)
@@ -81,7 +81,7 @@ setMethod("write.GenBank", "gbRecord",
                                 width=79, offset=21, indent=0, split=","))
   qua <- names(f@qualifiers)
   val <- linebreak(dQuote(f@qualifiers), width=79, offset=21, FORCE=TRUE,
-                   indent=-(nchar(qua) + 2))
+                   indent=-(base::nchar(qua) + 2))
   qua_line <- sprintf("%+22s%s=%s", "/", qua, val)
   
   feature <- paste0(loc_line, "\n", paste0(qua_line, collapse="\n"))
@@ -100,8 +100,8 @@ setMethod("write.GenBank", "gbRecord",
     s <- character(n_lines)
     
     for (i in lines) {
-      seqw <- ifelse(i <  n_lines, i*60, seq@ranges@width)
-      seqs <- toString(subseq(seq, 1 + (i - 1)*60, seqw))
+      seqw <- base::ifelse(i <  n_lines, i*60, seq@ranges@width)
+      seqs <- XVector::toString(XVector::subseq(seq, 1 + (i - 1)*60, seqw))
       s[i] <- paste0(strsplit(seqs, "(?<=.{10})(?=.)", perl=TRUE)[[1]], collapse=" ")     
     }
     

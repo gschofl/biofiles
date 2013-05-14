@@ -5,7 +5,7 @@ NULL
 # The biofiles API -------------------------------------------------------
 
 ##    Basic getters/setters in
-##    gbLocation-class, gbRange-class, gbFeature-class, gbFeatureList-class
+##    gbLocation-class, gbFeature-class, gbFeatureList-class
 ##      start, end, strand, width
 ##      start<-, end<-, strand<-
 ##
@@ -55,12 +55,14 @@ NULL
 #' @rdname start
 #' @export
 #' @genericMethods
+#' @importFrom IRanges start
 setGeneric("start")
 
 
 #' @rdname start
 #' @export
 #' @genericMethods
+#' @importFrom IRanges "start<-"
 setGeneric("start<-")
 
 
@@ -74,12 +76,14 @@ setGeneric("start<-")
 #' @rdname end
 #' @export
 #' @genericMethods
+#' @importFrom IRanges end
 setGeneric("end")
 
 
 #' @rdname end
 #' @export
 #' @genericMethods
+#' @importFrom IRanges "end<-"
 setGeneric("end<-")
 
 
@@ -95,12 +99,14 @@ setGeneric("end<-")
 #' @rdname strand
 #' @export
 #' @genericMethods
+#' @importFrom BiocGenerics strand
 setGeneric("strand")
 
 
 #' @rdname strand
 #' @export
 #' @genericMethods
+#' @importFrom BiocGenerics "strand<-"
 setGeneric("strand<-")
 
 
@@ -115,6 +121,7 @@ setGeneric("strand<-")
 #' @rdname width
 #' @export
 #' @genericMethods
+#' @importFrom IRanges width
 setGeneric("width", signature="x", function (x, ...) {
   standardGeneric("width")
 })
@@ -134,11 +141,13 @@ setGeneric("width", signature="x", function (x, ...) {
 #' @return A \code{\linkS4class{GRanges}} object.
 #' @rdname ranges
 #' @export
+#' @importFrom IRanges ranges
 setGeneric("ranges")
 
 
 #' @rdname ranges
 #' @export
+#' @importFrom IRanges "ranges<-"
 setGeneric("ranges<-")
 
 
@@ -157,6 +166,7 @@ setGeneric("fuzzy", signature="x", function (x, ...) {
 #' @rdname seqinfo
 #' @export
 #' @genericMethods
+#' @importFrom GenomicRanges seqinfo
 setGeneric("seqinfo")
 
 
@@ -182,6 +192,7 @@ setGeneric("definition", signature="x", function (x, ...) {
 #' @rdname seqinfo
 #' @export
 #' @genericMethods
+#' @importFrom GenomicRanges seqlengths
 setGeneric("seqlengths")
 
 
@@ -189,6 +200,7 @@ setGeneric("seqlengths")
 #' @rdname annotation
 #' @export
 #' @genericMethods
+#' @importFrom BiocGenerics annotation
 setGeneric("annotation")
 
 
