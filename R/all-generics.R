@@ -1,4 +1,5 @@
 #' @include utils.R
+#' @useDynLib biofiles
 NULL
 
 
@@ -176,6 +177,15 @@ setGeneric("seqinfo")
 #' @genericMethods
 setGeneric("accession", signature="x", function (x, ...) {
   standardGeneric("accession")
+})
+
+
+#' @usage geneid(x, db = 'gi')
+#' @rdname seqinfo
+#' @export
+#' @genericMethods
+setGeneric("geneid", signature="x", function (x, ...) {
+  standardGeneric("geneid")
 })
 
 

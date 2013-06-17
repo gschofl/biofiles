@@ -40,6 +40,7 @@ For a description of the GenBank format see
   \item \code{\link{definition}}
   \item \code{\link{end}}
   \item \code{\link{features}}
+  \item \code{\link{geneid}}
   \item \code{\link{listQualif}}
   \item \code{\link{ranges}}
   \item \code{\link{select}}

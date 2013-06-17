@@ -1,3 +1,10 @@
+#' @importFrom Biostrings DNAStringSet
+NULL
+#' @importFrom IRanges new2
+NULL
+#' @importFrom parallel mclapply mcmapply detectCores
+NULL
+
 .parseGB <- function (gb_data, with_sequence = TRUE) {
   # get a vector with the positions of the main GenBank fields
   gbf <- grep("^[A-Z//]+", gb_data)
@@ -36,7 +43,7 @@
 
   # generate the seqenv environment that will hold the Seqinfo and Sequence
   # information. Set "seqinfo" and "sequence" to NULL
-  seqenv = new.env(parent=emptyenv())
+  seqenv <- new.env(parent=emptyenv())
   
   ## parse HEADER, FEATURES, and ORIGIN and construct 'gbData' object
   header <- .parseGbHeader(gb_header=gb_header, gb_fields=gbf)
@@ -44,7 +51,7 @@
   
   sequence <- .parseGbSequence(gb_sequence=gb_sequence,
                                accession_no=seqnames(header[["seqinfo"]]),
-                               seq_type=header[["type"]])
+                               seq_type=header[["moltype"]])
   seqenv[["sequence"]] <- sequence
   
   features <- .parseGbFeatures(gb_features=gb_features, seqenv=seqenv)
@@ -66,15 +73,15 @@
     length <- as.integer(locus_line[3])
     if (locus_line[4] == 'aa') {
       # these are GenPept files; they don't have a 'molecule type' but we set it 'AA'
-      type <- 'AA'
+      moltype <- 'AA'
       topology <- locus_line[5]
       division <- locus_line[6]
-      date <- as.POSIXlt(locus_line[7], format="%d-%b-%Y")
+      update_date <- as.POSIXlt(locus_line[7], format="%d-%b-%Y")
     } else if (locus_line[4] == 'bp') {
-      type <- locus_line[5]
+      moltype <- locus_line[5]
       topology <- locus_line[6]
       division <- locus_line[7]
-      date <- as.POSIXlt(locus_line[8], format="%d-%b-%Y")
+      update_date <- as.POSIXlt(locus_line[8], format="%d-%b-%Y")
     }
   } 
   else
@@ -83,15 +90,15 @@
     locus <- locus_line[2]
     length <- as.integer(locus_line[3])
     if (locus_line[4] == 'aa') {
-      type <- 'AA'
+      moltype <- 'AA'
       topology <- locus_line[5]
       division <- NA_character_
-      date <- as.POSIXlt(locus_line[6], format="%d-%b-%Y")
+      update_date <- as.POSIXlt(locus_line[6], format="%d-%b-%Y")
     } else if (locus_line[4] == 'bp') {
-      type <- locus_line[5]
+      moltype <- locus_line[5]
       topology <- NA_character_
       division <- locus_line[6]
-      date <- as.POSIXlt(locus_line[7], format="%d-%b-%Y")
+      update_date <- as.POSIXlt(locus_line[7], format="%d-%b-%Y")
     }
   }
   
@@ -108,7 +115,7 @@
   #### VERSION and GI
   ver_line <- gb_header[gb_fields[names(gb_fields) == "VERSION"]]
   version <- strsplit(ver_line, " +")[[1]][2]
-  GI <- strsplit(ver_line, "GI:")[[1]][2]
+  seqid <- paste0('gi|', strsplit(ver_line, "GI:")[[1]][2])
   
   #### DBLINK (not seen everywhere)
   if (length(db_line <- gb_header[gb_fields[names(gb_fields) == "DBLINK"]]) > 0L) {
@@ -137,7 +144,7 @@
     gb_header[seq.int(gb_fields[src_idx], gb_fields[src_idx + 1] - 1)]                  
   source <- sub("SOURCE      ", "", source_lines[1L])
   organism <- sub("  ORGANISM  ", "", source_lines[2L])
-  lineage <- paste(gsub("^ +", "", source_lines[-c(1L,2L)]), collapse=" ")
+  taxonomy <- paste(gsub("^ +", "", source_lines[-c(1L,2L)]), collapse=" ")
   
   #### REFERENCES (not seen everywhere)
   if (length(ref_idx <- which(names(gb_fields) == "REFERENCE")) > 0L) {
@@ -165,13 +172,12 @@
                      genome=definition)
 
   # References are assigned to the 'gb_reference' class
-  list(seqinfo=seqinfo, locus=locus, type=type, topology=topology,
-       division=division, date=date, version=version, GI=GI, dblink=dblink,
-       dbsource=dbsource, keywords=keywords, source=source,
-       organism=organism, lineage=lineage, references=references,
-       comment=comment)
+  list(seqinfo=seqinfo, locus=locus, moltype=moltype, topology=topology,
+       division=division, update_date=update_date, create_date=as.POSIXlt(NA),
+       version=version, seqid=seqid, dblink=dblink, dbsource=dbsource,
+       keywords=keywords, source=source, organism=organism, taxonomy=taxonomy,
+       references=references, comment=comment)
 } 
-
 
 .parseGbReferences <- function (ref_lines) {
   return("Not implemented yet")
@@ -181,7 +187,6 @@
   auth_line <- grep("^  AUTHORS", ref, value=TRUE)
   .parseAuthors <- function (auth_line) {}
 }
-
 
 ## characters permitted to occur in feature table component names:
 ## [A-Z], [a-z], [0-9], [_'*-] --> [[:alnum]_'*\\-]
@@ -217,9 +222,6 @@
 ##   /citation=[number] e.g. /citation=[3]
 ##   /compare=[accession-number.sequence-version] e.g. /compare=AJ634337.1
 ##
-#' @importFrom IRanges new2
-#' @importFrom parallel mcmapply
-#' @importFrom parallel detectCores
 .parseGbFeatures <- function (gb_features, seqenv) {
   # where do all the features start
   feature_start <- which(substr(gb_features, 6, 6) != " ")
@@ -228,16 +230,14 @@
   # indeces for all features
   feature_idx <- mapply(seq.int, feature_start, feature_end,
                         SIMPLIFY=FALSE, USE.NAMES=FALSE)
-  ftr <- mcmapply(function (idx, n) {
+  ftbl <- mcmapply(function (idx, n) {
     gbFeature(gb_features[idx], seqenv, n)
   }, idx=feature_idx, n=seq_along(feature_start),
                   SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
   
-  IRanges::new2('gbFeatureList', .Data=ftr, .seqinfo=seqenv, check=FALSE) 
+  IRanges::new2('gbFeatureList', .Data=ftbl, .seqinfo=seqenv, check=FALSE) 
 }
 
-
-#' @importFrom parallel mclapply
 .joinSeq <- function (seq, accession_no) {
   mc_cores <- detectCores()
   s <- unlist(mclapply(seq, function(x) {
@@ -247,8 +247,6 @@
   s
 }
 
-
-#' @importFrom Biostrings DNAStringSet
 #' @autoImports
 .parseGbSequence <- function (gb_sequence, accession_no, seq_type) {
   # read.BStringSet() does not support connections and

@@ -12,7 +12,6 @@ Super classes:
 \itemize{
   \item \linkS4class{list}
   \item \linkS4class{vector}
-  \item \linkS4class{vectorORfactor}
 }
 
 }

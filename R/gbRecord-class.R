@@ -14,19 +14,20 @@ setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
 #' @classMethods
 setClass("gbRecord",
          representation(
-           locus = "character", type = "character", topology = "character",
-           division = "character", date = "POSIXlt", version = "character",
-           GI = "character", dblink = "character", dbsource = "character",
-           keywords = "character", source = "character", organism = "character",
-           lineage = "character", references = "character", comment = "character",
-           features = "gbFeatureList", contig = "gbLocationOrNull", seqinfo = "environment"),
+           locus = "character", moltype = "character", topology = "character",
+           division = "character", update_date = "POSIXlt", create_date = "POSIXlt",
+           version = "character", seqid = "character", dblink = "character",
+           dbsource = "character", keywords = "character", source = "character",
+           organism = "character", taxonomy = "character", references = "character",
+           comment = "character", features = "gbFeatureList",
+           contig = "gbLocationOrNull", seqinfo = "environment"),
          prototype(
-           locus=NA_character_, type=NA_character_, topology=NA_character_,
-           division=NA_character_, date=as.POSIXlt(NA), version=NA_character_,
-           GI=NA_character_, dblink=NA_character_, dbsource=NA_character_,
-           keywords=NA_character_, source=NA_character_, organism=NA_character_,
-           lineage=NA_character_, references=NA_character_, comment=NA_character_,
-           seqinfo=new.env(parent=emptyenv())
+           locus=NA_character_, moltype=NA_character_, topology=NA_character_,
+           division=NA_character_, update_date=as.POSIXlt(NA), create_date=as.POSIXlt(NA),
+           version=NA_character_, seqid=NA_character_, dblink=NA_character_,
+           dbsource=NA_character_, keywords=NA_character_, source=NA_character_,
+           organism=NA_character_, taxonomy=NA_character_, references=NA_character_,
+           comment=NA_character_, seqinfo=new.env(parent=emptyenv())
          )
 )
 
@@ -75,7 +76,7 @@ gbRecord <- function (gb, with_sequence = TRUE)
     for (i in seq_len(n))
     {
       gb_data <- base::unlist(strsplit(split_gb[i], "\n"))
-      parsed_dg_data[[i]] <- .parseGB( gb_data, with_sequence )
+      parsed_gb_data[[i]] <- .parseGB( gb_data, with_sequence )
     }
   ##
   ## Parse random textConnections
@@ -111,18 +112,19 @@ gbRecord <- function (gb, with_sequence = TRUE)
     gbr <- base::with(gbk, 
                       new("gbRecord",
                           locus = header[["locus"]],
-                          type = header[["type"]],
+                          moltype = header[["moltype"]],
                           topology = header[["topology"]],
                           division = header[["division"]],
-                          date = header[["date"]],
+                          update_date = header[["update_date"]],
+                          create_date = header[["create_date"]],
                           version = header[["version"]],
-                          GI = header[["GI"]],
+                          seqid = header[["seqid"]],
                           dblink = header[["dblink"]],
                           dbsource = header[["dbsource"]],
                           keywords = header[["keywords"]],
                           source = header[["source"]],
                           organism = header[["organism"]],
-                          lineage = header[["lineage"]],
+                          taxonomy = header[["taxonomy"]],
                           references = header[["references"]],
                           comment = header[["comment"]],
                           features = features,
@@ -142,8 +144,7 @@ gbRecord <- function (gb, with_sequence = TRUE)
 # show -------------------------------------------------------------------
 
 
-#' @importFrom XVector toString
-#' @importFrom XVector subseq
+#' @importFrom XVector toString  subseq
 setMethod("show", "gbRecord",
           function (object) { 
             if (is.na(accession(object))) {
@@ -156,16 +157,16 @@ setMethod("show", "gbRecord",
                         sQuote(class(object)), length(features(object))),
                 sprintf("LOCUS       %s\n",
                         linebreak(paste(object@locus, seqlengths(object),
-                                        if (object@type == 'AA') 'aa' else 'bp',
-                                        object@type, object@topology,
-                                        object@division, object@date),
+                                        if (object@moltype == 'AA') 'aa' else 'bp',
+                                        object@moltype, object@topology,
+                                        object@division, object@update_date),
                                   offset=13, FORCE=TRUE)),
                 sprintf("DEFINITION  %s\n",
                         linebreak(definition(object), offset=13, FORCE=TRUE)),
                 sprintf("ACCESSION   %s\n", accession(object)),
-                sprintf("VERSION     %s GI:%s\n", object@version, object@GI),
+                sprintf("VERSION     %s GI:%s\n", object@version, geneid(object)),
                 sprintf("DBLINK      Project: %s\n", object@dblink),
-                if (object@type == "AA") {
+                if (object@moltype == "AA") {
                   sprintf("DBSOURCE    %s\n",
                           linebreak(object@dbsource, offset=13, FORCE=TRUE))
                 },
@@ -176,7 +177,7 @@ setMethod("show", "gbRecord",
                 sprintf("  ORGANISM  %s\n",
                         linebreak(object@organism, offset=13, FORCE=TRUE)),
                 sprintf("            %s\n",
-                        linebreak(object@lineage, offset=13, FORCE=TRUE)),
+                        linebreak(object@taxonomy, offset=13, FORCE=TRUE)),
                 sprintf("REFERENCE   %s\n", object@references),
                 sprintf("COMMENT     %s\n",
                         linebreak(object@comment, offset=13, FORCE=TRUE)),
@@ -240,6 +241,13 @@ setMethod("seqlengths", "gbRecord",
 
 setMethod("accession", "gbRecord", 
           function (x) seqnames(seqinfo(x)))
+
+
+setMethod("geneid", "gbRecord", 
+          function (x, db = 'gi') {
+            db.idx <- which(strsplitN(x@seqid, "|", 1, fixed = TRUE) == db)
+            strsplitN(x@seqid, "|", 2, fixed = TRUE)[db.idx]
+          })
 
 
 setMethod("definition", "gbRecord", 

@@ -1,10 +1,8 @@
 #' @importFrom rmisc Curry
-#' @importFrom IRanges follow
-#' @importFrom IRanges precede
-#' @importFrom IRanges IRanges
-#' @importFrom IRanges split
-#' @importFrom IRanges queryHits
-#' @importFrom IRanges subjectHits
+NULL
+#' @importFrom IRanges IRanges follow precede split queryHits subjectHits
+NULL
+
 #' @keywords internal
 find_neighbors <- function (query, subject, n = 5, 
                             direction = 'flanking',

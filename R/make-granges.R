@@ -1,8 +1,8 @@
-#' @importFrom IRanges DataFrame
-#' @importFrom IRanges IRanges
-#' @importFrom IRanges Rle
-#' @importFrom GenomicRanges GRanges
-#' @importFrom GenomicRanges GRangesList
+#' @importFrom IRanges DataFrame Rle
+NULL
+#' @importFrom GenomicRanges GRanges GRangesList
+NULL
+
 .make_GRanges <- function (x, join = FALSE, include = "none", exclude = "", key = TRUE) {
   
   if (length(x) == 0)
