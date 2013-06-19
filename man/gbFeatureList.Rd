@@ -12,6 +12,7 @@ Super classes:
 \itemize{
   \item \linkS4class{list}
   \item \linkS4class{vector}
+  \item \linkS4class{vectorORfactor}
 }
 
 }
@@ -34,6 +35,7 @@ Super classes:
   \item \code{\link{seqinfo}}
   \item \code{\link{seqlengths}}
   \item \code{\link{sequence}}
+  \item \code{\link{shift}}
   \item \code{\link{show}}
   \item \code{\link{start}}
   \item \code{\link{start<-}}

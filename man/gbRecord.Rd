@@ -47,6 +47,7 @@ For a description of the GenBank format see
   \item \code{\link{seqinfo}}
   \item \code{\link{seqlengths}}
   \item \code{\link{sequence}}
+  \item \code{\link{shift}}
   \item \code{\link{show}}
   \item \code{\link{start}}
   \item \code{\link{strand}}

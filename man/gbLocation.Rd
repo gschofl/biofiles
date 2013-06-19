@@ -29,6 +29,7 @@ Super classes:
   \item \code{\link{end}}
   \item \code{\link{end<-}}
   \item \code{\link{fuzzy}}
+  \item \code{\link{shift}}
   \item \code{\link{show}}
   \item \code{\link{start}}
   \item \code{\link{start<-}}

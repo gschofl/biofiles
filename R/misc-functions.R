@@ -1,4 +1,5 @@
-#' @importFrom rmisc %.%
+#' @importFrom rmisc compose
+#' @importFrom Biostrings AAStringSet
 NULL
 
 #' Quickly list all qualifier names
@@ -9,36 +10,35 @@ NULL
 #' or, \code{\linkS4class{gbFeature}} instance
 #' @return A character vector of qualifier names
 #' @export
-listUniqueQualifs <- unique %.% unlist %.% listQualif
+listUniqueQualifs <- compose(unique, unlist, listQualif)
 
 
 #' @usage locusTag(x)
 #' @rdname qualif
 #' @export
-locusTag <- Curry("qualif", which="locus_tag")
+locusTag <- Curry(qualif, which="locus_tag")
 
 
 #' @usage product(x)
 #' @rdname qualif
 #' @export
-product <- Curry("qualif", which="product")
+product <- Curry(qualif, which="product")
 
 
 #' @usage note(x)
 #' @rdname qualif
 #' @export
-note <- Curry("qualif", which="note")
+note <- Curry(qualif, which="note")
 
 
 #' @usage proteinID(x)
 #' @rdname qualif
 #' @export
-proteinID <- Curry("qualif", which="protein_id")
+proteinID <- Curry(qualif, which="protein_id")
 
 
 #' @usage translation(x)
 #' @rdname qualif
 #' @export
-#' @importFrom Biostrings AAStringSet
-translation <- AAStringSet %.% Curry("qualif", which="translation")
+translation <- compose(AAStringSet, Curry(qualif, which="translation"))
 
