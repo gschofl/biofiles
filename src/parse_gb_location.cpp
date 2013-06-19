@@ -15,17 +15,17 @@ SEXP gbLocation(
 }
 
 void parse_gb_location(
-    Rcpp::S4 &gb_location,
-    std::string &gb_base_span,
+    Rcpp::S4 &location,
+    std::string &span,
     std::string &accession )
 {
     // clean up possible whitespace
-    gb_base_span = boost::regex_replace(gb_base_span, WHITESPACE, EMPTY);
+    span.erase( remove_if(span.begin(), span.end(), ::isspace), span.end());
 
     // iterator over the complete gb_base_span
     std::string::const_iterator b_it, e_it; 
-    b_it = gb_base_span.begin();
-    e_it = gb_base_span.end();
+    b_it = span.begin();
+    e_it = span.end();
     boost::smatch m;
   
     // initialise a BaseSpan
@@ -35,26 +35,26 @@ void parse_gb_location(
     try {
       if ( boost::regex_match(b_it, e_it, m, PCSL) ) {
         
-          parse_simple_span(bs, gb_base_span, accession);
+          parse_simple_span(bs, span, accession);
           
           // fill gbLocation@range
           // guarantied integer Matrix/two columns 
           IntegerMatrix range(1,2);
           range(0,0) = bs.range[0];
           range(0,1) = bs.range[1];
-          gb_location.slot("range") = range;
+          location.slot("range") = range;
           
           // fill gbLocation@fuzzy
           // guarantied logical Matrix/two columns 
           LogicalMatrix fuzzy(1,2);
           fuzzy(0,0) = bs.fuzzy[0];
           fuzzy(0,1) = bs.fuzzy[1];
-          gb_location.slot("fuzzy") = fuzzy;
+          location.slot("fuzzy") = fuzzy;
           
-          gb_location.slot("strand") = bs.strand;
-          gb_location.slot("accession") = bs.accession;
-          gb_location.slot("remote") = bs.remote;
-          gb_location.slot("type") = bs.type;
+          location.slot("strand") = bs.strand;
+          location.slot("accession") = bs.accession;
+          location.slot("remote") = bs.remote;
+          location.slot("type") = bs.type;
           
       // test for a possibly complemented compound location
       } else if ( boost::regex_match( b_it, e_it, m, PCCL ) ) {
@@ -111,13 +111,13 @@ void parse_gb_location(
                   strandVec[i] = -1;
           }
           
-          gb_location.slot("range") = rangeMat;
-          gb_location.slot("fuzzy") = fuzzyMat;
-          gb_location.slot("strand") = strandVec;
-          gb_location.slot("compound") = compound;
-          gb_location.slot("accession") = accessionVec;
-          gb_location.slot("remote") = remoteVec;
-          gb_location.slot("type") = typeVec;
+          location.slot("range") = rangeMat;
+          location.slot("fuzzy") = fuzzyMat;
+          location.slot("strand") = strandVec;
+          location.slot("compound") = compound;
+          location.slot("accession") = accessionVec;
+          location.slot("remote") = remoteVec;
+          location.slot("type") = typeVec;
       } else {
         throw std::range_error("Cannot parse location descriptor.");
       }
@@ -139,7 +139,7 @@ void parse_simple_span(
     
     // initialize and set defaults
     std::string start, end;
-    std::vector<int> range(2);
+    std::vector<unsigned int> range(2);
     std::vector<bool> fuzzy(2, false);
     int strand(1);
     bool remote(false);
@@ -186,9 +186,8 @@ void parse_simple_span(
     fuzzy[1] = boost::regex_match(end, m, FUZZY_END );
   
     // get range
-    static const boost::regex FUZZY("<|>");
-    range[0] = atoi( boost::regex_replace(start, FUZZY, EMPTY).c_str() );
-    range[1] = atoi( boost::regex_replace(end, FUZZY, EMPTY).c_str() );
+    range[0] = extractNumber(start);
+    range[1] = extractNumber(end);
     
     try {
       // throw error if the end point comes before the start point.
@@ -210,4 +209,16 @@ void parse_simple_span(
     }
 }
 
+
+unsigned int extractNumber(const std::string& str) {
+    std::string temp;
+    std::string::const_iterator it;
+    for (it = str.begin(); it != str.end(); it++)
+    {
+        if (isdigit(*it)) {
+            temp += *it;
+        }
+    }
+    return( atoi(temp.c_str()) );
+}
 

@@ -7,7 +7,7 @@
 #include <boost/regex.hpp>
 
 struct BaseSpan {
-    std::vector<int> range;
+    std::vector<unsigned int> range;
     std::vector<bool> fuzzy;
     int strand;
     std::string accession;
@@ -21,8 +21,13 @@ void parse_simple_span(
     std::string& accession );
     
 void parse_gb_location(
-    Rcpp::S4 &gb_location,
-    std::string &gb_base_span,
+    Rcpp::S4 &location,
+    std::string &span,
+    std::string &accession );
+
+void parse_gb_location2(
+    Rcpp::S4 &location,
+    std::string &span,
     std::string &accession );
 
 void parse_gb_feature_table(
@@ -32,6 +37,8 @@ void parse_gb_feature_table(
 
 Rcpp::CharacterVector parse_gb_qualifiers( 
     const std::vector<std::string>& qualifiers );
+    
+unsigned int extractNumber(const std::string& str);
 
 /*
  * The notation '55^56' describes a site between two adjoining nucleotides,
@@ -55,12 +62,6 @@ Rcpp::CharacterVector parse_gb_qualifiers(
  *   order(location,location,...)
  *   bond(location,location,...) only in GenPept files
  */
-
-// empty
-static const std::string EMPTY("");
-
-// whitespace
-static const boost::regex WHITESPACE("\\s+");
 
 // complement
 static const boost::regex COMPL("^complement");
