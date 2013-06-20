@@ -24,7 +24,7 @@ gbRecordList <- function (...) {
       listData <- listData[[1L]]
     if (!all(vapply(listData, is, "gbRecord", FUN.VALUE=logical(1)))) 
       stop("All elements in '...' must be gbRecord objects")
-    names(listData) <- sapply(listData, accession)
+    names(listData) <- sapply(listData, getAccession)
     return( new('gbRecordList', .Data = listData) )
   }
 }
@@ -41,16 +41,16 @@ setValidity2("gbRecordList", function (object) {
 #' @autoImports
 setMethod("show", "gbRecordList",
           function (object) { 
-            if (all(is.na(accession(object)))) {
+            if (all(is.na(getAccession(object)))) {
               cat(sprintf("%s instance with zero records\n", sQuote(class(object))))
             } else {
               cat(sprintf("%s instance with %i records\n", 
                           sQuote(class(object)), length(object)))
               si <- seqinfo(object)
               acc <- seqnames(si)
-              len <- unname(seqlengths(si))
+              len <- unname(getLength(si))
               type <- base::ifelse(
-                vapply(object, slot, name='type', FUN.VALUE=character(1)) == 'AA',
+                vapply(object, slot, name='moltype', FUN.VALUE=character(1)) == 'AA',
                 'aa', 'bp'
               )
               def <- 
@@ -82,25 +82,30 @@ setMethod("seqinfo", "gbRecordList",
           })
 
 
-setMethod("seqlengths", "gbRecordList",
+setMethod("getLength", "gbRecordList",
           function (x) seqlengths(seqinfo(x)))
 
 
-setMethod("accession", "gbRecordList", 
+setMethod("getAccession", "gbRecordList", 
           function (x) seqnames(seqinfo(x)))
 
 
-setMethod("definition", "gbRecordList", 
+setMethod("getGeneID", "gbRecordList", function (x) {
+            vapply(x, getGeneID, FUN.VALUE=character(1), USE.NAMES=FALSE)
+          })
+
+
+setMethod("getDefinition", "gbRecordList", 
           function (x) genome(seqinfo(x)))
 
 
-setMethod("features", "gbRecordList", 
-          function (x) Map(features, x))
+setMethod("getFeatures", "gbRecordList", 
+          function (x) Map(getFeatures, x))
 
 
-setMethod("sequence", "gbRecordList", 
+setMethod("getSequence", "gbRecordList", 
           function (x) {
-            Reduce(append, Map(sequence, x))
+            Reduce(append, Map(getSequence, x))
             })
 
 
@@ -134,3 +139,13 @@ setMethod("width", "gbRecordList",
             lapply(x, width, join = join)
           })
 
+
+# internal ---------------------------------------------------------------
+
+setMethod('.dbSource', 'gbRecordList', function (x) {
+  vapply(x, .dbSource, character(1), USE.NAMES=FALSE)
+})
+
+setMethod(".defline", "gbRecordList", function (x) {
+  paste0('gi|', getGeneID(x), .dbSource(x), getAccession(x), ' ', getDefinition(x))
+})

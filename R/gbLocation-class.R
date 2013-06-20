@@ -118,7 +118,7 @@ setMethod("fuzzy", "gbLocation",
           function (x) x@fuzzy)
 
 
-setMethod("accession", "gbLocation",
+setMethod("getAccession", "gbLocation",
           function (x) x@accession)
 
 

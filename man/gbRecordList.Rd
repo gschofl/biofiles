@@ -27,14 +27,17 @@ Super classes:
 
 \section{Generics with methods for gbRecordList}{
 \itemize{
-  \item \code{\link{accession}}
-  \item \code{\link{definition}}
+  \item \code{\link{.dbSource}}
+  \item \code{\link{.defline}}
   \item \code{\link{end}}
-  \item \code{\link{features}}
+  \item \code{\link{getAccession}}
+  \item \code{\link{getDefinition}}
+  \item \code{\link{getFeatures}}
+  \item \code{\link{getGeneID}}
+  \item \code{\link{getLength}}
+  \item \code{\link{getSequence}}
   \item \code{\link{ranges}}
   \item \code{\link{seqinfo}}
-  \item \code{\link{seqlengths}}
-  \item \code{\link{sequence}}
   \item \code{\link{show}}
   \item \code{\link{start}}
   \item \code{\link{strand}}

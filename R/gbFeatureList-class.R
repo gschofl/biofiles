@@ -30,9 +30,9 @@ setValidity2("gbFeatureList", function (object) {
   if (!all(vapply(object@.Data, is, 'gbFeature', FUN.VALUE=logical(1))))
     return("All elements in a 'gbFeatureList' must be 'gbFeature' instances")
   seq <- get("sequence", object@.seqinfo)
-  if (names(seq) != accession(object))
+  if (names(seq) != getAccession(object))
     return("Names of 'seqinfo' and 'sequence' do not match")
-  if (seq@ranges@width != unname(seqlengths(object)))
+  if (seq@ranges@width != unname(getLength(object)))
     return("Length of 'seqinfo' and 'sequence' do not match")
                  
   TRUE
@@ -154,15 +154,15 @@ setMethod("seqinfo", "gbFeatureList",
                                 error = function (e) Seqinfo() ))
 
 
-setMethod("seqlengths", "gbFeatureList",
+setMethod("getLength", "gbFeatureList",
           function (x) seqlengths(seqinfo(x)))
 
 
-setMethod("accession", "gbFeatureList",
+setMethod("getAccession", "gbFeatureList",
           function (x) seqnames(seqinfo(x)))
 
 
-setMethod("definition", "gbFeatureList",
+setMethod("getDefinition", "gbFeatureList",
           function (x) genome(seqinfo(x)))
 
 
@@ -210,8 +210,17 @@ setMethod("dbxref", "gbFeatureList",
           })
 
 
-setMethod("sequence", "gbFeatureList",
-          function (x) .seqAccess(x))
+setMethod("getSequence", "gbFeatureList", function (x) .seqAccess(x))
+
+
+setMethod('.dbSource', 'gbFeatureList', function (x) {
+  parse_dbsource(get("dbsource", x@.seqinfo))
+})
+
+
+setMethod(".defline", "gbFeatureList", function (x) {
+  vapply(x, .defline, character(1), USE.NAMES=FALSE)
+})
 
 
 # setters ----------------------------------------------------------------

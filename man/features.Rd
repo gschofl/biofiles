@@ -1,9 +1,9 @@
 % Built by roxygen3 0.1
-\name{features}
-\alias{features}
+\name{getFeatures}
+\alias{getFeatures}
 \title{Retrieve features of a GenBank record.}
 \usage{
-  features(x, ...)
+  getFeatures(x, ...)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbRecord}} instance.}
@@ -18,7 +18,7 @@ gbRecord database.
 \description{
 Retrieve features of a GenBank record.
 }
-\section{Method signatures for generic features}{
+\section{Method signatures for generic getFeatures}{
 \itemize{
   \item \linkS4class{gbRecord}
   \item \linkS4class{gbRecordList}

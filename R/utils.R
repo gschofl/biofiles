@@ -202,7 +202,19 @@ merge_seq <- function (seq, x, SEQF) {
                       )
   }
   outseq <- SEQF(outseq)
-  outseq@ranges@NAMES <- sprintf("%s.%s.%s", accession(x), key(x), index(x))
+  outseq@ranges@NAMES <- .defline(x)
   outseq
 }
 
+
+#' @autoImports
+parse_dbsource <- function (dbsource) {
+  if (is.na(dbsource)) {
+    '|gb|'
+  }
+  else {
+    db <- strsplitN(dbsource, ": | ", 1L)
+    db <- switch(db, accession='gb', REFSEQ='ref', db)
+    paste0('|', db, '|')
+  }
+}

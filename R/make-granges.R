@@ -40,7 +40,7 @@ NULL
       qual <- qual[i, , drop=FALSE] 
   }
 
-  GRanges(seqnames=Rle(accession(x)), ranges=IRanges(start, end, names=names),
+  GRanges(seqnames=Rle(getAccession(x)), ranges=IRanges(start, end, names=names),
           strand=strand, qual, seqinfo = seqinfo(x))
 }
 

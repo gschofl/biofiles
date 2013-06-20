@@ -1,5 +1,6 @@
 #' @include utils.R
 #' @useDynLib biofiles
+#' @importFrom GenomicRanges seqlengths seqinfo
 NULL
 
 
@@ -59,13 +60,11 @@ NULL
 #' @importFrom IRanges start
 setGeneric("start")
 
-
 #' @rdname start
 #' @export
 #' @genericMethods
 #' @importFrom IRanges "start<-"
 setGeneric("start<-")
-
 
 #' Get or set the end of genomic features
 #' 
@@ -80,13 +79,11 @@ setGeneric("start<-")
 #' @importFrom IRanges end
 setGeneric("end")
 
-
 #' @rdname end
 #' @export
 #' @genericMethods
 #' @importFrom IRanges "end<-"
 setGeneric("end<-")
-
 
 ### The "strand" generic is defined in the BiocGenerics package.
 #' Get or set the strand of genomic features
@@ -103,13 +100,11 @@ setGeneric("end<-")
 #' @importFrom BiocGenerics strand
 setGeneric("strand")
 
-
 #' @rdname strand
 #' @export
 #' @genericMethods
 #' @importFrom BiocGenerics "strand<-"
 setGeneric("strand<-")
-
 
 ### The "width" generic is defined in the IRanges package. We need
 ### to override it because they don't provide a dotdotdot interface.
@@ -126,7 +121,6 @@ setGeneric("strand<-")
 setGeneric("width", signature="x", function (x, ...) {
   standardGeneric("width")
 })
-
 
 ### The "ranges" generic is defined in the IRanges package.
 #' Get or set the range of genomic features
@@ -145,12 +139,10 @@ setGeneric("width", signature="x", function (x, ...) {
 #' @importFrom IRanges ranges
 setGeneric("ranges")
 
-
 #' @rdname ranges
 #' @export
 #' @importFrom IRanges "ranges<-"
 setGeneric("ranges<-")
-
 
 #' @rdname fuzzy
 #' @export
@@ -158,7 +150,6 @@ setGeneric("ranges<-")
 setGeneric("fuzzy", signature="x", function (x, ...) {
   standardGeneric("fuzzy")
 })
-
 
 ### The "seqinfo" generic is defined in the BiocGenerics package.
 #' Get sequence information about genomic features
@@ -170,40 +161,136 @@ setGeneric("fuzzy", signature="x", function (x, ...) {
 #' @importFrom GenomicRanges seqinfo
 setGeneric("seqinfo")
 
-
-#' @usage accession(x)
-#' @rdname seqinfo
+#' @usage getLocus(x)
+#' @rdname accessors
 #' @export
 #' @genericMethods
-setGeneric("accession", signature="x", function (x, ...) {
-  standardGeneric("accession")
-})
+setGeneric('getLocus', function (x, ...) standardGeneric('getLocus'))
 
-
-#' @usage geneid(x, db = 'gi')
-#' @rdname seqinfo
+#' @usage getLength(x)
+#' @rdname accessors
 #' @export
 #' @genericMethods
-setGeneric("geneid", signature="x", function (x, ...) {
-  standardGeneric("geneid")
-})
+setGeneric("getLength", function (x, ...) standardGeneric('getLength'))
 
-
-#' @usage definition(x)
-#' @rdname seqinfo
+#' @usage getMoltype(x)
+#' @rdname accessors
 #' @export
 #' @genericMethods
-setGeneric("definition", signature="x", function (x, ...) {
-  standardGeneric("definition")
-})
+setGeneric('getMoltype', function (x, ...) standardGeneric('getMoltype'))
 
-
-#' @usage seqlengths(x)
-#' @rdname seqinfo
+#' @usage getTopology(x)
+#' @rdname accessors
 #' @export
 #' @genericMethods
-#' @importFrom GenomicRanges seqlengths
-setGeneric("seqlengths")
+setGeneric('getTopology', function (x, ...) standardGeneric('getTopology'))
+
+#' @usage getDivision(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric('getDivision', function (x, ...) standardGeneric('getDivision'))
+
+#' @usage getDate(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric('getDate', function (x) standardGeneric('getDate'))
+
+#' @usage getDefinition(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric("getDefinition", function (x, ...) standardGeneric("getDefinition"))
+
+#' @usage getAccession(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric("getAccession", function (x, ...) standardGeneric("getAccession"))
+
+#' @usage getVersion(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric("getVersion", function (x, ...) standardGeneric("getVersion"))
+
+#' @usage getGeneID(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric("getGeneID", function (x, ...) standardGeneric("getGeneID"))
+
+#' @usage getDBLink(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric('getDBLink', function (x) standardGeneric('getDBLink'))
+
+#' @usage getDBSource(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric('getDBSource', function (x) standardGeneric('getDBSource'))
+
+#' @usage getSource(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric('getSource', function (x) standardGeneric('getSource'))
+
+#' @usage getOrganism(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric('getOrganism', function (x) standardGeneric('getOrganism'))
+
+#' @usage getTaxonomy(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric('getTaxonomy', function (x) standardGeneric('getTaxonomy'))
+
+#' @usage getKeywords(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric('getKeywords', function (x) standardGeneric('getKeywords'))
+
+#' @usage getReference(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric('getReference', function (x) standardGeneric('getReference'))
+
+#' @usage getComment(x)
+#' @rdname accessors
+#' @export
+#' @genericMethods
+setGeneric('getComment', function (x) standardGeneric('getComment'))
+
+#' Retrieve features of a GenBank record.
+#'
+#' @param x A \code{\linkS4class{gbRecord}} instance.
+#' @param ... Additional arguments passed to methods.
+#' @return The \code{\linkS4class{gbFeatureList}} object contained in a
+#' gbRecord database.
+#' @rdname features
+#' @export
+#' @genericMethods
+setGeneric("getFeatures", function (x, ...) standardGeneric("getFeatures"))
+
+
+#' Get sequences of GenBank features
+#' 
+#' @param x A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeature}},
+#'  or \code{\linkS4class{gbFeatureList}} instance.
+#' @param ... Additional arguments passed to methods.
+#' @return An \code{\linkS4class{XStringSet}} object.
+#' @rdname sequence
+#' @export
+#' @genericMethods
+setGeneric("getSequence", function(x, ...) standardGeneric("getSequence"))
 
 
 ### The "annotation" generic is defined in the BiocGenerics package.
@@ -312,34 +399,6 @@ setGeneric("dbxref", signature="x",
            function(x, db = NULL, ...) {
              standardGeneric("dbxref")
            })
-
-
-#' Get sequences of GenBank features
-#' 
-#' @param x A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeature}},
-#'  or \code{\linkS4class{gbFeatureList}} instance.
-#' @param ... Additional arguments passed to methods.
-#' @return An \code{\linkS4class{XStringSet}} object.
-#' @rdname sequence
-#' @export
-#' @genericMethods
-setGeneric("sequence", signature="x", function(x, ...) {
-  standardGeneric("sequence")
-})
-
-
-#' Retrieve features of a GenBank record.
-#'
-#' @param x A \code{\linkS4class{gbRecord}} instance.
-#' @param ... Additional arguments passed to methods.
-#' @return The \code{\linkS4class{gbFeatureList}} object contained in a
-#' gbRecord database.
-#' @rdname features
-#' @export
-#' @genericMethods
-setGeneric("features", signature="x", function (x, ...) {
-  standardGeneric("features")
-})
 
 
 # write generics ---------------------------------------------------------
@@ -541,4 +600,17 @@ setGeneric("select", signature="x",
            function(x, ..., keys = NULL, cols = NULL) {
              standardGeneric("select")
            })
+
+
+# internal ---------------------------------------------------------------
+
+
+#' @keywords internal
+setGeneric('.dbSource', function (x) standardGeneric('.dbSource'))
+
+
+#' @keywords internal
+setGeneric('.defline', function (x) standardGeneric('.defline'))
+
+
 

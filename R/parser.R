@@ -48,6 +48,7 @@ NULL
   ## parse HEADER, FEATURES, and ORIGIN and construct 'gbData' object
   header <- .parseGbHeader(gb_header=gb_header, gb_fields=gbf)
   seqenv[["seqinfo"]] <- header[["seqinfo"]]
+  seqenv[["dbsource"]] <- header[["dbsource"]]
   
   sequence <- .parseGbSequence(gb_sequence=gb_sequence,
                                accession_no=seqnames(header[["seqinfo"]]),

@@ -4,11 +4,11 @@ setMethod("write.FeatureTable", "gbRecord",
                     sequence = TRUE, append = FALSE) {
   
   # write header
-  header <- rmisc::trim(sprintf(">Feature %s %s", accession(x), tablename))
+  header <- rmisc::trim(sprintf(">Feature %s %s", getAccession(x), tablename))
   cat(paste0(header, sep="\n"), file=file)
   
   # kick out source if present
-  FeatureList <- features(x)
+  FeatureList <- getFeatures(x)
   FeatureList <- FeatureList[key(FeatureList) != "source"]
   # get index of genes
   gene_idx <- index(FeatureList[key(FeatureList) == "gene"])
@@ -17,8 +17,8 @@ setMethod("write.FeatureTable", "gbRecord",
   cat(paste0(FeatureTable, collapse="\n"), file=file, append=TRUE)
   
   if (sequence) {
-    seq <- sequence(x)
-    names(seq) <- accession(x)
+    seq <- getSequence(x)
+    names(seq) <- getAccession(x)
     writeXStringSet(seq, filepath=replace_ext(file, "fna", level=1),
                     format="fasta")
   }

@@ -129,17 +129,17 @@ setMethod("seqinfo", "gbFeature",
 
 
 #' @autoImports
-setMethod("seqlengths", "gbFeature",
+setMethod("getLength", "gbFeature",
           function (x) seqlengths(seqinfo(x)))
 
 
 #' @autoImports
-setMethod("accession", "gbFeature",
+setMethod("getAccession", "gbFeature",
           function (x) seqnames(seqinfo(x)))
 
 
 #' @autoImports
-setMethod("definition", "gbFeature",
+setMethod("getDefinition", "gbFeature",
           function (x) genome(seqinfo(x)))
 
 
@@ -195,9 +195,17 @@ setMethod("dbxref", "gbFeature",
           })
 
 
-setMethod("sequence", "gbFeature",
-          function (x) .seqAccess(x))
+setMethod("getSequence", "gbFeature", function (x) .seqAccess(x))
 
+
+setMethod('.dbSource', 'gbFeature', function (x) {
+  parse_dbsource(get("dbsource", x@.seqinfo))
+})
+
+
+setMethod(".defline", "gbFeature", function (x) {
+  paste0("lcl|", key(x), '.', index(x), .dbSource(x), getAccession(x))
+})
 
 # setters ----------------------------------------------------------------
 

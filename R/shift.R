@@ -1,8 +1,8 @@
 .shift_features <- function (x, shift=0L, split=FALSE, order=FALSE) {
 
   if (is(x, "gbRecord")) {
-    len <- seqlengths(x)
-    features <- features(x)
+    len <- getLength(x)
+    features <- getFeatures(x)
   } else if (is(x, "gbFeatureList")) {
     if (all_empty(x["source"])) {
       stop("No source key in this gbFeatureList")

@@ -143,65 +143,69 @@ gbRecord <- function (gb, with_sequence = TRUE)
 
 # show -------------------------------------------------------------------
 
-
 #' @importFrom XVector toString  subseq
+.show_gbRecord <- function (x) {
+  if (is.na(getAccession(x))) {
+    showme <- sprintf("%s instance with no features\n", sQuote(class(x)))
+  } else {
+    S <- getSequence(x)
+    W <- getOption("width")
+    type <- getMoltype(x)
+    showme <- paste0(
+      sprintf("%s instance with %i features\n", sQuote(class(x)), length(getFeatures(x))),
+      sprintf("LOCUS       %s\n",
+              linebreak(paste(getLocus(x), getLength(x),
+                              if (type == 'AA') 'aa' else 'bp',
+                              type, getTopology(x), getDivision(x),
+                              getDate(x)["update_date"]),
+                        offset=13, FORCE=TRUE)),
+      sprintf("DEFINITION  %s\n",
+              linebreak(getDefinition(x), offset=13, FORCE=TRUE)),
+      sprintf("ACCESSION   %s\n", getAccession(x)),
+      sprintf("VERSION     %s GI:%s\n", getVersion(x), getGeneID(x)),
+      sprintf("DBLINK      Project: %s\n", getDBLink(x)),
+      if (type == "AA") {
+        sprintf("DBSOURCE    %s\n",
+                linebreak(getDBSource(x), offset=13, FORCE=TRUE))
+      },
+      sprintf("KEYWORDS    %s\n",
+              linebreak(getKeywords(x), offset=13, FORCE=TRUE)),
+      sprintf("SOURCE      %s\n",
+              linebreak(getSource(x), offset=13, FORCE=TRUE)),
+      sprintf("  ORGANISM  %s\n",
+              linebreak(getOrganism(x), offset=13, FORCE=TRUE)),
+      sprintf("            %s\n",
+              linebreak(getTaxonomy(x), offset=13, FORCE=TRUE)),
+      sprintf("REFERENCE   %s\n", getReference(x)),
+      sprintf("COMMENT     %s\n",
+              linebreak(getComment(x), offset=13, FORCE=TRUE)),
+      if (!is.null(S)) {
+        if (S@ranges@width[1L] < W - 14)
+          sprintf("ORIGIN      %s\n", XVector::toString(S))
+        else
+          sprintf("ORIGIN      %s\n            ...\n            %s\n",
+                  XVector::toString(
+                    XVector::subseq(S, start=1, end=W - 14)
+                  ),
+                  XVector::toString(
+                    subseq(S, start=length(S[[1L]]) -  W + 15,
+                           end=length(S[[1L]]))
+                  )
+          )
+      },
+      if (!is.null(x@contig)) {
+        sprintf("CONTIG      %s\n", linebreak(as(x@contig, "character"),
+                                              offset=13, split=",", FORCE=TRUE))
+      })
+  }
+  
+  cat(showme)
+}
+
+
 setMethod("show", "gbRecord",
           function (object) { 
-            if (is.na(accession(object))) {
-              showme <- sprintf("%s instance with no features\n", sQuote(class(object)))
-            } else {
-              S <- sequence(object)
-              W <- getOption("width")
-              showme <- paste0(
-                sprintf("%s instance with %i features\n", 
-                        sQuote(class(object)), length(features(object))),
-                sprintf("LOCUS       %s\n",
-                        linebreak(paste(object@locus, seqlengths(object),
-                                        if (object@moltype == 'AA') 'aa' else 'bp',
-                                        object@moltype, object@topology,
-                                        object@division, object@update_date),
-                                  offset=13, FORCE=TRUE)),
-                sprintf("DEFINITION  %s\n",
-                        linebreak(definition(object), offset=13, FORCE=TRUE)),
-                sprintf("ACCESSION   %s\n", accession(object)),
-                sprintf("VERSION     %s GI:%s\n", object@version, geneid(object)),
-                sprintf("DBLINK      Project: %s\n", object@dblink),
-                if (object@moltype == "AA") {
-                  sprintf("DBSOURCE    %s\n",
-                          linebreak(object@dbsource, offset=13, FORCE=TRUE))
-                },
-                sprintf("KEYWORDS    %s\n",
-                        linebreak(object@keywords, offset=13, FORCE=TRUE)),
-                sprintf("SOURCE      %s\n",
-                        linebreak(object@source, offset=13, FORCE=TRUE)),
-                sprintf("  ORGANISM  %s\n",
-                        linebreak(object@organism, offset=13, FORCE=TRUE)),
-                sprintf("            %s\n",
-                        linebreak(object@taxonomy, offset=13, FORCE=TRUE)),
-                sprintf("REFERENCE   %s\n", object@references),
-                sprintf("COMMENT     %s\n",
-                        linebreak(object@comment, offset=13, FORCE=TRUE)),
-                if (!is.null(S)) {
-                  if (S@ranges@width[1L] < W - 14)
-                    sprintf("ORIGIN      %s\n", XVector::toString(S))
-                  else
-                    sprintf("ORIGIN      %s\n            ...\n            %s\n",
-                            XVector::toString(
-                              XVector::subseq(S, start=1, end=W - 14)
-                            ),
-                            XVector::toString(
-                              subseq(S, start=length(S[[1L]]) -  W + 15,
-                                     end=length(S[[1L]]))
-                            )
-                    )
-                },
-                if (!is.null(object@contig)) {
-                  sprintf("CONTIG      %s\n", linebreak(as(object@contig, "character"),
-                                                        offset=13, split=",", FORCE=TRUE))
-                })
-            }
-            
-            cat(showme)
+            .show_gbRecord(object)
           })
 
 
@@ -213,13 +217,13 @@ setMethod("summary", "gbRecord",
           function (object, n=7, ...) {
             si <- seqinfo(object)
             acc <- seqnames(si)
-            len <- unname(seqlengths(si))
+            len <- unname(getLength(si))
             type <- if (object@type == 'AA') 'aa' else 'bp'
             def <- 
               ellipsize(obj=unname(genome(si)),
                         width=getOption("width") - base::nchar(len) - base::nchar(type) - 8)
             cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep="")
-            summary(object=features(object), n=n, setoff=2)
+            summary(object=getFeatures(object), n=n, setoff=2)
             
             return(invisible(NULL))
           })
@@ -234,32 +238,52 @@ setMethod("seqinfo", "gbRecord",
                      error = function (e) Seqinfo() )
           })
 
+setMethod("getLocus", "gbRecord", function (x) x@locus)
 
-setMethod("seqlengths", "gbRecord",
-          function (x) seqlengths(seqinfo(x)))
+setMethod("getLength", "gbRecord", function (x) seqlengths(seqinfo(x)))
 
+setMethod("getMoltype", "gbRecord", function (x) x@moltype)
 
-setMethod("accession", "gbRecord", 
-          function (x) seqnames(seqinfo(x)))
+setMethod("getTopology", "gbRecord", function (x) x@topology)
 
+setMethod("getDivision", "gbRecord", function (x) x@division)
 
-setMethod("geneid", "gbRecord", 
+setMethod("getDate", "gbRecord", function (x) {
+  c(create_date = x@create_date, update_date = x@update_date)
+})
+  
+setMethod("getDefinition", "gbRecord", function (x) genome(seqinfo(x)))
+
+setMethod("getAccession", "gbRecord", function (x) seqnames(seqinfo(x)))
+
+setMethod("getVersion", "gbRecord", function (x) x@version)
+
+setMethod("getGeneID", "gbRecord", 
           function (x, db = 'gi') {
             db.idx <- which(strsplitN(x@seqid, "|", 1, fixed = TRUE) == db)
             strsplitN(x@seqid, "|", 2, fixed = TRUE)[db.idx]
           })
 
+setMethod("getDBLink", "gbRecord", function (x) x@dblink)
 
-setMethod("definition", "gbRecord", 
-          function (x) genome(seqinfo(x)))
+setMethod("getDBSource", "gbRecord", function (x) x@dbsource)
 
+setMethod("getSource", "gbRecord", function (x) x@source)
 
-setMethod("features", "gbRecord", 
-          function (x) x@features)
+setMethod("getOrganism", "gbRecord", function (x) x@organism)
 
+setMethod("getTaxonomy", "gbRecord", function (x) x@taxonomy)
+
+setMethod("getReference", "gbRecord", function (x) x@references)
+
+setMethod("getKeywords", "gbRecord", function (x) x@keywords)
+
+setMethod("getComment", "gbRecord", function (x) x@comment)
+
+setMethod("getFeatures", "gbRecord", function (x) x@features)
 
 #' @autoImports
-setMethod("sequence", "gbRecord", 
+setMethod("getSequence", "gbRecord", 
           function (x) {
             if (exists("sequence", envir=x@seqinfo))
               seq <- base::get("sequence", x@seqinfo)
@@ -273,32 +297,32 @@ setMethod("sequence", "gbRecord",
 
 setMethod("ranges", "gbRecord",
           function (x, join = FALSE, key = TRUE, include = "none", exclude = "") {
-            .make_GRanges(features(x), join = join, include = include,
+            .make_GRanges(getFeatures(x), join = join, include = include,
                           exclude = exclude, key = key)
           })
 
 
 setMethod("start", "gbRecord",
           function (x, join = FALSE, drop = TRUE) {
-            start(features(x), join = join, drop = drop)
+            start(getFeatures(x), join = join, drop = drop)
           })
 
 
 setMethod("end", "gbRecord",
           function (x, join = FALSE, drop = TRUE) {
-            end(features(x), join = join, drop = drop)
+            end(getFeatures(x), join = join, drop = drop)
           })
 
 
 setMethod("strand", "gbRecord",
           function (x, join = FALSE) {
-            strand(features(x), join = join)
+            strand(getFeatures(x), join = join)
           })
 
 
 setMethod("width", "gbRecord",
           function (x, join = FALSE) {
-            width(features(x), join = join)
+            width(getFeatures(x), join = join)
           })
 
 
@@ -307,7 +331,7 @@ setMethod("width", "gbRecord",
 
 setMethod("listQualif", "gbRecord", 
           function (x) {
-            lapply(features(x), listQualif)
+            lapply(getFeatures(x), listQualif)
           })
 
 
@@ -327,7 +351,7 @@ setMethod("$", "gbRecord",
 
 setMethod("select", "gbRecord",
           function (x, ..., keys = NULL, cols = NULL) {
-            ans <- features(x)
+            ans <- getFeatures(x)
             ans <- .select(ans, ..., keys = keys)
             ans <- .retrieve(ans, cols = cols)
             ans
@@ -340,4 +364,18 @@ setMethod("select", "gbRecord",
 setMethod("shift", "gbRecord",
           function(x, shift, split=FALSE, order=FALSE, updateDb=FALSE)
             .shift_features(x=x, shift=shift, split=split, order=order))
+
+
+
+# internal ---------------------------------------------------------------
+
+
+setMethod('.dbSource', 'gbRecord', function (x) {
+  parse_dbsource(getDBSource(x))
+})
+
+setMethod(".defline", "gbRecord", function (x) {
+  paste0('gi|', getGeneID(x), .dbSource(x), getAccession(x), ' ', getDefinition(x))
+})
+
 

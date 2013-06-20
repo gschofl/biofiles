@@ -13,14 +13,18 @@ for GenBank feature tables.
 }
 \section{Generics with methods for gbFeature}{
 \itemize{
+  \item \code{\link{.dbSource}}
+  \item \code{\link{.defline}}
   \item \code{\link{[[}}
   \item \code{\link{$}}
-  \item \code{\link{accession}}
   \item \code{\link{dbxref}}
-  \item \code{\link{definition}}
   \item \code{\link{end}}
   \item \code{\link{end<-}}
   \item \code{\link{fuzzy}}
+  \item \code{\link{getAccession}}
+  \item \code{\link{getDefinition}}
+  \item \code{\link{getLength}}
+  \item \code{\link{getSequence}}
   \item \code{\link{hasKey}}
   \item \code{\link{hasQualif}}
   \item \code{\link{index}}
@@ -31,9 +35,6 @@ for GenBank feature tables.
   \item \code{\link{qualif<-}}
   \item \code{\link{ranges}}
   \item \code{\link{seqinfo}}
-  \item \code{\link{seqlengths}}
-  \item \code{\link{sequence}}
-  \item \code{\link{shift}}
   \item \code{\link{show}}
   \item \code{\link{start}}
   \item \code{\link{start<-}}

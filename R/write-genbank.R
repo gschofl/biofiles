@@ -11,7 +11,7 @@ setMethod("write.GenBank", "gbRecord",
             op <- options("useFancyQuotes")
             options(useFancyQuotes=FALSE)
             #cat("Writing features\n")
-            f <- unlist(lapply(features(x), .writeFeature))
+            f <- unlist(lapply(getFeatures(x), .writeFeature))
             cat(paste0(f, collapse="\n"), file=file, append=TRUE)
             options(op)
             # write origin
@@ -27,11 +27,11 @@ setMethod("write.GenBank", "gbRecord",
   
   type <- if (x@type == "DNA") "bp" else "  "
   loc_line <- sprintf("%-12s%-17s %+10s %s    %-6s  %-8s %s %s",
-                      "LOCUS", x@locus, seqlengths(x), type, x@type, x@topology,
+                      "LOCUS", getLocus(x), getLength(x), type, x@type, x@topology,
                       x@division, base::toupper(format(x@date, "%d-%b-%Y")))
   def_line <- sprintf("%-12s%s", "DEFINITION", 
                       linebreak(definition(x), width=79, offset=12))
-  acc_line <- sprintf("%-12s%s", "ACCESSION", accession(x))
+  acc_line <- sprintf("%-12s%s", "ACCESSION", getAccession(x))
   ver_line <- sprintf("%-12s%-12s%s%s", "VERSION", x@version, "GI:", x@GI)
   
   dbl_line <- if (!is.null(x@dblink)) {
@@ -49,7 +49,7 @@ setMethod("write.GenBank", "gbRecord",
                              linebreak(x@lineage, width=79, indent=12, offset=12),
                              sep="\n"))
   ref_line <- sprintf("%-12s%-3s(bases %s to %s)\n%-12s%s\n%-12s%s\n%-12s%s",
-                      "REFERENCE", 1, 1, seqlengths(x),
+                      "REFERENCE", 1, 1, getLength(x),
                       "  AUTHORS", "authors",
                       "  TITLE", "title",
                       "  JOURNAL", "journal")
@@ -93,7 +93,7 @@ setMethod("write.GenBank", "gbRecord",
 .writeSequence <- function (x, outfile = "out.gbk") {
   
   if (exists("sequence", envir=x@seqinfo)) {
-    seq <- sequence(x)
+    seq <- getSequence(x)
     lineno <- seq(from=1, to=seq@ranges@width, by=60)
     lines <- seq_along(lineno)
     n_lines <- length(lines)

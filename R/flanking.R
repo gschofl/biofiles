@@ -24,7 +24,7 @@ find_neighbors <- function (query, subject, n = 5,
   }
   
   if (is(subject, "gbRecord")) {
-    subject <- features(subject)
+    subject <- getFeatures(subject)
   }
   
   if (include_key != "any") {
