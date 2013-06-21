@@ -161,6 +161,8 @@ setGeneric("fuzzy", signature="x", function (x, ...) {
 #' @importFrom GenomicRanges seqinfo
 setGeneric("seqinfo")
 
+#' Access slots of aGenBank record object.
+#' 
 #' @usage getLocus(x)
 #' @rdname accessors
 #' @export
@@ -269,7 +271,7 @@ setGeneric('getReference', function (x) standardGeneric('getReference'))
 #' @genericMethods
 setGeneric('getComment', function (x) standardGeneric('getComment'))
 
-#' Retrieve features of a GenBank record.
+#' Retrieve feature tables from a GenBank record.
 #'
 #' @param x A \code{\linkS4class{gbRecord}} instance.
 #' @param ... Additional arguments passed to methods.
@@ -281,7 +283,7 @@ setGeneric('getComment', function (x) standardGeneric('getComment'))
 setGeneric("getFeatures", function (x, ...) standardGeneric("getFeatures"))
 
 
-#' Get sequences of GenBank features
+#' Retrieve sequence from a GenBank record or a Feature.
 #' 
 #' @param x A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeature}},
 #'  or \code{\linkS4class{gbFeatureList}} instance.

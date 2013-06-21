@@ -79,14 +79,17 @@ expandIds <- function (x) {
 
 #' @importFrom stats setNames
 #' @autoImports
-.access <- function (x, which, dbxrefs) {
+.access <- function (x, which, dbxrefs, use.names = TRUE) {
   q <- x@qualifiers
   n <- length(q)
   els <- c(which[which != 'db_xref' & which != '\\bdb_xref\\b'], dbxrefs)
   
   if (n == 0) {
-    return(setNames(rep(NA_character_, length(els)),
-                    nm=rmisc::trim(els, "\\\\b")))
+    ans <- rep(NA_character_, length(els))
+    if (use.names)
+      return( setNames(ans, rmisc::trim(els, "\\\\b")) )
+    else
+      return( ans )
   }
   
   if (length(which) == 1) {
@@ -95,8 +98,9 @@ expandIds <- function (x) {
       ans <- q[idx]
     else
       ans <- setNames(rep(NA_character_, length(els)),
-                      nm=rmisc::trim(which, "\\\\b"))
-  } else {
+                      rmisc::trim(which, "\\\\b"))
+  } 
+  else {
     idx <- base::lapply(which, grepl, names(q))
     ans <- base::lapply(idx, function(i) q[i])
     na <- which(vapply(ans, length, numeric(1)) == 0)
@@ -110,17 +114,17 @@ expandIds <- function (x) {
   if (length(dbxrefs) > 0) {
     dbx_ <- names(ans) == 'db_xref'
     dbx <- strsplit(ans[dbx_], ':')
-    dbx_nm <- vapply(dbx, `[`, 1, FUN.VALUE=character(1))
-    dbx_val <- vapply(dbx, `[`, 2, FUN.VALUE=character(1))
-    ans <- c(ans[!dbx_], setNames(dbx_val[base::match(dbxrefs, dbx_nm)], nm=dbxrefs))
+    dbx_nm <- vapply(dbx, `[`, 1, FUN.VALUE=character(1), USE.NAMES=FALSE)
+    dbx_val <- vapply(dbx, `[`, 2, FUN.VALUE=character(1), USE.NAMES=FALSE)
+    ans <- c(ans[!dbx_], setNames(dbx_val[base::match(dbxrefs, dbx_nm)], dbxrefs))
   }
   
-  return(ans)
+  return( if (use.names) ans else unname(ans) )
 }
 
 
 #' @autoImports
-.qualAccess <- function (x, which = "", fixed = FALSE) {
+.qualAccess <- function (x, which = "", fixed = FALSE, use.names=TRUE) {
   dbxrefs <- NULL
   dbx <- grepl('db_xref:.+', which)
   if (any(dbx)) {
@@ -131,9 +135,9 @@ expandIds <- function (x) {
     which <- rmisc::wrap(which, "\\b")
   }
   if (is(x, "gbFeature")) {
-    .access(x, which, dbxrefs)
+    .access(x, which, dbxrefs, use.names)
   } else if (is(x, "gbFeatureList")) {
-    base::lapply(x, .access, which, dbxrefs)
+    base::lapply(x, .access, which, dbxrefs, use.names)
   }
 }
 

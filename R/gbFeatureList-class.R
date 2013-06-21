@@ -155,7 +155,7 @@ setMethod("seqinfo", "gbFeatureList",
 
 
 setMethod("getLength", "gbFeatureList",
-          function (x) seqlengths(seqinfo(x)))
+          function (x) unname(seqlengths(seqinfo(x))))
 
 
 setMethod("getAccession", "gbFeatureList",
@@ -163,7 +163,7 @@ setMethod("getAccession", "gbFeatureList",
 
 
 setMethod("getDefinition", "gbFeatureList",
-          function (x) genome(seqinfo(x)))
+          function (x) unname(genome(seqinfo(x))))
 
 
 setMethod("ranges", "gbFeatureList",

@@ -7,7 +7,6 @@ src/*.so
 src/*.dll
 data/
 doc/
-inst/
 scripts/
 test/
 scratch.r

@@ -1,7 +1,7 @@
 % Built by roxygen3 0.1
 \name{getFeatures}
 \alias{getFeatures}
-\title{Retrieve features of a GenBank record.}
+\title{Retrieve feature tables from a GenBank record.}
 \usage{
   getFeatures(x, ...)
 }
@@ -16,7 +16,7 @@ The \code{\linkS4class{gbFeatureList}} object contained in a
 gbRecord database.
 }
 \description{
-Retrieve features of a GenBank record.
+Retrieve feature tables from a GenBank record.
 }
 \section{Method signatures for generic getFeatures}{
 \itemize{

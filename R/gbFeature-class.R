@@ -130,7 +130,7 @@ setMethod("seqinfo", "gbFeature",
 
 #' @autoImports
 setMethod("getLength", "gbFeature",
-          function (x) seqlengths(seqinfo(x)))
+          function (x) unname(seqlengths(seqinfo(x))))
 
 
 #' @autoImports
@@ -140,7 +140,7 @@ setMethod("getAccession", "gbFeature",
 
 #' @autoImports
 setMethod("getDefinition", "gbFeature",
-          function (x) genome(seqinfo(x)))
+          function (x) unname(genome(seqinfo(x))))
 
 
 setMethod("ranges", "gbFeature",
@@ -162,14 +162,13 @@ setMethod("key", "gbFeature",
 
 
 setMethod("qualif", "gbFeature", 
-          function (x, which, fixed = FALSE) {
+          function (x, which, fixed=FALSE, use.names=TRUE) {
             if (missing(which)) {
               x@qualifiers
             } else {
-              .qualAccess(x, which, fixed)
+              .qualAccess(x, which, fixed, use.names)
             }
           })
-
 
 #' @autoImports
 setMethod("dbxref", "gbFeature",
@@ -178,17 +177,17 @@ setMethod("dbxref", "gbFeature",
             if (all(is.na(ans))) {
               return( NA_character_ )
             } else {
-              dbs <- strsplitN(ans, ":", 1)
-              ids <- strsplitN(ans, ":", 2)
+              dbs <- strsplitN(unname(ans), ":", 1)
+              ids <- strsplitN(unname(ans), ":", 2)
               if (is.null(db)) {
-                structure(ids, names = dbs)
+                setNames(ids, dbs)
               } else {
                 db_pattern <- paste0(wrap(db, "\\b"), collapse="|")
                 db_pos <- grep(db_pattern, dbs, ignore.case=TRUE)
                 if (all_empty(db_pos)) {
                   return( NA_character_ )
                 } else {
-                  structure(ids[db_pos], names = dbs[db_pos])
+                  setNames(ids[db_pos], dbs[db_pos])
                 }
               }
             }
@@ -229,10 +228,8 @@ setReplaceMethod("end", "gbFeature",
 
 
 setReplaceMethod("strand", "gbFeature",
-                 function(x, check=TRUE, value) { 
-                   strand(x@location, check=check) <- value
-                   if (check)
-                     validObject(x)
+                 function(x, value) { 
+                   strand(x@location) <- value
                    x
                  })
 

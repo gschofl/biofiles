@@ -1,7 +1,7 @@
 % Built by roxygen3 0.1
 \name{getSequence}
 \alias{getSequence}
-\title{Get sequences of GenBank features}
+\title{Retrieve sequence from a GenBank record or a Feature.}
 \usage{
   getSequence(x, ...)
 }
@@ -16,7 +16,7 @@
 An \code{\linkS4class{XStringSet}} object.
 }
 \description{
-Get sequences of GenBank features
+Retrieve sequence from a GenBank record or a Feature.
 }
 \section{Method signatures for generic getSequence}{
 \itemize{

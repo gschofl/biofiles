@@ -166,7 +166,7 @@ setReplaceMethod("end", "gbLocation",
 
 
 setReplaceMethod("strand", "gbLocation",
-                 function (x, check=TRUE, value) {
+                 function (x, value) {
                    nrow <- dim(x@range)[1]
                    if (length(value) > nrow)
                      value <- value[seq_len(nrow)]
@@ -176,8 +176,6 @@ setReplaceMethod("strand", "gbLocation",
                      value <- vapply(value, switch, '+'=1L, '-'=-1L, NA_integer_,
                                      FUN.VALUE=integer(1))
                    x@strand <- as.integer(value)
-                   if (check)
-                     validObject(x)
                    x
                  })
 

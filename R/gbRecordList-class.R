@@ -83,7 +83,7 @@ setMethod("seqinfo", "gbRecordList",
 
 
 setMethod("getLength", "gbRecordList",
-          function (x) seqlengths(seqinfo(x)))
+          function (x) unname(seqlengths(seqinfo(x))))
 
 
 setMethod("getAccession", "gbRecordList", 
@@ -96,7 +96,7 @@ setMethod("getGeneID", "gbRecordList", function (x) {
 
 
 setMethod("getDefinition", "gbRecordList", 
-          function (x) genome(seqinfo(x)))
+          function (x) unname(genome(seqinfo(x))))
 
 
 setMethod("getFeatures", "gbRecordList", 

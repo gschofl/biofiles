@@ -12,7 +12,7 @@
   }
   
   update_split <- function(x, split_matrix) {
-    if (not.na(x@location@compound)) {
+    if (!is.na(x@location@compound)) {
       stop("Cannot split a compound location")
     }
     x@location@range <- split_matrix

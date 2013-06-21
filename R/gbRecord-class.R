@@ -240,7 +240,7 @@ setMethod("seqinfo", "gbRecord",
 
 setMethod("getLocus", "gbRecord", function (x) x@locus)
 
-setMethod("getLength", "gbRecord", function (x) seqlengths(seqinfo(x)))
+setMethod("getLength", "gbRecord", function (x) unname(seqlengths(seqinfo(x))))
 
 setMethod("getMoltype", "gbRecord", function (x) x@moltype)
 
@@ -252,7 +252,7 @@ setMethod("getDate", "gbRecord", function (x) {
   c(create_date = x@create_date, update_date = x@update_date)
 })
   
-setMethod("getDefinition", "gbRecord", function (x) genome(seqinfo(x)))
+setMethod("getDefinition", "gbRecord", function (x) unname(genome(seqinfo(x))))
 
 setMethod("getAccession", "gbRecord", function (x) seqnames(seqinfo(x)))
 

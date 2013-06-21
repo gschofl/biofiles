@@ -48,6 +48,7 @@ For a description of the GenBank format see
   \item \code{\link{getDivision}}
   \item \code{\link{getFeatures}}
   \item \code{\link{getGeneID}}
+  \item \code{\link{getKeywords}}
   \item \code{\link{getLength}}
   \item \code{\link{getLocus}}
   \item \code{\link{getMoltype}}

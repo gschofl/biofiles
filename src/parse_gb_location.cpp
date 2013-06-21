@@ -181,7 +181,7 @@ void parse_simple_span(
   
     // get fuzzy
     static const boost::regex FUZZY_START("^<\\d+$");
-    static const boost::regex FUZZY_END("^<\\d+$");
+    static const boost::regex FUZZY_END("^>\\d+$");
     fuzzy[0] = boost::regex_match(start, m, FUZZY_START );
     fuzzy[1] = boost::regex_match(end, m, FUZZY_END );
   
