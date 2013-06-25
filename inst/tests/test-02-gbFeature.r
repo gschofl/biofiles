@@ -5,18 +5,18 @@ cds <- readLines("sequences/CDS.gbk")
 
 test_that("GenBank feature tables parse correctly", {
   expect_is(
-    gbFeature(src, seqenv=new.env(parent=baseenv())),
+    gbFeature(src, seqinfo=new('seqinfo')),
     'gbFeature')
   
   expect_is(
-    gbFeature(cds, seqenv=new.env(parent=baseenv())),
+    gbFeature(cds, seqinfo=new('seqinfo')),
     'gbFeature')
 })
 
 context("gbFeature getter checks")
 
 test_that("gbFeature accessors work", {
-  x <- gbFeature(cds, seqenv=new.env(parent=baseenv()), id=10)
+  x <- gbFeature(cds, seqinfo=new('seqinfo'), id=10)
   
   expect_equal(index(x), 10)
   

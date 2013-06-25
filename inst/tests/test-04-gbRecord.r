@@ -3,7 +3,7 @@ context("gbFeature getter checks")
 x <- select(gbRecord("sequences/nucleotide.gbk"), key='CDS')[[3]]
 
 test_that("Sequence, and Seqinfo can be extracted", {
-  expect_is(seqinfo(x), 'Seqinfo')
+  expect_is(x@.seqinfo, 'seqinfo')
   expect_is(getSequence(x), 'DNAStringSet')
 })
 

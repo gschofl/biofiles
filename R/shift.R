@@ -90,6 +90,6 @@
     f <- f[order(mapply("[", new_start, 1))]
   }
   
-  new('gbFeatureList', .Data=c(src, f), .Info=seqinfo(f))
+  new('gbFeatureList', .Data=c(src, f), .seqinfo=f@.seqinfo)
 }
 

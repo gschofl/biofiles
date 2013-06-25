@@ -11,30 +11,24 @@ setOldClass("list")
 #' \dQuote{gbFeatureList} is an S4 class that provides a container for
 #' \dQuote{\linkS4class{gbFeature}}s retrived from GenBank flat files.
 #'
-#' @slot .seqinfo An \code{environment} containing the genome sequence as
+#' @slot .seqinfo An \code{seqinfo} containing the genome sequence as
 #' an \code{\linkS4class{XStringSet}} object and sequence metadata
-#' as a \code{\linkS4class{Seqinfo}} object.
+#' as a \code{\linkS4class{gbHeader}} object.
 #' @slot .Data A list of \code{\linkS4class{gbFeature}} objects.
 #' 
 #' @rdname gbFeatureList
 #' @export
 #' @classHierarchy
 #' @classMethods
-setClass("gbFeatureList", 
-         representation(.seqinfo="environment"),
-         prototype(.seqinfo=new.env(parent=emptyenv())),
+setClass("gbFeatureList",
+         representation(.seqinfo="seqinfo"),
          contains="list")
 
 
 setValidity2("gbFeatureList", function (object) {
   if (!all(vapply(object@.Data, is, 'gbFeature', FUN.VALUE=logical(1))))
     return("All elements in a 'gbFeatureList' must be 'gbFeature' instances")
-  seq <- get("sequence", object@.seqinfo)
-  if (names(seq) != getAccession(object))
-    return("Names of 'seqinfo' and 'sequence' do not match")
-  if (seq@ranges@width != unname(getLength(object)))
-    return("Length of 'seqinfo' and 'sequence' do not match")
-                 
+
   TRUE
 })
 
@@ -54,7 +48,7 @@ setMethod("show", "gbFeatureList",
               }
             }
             cat("Seqinfo:\n")
-            showInfo(seqinfo(object))
+            show(object@.seqinfo)
             return(invisible(object))
           })
 
@@ -72,8 +66,7 @@ setMethod("summary", "gbFeatureList",
               key <- c("Key", key(hd), "...", key(tl))
               loc <- c(location(hd), "...", location(tl))
               loc <- c("Location", unlist(lapply(loc, as, "character")))
-              prod <- c("Product", unlist(product(hd), use.names=FALSE),
-                        "...", unlist(product(tl), use.names=FALSE))
+              prod <- c("Product", product(hd), "...", product(tl))
             } else {
               idx <- c("N", index(object))
               key <- c("Key", key(object))
@@ -96,6 +89,43 @@ setMethod("summary", "gbFeatureList",
 
 # getters ----------------------------------------------------------------
 
+setMethod(".sequence", "gbFeatureList", function (x) .sequence(x@.seqinfo) )
+
+setMethod("getLocus", "gbFeatureList", function (x) getLocus(x@.seqinfo) )
+
+setMethod("getLength", "gbFeatureList", function (x) getLength(x@.seqinfo) )
+
+setMethod("getMoltype", "gbFeatureList", function (x) getMoltype(x@.seqinfo) )
+
+setMethod("getTopology", "gbFeatureList", function (x) getTopology(x@.seqinfo) )
+
+setMethod("getDivision", "gbFeatureList", function (x) getDivision(x@.seqinfo) )
+
+setMethod("getDate", "gbFeatureList", function (x) getDate(x@.seqinfo) )
+
+setMethod("getDefinition", "gbFeatureList", function (x) getDefinition(x@.seqinfo) )
+
+setMethod("getAccession", "gbFeatureList", function (x) getAccession(x@.seqinfo) )
+
+setMethod("getVersion", "gbFeatureList", function (x) getVersion(x@.seqinfo) )
+
+setMethod("getGeneID", "gbFeatureList", function (x, db='gi') getGeneID(x@.seqinfo, db=db) )
+
+setMethod("getDBLink", "gbFeatureList", function (x) getDBLink(x@.seqinfo) )
+
+setMethod("getDBSource", "gbFeatureList", function (x) getDBSource(x@.seqinfo) )
+
+setMethod("getSource", "gbFeatureList", function (x) getSource(x@.seqinfo) )
+
+setMethod("getOrganism", "gbFeatureList", function (x) getOrganism(x@.seqinfo) )
+
+setMethod("getTaxonomy", "gbFeatureList", function (x) getTaxonomy(x@.seqinfo) )
+
+setMethod("getReference", "gbFeatureList", function (x) getReference(x@.seqinfo) )
+
+setMethod("getKeywords", "gbFeatureList", function (x) getKeywords(x@.seqinfo) )
+
+setMethod("getComment", "gbFeatureList", function (x) getComment(x@.seqinfo) )
 
 setMethod("start", "gbFeatureList",
           function (x, join = FALSE, drop = TRUE) {
@@ -149,23 +179,6 @@ setMethod("width", "gbFeatureList",
           })
 
 
-setMethod("seqinfo", "gbFeatureList",
-          function (x) tryCatch(get("seqinfo", x@.seqinfo),
-                                error = function (e) Seqinfo() ))
-
-
-setMethod("getLength", "gbFeatureList",
-          function (x) unname(seqlengths(seqinfo(x))))
-
-
-setMethod("getAccession", "gbFeatureList",
-          function (x) seqnames(seqinfo(x)))
-
-
-setMethod("getDefinition", "gbFeatureList",
-          function (x) unname(genome(seqinfo(x))))
-
-
 setMethod("ranges", "gbFeatureList",
           function (x, join = FALSE, key = TRUE, include = "none", exclude = "") {
             .make_GRanges(x, join = join, include = include, exclude = exclude, key = key)
@@ -191,8 +204,14 @@ setMethod("key", "gbFeatureList",
 
 
 setMethod("qualif", "gbFeatureList",
-          function (x, which = "", fixed = FALSE) {
-            .simplify(.qualAccess(x, which, fixed), unlist=FALSE)
+          function (x, which = "", fixed = FALSE, use.names = TRUE) {
+            ans <- .qualAccess(x, which, fixed, use.names)
+            if (use.names) {
+              .simplify(ans, unlist=FALSE)
+            }
+            else {
+              .simplify(ans, unlist=TRUE)
+            }
           })
 
 
@@ -213,9 +232,7 @@ setMethod("dbxref", "gbFeatureList",
 setMethod("getSequence", "gbFeatureList", function (x) .seqAccess(x))
 
 
-setMethod('.dbSource', 'gbFeatureList', function (x) {
-  parse_dbsource(get("dbsource", x@.seqinfo))
-})
+setMethod('.dbSource', 'gbFeatureList', function (x) parse_dbsource(getDBSource(x)) )
 
 
 setMethod(".defline", "gbFeatureList", function (x) {

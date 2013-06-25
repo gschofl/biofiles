@@ -5,10 +5,13 @@
 src/*.o
 src/*.so
 src/*.dll
+cache/
 data/
 doc/
 scripts/
 test/
 scratch.r
+*.html
+*.Rmd
 CopyOfNAMESPACE
 

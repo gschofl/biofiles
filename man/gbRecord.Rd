@@ -36,8 +36,6 @@ For a description of the GenBank format see
 \itemize{
   \item \code{\link{.dbSource}}
   \item \code{\link{.defline}}
-  \item \code{\link{[[}}
-  \item \code{\link{$}}
   \item \code{\link{end}}
   \item \code{\link{getAccession}}
   \item \code{\link{getComment}}
@@ -62,7 +60,6 @@ For a description of the GenBank format see
   \item \code{\link{listQualif}}
   \item \code{\link{ranges}}
   \item \code{\link{select}}
-  \item \code{\link{seqinfo}}
   \item \code{\link{show}}
   \item \code{\link{start}}
   \item \code{\link{strand}}

@@ -1,5 +1,6 @@
 #' @include utils.R
 #' @include all-generics.R
+#' @include gbHeader-class.R
 NULL
 
 

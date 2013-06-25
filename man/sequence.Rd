@@ -24,6 +24,7 @@ Retrieve sequence from a GenBank record or a Feature.
   \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
   \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }

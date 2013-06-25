@@ -6,28 +6,13 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 SEXP gbFeature(
     std::vector<std::string> feature,
-    Rcpp::Environment seqenv,
+    Rcpp::S4 seqinfo,
+    std::string accession = "",
     int id = 0 )
 {
     // create and assign a 'gbFeature' object
-    Rcpp::S4 gb_feature("gbFeature");
-    std::string accession;
-    
-    if ( not seqenv.exists("seqinfo") ) {
-        Rcpp::S4 seqinfo("Seqinfo");
-        seqenv.assign("seqinfo", seqinfo);
-        accession = "";
-    } else {
-        Rcpp::S4 seqinfo = seqenv.get("seqinfo");
-        std::string accession = seqinfo.slot("seqnames");
-    }
-    
-    if ( not seqenv.exists("sequence") ) {
-      Rcpp::S4 sequence("DNAStringSet");
-      seqenv.assign("sequence", sequence);
-    }
-    
-    gb_feature.slot(".seqinfo") = seqenv;
+    Rcpp::S4 gb_feature("gbFeature");    
+    gb_feature.slot(".seqinfo") = seqinfo;
     gb_feature.slot(".id") = id;
     parse_gb_feature_table( gb_feature, feature, accession );
     return gb_feature; 

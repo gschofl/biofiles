@@ -8,7 +8,7 @@ NULL
 #' 
 #' @slot .seqinfo An \code{environment} containing the genome sequence as
 #' an \code{\linkS4class{XStringSet}} object and sequence metadata
-#' as a \code{\linkS4class{Seqinfo}} object.
+#' as a \code{\linkS4class{gbHeader}} object.
 #' @slot .id Identifier (index) of the feature in the
 #' GenBank record the feature is part of.
 #' @slot key The feature key.
@@ -21,12 +21,11 @@ NULL
 #' @classHierarchy
 #' @classMethods
 setClass("gbFeature",
-         representation(.seqinfo="environment",
+         representation(.seqinfo="seqinfo",
                         .id="integer",
                         key="character",
                         location="gbLocation",
-                        qualifiers="character"),
-         prototype(.seqinfo=new.env(parent=emptyenv())))
+                        qualifiers="character"))
 
 
 setValidity2("gbFeature", function (object) {
@@ -57,7 +56,7 @@ setValidity2("gbFeature", function (object) {
   }
   if (showInfo) {
     cat("Seqinfo:\n")
-    showInfo(seqinfo(object))
+    show(object@.seqinfo)
   }
   options(op)
 }
@@ -94,6 +93,43 @@ setMethod("summary", "gbFeature",
 
 # getters ----------------------------------------------------------------
 
+setMethod(".sequence", "gbFeature", function (x) .sequence(x@.seqinfo) )
+
+setMethod("getLocus", "gbFeature", function (x) getLocus(x@.seqinfo) )
+
+setMethod("getLength", "gbFeature", function (x) getLength(x@.seqinfo) )
+
+setMethod("getMoltype", "gbFeature", function (x) getMoltype(x@.seqinfo) )
+
+setMethod("getTopology", "gbFeature", function (x) getTopology(x@.seqinfo) )
+
+setMethod("getDivision", "gbFeature", function (x) getDivision(x@.seqinfo) )
+
+setMethod("getDate", "gbFeature", function (x) getDate(x@.seqinfo) )
+
+setMethod("getDefinition", "gbFeature", function (x) getDefinition(x@.seqinfo) )
+
+setMethod("getAccession", "gbFeature", function (x) getAccession(x@.seqinfo) )
+
+setMethod("getVersion", "gbFeature", function (x) getVersion(x@.seqinfo) )
+
+setMethod("getGeneID", "gbFeature", function (x, db='gi') getGeneID(x@.seqinfo, db=db) )
+
+setMethod("getDBLink", "gbFeature", function (x) getDBLink(x@.seqinfo) )
+
+setMethod("getDBSource", "gbFeature", function (x) getDBSource(x@.seqinfo) )
+
+setMethod("getSource", "gbFeature", function (x) getSource(x@.seqinfo) )
+
+setMethod("getOrganism", "gbFeature", function (x) getOrganism(x@.seqinfo) )
+
+setMethod("getTaxonomy", "gbFeature", function (x) getTaxonomy(x@.seqinfo) )
+
+setMethod("getReference", "gbFeature", function (x) getReference(x@.seqinfo) )
+
+setMethod("getKeywords", "gbFeature", function (x) getKeywords(x@.seqinfo) )
+
+setMethod("getComment", "gbFeature", function (x) getComment(x@.seqinfo) )
 
 setMethod("start", "gbFeature",
           function (x, join = FALSE, drop = TRUE) 
@@ -118,29 +154,6 @@ setMethod("width", "gbFeature",
 setMethod("fuzzy", "gbFeature",
           function (x)
             fuzzy(x@location))
-
-
-#' @autoImports
-setMethod("seqinfo", "gbFeature",
-          function (x) {
-            tryCatch(base::get("seqinfo", x@.seqinfo),
-                     error = function (e) Seqinfo() )
-          })
-
-
-#' @autoImports
-setMethod("getLength", "gbFeature",
-          function (x) unname(seqlengths(seqinfo(x))))
-
-
-#' @autoImports
-setMethod("getAccession", "gbFeature",
-          function (x) seqnames(seqinfo(x)))
-
-
-#' @autoImports
-setMethod("getDefinition", "gbFeature",
-          function (x) unname(genome(seqinfo(x))))
 
 
 setMethod("ranges", "gbFeature",
@@ -196,14 +209,11 @@ setMethod("dbxref", "gbFeature",
 
 setMethod("getSequence", "gbFeature", function (x) .seqAccess(x))
 
-
-setMethod('.dbSource', 'gbFeature', function (x) {
-  parse_dbsource(get("dbsource", x@.seqinfo))
-})
-
+setMethod('.dbSource', 'gbFeature', function (x) parse_dbsource(getDBSource(x)) )
 
 setMethod(".defline", "gbFeature", function (x) {
-  paste0("lcl|", key(x), '.', index(x), .dbSource(x), getAccession(x))
+  paste0("lcl|", key(x), '.', index(x), .dbSource(x), getAccession(x), ' ',
+         getDefinition(x))
 })
 
 # setters ----------------------------------------------------------------

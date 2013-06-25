@@ -46,16 +46,11 @@ setMethod("show", "gbRecordList",
             } else {
               cat(sprintf("%s instance with %i records\n", 
                           sQuote(class(object)), length(object)))
-              si <- seqinfo(object)
-              acc <- seqnames(si)
-              len <- unname(getLength(si))
-              type <- base::ifelse(
-                vapply(object, slot, name='moltype', FUN.VALUE=character(1)) == 'AA',
-                'aa', 'bp'
-              )
-              def <- 
-                ellipsize(obj=unname(genome(si)),
-                          width=getOption("width") - base::nchar(len) - base::nchar(type) - 8)
+              acc <- getAccession(object)
+              len <- getLength(object)
+              type <- ifelse(getMoltype(object) == 'AA', 'aa', 'bp')
+              def <- ellipsize(obj=getDefinition(object),
+                               width=getOption("width") - nchar(len) - nchar(type) - 8)
               cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep="")
             }
           })
@@ -71,32 +66,77 @@ setMethod("summary", "gbRecordList",
 # getters ----------------------------------------------------------------
 
 
-#' @autoImports
-setMethod("seqinfo", "gbRecordList",
-          function (x) {
-            suppressWarnings(
-              base::Reduce(
-                GenomicRanges::merge, base::lapply(x, seqinfo)
-              )
-            )
-          })
+setMethod("getLocus", "gbRecordList", function (x) {
+  vapply(x, getLocus, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
 
+setMethod("getLength", "gbRecordList", function (x) {
+  vapply(x, getLength, FUN.VALUE=integer(1), USE.NAMES=FALSE)
+})
 
-setMethod("getLength", "gbRecordList",
-          function (x) unname(seqlengths(seqinfo(x))))
+setMethod("getMoltype", "gbRecordList", function (x) {
+  vapply(x, getMoltype, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
 
+setMethod("getTopology", "gbRecordList", function (x) {
+  vapply(x, getTopology, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
 
-setMethod("getAccession", "gbRecordList", 
-          function (x) seqnames(seqinfo(x)))
+setMethod("getDivision", "gbRecordList", function (x) {
+  vapply(x, getDivision, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
 
+setMethod("getDate", "gbRecordList", function (x) {
+  Map(getDate, x)
+})
 
-setMethod("getGeneID", "gbRecordList", function (x) {
-            vapply(x, getGeneID, FUN.VALUE=character(1), USE.NAMES=FALSE)
-          })
+setMethod("getDefinition", "gbRecordList", function (x) {
+  vapply(x, getDefinition, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
 
+setMethod("getAccession", "gbRecordList", function (x) {
+  vapply(x, getAccession, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
 
-setMethod("getDefinition", "gbRecordList", 
-          function (x) unname(genome(seqinfo(x))))
+setMethod("getVersion", "gbRecordList", function (x) {
+  vapply(x, getVersion, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
+
+setMethod("getGeneID", "gbRecordList", function (x, db='gi') {
+  vapply(x, getGeneID, db=db, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
+
+setMethod("getDBLink", "gbRecordList", function (x) {
+  vapply(x, getDBLink, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
+
+setMethod("getDBSource", "gbRecordList", function (x) {
+  vapply(x, getDBSource, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
+
+setMethod("getSource", "gbRecordList", function (x) {
+  vapply(x, getSource, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
+
+setMethod("getOrganism", "gbRecordList", function (x) {
+  vapply(x, getOrganism, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
+
+setMethod("getTaxonomy", "gbRecordList", function (x) {
+  vapply(x, getTaxonomy, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
+
+setMethod("getReference", "gbRecordList", function (x) {
+  Map(getReference, x)
+})
+
+setMethod("getKeywords", "gbRecordList", function (x) {
+  vapply(x, getKeywords, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
+
+setMethod("getComment", "gbRecordList", function (x) {
+  vapply(x, getComment, FUN.VALUE=character(1), USE.NAMES=FALSE)
+})
 
 
 setMethod("getFeatures", "gbRecordList", 

@@ -61,7 +61,11 @@ Access slots of aGenBank record object.
 }
 \section{Method signatures for generic getLocus}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
@@ -72,34 +76,51 @@ Access slots of aGenBank record object.
   \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
   \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getMoltype}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getTopology}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getDivision}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getDate}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
@@ -110,6 +131,7 @@ Access slots of aGenBank record object.
   \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
   \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
@@ -121,77 +143,117 @@ Access slots of aGenBank record object.
   \item \linkS4class{gbLocation}
   \item \linkS4class{gbRecord}
   \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getVersion}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getGeneID}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
   \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getDBLink}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getDBSource}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getSource}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getOrganism}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getTaxonomy}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getKeywords}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getReference}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }
 
 \section{Method signatures for generic getComment}{
 \itemize{
+  \item \linkS4class{gbFeature}
+  \item \linkS4class{gbFeatureList}
   \item \linkS4class{gbRecord}
+  \item \linkS4class{gbRecordList}
+  \item \linkS4class{seqinfo}
 }
 
 }

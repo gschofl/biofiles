@@ -6,14 +6,15 @@
 using namespace Rcpp;
 
 // gbFeature
-SEXP gbFeature(std::vector<std::string> feature, Rcpp::Environment seqenv, int id = 0);
-RcppExport SEXP biofiles_gbFeature(SEXP featureSEXP, SEXP seqenvSEXP, SEXP idSEXP) {
+SEXP gbFeature(std::vector<std::string> feature, Rcpp::S4 seqinfo, std::string accession = "", int id = 0);
+RcppExport SEXP biofiles_gbFeature(SEXP featureSEXP, SEXP seqinfoSEXP, SEXP accessionSEXP, SEXP idSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope __rngScope;
     std::vector<std::string> feature = Rcpp::as<std::vector<std::string> >(featureSEXP);
-    Rcpp::Environment seqenv = Rcpp::as<Rcpp::Environment >(seqenvSEXP);
+    Rcpp::S4 seqinfo = Rcpp::as<Rcpp::S4 >(seqinfoSEXP);
+    std::string accession = Rcpp::as<std::string >(accessionSEXP);
     int id = Rcpp::as<int >(idSEXP);
-    SEXP __result = gbFeature(feature, seqenv, id);
+    SEXP __result = gbFeature(feature, seqinfo, accession, id);
     return Rcpp::wrap(__result);
 END_RCPP
 }

@@ -27,7 +27,7 @@ setMethod("write.GenBank", "gbRecord",
   
   type <- if (x@type == "DNA") "bp" else "  "
   loc_line <- sprintf("%-12s%-17s %+10s %s    %-6s  %-8s %s %s",
-                      "LOCUS", getLocus(x), getLength(x), type, x@type, x@topology,
+                      "LOCUS", getLocus(x), getLength(x), type, x@moltype, x@topology,
                       x@division, base::toupper(format(x@date, "%d-%b-%Y")))
   def_line <- sprintf("%-12s%s", "DEFINITION", 
                       linebreak(definition(x), width=79, offset=12))

@@ -8,23 +8,6 @@ recycle <- function (val, len) {
 
 
 #' @autoImports
-showInfo <- function(object) {
-  if (length(object) == 0) {
-    seqname <- seqlen <- genome <- ""
-  } else {
-    sn <- seqnames(object)
-    sl <- paste0(seqlengths(object), " ", names(seqlengths(object)))
-    g <- genome(object)
-    seqname <- rmisc::pad(sn, base::nchar(sn) + 2, "right")
-    seqlen <- rmisc::pad(sl, base::nchar(sl) + 2, "right")
-    genome <- ellipsize(g, width=getOption("width") - 
-                        base::nchar(seqname) - base::nchar(seqlen) - 3)
-  }
-  cat(sprintf("%s%s%s", seqname, seqlen, genome))
-}
-
-
-#' @autoImports
 ellipsize <- function(obj, width = getOption("width"), ellipsis = "...") {
   str <- encodeString(obj)
   base::ifelse(base::nchar(str) > width - 1,
@@ -168,30 +151,16 @@ expandIds <- function (x) {
 
 #' @autoImports
 .seqAccess <- function (x) {
+  seq <- .sequence(x)
   
-  if (exists("sequence", envir=x@.seqinfo))
-    seq <- base::get("sequence", x@.seqinfo)
-  else {
-    warning("No sequence associated with this feature", call.=FALSE)
-    return(BStringSet())
-  }
-
-  if (length(seq) == 0) {
-    warning("No sequence associated with this feature", call.=FALSE)
-    if (is(seq, "XStringSet"))
-      return(seq)
-    else
-      return(BStringSet())
-  }
-
+  if (length(seq) == 0) return(seq)
+  
   SEQF <- match.fun(class(seq))
   if (is(x, "gbFeature")) {
     seq <- merge_seq(seq, x, SEQF)
   } else if (is(x, "gbFeatureList")) {
-    seq <- base::Reduce(append, base::lapply(x, merge_seq, seq=seq, SEQF=SEQF))
+    seq <- Reduce(append, lapply(x, merge_seq, seq=seq, SEQF=SEQF))
   }
-  
-  seq@metadata <- list(seqinfo(x))
   seq
 }
 

@@ -1,6 +1,6 @@
 #' @importFrom IRanges DataFrame Rle
 NULL
-#' @importFrom GenomicRanges GRanges GRangesList
+#' @importFrom GenomicRanges GRanges GRangesList Seqinfo
 NULL
 
 .make_GRanges <- function (x, join = FALSE, include = "none", exclude = "", key = TRUE) {
@@ -40,10 +40,14 @@ NULL
       qual <- qual[i, , drop=FALSE] 
   }
 
+  seqinfo <- Seqinfo(seqnames=getAccession(x),
+                     seqlengths=getLength(x),
+                     isCircular=getTopology(x)=='circular',
+                     genome=getDefinition(x))
+  
   GRanges(seqnames=Rle(getAccession(x)), ranges=IRanges(start, end, names=names),
-          strand=strand, qual, seqinfo = seqinfo(x))
+          strand=strand, qual, seqinfo = seqinfo)
 }
-
 
 update_indeces <- function(x) {
   j_len <- vapply(x, length, numeric(1))

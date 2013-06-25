@@ -28,6 +28,7 @@ Suggests:
 Collate:
     'utils.R'
     'all-generics.R'
+    'gbHeader-class.R'
     'gbLocation-class.R'
     'gbFeature-class.R'
     'gbFeatureList-class.R'

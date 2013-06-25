@@ -151,16 +151,6 @@ setGeneric("fuzzy", signature="x", function (x, ...) {
   standardGeneric("fuzzy")
 })
 
-### The "seqinfo" generic is defined in the BiocGenerics package.
-#' Get sequence information about genomic features
-#' 
-#' @usage seqinfo(x)
-#' @rdname seqinfo
-#' @export
-#' @genericMethods
-#' @importFrom GenomicRanges seqinfo
-setGeneric("seqinfo")
-
 #' Access slots of aGenBank record object.
 #' 
 #' @usage getLocus(x)
@@ -605,6 +595,13 @@ setGeneric("select", signature="x",
 
 
 # internal ---------------------------------------------------------------
+
+#' @keywords internal
+setGeneric('.header', function (x) standardGeneric('.header'))
+
+
+#' @keywords internal
+setGeneric('.sequence', function (x) standardGeneric('.sequence'))
 
 
 #' @keywords internal

@@ -5,7 +5,7 @@ NULL
 #' @importFrom parallel mclapply mcmapply detectCores
 NULL
 
-.parseGB <- function (gb_data, with_sequence = TRUE) {
+.parseGbRecord <- function (gb_data, with_sequence = TRUE) {
   # get a vector with the positions of the main GenBank fields
   gbf <- grep("^[A-Z//]+", gb_data)
   gbf_names <- strsplitN(gb_data[gbf], split=" +", 1)
@@ -41,22 +41,18 @@ NULL
     gb_contig <- gbLocation(strsplitN(gb_data[contig], "CONTIG", 2))
   }
 
-  # generate the seqenv environment that will hold the Seqinfo and Sequence
-  # information. Set "seqinfo" and "sequence" to NULL
-  seqenv <- new.env(parent=emptyenv())
-  
+  # generate the seqenv environment that will hold the Header and Sequence
+  # information.
+  e <- new('seqinfo')
   ## parse HEADER, FEATURES, and ORIGIN and construct 'gbData' object
-  header <- .parseGbHeader(gb_header=gb_header, gb_fields=gbf)
-  seqenv[["seqinfo"]] <- header[["seqinfo"]]
-  seqenv[["dbsource"]] <- header[["dbsource"]]
+  e$header <- .parseGbHeader(gb_header, gb_fields=gbf)
+  e$sequence <- .parseGbSequence(gb_sequence=gb_sequence,
+                                 accession_no=getAccession(e),
+                                 seq_type=getMoltype(e))
   
-  sequence <- .parseGbSequence(gb_sequence=gb_sequence,
-                               accession_no=seqnames(header[["seqinfo"]]),
-                               seq_type=header[["moltype"]])
-  seqenv[["sequence"]] <- sequence
+  features <- .parseGbFeatures(gb_features, seqinfo=e)
   
-  features <- .parseGbFeatures(gb_features=gb_features, seqenv=seqenv)
-  list(header=header, features=features, contig=gb_contig, seqenv=seqenv)
+  new('gbRecord', seqinfo=e, features=features, contig=gb_contig)
 }
 
 
@@ -166,18 +162,13 @@ NULL
   } else {
     comment <- NA_character_
   }
-
-  #### Seqinfo
-  seqinfo <- Seqinfo(seqnames=accession, seqlengths=length,
-                     isCircular=topology == 'circular',
-                     genome=definition)
-
-  # References are assigned to the 'gb_reference' class
-  list(seqinfo=seqinfo, locus=locus, moltype=moltype, topology=topology,
-       division=division, update_date=update_date, create_date=as.POSIXlt(NA),
-       version=version, seqid=seqid, dblink=dblink, dbsource=dbsource,
-       keywords=keywords, source=source, organism=organism, taxonomy=taxonomy,
-       references=references, comment=comment)
+  
+  new("gbHeader", locus=locus, length=length, moltype=moltype,
+      topology=topology, division=division, update_date=update_date,
+      create_date=as.POSIXlt(NA), definition=definition, accession=accession,
+      version=version, seqid=seqid, dblink=dblink, dbsource=dbsource,
+      keywords=keywords, source=source, organism=organism, taxonomy=taxonomy,
+      references=references, comment=comment)
 } 
 
 .parseGbReferences <- function (ref_lines) {
@@ -223,7 +214,7 @@ NULL
 ##   /citation=[number] e.g. /citation=[3]
 ##   /compare=[accession-number.sequence-version] e.g. /compare=AJ634337.1
 ##
-.parseGbFeatures <- function (gb_features, seqenv) {
+.parseGbFeatures <- function (gb_features, seqinfo) {
   # where do all the features start
   feature_start <- which(substr(gb_features, 6, 6) != " ")
   # where do all the features end
@@ -231,12 +222,13 @@ NULL
   # indeces for all features
   feature_idx <- mapply(seq.int, feature_start, feature_end,
                         SIMPLIFY=FALSE, USE.NAMES=FALSE)
+  accession <- getAccession(seqinfo)
   ftbl <- mcmapply(function (idx, n) {
-    gbFeature(gb_features[idx], seqenv, n)
+    gbFeature(gb_features[idx], seqinfo, accession, n)
   }, idx=feature_idx, n=seq_along(feature_start),
-                  SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
+    SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
   
-  IRanges::new2('gbFeatureList', .Data=ftbl, .seqinfo=seqenv, check=FALSE) 
+  IRanges::new2('gbFeatureList', .Data=ftbl, .seqinfo=seqinfo, check=FALSE) 
 }
 
 .joinSeq <- function (seq, accession_no) {

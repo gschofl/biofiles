@@ -13,23 +13,9 @@ setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
 #' @classHierarchy
 #' @classMethods
 setClass("gbRecord",
-         representation(
-           locus = "character", moltype = "character", topology = "character",
-           division = "character", update_date = "POSIXlt", create_date = "POSIXlt",
-           version = "character", seqid = "character", dblink = "character",
-           dbsource = "character", keywords = "character", source = "character",
-           organism = "character", taxonomy = "character", references = "character",
-           comment = "character", features = "gbFeatureList",
-           contig = "gbLocationOrNull", seqinfo = "environment"),
-         prototype(
-           locus=NA_character_, moltype=NA_character_, topology=NA_character_,
-           division=NA_character_, update_date=as.POSIXlt(NA), create_date=as.POSIXlt(NA),
-           version=NA_character_, seqid=NA_character_, dblink=NA_character_,
-           dbsource=NA_character_, keywords=NA_character_, source=NA_character_,
-           organism=NA_character_, taxonomy=NA_character_, references=NA_character_,
-           comment=NA_character_, seqinfo=new.env(parent=emptyenv())
-         )
-)
+         representation(seqinfo = "seqinfo",
+                        features = "gbFeatureList",
+                        contig = "gbLocationOrNull"))
 
 
 setValidity2("gbRecord", function (object) {
@@ -65,18 +51,16 @@ gbRecord <- function (gb, with_sequence = TRUE)
   ##
   if (is(gb, "efetch"))
   {
-    if (gb@rettype %ni% c("gb", "gp") || gb@retmode != "text")
+    if (gb@rettype %ni% c('gb','gbwithparts','gp') || gb@retmode != "text")
       stop("Must use efetch with rettype='gbwithparts','gb', or 'gp' and retmode='text'")
     
-    split_gb <- base::unlist(
-      strsplit(Rentrez::content(gb, "text"), "\n\n")
-    )
+    split_gb <- unlist(strsplit(Rentrez::content(gb, "text"), "\n\n"))
     n <- length(split_gb)
-    parsed_gb_data <- vector("list", n)
+    gbr_list <- vector("list", n)
     for (i in seq_len(n))
     {
-      gb_data <- base::unlist(strsplit(split_gb[i], "\n"))
-      parsed_gb_data[[i]] <- .parseGB( gb_data, with_sequence )
+      gb_data <- unlist(strsplit(split_gb[i], "\n"))
+      gbr_list[[i]] <- .parseGbRecord( gb_data, with_sequence )
     }
   ##
   ## Parse random textConnections
@@ -86,7 +70,7 @@ gbRecord <- function (gb, with_sequence = TRUE)
   {
     con <- gb
     on.exit(close(con))
-    parsed_gb_data <- list( .parseGB(readLines(con), with_sequence) )
+    gbr_list <- list( .parseGbRecord(readLines(con), with_sequence) )
   ##
   ## Parse GeneBank flat files  
   ##
@@ -94,11 +78,11 @@ gbRecord <- function (gb, with_sequence = TRUE)
   else if (tryCatch(all(file.exists(gb)), error = function() FALSE))
   {
     n <- length(gb)
-    parsed_gb_data <- vector("list", n)
+    gbr_list <- vector("list", n)
     for (i in seq_len(n))
     {
       con <- file(gb[i], open="rt")
-      parsed_gb_data[[i]] <- .parseGB( readLines(con), with_sequence )
+      gbr_list[[i]] <- .parseGbRecord( gb_data=readLines(con), with_sequence )
       close(con)
     }
   }
@@ -106,38 +90,10 @@ gbRecord <- function (gb, with_sequence = TRUE)
     stop(paste0("'gb' must be the path to a GenBank flat file or an 'efetch' ",
                 "object containing GenBank records"))
   
-  gbr_list <- list()
-  for (gbk in parsed_gb_data)
-  {
-    gbr <- base::with(gbk, 
-                      new("gbRecord",
-                          locus = header[["locus"]],
-                          moltype = header[["moltype"]],
-                          topology = header[["topology"]],
-                          division = header[["division"]],
-                          update_date = header[["update_date"]],
-                          create_date = header[["create_date"]],
-                          version = header[["version"]],
-                          seqid = header[["seqid"]],
-                          dblink = header[["dblink"]],
-                          dbsource = header[["dbsource"]],
-                          keywords = header[["keywords"]],
-                          source = header[["source"]],
-                          organism = header[["organism"]],
-                          taxonomy = header[["taxonomy"]],
-                          references = header[["references"]],
-                          comment = header[["comment"]],
-                          features = features,
-                          contig = contig,
-                          seqinfo = seqenv)
-    )
-    gbr_list <- c(gbr_list, gbr)
-  }
-  
   if (length(gbr_list) == 1L) 
     gbr_list[[1L]]
   else
-    gbRecordList(gbr_list)
+    gbRecordList( gbr_list )
 }
 
 
@@ -157,7 +113,7 @@ gbRecord <- function (gb, with_sequence = TRUE)
               linebreak(paste(getLocus(x), getLength(x),
                               if (type == 'AA') 'aa' else 'bp',
                               type, getTopology(x), getDivision(x),
-                              getDate(x)["update_date"]),
+                              unname(getDate(x)[2])),
                         offset=13, FORCE=TRUE)),
       sprintf("DEFINITION  %s\n",
               linebreak(getDefinition(x), offset=13, FORCE=TRUE)),
@@ -179,7 +135,7 @@ gbRecord <- function (gb, with_sequence = TRUE)
       sprintf("REFERENCE   %s\n", getReference(x)),
       sprintf("COMMENT     %s\n",
               linebreak(getComment(x), offset=13, FORCE=TRUE)),
-      if (!is.null(S)) {
+      if (length(S) != 0) {
         if (S@ranges@width[1L] < W - 14)
           sprintf("ORIGIN      %s\n", XVector::toString(S))
         else
@@ -193,7 +149,7 @@ gbRecord <- function (gb, with_sequence = TRUE)
                   )
           )
       },
-      if (!is.null(x@contig)) {
+      if (!is.null(x)) {
         sprintf("CONTIG      %s\n", linebreak(as(x@contig, "character"),
                                               offset=13, split=",", FORCE=TRUE))
       })
@@ -215,15 +171,14 @@ setMethod("show", "gbRecord",
 #' @autoImports
 setMethod("summary", "gbRecord",
           function (object, n=7, ...) {
-            si <- seqinfo(object)
-            acc <- seqnames(si)
-            len <- unname(getLength(si))
-            type <- if (object@type == 'AA') 'aa' else 'bp'
+            acc <- getAccession(object)
+            len <- getLength(object)
+            type <- if (getMoltype(object) == 'AA') 'aa' else 'bp'
             def <- 
-              ellipsize(obj=unname(genome(si)),
+              ellipsize(obj=getDefinition(object),
                         width=getOption("width") - base::nchar(len) - base::nchar(type) - 8)
             cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep="")
-            summary(object=getFeatures(object), n=n, setoff=2)
+            summary(getFeatures(object), n=n, setoff=2)
             
             return(invisible(NULL))
           })
@@ -231,68 +186,45 @@ setMethod("summary", "gbRecord",
 
 # getters ----------------------------------------------------------------
 
+setMethod("getLocus", "gbRecord", function (x) getLocus(x@seqinfo) )
 
-setMethod("seqinfo", "gbRecord",
-          function (x)  {
-            tryCatch(get("seqinfo", x@seqinfo),
-                     error = function (e) Seqinfo() )
-          })
+setMethod("getLength", "gbRecord", function (x) getLength(x@seqinfo) )
 
-setMethod("getLocus", "gbRecord", function (x) x@locus)
+setMethod("getMoltype", "gbRecord", function (x) getMoltype(x@seqinfo) )
 
-setMethod("getLength", "gbRecord", function (x) unname(seqlengths(seqinfo(x))))
+setMethod("getTopology", "gbRecord", function (x) getTopology(x@seqinfo) )
 
-setMethod("getMoltype", "gbRecord", function (x) x@moltype)
+setMethod("getDivision", "gbRecord", function (x) getDivision(x@seqinfo) )
 
-setMethod("getTopology", "gbRecord", function (x) x@topology)
-
-setMethod("getDivision", "gbRecord", function (x) x@division)
-
-setMethod("getDate", "gbRecord", function (x) {
-  c(create_date = x@create_date, update_date = x@update_date)
-})
+setMethod("getDate", "gbRecord", function (x) getDate(x@seqinfo) )
   
-setMethod("getDefinition", "gbRecord", function (x) unname(genome(seqinfo(x))))
+setMethod("getDefinition", "gbRecord", function (x) getDefinition(x@seqinfo) )
 
-setMethod("getAccession", "gbRecord", function (x) seqnames(seqinfo(x)))
+setMethod("getAccession", "gbRecord", function (x) getAccession(x@seqinfo) )
 
-setMethod("getVersion", "gbRecord", function (x) x@version)
+setMethod("getVersion", "gbRecord", function (x) getVersion(x@seqinfo) )
 
-setMethod("getGeneID", "gbRecord", 
-          function (x, db = 'gi') {
-            db.idx <- which(strsplitN(x@seqid, "|", 1, fixed = TRUE) == db)
-            strsplitN(x@seqid, "|", 2, fixed = TRUE)[db.idx]
-          })
+setMethod("getGeneID", "gbRecord", function (x, db='gi') getGeneID(x@seqinfo, db=db) )
 
-setMethod("getDBLink", "gbRecord", function (x) x@dblink)
+setMethod("getDBLink", "gbRecord", function (x) getDBLink(x@seqinfo) )
 
-setMethod("getDBSource", "gbRecord", function (x) x@dbsource)
+setMethod("getDBSource", "gbRecord", function (x) getDBSource(x@seqinfo) )
 
-setMethod("getSource", "gbRecord", function (x) x@source)
+setMethod("getSource", "gbRecord", function (x) getSource(x@seqinfo) )
 
-setMethod("getOrganism", "gbRecord", function (x) x@organism)
+setMethod("getOrganism", "gbRecord", function (x) getOrganism(x@seqinfo) )
 
-setMethod("getTaxonomy", "gbRecord", function (x) x@taxonomy)
+setMethod("getTaxonomy", "gbRecord", function (x) getTaxonomy(x@seqinfo) )
 
-setMethod("getReference", "gbRecord", function (x) x@references)
+setMethod("getReference", "gbRecord", function (x) getReference(x@seqinfo) )
 
-setMethod("getKeywords", "gbRecord", function (x) x@keywords)
+setMethod("getKeywords", "gbRecord", function (x) getKeywords(x@seqinfo) )
 
-setMethod("getComment", "gbRecord", function (x) x@comment)
+setMethod("getComment", "gbRecord", function (x) getComment(x@seqinfo) )
 
 setMethod("getFeatures", "gbRecord", function (x) x@features)
 
-#' @autoImports
-setMethod("getSequence", "gbRecord", 
-          function (x) {
-            if (exists("sequence", envir=x@seqinfo))
-              seq <- base::get("sequence", x@seqinfo)
-            else {
-              warning("No sequence associated with this record", call.=FALSE)
-              seq <- BStringSet()
-            }
-            seq
-          })
+setMethod("getSequence", "gbRecord",  function (x) getSequence(x@seqinfo))
 
 
 setMethod("ranges", "gbRecord",
@@ -333,17 +265,6 @@ setMethod("listQualif", "gbRecord",
           function (x) {
             lapply(getFeatures(x), listQualif)
           })
-
-
-# subsetting ----------------------------------------------------------
-
-
-setMethod("[[", c("gbRecord", "character", "missing"),
-          function(x, i) slot(object=x, name=i))
-
-
-setMethod("$", "gbRecord",
-          function(x, name) slot(object=x, name=name))
 
 
 # select -----------------------------------------------------------------
