@@ -39,6 +39,7 @@ Super classes:
   \item \code{\link{getTaxonomy}}
   \item \code{\link{getTopology}}
   \item \code{\link{getVersion}}
+  \item \code{\link{initialize}}
   \item \code{\link{show}}
 }
 

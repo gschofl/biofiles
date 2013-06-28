@@ -31,13 +31,14 @@ setClass("gbHeader",
 #' @export
 #' @classHierarchy
 #' @classMethods
-setClass("seqinfo", contains="environment",
-         prototype={
-           .xData <- new.env(parent=emptyenv())
-           .xData$header <- new('gbHeader')
-           .xData$sequence <- new('DNAStringSet')
-           .xData
-         })
+setClass("seqinfo", contains="environment")
+
+setMethod('initialize', 'seqinfo', function (.Object) {
+  .Object@.xData <- new.env(parent=emptyenv())
+  .Object@.xData$header <- new("gbHeader")
+  .Object@.xData$sequence <- new("DNAStringSet")
+  .Object
+})
 
 
 setMethod('.header', 'seqinfo', function (x) get('header', x))

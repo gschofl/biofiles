@@ -1,5 +1,5 @@
 Package: biofiles
-Version: 0.2-0
+Version: 0.2.1
 Title: Working with GenBank flat file records
 Authors@R: person("Gerhard", "Schöfl", role=c("aut","cre"),
     email="gschofl@yahoo.de")
