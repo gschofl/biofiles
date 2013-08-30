@@ -131,7 +131,7 @@ parseDbXref <- function (dbx) {
               names=unique(strsplitN(dbx, ":", 1)))
   } else if (is.data.frame(dbx)) {
     dbs <-`dim<-`(
-        vapply(dbx, compose(unique, strsplitN), ":", 1, FUN.VALUE=character(1)),
+        vapply(dbx, Compose(unique, strsplitN), ":", 1, FUN.VALUE=character(1)),
         NULL
       )
     structure(lapply(dbx, strsplitN, ":", 2), names = dbs)

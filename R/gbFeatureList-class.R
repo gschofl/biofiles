@@ -56,6 +56,7 @@ setMethod("show", "gbFeatureList",
 # summary ----------------------------------------------------------------
 
 
+#' @importFrom rmisc "%||%"
 setMethod("summary", "gbFeatureList",
           function (object, n=8, ...) {
             olen <- length(object)

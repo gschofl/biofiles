@@ -1,17 +1,13 @@
 .Rproj.user
 .Rhistory
 .RData
-*.Rproj
-src/*.o
-src/*.so
-src/*.dll
+scratch.[rR]
 cache/
 data/
 doc/
-scripts/
-test/
-scratch.r
+playground/
 *.html
 *.Rmd
-CopyOfNAMESPACE
+*.so
+*.o
 

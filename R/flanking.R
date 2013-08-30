@@ -1,4 +1,4 @@
-#' @importFrom rmisc Curry
+#' @importFrom rmisc Partial
 NULL
 #' @importFrom IRanges IRanges follow precede split queryHits subjectHits
 NULL
@@ -109,17 +109,17 @@ find_neighbors <- function (query, subject, n = 5,
 #' 
 #' @rdname upstream
 #' @export
-upstream <- Curry(find_neighbors, direction = "upstream")
+upstream <- Partial(find_neighbors, direction = "upstream")
 
 
 #' @usage downstream(query, subject, n=5, include_key="all", exclude_key="none)
 #' @export
 #' @rdname upstream
-downstream <- Curry(find_neighbors, direction = "downstream")
+downstream <- Partial(find_neighbors, direction = "downstream")
 
 
 #' @usage flanking(query, subject, n=5, include_key="all", exclude_key="none)
 #' @export
 #' @rdname upstream
-flanking <- Curry(find_neighbors, direction = "flanking")
+flanking <- Partial(find_neighbors, direction = "flanking")
 
