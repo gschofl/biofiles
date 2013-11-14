@@ -405,11 +405,12 @@ setGeneric("dbxref", signature="x",
 #' @param x A \code{\linkS4class{gbRecord}} instance.
 #' @param file A connection or a character string naming the file to write to.
 #' @param header if \code{FALSE} exclude the Genbank header.
+#' @param sequence if \code{FALSE} exclude the sequence.
 #' @param append if \code{TRUE} the data is appended to the connection.
 #' @export
 #' @genericMethods
 setGeneric("write.GenBank", signature="x",
-           function(x, file, header = TRUE, append = FALSE, ...) {
+           function(x, file, header = TRUE, sequence=TRUE, append = FALSE, ...) {
              standardGeneric("write.GenBank")
            })
 

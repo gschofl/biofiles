@@ -51,8 +51,7 @@ NULL
                                  seq_type=getMoltype(e))
   
   features <- .parseGbFeatures(gb_features, seqinfo=e)
-  
-  new('gbRecord', seqinfo=e, features=features, contig=gb_contig)
+  new_gbRecord(seqinfo=e, features=features, contig=gb_contig)
 }
 
 

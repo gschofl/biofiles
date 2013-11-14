@@ -12,10 +12,10 @@ BEGIN_RCPP
     SEXP __sexp_result;
     {
         Rcpp::RNGScope __rngScope;
-        std::vector<std::string> feature = Rcpp::as<std::vector<std::string> >(featureSEXP);
-        Rcpp::S4 seqinfo = Rcpp::as<Rcpp::S4 >(seqinfoSEXP);
-        std::string accession = Rcpp::as<std::string >(accessionSEXP);
-        int id = Rcpp::as<int >(idSEXP);
+        Rcpp::traits::input_parameter< std::vector<std::string> >::type feature(featureSEXP );
+        Rcpp::traits::input_parameter< Rcpp::S4 >::type seqinfo(seqinfoSEXP );
+        Rcpp::traits::input_parameter< std::string >::type accession(accessionSEXP );
+        Rcpp::traits::input_parameter< int >::type id(idSEXP );
         SEXP __result = gbFeature(feature, seqinfo, accession, id);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
@@ -30,8 +30,8 @@ BEGIN_RCPP
     SEXP __sexp_result;
     {
         Rcpp::RNGScope __rngScope;
-        std::string gb_base_span = Rcpp::as<std::string >(gb_base_spanSEXP);
-        std::string accession = Rcpp::as<std::string >(accessionSEXP);
+        Rcpp::traits::input_parameter< std::string >::type gb_base_span(gb_base_spanSEXP );
+        Rcpp::traits::input_parameter< std::string >::type accession(accessionSEXP );
         SEXP __result = gbLocation(gb_base_span, accession);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }

@@ -12,10 +12,15 @@ setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
 #' @export
 #' @classHierarchy
 #' @classMethods
-setClass("gbRecord",
-         representation(seqinfo = "seqinfo",
-                        features = "gbFeatureList",
-                        contig = "gbLocationOrNull"))
+new_gbRecord <- setClass(
+  "gbRecord",
+  slots=c(
+    seqinfo = "seqinfo",
+    features = "gbFeatureList",
+    contig = "gbLocationOrNull"
+  )
+)
+
 
 
 setValidity2("gbRecord", function (object) {

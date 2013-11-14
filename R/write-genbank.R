@@ -1,23 +1,16 @@
 #' @autoImports
 setMethod("write.GenBank", "gbRecord", 
-          function (x, file, header = TRUE, append = FALSE) {
+          function (x, file, header = TRUE, sequence = TRUE, append = FALSE) {
             # write header
-            if (header) {
-              h <- .writeHeader(x, file)
-            } else {
-              h <- ""
-            }
+            h <- if (header) .writeHeader(x, file) else ""
             # write features
-            op <- options("useFancyQuotes")
-            options(useFancyQuotes=FALSE)
+            op <- options(useFancyQuotes=FALSE)
             #cat("Writing features\n")
             f <- unlist(lapply(getFeatures(x), .writeFeature))
             cat(paste0(f, collapse="\n"), file=file, append=TRUE)
             options(op)
             # write origin
-            #cat("Writing sequence\n")
-            s <- .writeSequence(x, file)
-            
+            s <- if (sequence) .writeSequence(x, file) else "//"
             invisible(list(header=h, features=f, sequence=s)) 
           })
 
