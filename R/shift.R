@@ -1,49 +1,66 @@
-.shift_features <- function (x, shift=0L, split=FALSE, order=FALSE) {
+#' @importFrom Biostrings reverseComplement
+NULL
 
+setAs(from="gbFeatureList", to="gbRecord", function(from) {
+  new_gbRecord(seqinfo = from@.seqinfo, features = from, contig = NULL)
+})
+
+update_split <- function(x, split_matrix) {
+  if (!is.na(x@location@compound)) {
+    stop("Cannot split a compound location")
+  }
+  x@location@range <- split_matrix
+  x@location@fuzzy <- matrix(c(FALSE, TRUE, TRUE, FALSE), ncol=2)
+  x@location@compound <- "join"
+  x@location@accession <- rep(x@location@accession, 2)
+  x@location@remote <- rep(x@location@remote, 2)
+  x
+}
+
+merge_split <- function(fList, omit_unmergables = FALSE) {
+  ## unmergables:
+  ## genes that span the start/end of a circular chromosome
+  ## genes with trans-splicing structure
+  ## e.g.: join(complement(331719..331758),487030..487064)
+  assert_that(all(is_compound(fList)))
+  lapply(fList, function(f) {
+    lRange <- f@location@range 
+    if (lRange[-nrow(lRange), 2] - lRange[-1,1] < 1 &&
+          length(strand <- unique(f@location@strand)) < 2) {
+      f@location@range <- matrix(range(lRange), ncol=2)
+      f@location@fuzzy <- matrix(c(FALSE, FALSE), ncol=2)
+      f@location@strand <- strand
+      f@location@compound <- NA_character_
+      f@location@accession <- f@location@accession[1]
+      f@location@remote <- f@location@remote[1]
+      f@location@type <- f@location@type[1]
+      f
+    } else {
+      if (omit_unmergables)
+        NULL
+      else
+        f
+    }
+  })
+}
+
+
+.shift <- function(x, shift=0L, split=FALSE, order=FALSE) {
+  assert_that(is(x, "gbRecord") || is(x, "gbFeatureList"))
+  was.gbRecord <- FALSE
   if (is(x, "gbRecord")) {
-    len <- getLength(x)
-    features <- getFeatures(x)
-  } else if (is(x, "gbFeatureList")) {
-    if (all_empty(x["source"])) {
-      stop("No source key in this gbFeatureList")
-    }
-    len <- end(x["source"])
-    features <- x
+    x <- getFeatures(x)
+    was.gbRecord <- TRUE
   }
-  
-  update_split <- function(x, split_matrix) {
-    if (!is.na(x@location@compound)) {
-      stop("Cannot split a compound location")
-    }
-    x@location@range <- split_matrix
-    x@location@compound <- "join"
-    x@location@fuzzy <- matrix(c(FALSE, TRUE, TRUE, FALSE), ncol=2)
-    x@location@accession <- rep(x@location@accession, 2)
-    x@location@remote <- rep(x@location@remote, 2)
-    x@location@closed <- matrix(rep(x@location@closed, 2), ncol=2)
-    x
-  }
-  
-  merge_split <- function(x) {
-    lapply(x, function(x) {
-      ld <- location(x)@.Data
-      if (ld[-nrow(ld),2] - ld[-1,1] < 1) {
-        x@location@.Data <- matrix(range(ld), ncol=2)
-        x@location@compound <- NA_character_
-        x@location@partial <- matrix(c(FALSE, FALSE), ncol=2)
-        x@location@accession <- x@location@accession[1]
-        x@location@remote <- x@location@remote[1]
-        x@location@closed <- x@location@closed[1,,drop=FALSE]
-      }
-      x
-    })
-  }
-  
-  src <- features["source"]
+  len <- getLength(x)
+  if (all_empty(x["source"])) {
+    stop("No source key in this gbFeatureList")
+  }  
+  src <- x["source"]
   if (all_empty(src)) {
     stop("No source key available")
   }
-  f <- features[-index(src)]
+  f <- x[-index(src)]
   
   start_pos <- start(f)
   end_pos <- end(f)
@@ -76,20 +93,42 @@
         stop("This shiftwidth would split features ", paste(end_only, collapse=", "))
       }
     }
-  }
-  
+  } 
   start(f, check=FALSE) <- new_start
   end(f, check=FALSE) <- new_end
-
   cmpnd <- which(is_compound(f))
   if (length(cmpnd) > 0) {
-    f[cmpnd] <- merge_split(f[cmpnd])  
+    f[cmpnd] <- merge_split(f[cmpnd], omit_unmergables=FALSE)
   }
-  
-  if (order) {
-    f <- f[order(mapply("[", new_start, 1))]
+  f <- if (order) f[order(mapply("[", new_start, 1))] else f
+  x <- new('gbFeatureList', .Data=c(src, f), .seqinfo=f@.seqinfo)
+  x <- if (was.gbRecord) as(x, "gbRecord") else x
+  x
+}
+
+
+.revcomp <- function(x, order = TRUE) {
+  assert_that(is(x, "gbRecord") || is(x, "gbFeatureList"))
+  was.gbRecord <- FALSE
+  if (is(x, "gbRecord")) {
+    x <- getFeatures(x)
+    was.gbRecord <- TRUE
   }
-  
-  new('gbFeatureList', .Data=c(src, f), .seqinfo=f@.seqinfo)
+  cmpnd <- which(is_compound(x))
+  if (length(cmpnd) > 0) {
+    x[cmpnd] <- merge_split(x[cmpnd], omit_unmergables=TRUE)
+    x <- rmisc::compact(x)
+  }
+  len <- getLength(x)
+  new_end <- len - start(x) + 1
+  new_start <- len - end(x) + 1
+  new_strand <- -strand(x) 
+  start(x, check=FALSE) <- new_start
+  end(x) <- new_end
+  strand(x) <- new_strand
+  x <- if (order) x[order(new_start)] else x
+  #x@.seqinfo$sequence <- reverseComplement(x@.seqinfo$sequence)
+  x <- if (was.gbRecord) as(x, "gbRecord") else x
+  x
 }
 

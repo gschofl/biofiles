@@ -287,10 +287,14 @@ setMethod("select", "gbRecord",
 # shift ------------------------------------------------------------------
 
 
-setMethod("shift", "gbRecord",
-          function(x, shift, split=FALSE, order=FALSE, updateDb=FALSE)
-            .shift_features(x=x, shift=shift, split=split, order=order))
+setMethod("shift", "gbRecord", function(x, shift, split=FALSE, order=FALSE) {
+  .shift(x=x, shift=shift, split=split, order=order)
+})
+            
 
+setMethod("revcomp", "gbRecord", function(x, order=TRUE) {
+  .revcomp(x=x, order=order)
+})
 
 
 # internal ---------------------------------------------------------------

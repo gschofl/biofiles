@@ -269,12 +269,12 @@ setReplaceMethod("end", "gbFeatureList",
 
 
 setReplaceMethod("strand", "gbFeatureList",
-                 function(x, check=TRUE, value) {
+                 function(x, value) {
                    value <- recycle(value, length(x))
-                   new_x <- Map(function(Feature, check, val) { 
-                     strand(Feature, check=check) <- val
+                   new_x <- Map(function(Feature, val) { 
+                     strand(Feature) <- val
                      Feature
-                   }, Feature=x, check=list(check), val=value)
+                   }, Feature=x, val=value)
                    
                    new('gbFeatureList', .Data=new_x, .seqinfo=x@.seqinfo)
                  })
@@ -363,11 +363,15 @@ setMethod("view", "gbFeatureList",
           })
 
 
-# shift ------------------------------------------------------------------
+# shift and revcomp --------------------------------------------------------
 
 
-setMethod("shift", "gbFeatureList",
-          function(x, shift=0L, split=FALSE, order=FALSE) {
-            .shift_features(x=x, shift=shift, split=split, order=order)
-          })
+setMethod("shift", "gbFeatureList", function(x, shift=0L, split=FALSE, order=FALSE) {
+  .shift(x=x, shift=shift, split=split, order=order)
+})
+
+
+setMethod("revcomp", "gbFeatureList", function(x, order=TRUE) {
+  .revcomp(x=x, order=order)
+})
 

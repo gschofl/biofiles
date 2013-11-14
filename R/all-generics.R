@@ -468,13 +468,12 @@ setGeneric("hasQualif", signature=c("x","qualifier"),
            })
 
 
-# shift ------------------------------------------------------------------
+# shift and revcomp -------------------------------------------------------------
 
 
 #' Shift location of features in a GenBank record
 #'
 #' @usage shift(x, shift=0L, split=FALSE, order=FALSE)
-#'
 #' @param x A \code{\linkS4class{gbFeatureList}} or
 #' \code{\linkS4class{gbRecord}} instance (gbFeatureLists must 
 #' be complete and include a 'source' field).
@@ -487,11 +486,21 @@ setGeneric("hasQualif", signature=c("x","qualifier"),
 #' @rdname shift
 #' @export
 #' @genericMethods
-setGeneric("shift", signature="x",
-           function(x, shift=0L, use.names=TRUE, ...) {
-             standardGeneric("shift")
-           })
+setGeneric("shift", signature="x", function(x, shift=0L, use.names=TRUE, ...) {
+  standardGeneric("shift")
+})
 
+#' Reverse-complement features in a GenBank record
+#' 
+#' @usage revcomp(x, order=TRUE)
+#' @param x A \code{\linkS4class{gbFeatureList}} or
+#' \code{\linkS4class{gbRecord}} object (gbFeatureLists must 
+#' be complete and include a 'source' field).
+#' @param order Reorder features after reverse-complementing them.
+#' @rdname revcomp
+#' @export
+#' @genericMethods
+setGeneric("revcomp", signature="x", function(x, ...)  standardGeneric("revcomp"))
 
 # view -------------------------------------------------------------------
 

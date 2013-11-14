@@ -59,6 +59,7 @@ For a description of the GenBank format see
   \item \code{\link{getVersion}}
   \item \code{\link{listQualif}}
   \item \code{\link{ranges}}
+  \item \code{\link{revcomp}}
   \item \code{\link{select}}
   \item \code{\link{show}}
   \item \code{\link{start}}
