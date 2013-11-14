@@ -17,50 +17,39 @@ setMethod("write.GenBank", "gbRecord",
 
 #' @autoImports
 .writeHeader <- function (x, outfile = "out.gbk") {
-  
-  type <- if (x@type == "DNA") "bp" else "  "
+  type <- if (getMoltype(x) == "DNA") "bp" else "  "
   loc_line <- sprintf("%-12s%-17s %+10s %s    %-6s  %-8s %s %s",
-                      "LOCUS", getLocus(x), getLength(x), type, x@moltype, x@topology,
-                      x@division, base::toupper(format(x@date, "%d-%b-%Y")))
-  def_line <- sprintf("%-12s%s", "DEFINITION", 
-                      linebreak(definition(x), width=79, offset=12))
+                      "LOCUS", getLocus(x), getLength(x), type, getMoltype(x),
+                      getTopology(x), getDivision(x), base::toupper(format(getDate(x)[2], "%d-%b-%Y")))
+  def_line <- sprintf("%-12s%s", "DEFINITION", linebreak(getDefinition(x), width=79, offset=12))
   acc_line <- sprintf("%-12s%s", "ACCESSION", getAccession(x))
-  ver_line <- sprintf("%-12s%-12s%s%s", "VERSION", x@version, "GI:", x@GI)
-  
-  dbl_line <- if (!is.null(x@dblink)) {
-    sprintf("%-12s%s%s", "DBLINK", "Project: ", x@dblink)
+  ver_line <- sprintf("%-12s%-12s%s%s", "VERSION", getVersion(x), "GI:", getGeneID(x))
+  dbl_line <- if (!is.null(dblink <- getDBLink(x))) {
+    sprintf("%-12s%s%s", "DBLINK", "Project: ", dblink)
   } else {
-    character()
+    character(0)
   }
-  
-  key_line <- sprintf("%-12s%s", "KEYWORDS",
-                      linebreak(x@keywords, width=79, offset=12))
-  src_line <- sprintf("%-12s%s", "SOURCE",
-                      linebreak(x@source, width=79, offset=12))
-  org_line <- sprintf("%-12s%s", "  ORGANISM",
-                      paste0(x@organism,
-                             linebreak(x@lineage, width=79, indent=12, offset=12),
+  key_line <- sprintf("%-12s%s", "KEYWORDS", linebreak(getKeywords(x), width=79, offset=12))
+  src_line <- sprintf("%-12s%s", "SOURCE", linebreak(getSource(x), width=79, offset=12))
+  org_line <- sprintf("%-12s%s", "  ORGANISM", paste0(getOrganism(x),
+                             linebreak(getTaxonomy(x), width=79, indent=12, offset=12),
                              sep="\n"))
   ref_line <- sprintf("%-12s%-3s(bases %s to %s)\n%-12s%s\n%-12s%s\n%-12s%s",
                       "REFERENCE", 1, 1, getLength(x),
                       "  AUTHORS", "authors",
                       "  TITLE", "title",
                       "  JOURNAL", "journal")
-  
-  com_line <- if (!is.null(x@comment)) {
-    sprintf("%-12s%s", "COMMENTS", linebreak(x@comment, width=79, offset=12))
+  com_line <- if (!is.null(comment <- getComment(x))) {
+    sprintf("%-12s%s", "COMMENTS", linebreak(comment, width=79, offset=12))
   } else {
-    character()
+    character(0)
   }
-  
   f_line <- sprintf("%-21s%s", "FEATURES", "Location/Qualifiers\n")
-  
   header <- paste0(loc_line, def_line, acc_line, ver_line, dbl_line,
                    key_line, src_line, org_line, ref_line, com_line,
-                   f_line, sep="\n")
+                   f_line, collapse="\n")
   header <- base::gsub("\n{2,}", "\n", header)
   cat(header, file=outfile)
-  
   invisible(header)
 }
 
