@@ -25,10 +25,9 @@ NULL
   } else {
     gb_features <- gb_data[seq.int(gbf["FEATURES"] + 1, gbf[match("FEATURES", gbf_names) + 1] - 1)]
   }
-  
-  if (length(gb_features) < 2L) 
+  if (length(gb_features) < 2L) {
     stop("No features in the GenBank file")
-  
+  }
   if (!is.na(origin <- gbf["ORIGIN"])) {
     seq_idx <- seq.int(origin + 1, gbf["//"] - 1)
     if (length(seq_idx) > 1L && seq_idx[2] < seq_idx[1]) {
@@ -57,46 +56,7 @@ NULL
 
 .parseGbHeader <- function (gb_header, gb_fields) {
   #### LOCUS
-  locus_line <- strsplit(gb_header[gb_fields[names(gb_fields) == "LOCUS"]], "\\s+")[[1]]
-  # if split by whitespace the LOCUS field seems to be made up of up to 8
-  # different elements, 6 of which are data: LOCUS (1), locus name (2)
-  # sequence length (3), bp or aa (4), molecule type (5, not given if protein,
-  # GenBank division (6), topology (7, optional?), and modification date (8)
-  if (length(locus_line) == 8 || 
-     (length(locus_line) == 7 && locus_line[4] == "aa"))
-  {
-    locus <- locus_line[2]
-    length <- as.integer(locus_line[3])
-    if (locus_line[4] == 'aa') {
-      # these are GenPept files; they don't have a 'molecule type' but we set it 'AA'
-      moltype <- 'AA'
-      topology <- locus_line[5]
-      division <- locus_line[6]
-      update_date <- as.POSIXlt(locus_line[7], format="%d-%b-%Y")
-    } else if (locus_line[4] == 'bp') {
-      moltype <- locus_line[5]
-      topology <- locus_line[6]
-      division <- locus_line[7]
-      update_date <- as.POSIXlt(locus_line[8], format="%d-%b-%Y")
-    }
-  } 
-  else
-  {
-    # some GenBank files just don't seem to have topology or division
-    locus <- locus_line[2]
-    length <- as.integer(locus_line[3])
-    if (locus_line[4] == 'aa') {
-      moltype <- 'AA'
-      topology <- locus_line[5]
-      division <- NA_character_
-      update_date <- as.POSIXlt(locus_line[6], format="%d-%b-%Y")
-    } else if (locus_line[4] == 'bp') {
-      moltype <- locus_line[5]
-      topology <- NA_character_
-      division <- locus_line[6]
-      update_date <- as.POSIXlt(locus_line[7], format="%d-%b-%Y")
-    }
-  }
+  locus <- gbLocus(gb_header[gb_fields[names(gb_fields) == "LOCUS"]])
   
   #### DEFINITION
   def_idx <- which(names(gb_fields) == "DEFINITION")
@@ -162,9 +122,7 @@ NULL
     comment <- NA_character_
   }
   
-  new("gbHeader", locus=locus, length=length, moltype=moltype,
-      topology=topology, division=division, update_date=update_date,
-      create_date=as.POSIXlt(NA), definition=definition, accession=accession,
+  new("gbHeader", locus=locus, definition=definition, accession=accession,
       version=version, seqid=seqid, dblink=dblink, dbsource=dbsource,
       keywords=keywords, source=source, organism=organism, taxonomy=taxonomy,
       references=references, comment=comment)
@@ -239,7 +197,8 @@ NULL
   s
 }
 
-#' @autoImports
+
+#' @importFrom Biostrings BStringSet readAAStringSet readDNAStringSet
 .parseGbSequence <- function (gb_sequence, accession_no, seq_type) {
   # read.BStringSet() does not support connections and
   # currently only accepts fasta format. So we write out gb_sequence as
@@ -247,8 +206,8 @@ NULL
   # DNAStringSet (mRNA etc seems to be encoded with Ts rather then Us,
   # so we use DNAStringSets for RNA)
   if (is.null(gb_sequence)) {
-    return( BStringSet() )
-    } else {
+    return(BStringSet())
+  } else {
     tmp <- tempfile()
     on.exit(unlink(tmp))
     writeLines(text=.joinSeq( gb_sequence, accession_no ), tmp)

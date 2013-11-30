@@ -24,24 +24,24 @@ Imports:
     stringr,
     XVector
 Suggests:
-    Rentrez
+    reutils
 Collate:
+    'RcppExports.R'
     'utils.R'
     'all-generics.R'
+    'flanking.R'
     'gbHeader-class.R'
     'gbLocation-class.R'
     'gbFeature-class.R'
     'gbFeatureList-class.R'
     'gbRecord-class.R'
     'gbRecordList-class.R'
-    'RcppExports.R'
     'make-granges.R'
-    'flanking.R'
+    'misc-functions.R'
     'parser.R'
     'retrieve.R'
     'select.R'
     'shift.R'
     'write-feature-table.R'
     'write-genbank.R'
-    'misc-functions.R'
     'zzz.R'

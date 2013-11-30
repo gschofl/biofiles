@@ -1,4 +1,4 @@
-% Built by roxygen3 0.1
+\docType{methods}
 \name{getLocus}
 \alias{getAccession}
 \alias{getComment}
@@ -7,6 +7,7 @@
 \alias{getDate}
 \alias{getDefinition}
 \alias{getDivision}
+\alias{getFeatures}
 \alias{getGeneID}
 \alias{getKeywords}
 \alias{getLength}
@@ -14,248 +15,75 @@
 \alias{getMoltype}
 \alias{getOrganism}
 \alias{getReference}
+\alias{getSequence}
 \alias{getSource}
 \alias{getTaxonomy}
 \alias{getTopology}
 \alias{getVersion}
-\title{Access slots of aGenBank record object.}
+\title{Access slots of a GenBank record.}
 \usage{
-  getLocus(x)
+getLocus(x)
 
-  getLength(x)
+getLength(x)
 
-  getMoltype(x)
+getMoltype(x)
 
-  getTopology(x)
+getTopology(x)
 
-  getDivision(x)
+getDivision(x)
 
-  getDate(x)
+getDate(x)
 
-  getDefinition(x)
+getDefinition(x)
 
-  getAccession(x)
+getAccession(x)
 
-  getVersion(x)
+getVersion(x)
 
-  getGeneID(x)
+getGeneID(x)
 
-  getDBLink(x)
+getDBLink(x)
 
-  getDBSource(x)
+getDBSource(x)
 
-  getSource(x)
+getSource(x)
 
-  getOrganism(x)
+getOrganism(x)
 
-  getTaxonomy(x)
+getTaxonomy(x)
 
-  getKeywords(x)
+getKeywords(x)
 
-  getReference(x)
+getReference(x)
 
-  getComment(x)
+getComment(x)
+
+getFeatures(x, ...)
+
+getSequence(x, ...)
+}
+\arguments{
+  \item{x}{A \code{\linkS4class{gbRecord}} instance.}
+
+  \item{...}{Additional arguments passed to methods.}
+
+  \item{x}{A \code{\linkS4class{gbRecord}},
+  \code{\linkS4class{gbFeature}}, or
+  \code{\linkS4class{gbFeatureList}} instance.}
+
+  \item{...}{Additional arguments passed to methods.}
+}
+\value{
+The \code{\linkS4class{gbFeatureList}} object contained in
+a gbRecord database.
+
+An \code{\linkS4class{XStringSet}} object.
 }
 \description{
-Access slots of aGenBank record object.
-}
-\section{Method signatures for generic getLocus}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
+Access slots of a GenBank record.
+
+Retrieve feature tables from a GenBank record.
+
+Retrieve sequence from a GenBank record or a Feature.
 }
 
-}
-
-\section{Method signatures for generic getLength}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getMoltype}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getTopology}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getDivision}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getDate}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getDefinition}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getAccession}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbLocation}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getVersion}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getGeneID}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getDBLink}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getDBSource}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getSource}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getOrganism}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getTaxonomy}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getKeywords}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getReference}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\section{Method signatures for generic getComment}{
-\itemize{
-  \item \linkS4class{gbFeature}
-  \item \linkS4class{gbFeatureList}
-  \item \linkS4class{gbRecord}
-  \item \linkS4class{gbRecordList}
-  \item \linkS4class{seqinfo}
-}
-
-}
-
-\keyword{methods}

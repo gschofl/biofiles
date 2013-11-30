@@ -1,17 +1,14 @@
 #' @keywords internal
-#' @autoImports
+#' @importFrom IRanges IRanges ranges IntervalTree findOverlaps subjectHits
 .select <- function (x, ..., keys = NULL) {
-    
   args <- parse_args(..., keys = keys)
-  
-  if (is.null(args))
+  if (is.null(args)) {
     return(x)
-  
+  }
   # restrict features to the selected indices
   if (!all_empty(args[["idx"]])) {
-    x <- x[ matchIdx(x, args[["idx"]]) ]
+    x <- x[matchIdx(x, args[["idx"]])]
   }
-
   # for the selected indices restrict features to
   # the selected range
   if (!all_empty(args[["range"]])) {
@@ -28,7 +25,7 @@
   # for the selected range restrict features to
   # the selected keys 
   if (!all_empty(args$key)) {
-    key_idx <- base::which(grepl(args[["key"]], key(x)))
+    key_idx <- which(grepl(args[["key"]], key(x)))
     x <- x[key_idx]
   }
   
@@ -37,7 +34,7 @@
   feature_idx <- is_feature(names(args))
   if (any(feature_idx)) {
     features <- args[feature_idx]
-    idx <- base::Map(function (tag, val) {
+    idx <- Map(function(tag, val) {
       if (isTRUE(val)) {
         ## test for the presence of a qualifier tag among the qualifiers
         ## of each feature
@@ -47,8 +44,8 @@
       } else {
         ## get indices for matching tags for each feature
         tag_idx_lst <- 
-          base::lapply(x, function(x_item) grep(tag, names(x_item@qualifiers)))
-        idx <- base::mapply( function(x_item, tag_idx) { 
+          lapply(x, function(x_item) grep(tag, names(x_item@qualifiers)))
+        idx <- mapply(function(x_item, tag_idx) { 
           any(grepl(val[[1]], x_item@qualifiers[tag_idx]))
         }, x, tag_idx_lst, USE.NAMES=FALSE)
       }   
@@ -108,11 +105,11 @@ parse_args <- function (..., keys) {
 
 #' @keywords internal
 parse_tags <- function (keys) {
-  if (all_empty(keys))
+  if (all_empty(keys)) {
     return(NULL)
-  
+  }
   x <- if (is.list(keys)) {
-    keys <- rmisc::compact(keys)
+    keys <- compact(keys)
     if (all_empty(names(keys))) {
       stop("Require named arguments")
     }
@@ -126,7 +123,7 @@ parse_tags <- function (keys) {
       )
     )
   } else {
-    strsplit(keys, ";")[[1]]
+    usplit(keys, ";", fixed=TRUE)
   }
   
   c(
@@ -139,63 +136,60 @@ parse_tags <- function (keys) {
 
 
 #' @keywords internal
-#' @autoImports
 parse_index <- function (index) {
-  if (all_empty(index))
+  if (all_empty(index)) {
     return(NULL)
-  idx <- vapply(strsplit(index, "="), "[", 2, FUN.VALUE=character(1))
-  idx <- base::unlist(strsplit(idx, ","))
-  idx <- base::unlist(base::lapply(idx, function (i) {
-    base::eval(parse(text=i)) 
-  }))
-  list(idx = base::unique(idx))
+  }
+  idx <- vapply(strsplit(index, "=", fixed=TRUE), "[", 2, FUN.VALUE="")
+  idx <- usplit(idx, ",")
+  idx <- unlist(lapply(idx, function(i) eval(parse(text=i))))
+  list(idx = unique(idx))
 }
 
 
 #' @keywords internal
-#' @autoImports
-prepare_range <- function (range) {
-  if (all_empty(range))
+prepare_range <- function(range) {
+  if (all_empty(range)) {
     return(NULL)
-  range <- vapply(strsplit(range, "="), "[", 2, FUN.VALUE=character(1))
-  list(range = base::unique(base::unlist(strsplit(range, ","))))
+  }
+  range <- vapply(strsplit(range, "=", fixed=TRUE), "[", 2, FUN.VALUE="")
+  list(range = uusplit(range, ",", fixed=TRUE))
 }
 
 
 #' @keywords internal
-#' @autoImports
-prepare_key <- function (key) {
-  if (all_empty(key))
+prepare_key <- function(key) {
+  if (all_empty(key)) {
     return(NULL)
-  key <- vapply(strsplit(key, "="), "[", 2, FUN.VALUE=character(1))
-  list(key = base::unique(base::unlist(strsplit(key, ","))))
+  }
+  key <- vapply(strsplit(key, "=", fixed=TRUE), "[", 2, FUN.VALUE="")
+  list(key = uusplit(key, ",", fixed=TRUE))
 }
 
 
 #' @keywords internal
-#' @autoImports
-prepare_features <- function (feature) {
-  if (all_empty(feature))
+prepare_features <- function(feature) {
+  if (all_empty(feature)) {
     return(NULL)
+  }
   tag_val <- strsplit(feature, "=")
-  tags <- vapply(tag_val, "[", 1, FUN.VALUE=character(1))
-  vals <- vapply(tag_val, "[", 2, FUN.VALUE=character(1))
-  vals <- strsplit(vals, ",")
-  vals <- merge_dups(base::as.list(setNames(vals, nm=tags)))
-  base::lapply(vals, function (v) if (all(is.na(v))) TRUE else v )
+  tags <- vapply(tag_val, "[", 1, FUN.VALUE="")
+  vals <- vapply(tag_val, "[", 2, FUN.VALUE="")
+  vals <- strsplit(vals, ",", fixed=TRUE)
+  vals <- merge_dups(as.list(setNames(vals, nm=tags)))
+  lapply(vals, function(v) if (all(is.na(v))) TRUE else v )
 }
 
 
 #' @keywords internal
-#' @autoImports
 parse_range <- function (range) {
-  if (all_empty(range))
+  if (all_empty(range)) {
     return(NULL)
-  
+  }
   start <- end <- numeric(0)
   r <- strsplit(range, "..", fixed=TRUE)
-  r <- list(start = as.numeric(vapply(r, "[", 1, FUN.VALUE=character(1))),
-            end = as.numeric(vapply(r, "[", 2, FUN.VALUE=character(1))))
+  r <- list(start = as.numeric(vapply(r, "[", 1, FUN.VALUE="")),
+            end   = as.numeric(vapply(r, "[", 2, FUN.VALUE="")))
   list(range = r)
 }
 

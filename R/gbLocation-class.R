@@ -27,10 +27,9 @@ NULL
 #' For more information see the 
 #' \href{ftp://ftp.ncbi.nih.gov/genbank/gbrel.txt}{GenBank Release Note}
 #'
-#' @rdname gbLocation
-#' @export
-#' @classHierarchy
-#' @classMethods
+#' @name gbLocation-class
+#' @rdname gbLocation-class
+#' @exportClass gbLocation
 setClass("gbLocation",
          representation(range = "matrix",
                         fuzzy = "matrix",
@@ -50,30 +49,29 @@ setClass("gbLocation",
 
 #' @keywords internal
 #' @importFrom IRanges setValidity2
-setValidity2("gbLocation",
-            function (object) {
-              # check range matrix
-              if (!is.integer(object@range) || dim(object@range)[2] != 2 )
-                return( "The 'range' slot should be a two-column, integer matrix." )
-              # Check for valid base ranges
-              if (any(object@range[, 2] < object@range[, 1], na.rm = TRUE))
-                return( "One or more ranges with second endpoint before first." )
-              # check fuzzy matrix
-              if (!is.logical(object@fuzzy) || dim(object@fuzzy)[2] != 2 )
-                return( "The 'fuzzy' slot should be a two-column, logical matrix." )
-              # check strand vector
-              if (all_empty(object@strand) || !all(object@strand %in% c(1L, -1L, NA_integer_)))
-                return("The 'strand' slot should only contain 1L, -1L, or NA")
-              # check compound character
-              if (length(object@compound) > 1L || all_empty(object@compound) ||
-                   !object@compound %in% c("join", "order", "bond", NA_character_))
-                return("The 'compound' slot should contain either 'join', 'order', 'bond', or NA")
-              # For type 'B', check that nucleotides are adjoining
-              if (any(object@type == "B") && any(object@range[,2] - object@range[,1][object@type == 'B'] != 1))
-                return( "For span type 'B', start and end position must be adjacent" )
-              
-              TRUE
-            })
+setValidity2("gbLocation", function (object) {
+  # check range matrix
+  if (!is.integer(object@range) || dim(object@range)[2] != 2 )
+    return( "The 'range' slot should be a two-column, integer matrix." )
+  # Check for valid base ranges
+  if (any(object@range[, 2] < object@range[, 1], na.rm = TRUE))
+    return( "One or more ranges with second endpoint before first." )
+  # check fuzzy matrix
+  if (!is.logical(object@fuzzy) || dim(object@fuzzy)[2] != 2 )
+    return( "The 'fuzzy' slot should be a two-column, logical matrix." )
+  # check strand vector
+  if (all_empty(object@strand) || !all(object@strand %in% c(1L, -1L, NA_integer_)))
+    return("The 'strand' slot should only contain 1L, -1L, or NA")
+  # check compound character
+  if (length(object@compound) > 1L || all_empty(object@compound) ||
+        !object@compound %in% c("join", "order", "bond", NA_character_))
+    return("The 'compound' slot should contain either 'join', 'order', 'bond', or NA")
+  # For type 'B', check that nucleotides are adjoining
+  if (any(object@type == "B") && any(object@range[,2] - object@range[,1][object@type == 'B'] != 1))
+    return( "For span type 'B', start and end position must be adjacent" )
+  
+  TRUE
+})
 
 
 # Getter-methods ---------------------------------------------------------
@@ -184,7 +182,6 @@ setReplaceMethod("strand", "gbLocation",
 # Coerce-methods ------------------------------------------------------
 
 
-#' @autoImports
 setAs("gbLocation", "character",
       function (from) {
         nrow <- dim(from@range)[1]

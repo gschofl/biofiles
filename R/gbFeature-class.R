@@ -1,7 +1,7 @@
 #' @include gbLocation-class.R
 NULL
 
-#' gbFeature
+#' gbFeature-class
 #' 
 #' \dQuote{gbFeature} is an S4 class that provides a container
 #' for GenBank feature tables.
@@ -14,12 +14,13 @@ NULL
 #' @slot key The feature key.
 #' @slot location A \code{\linkS4class{gbLocation}} object.
 #' @slot qualifiers A named character vector. Name attributes
-#' correspond to GenBank qualifier tags.       
+#' correspond to GenBank qualifier tags.
+#' @seealso
+#'    \code{\linkS4class{gbFeatureList}}    
 #' 
-#' @rdname gbFeature
-#' @export
-#' @classHierarchy
-#' @classMethods
+#' @name gbFeature-class
+#' @rdname gbFeature-class
+#' @exportClass gbFeature
 setClass("gbFeature",
          representation(.seqinfo="seqinfo",
                         .id="integer",
@@ -71,16 +72,15 @@ setMethod("show", "gbFeature",
 # summary ----------------------------------------------------------------
 
 
-#' @autoImports
 setMethod("summary", "gbFeature",
           function (object, ...) {
-            idx <- c("N", index(object))
-            key <- c("Key", key(object))
-            loc <- c("Location", as(location(object), "character"))
+            idx  <- c("N", index(object))
+            key  <- c("Key", key(object))
+            loc  <- c("Location", as(location(object), "character"))
             prod <- c("Product", product(object))
-            idx_len <-max(base::nchar(idx))
-            key_len <- max(base::nchar(key))
-            loc_len <- max(base::nchar(loc))
+            idx_len <- max(nchar(idx))
+            key_len <- max(nchar(key))
+            loc_len <- max(nchar(loc))
             idx <- pad(idx, idx_len + 2, "right")
             key <- pad(key, key_len + 3, "right")
             loc <- pad(loc, loc_len + 3, "right")
@@ -179,14 +179,14 @@ setMethod("qualif", "gbFeature",
             if (missing(which)) {
               x@qualifiers
             } else {
-              .qualAccess(x, which, fixed, use.names)
+              .qual_access(x, which, fixed, use.names)
             }
           })
 
-#' @autoImports
+
 setMethod("dbxref", "gbFeature",
           function (x, db = NULL, ...) {     
-            ans <- .qualAccess(x, "db_xref")
+            ans <- .qual_access(x, "db_xref")
             if (all(is.na(ans))) {
               return( NA_character_ )
             } else {
@@ -207,7 +207,7 @@ setMethod("dbxref", "gbFeature",
           })
 
 
-setMethod("getSequence", "gbFeature", function (x) .seqAccess(x))
+setMethod("getSequence", "gbFeature", function (x) .seq_access(x))
 
 setMethod('.dbSource', 'gbFeature', function (x) parse_dbsource(getDBSource(x)) )
 

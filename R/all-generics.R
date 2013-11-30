@@ -49,60 +49,60 @@ NULL
 ### Here we explicitely set them S4.
 #' Get or set the start of genomic features
 #' 
-#' @usage start(x, join=FALSE, ...)
+#' @usage start(x, join = FALSE, ...)
 #' @param x A \code{gbFeature} or \code{gbFeatureList} object.
 #' @param join Join compound genomic locations into a single range.
 #' @param ... Further arguments passed to methods.
 #' @return An integer vector
-#' @rdname start
+#' @rdname start-methods
 #' @export
-#' @genericMethods
+#' @docType methods
 #' @importFrom IRanges start
 setGeneric("start")
 
-#' @rdname start
+#' @rdname start-methods
 #' @export
-#' @genericMethods
+#' @docType methods
 #' @importFrom IRanges "start<-"
 setGeneric("start<-")
 
 #' Get or set the end of genomic features
 #' 
-#' @usage start(x, join=FALSE, ...)
+#' @usage end(x, join = FALSE, ...)
 #' @param x A \code{gbFeature} or \code{gbFeatureList} object.
 #' @param join Join compound genomic locations into a single range.
 #' @param ... Further arguments passed to methods.
 #' @return An integer vector
-#' @rdname end
+#' @rdname end-methods
 #' @export
-#' @genericMethods
+#' @docType methods
 #' @importFrom IRanges end
 setGeneric("end")
 
-#' @rdname end
+#' @rdname end-methods
 #' @export
-#' @genericMethods
+#' @docType methods
 #' @importFrom IRanges "end<-"
 setGeneric("end<-")
 
 ### The "strand" generic is defined in the BiocGenerics package.
 #' Get or set the strand of genomic features
 #'
-#' @usage strand(x, join=FALSE, ...)
+#' @usage strand(x, join = FALSE, ...)
 #' @param x A \code{gbFeature} or \code{gbFeatureList}object.
 #' @param join Join compound genomic locations into a single range.
 #' @param ... Further arguments passed to methods.
 #' @return An integer vector of 1 (plus strand), -1 (minus strand), or
 #' \code{NA}
-#' @rdname strand
+#' @rdname strand-methods
 #' @export
-#' @genericMethods
+#' @docType methods
 #' @importFrom BiocGenerics strand
 setGeneric("strand")
 
-#' @rdname strand
+#' @rdname strand-methods
 #' @export
-#' @genericMethods
+#' @docType methods
 #' @importFrom BiocGenerics "strand<-"
 setGeneric("strand<-")
 
@@ -114,9 +114,9 @@ setGeneric("strand<-")
 #' @param x A \code{gbFeature} or \code{gbFeatureList}object.
 #' @param ... Further arguments passed to methods.
 #' @return An integer vector.
-#' @rdname width
+#' @rdname width-methods
 #' @export
-#' @genericMethods
+#' @docType methods
 #' @importFrom IRanges width
 setGeneric("width", signature="x", function (x, ...) {
   standardGeneric("width")
@@ -125,7 +125,7 @@ setGeneric("width", signature="x", function (x, ...) {
 ### The "ranges" generic is defined in the IRanges package.
 #' Get or set the range of genomic features
 #' 
-#' @usage ranges(x, join=FALSE, include="none", exclude="")
+#' @usage ranges(x, join = FALSE, include = "none", exclude = "")
 #' @param x A \code{gbFeature} or \code{gbFeatureList} object.
 #' @param join Join compound genomic locations into a single range.
 #' @param key Include feature keys with ranges.
@@ -134,131 +134,134 @@ setGeneric("width", signature="x", function (x, ...) {
 #' @param exclude Exclude specific qualifiers.
 #' @param ... Further arguments passed to methods.
 #' @return A \code{\linkS4class{GRanges}} object.
-#' @rdname ranges
+#' @rdname ranges-methods
 #' @export
 #' @importFrom IRanges ranges
 setGeneric("ranges")
 
-#' @rdname ranges
+
+#' @rdname ranges-methods
 #' @export
 #' @importFrom IRanges "ranges<-"
 setGeneric("ranges<-")
 
-#' @rdname fuzzy
+#' Fuzzy location
+#' 
+#' @rdname fuzzy-methods
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("fuzzy", signature="x", function (x, ...) {
   standardGeneric("fuzzy")
 })
 
-#' Access slots of aGenBank record object.
+#' Access slots of a GenBank record.
 #' 
 #' @usage getLocus(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric('getLocus', function (x, ...) standardGeneric('getLocus'))
 
 #' @usage getLength(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("getLength", function (x, ...) standardGeneric('getLength'))
 
 #' @usage getMoltype(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric('getMoltype', function (x, ...) standardGeneric('getMoltype'))
 
 #' @usage getTopology(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric('getTopology', function (x, ...) standardGeneric('getTopology'))
 
 #' @usage getDivision(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric('getDivision', function (x, ...) standardGeneric('getDivision'))
 
 #' @usage getDate(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric('getDate', function (x) standardGeneric('getDate'))
 
 #' @usage getDefinition(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("getDefinition", function (x, ...) standardGeneric("getDefinition"))
 
 #' @usage getAccession(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("getAccession", function (x, ...) standardGeneric("getAccession"))
 
 #' @usage getVersion(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("getVersion", function (x, ...) standardGeneric("getVersion"))
 
 #' @usage getGeneID(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("getGeneID", function (x, ...) standardGeneric("getGeneID"))
 
 #' @usage getDBLink(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric('getDBLink', function (x) standardGeneric('getDBLink'))
 
 #' @usage getDBSource(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric('getDBSource', function (x) standardGeneric('getDBSource'))
 
 #' @usage getSource(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric('getSource', function (x) standardGeneric('getSource'))
 
 #' @usage getOrganism(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric('getOrganism', function (x) standardGeneric('getOrganism'))
 
 #' @usage getTaxonomy(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric('getTaxonomy', function (x) standardGeneric('getTaxonomy'))
 
 #' @usage getKeywords(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric('getKeywords', function (x) standardGeneric('getKeywords'))
 
 #' @usage getReference(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric('getReference', function (x) standardGeneric('getReference'))
 
 #' @usage getComment(x)
 #' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric('getComment', function (x) standardGeneric('getComment'))
 
 #' Retrieve feature tables from a GenBank record.
@@ -267,9 +270,9 @@ setGeneric('getComment', function (x) standardGeneric('getComment'))
 #' @param ... Additional arguments passed to methods.
 #' @return The \code{\linkS4class{gbFeatureList}} object contained in a
 #' gbRecord database.
-#' @rdname features
+#' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("getFeatures", function (x, ...) standardGeneric("getFeatures"))
 
 
@@ -279,23 +282,27 @@ setGeneric("getFeatures", function (x, ...) standardGeneric("getFeatures"))
 #'  or \code{\linkS4class{gbFeatureList}} instance.
 #' @param ... Additional arguments passed to methods.
 #' @return An \code{\linkS4class{XStringSet}} object.
-#' @rdname sequence
+#' @rdname accessors
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("getSequence", function(x, ...) standardGeneric("getSequence"))
 
 
 ### The "annotation" generic is defined in the BiocGenerics package.
+#' Retrieve annotation
+#' 
 #' @rdname annotation
 #' @export
-#' @genericMethods
+#' @docType methods
 #' @importFrom BiocGenerics annotation
 setGeneric("annotation")
 
 
+#' Summary
+#'
 #' @rdname summary
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("summary")
 
 
@@ -307,7 +314,7 @@ setGeneric("summary")
 #' @return A numeric vector of feature indeces.
 #' @rdname index
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("index", signature="x",
            function (x, ...) {
              standardGeneric("index")
@@ -322,7 +329,7 @@ setGeneric("index", signature="x",
 #' @return A list of \code{\linkS4class{gbLocation}} objects
 #' @rdname location
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("location", signature="x",
            function (x, ...) {
              standardGeneric("location")
@@ -336,7 +343,7 @@ setGeneric("location", signature="x",
 #' @param ... Additional arguments passed to methods.
 #' @rdname key
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("key", signature="x",
            function(x, ...) {
              standardGeneric("key")
@@ -345,7 +352,7 @@ setGeneric("key", signature="x",
 
 #' @rdname key
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("key<-", signature="x",
            function(x, value, ...) {
              standardGeneric("key<-")
@@ -361,7 +368,7 @@ setGeneric("key<-", signature="x",
 #' @param ... Additional arguments passed to methods.
 #' @rdname qualif
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("qualif", signature=c("x", "which"),
            function(x, which, ...) {
              standardGeneric("qualif")
@@ -370,7 +377,7 @@ setGeneric("qualif", signature=c("x", "which"),
 
 #' @rdname qualif
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("qualif<-", signature=c("x", "which"),
            function(x, which, value, ...) {
              standardGeneric("qualif<-")
@@ -386,7 +393,7 @@ setGeneric("qualif<-", signature=c("x", "which"),
 #' @param ... Additional arguments passed to methods.
 #' @rdname dbxref
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("dbxref", signature="x",
            function(x, db = NULL, ...) {
              standardGeneric("dbxref")
@@ -408,7 +415,7 @@ setGeneric("dbxref", signature="x",
 #' @param sequence if \code{FALSE} exclude the sequence.
 #' @param append if \code{TRUE} the data is appended to the connection.
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("write.GenBank", signature="x",
            function(x, file, header = TRUE, sequence=TRUE, append = FALSE, ...) {
              standardGeneric("write.GenBank")
@@ -429,7 +436,7 @@ setGeneric("write.GenBank", signature="x",
 #' @param sequence if \code{TRUE}, additionally autput fasta file
 #' @param append if \code{TRUE} the data is appended to the connection.
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("write.FeatureTable", signature="x",
            function(x, file, tablename = "", dbname = "",
                     sequence = FALSE, append = FALSE, ...) {
@@ -440,9 +447,11 @@ setGeneric("write.FeatureTable", signature="x",
 # list-generics ----------------------------------------------------------
 
 
+#' List Qualifiers
+#'
 #' @rdname listQualif
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("listQualif", signature="x", function(x, ...) {
   standardGeneric("listQualif")
 })
@@ -450,18 +459,20 @@ setGeneric("listQualif", signature="x", function(x, ...) {
 
 # test-generics ----------------------------------------------------------
 
-
+#' Has a feature key?
+#' 
 #' @rdname hasKey
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("hasKey", signature=c("x","key"), function(x, key, ...) {
   standardGeneric("hasKey")
 })
 
-
+#' Has a Qualifier?
+#'
 #' @rdname hasQualif
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("hasQualif", signature=c("x","qualifier"),
            function(x, qualifier, ...) {
              standardGeneric("hasQualif")
@@ -485,7 +496,7 @@ setGeneric("hasQualif", signature=c("x","qualifier"),
 #' @return A \code{\linkS4class{gbFeatureList}} object.
 #' @rdname shift
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("shift", signature="x", function(x, shift=0L, use.names=TRUE, ...) {
   standardGeneric("shift")
 })
@@ -499,7 +510,7 @@ setGeneric("shift", signature="x", function(x, shift=0L, use.names=TRUE, ...) {
 #' @param order Reorder features after reverse-complementing them.
 #' @rdname revcomp
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("revcomp", signature="x", function(x, ...)  standardGeneric("revcomp"))
 
 # view -------------------------------------------------------------------
@@ -512,7 +523,7 @@ setGeneric("revcomp", signature="x", function(x, ...)  standardGeneric("revcomp"
 #' @param ... Additional arguments passed to methods.
 #' @rdname view
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("view", signature="x", function (x, n, ...){
   standardGeneric("view")
 })
@@ -597,7 +608,7 @@ setGeneric("view", signature="x", function (x, n, ...){
 #' @return Depending on the value of \code{select}.
 #' @rdname select
 #' @export
-#' @genericMethods
+#' @docType methods
 setGeneric("select", signature="x",
            function(x, ..., keys = NULL, cols = NULL) {
              standardGeneric("select")

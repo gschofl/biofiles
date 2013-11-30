@@ -1,0 +1,26 @@
+LOCUS       FP929037             3769775 bp    DNA     linear   BCT 30-MAY-2010
+DEFINITION  Clostridium saccharolyticum-like K10 draft genome.
+ACCESSION   FP929037
+VERSION     FP929037.1  GI:295089810
+DBLINK      BioProject: PRJEA45855
+KEYWORDS    .
+SOURCE      Clostridium cf. saccharolyticum K10
+ORGANISM  Clostridium cf. saccharolyticum K10
+Bacteria; Firmicutes; Clostridia; Clostridiales; Clostridiaceae;
+Clostridium.
+REFERENCE   1
+AUTHORS   Pajon,A., Turner,K., Parkhill,J., Duncan,S. and Flint,H.
+CONSRTM   metaHIT consortium -- http://www.metahit.eu/
+  TITLE     The genome sequence of Clostridium saccharolyticum-like K10
+JOURNAL   Unpublished
+REFERENCE   2
+AUTHORS   Pajon,A.
+TITLE     Direct Submission
+JOURNAL   Submitted (23-MAR-2010) Sanger Institute, Wellcome Trust Genome
+Campus, Hinxton, Cambridge CB10 1SA, United Kingdom
+COMMENT     This is a reference genome for the metaHIT project DNA source:
+  Rowett Institute of Nutrition and Health, University of Aberdeen --
+  http://www.rowett.ac.uk/divisions/ghp/ Sequencing technology: 454
+Genome coverage: 20x
+Annotation was added using ab initio prediction IMG/ER --
+  http://img.jgi.doe.gov/submit (Markowitz, Szeto et al. 2007).

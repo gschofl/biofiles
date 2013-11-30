@@ -3,15 +3,14 @@ NULL
 
 setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
 
-#' gbRecord
+#' gbRecord-class
 #' 
 #' \dQuote{gbRecord} is an S4 class that provides a container for data
 #' parsed from a GenBank record.
 #'
-#' @rdname gbRecord
-#' @export
-#' @classHierarchy
-#' @classMethods
+#' @name gbRecord-class
+#' @rdname gbRecord-class
+#' @exportClass gbRecord
 new_gbRecord <- setClass(
   "gbRecord",
   slots=c(
@@ -48,57 +47,49 @@ setValidity2("gbRecord", function (object) {
 #' @return A \code{\linkS4class{gbRecord}} or
 #' \code{\linkS4class{gbRecordList}} 
 #' @export
-#' @autoImports
-gbRecord <- function (gb, with_sequence = TRUE)
-{
+gbRecord <- function(gb, with_sequence = TRUE) {
   ##
   ## Parse 'efetch' objects
   ##
-  if (is(gb, "efetch"))
-  {
-    if (gb@rettype %ni% c('gb','gbwithparts','gp') || gb@retmode != "text")
+  if (is(gb, "efetch")) {
+    stopifnot(require(reutils))
+    if (rettype(gb) %ni% c('gb', 'gbwithparts', 'gp') || retmode(gb) != "text") {
       stop("Must use efetch with rettype='gbwithparts','gb', or 'gp' and retmode='text'")
-    
-    split_gb <- unlist(strsplit(Rentrez::content(gb, "text"), "\n\n"))
-    n <- length(split_gb)
-    gbr_list <- vector("list", n)
-    for (i in seq_len(n))
-    {
-      gb_data <- unlist(strsplit(split_gb[i], "\n"))
-      gbr_list[[i]] <- .parseGbRecord( gb_data, with_sequence )
+    }
+    gb <- usplit(content(gb, "text"), "\n\n")
+    n <- length(gb)
+    gb_list <- vector("list", n)
+    for (i in seq_len(n)) {
+      gb_data <- usplit(gb[i], "\n")
+      gb_list[[i]] <- .parseGbRecord(gb_data, with_sequence)
     }
   ##
   ## Parse random textConnections
   ##
-  }
-  else if (is(gb, "textConnection"))
-  {
+  } else if (is(gb, "textConnection")) {
     con <- gb
     on.exit(close(con))
-    gbr_list <- list( .parseGbRecord(readLines(con), with_sequence) )
+    gb_list <- list(.parseGbRecord(readLines(con), with_sequence))
   ##
   ## Parse GeneBank flat files  
   ##
-  }
-  else if (tryCatch(all(file.exists(gb)), error = function() FALSE))
-  {
+  } else if (tryCatch(all(file.exists(gb)), error = function() FALSE)) {
     n <- length(gb)
-    gbr_list <- vector("list", n)
-    for (i in seq_len(n))
-    {
+    gb_list <- vector("list", n)
+    for (i in seq_len(n)) {
       con <- file(gb[i], open="rt")
-      gbr_list[[i]] <- .parseGbRecord( gb_data=readLines(con), with_sequence )
+      gb_list[[i]] <- .parseGbRecord(gb_data=readLines(con), with_sequence)
       close(con)
     }
-  }
-  else
+  } else {
     stop(paste0("'gb' must be the path to a GenBank flat file or an 'efetch' ",
                 "object containing GenBank records"))
-  
-  if (length(gbr_list) == 1L) 
-    gbr_list[[1L]]
-  else
-    gbRecordList( gbr_list )
+  }
+  if (length(gb_list) == 1L) {
+    gb_list[[1L]]
+  } else {
+    gbRecordList(gb_list)
+  }
 }
 
 
@@ -173,15 +164,13 @@ setMethod("show", "gbRecord",
 # summary ----------------------------------------------------------------
 
 
-#' @autoImports
 setMethod("summary", "gbRecord",
           function (object, n=7, ...) {
-            acc <- getAccession(object)
-            len <- getLength(object)
+            acc  <- getAccession(object)
+            len  <- getLength(object)
             type <- if (getMoltype(object) == 'AA') 'aa' else 'bp'
-            def <- 
-              ellipsize(obj=getDefinition(object),
-                        width=getOption("width") - base::nchar(len) - base::nchar(type) - 8)
+            def  <- ellipsize(obj=getDefinition(object),
+                              width=getOption("width") - nchar(len) - nchar(type) - 8)
             cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep="")
             summary(getFeatures(object), n=n, setoff=2)
             

@@ -1,63 +1,71 @@
-context("gbFeatureList getter checks")
+context("gbFeature getter checks")
 
-x <- getFeatures(gbRecord("sequences/nucleotide.gbk"))
+x <- select(gbRecord("sequences/nucleotide.gbk"), key='CDS')[[3]]
 
 test_that("Sequence, and Seqinfo can be extracted", {
   expect_is(x@.seqinfo, 'seqinfo')
-  expect_is(.sequence(x), 'DNAStringSet')
   expect_is(getSequence(x), 'DNAStringSet')
 })
 
-test_that(".dbSource and .defline work for gbFeatureLists", {
+test_that(".dbSource and .defline work for gbFeatures", {
   expect_equal(.dbSource(x), '|gb|')
-  expect_match(.defline(x)[1], "lcl|.+|gb|AF229646")
+  expect_match(.defline(x), "lcl|CDS.+|gb|AF229646")
 })
 
-test_that("Global accessors work for gbFeatureLists", {
-  expect_equal(getLocus(x), 'AF229646')
+test_that("Accessors work for gbFeatures", {
+  expect_equal(getAccession(x), "AF229646")
   expect_equal(getLength(x), 8959)
-  expect_equal(getMoltype(x), 'DNA')
-  expect_equal(getTopology(x), 'linear')
-  expect_equal(getDivision(x), 'BCT')
-  expect_equal(getDefinition(x), 'Caulobacter crescentus pilus assembly gene cluster.')
-  expect_equal(getAccession(x), 'AF229646')
-  expect_equal(getVersion(x), 'AF229646.1')
-  expect_equal(getGeneID(x), '7208421')
-  expect_equal(getDBLink(x), NA_character_)
-  expect_equal(getDBSource(x), NA_character_)
-  expect_equal(getSource(x), 'Caulobacter crescentus CB15')
-  expect_equal(getOrganism(x), 'Caulobacter crescentus CB15')
-  expect_equal(getTaxonomy(x), 'Bacteria; Proteobacteria; Alphaproteobacteria; Caulobacterales; Caulobacteraceae; Caulobacter.')
-  expect_equal(getOrganism(x), 'Caulobacter crescentus CB15')
-  expect_equal(getReference(x), 'Not implemented yet')
-  expect_equal(getKeywords(x), '.')
-  expect_equal(getComment(x), NA_character_)
+  expect_equal(getDefinition(x), "Caulobacter crescentus pilus assembly gene cluster.")
+  
+  expect_true(end(x) - start(x) + 1 == width(x))
+  expect_equal(strand(x), 1)
+  expect_equal(fuzzy(x), matrix(c(FALSE,FALSE), nrow=1))
+  
+  expect_equal(index(x), 7)
+  expect_equal(key(x), 'CDS')
+  expect_output(show(location(x)), "1521..2414")
+  
+  expect_equal(qualif(x, 'gene', use.names=FALSE), 'cpaB')
+  expect_equal(qualif(x, 'bla', use.names=FALSE), NA_character_)
+  expect_equal(length(qualif(x, c("gene","protein_id"))), 2)
+  
+  expect_equal(unname(dbxref(x)), "7208424")
+  expect_equal(dbxref(x, 'bla'), NA_character_)
+  
+  expect_equal(locusTag(x), NA_character_)
+  expect_equal(product(x), "CpaB")
+  expect_equal(proteinID(x), "AAF40191.1")
+  expect_equal(note(x), "required for pilus assembly in Caulobacter")
+  expect_is(translation(x), "AAStringSet")
+  
 })
 
-test_that("Accessors work for gbFeatureLists", {
-  expect_equal(index(x), 1:17)
-  expect_true( all(key(x) %in% c("source","gene","CDS")) )
-  
-  x <- x["CDS"]
-  expect_true( all(key(x) %in% "CDS") )
-  expect_true( all(end(x) - start(x) + 1 == width(x)) )
-  
-  qualifier_table <- qualif(x, c('gene','protein_id',"db_xref"))
-  expect_equal(dim(qualifier_table), c(8, 3))
-  
-  ans1 <- .qualAccess(x, 'product', TRUE, use.names=FALSE)
-  expect_equal(ans1[[1]], 'PilA')
-  expect_equal(names(ans1[[1]]), NULL)
-  
-  ans2 <- .qualAccess(x, 'product', TRUE, use.names=TRUE)
-  expect_equal(unname(ans2[[1]]), 'PilA')
-  expect_equal(names(ans2[[1]]), 'product')
-  
-  expect_equal(.simplify(ans1),
-               c("PilA","CpaA","CpaB","CpaC","CpaD","CpaE","CpaF","TadB"))
-  expect_equal(.simplify(ans2, unlist=FALSE),
-               data.frame(product=c("PilA","CpaA","CpaB","CpaC","CpaD","CpaE","CpaF","TadB"),
-                          stringsAsFactors=FALSE))
+
+test_that("Ranges work for gbFeatures", {
+  range <- ranges(x)
+  expect_is(range, 'GRanges')
+  expect_equal(start(range), 1521)
+  expect_equal(end(range), 2414)
+  expect_equal(width(ranges(range)), 894)
+  expect_equal(names(range), "cpaB")
 })
+
+
+test_that("getSequence works for gbFeatures", {
+  seq <- getSequence(x)
+  expect_is(seq, "DNAStringSet")
+  expect_equal(names(seq), .defline(x))
+  expect_equal(length(seq[[1]]), width(x))  
+})
+
+
+context("gbFeature setter checks")
+
+test_that("Setters work for gbFeatures", {
+  
+  strand(x) <- -1
+  expect_output(show(location(x)), "complement\\(1521..2414\\)")
+  
+})  
 
 

@@ -19,15 +19,15 @@ NULL
     } else {
       which <- setdiff(include, exclude)
     }
-    qual <- c(qual, DataFrame(.simplify(.qualAccess(x, which, fixed=TRUE),
+    qual <- c(qual, DataFrame(.simplify(.qual_access(x, which, fixed=TRUE),
                                         unlist=FALSE)))
   }
   
   start <- start(x, join = join)
   end <- end(x, join = join)
   strand <- strand(x, join = join)
-  lt <- .qualAccess(x, 'locus_tag', fixed=TRUE)
-  gene <- .qualAccess(x, 'gene', fixed=TRUE)
+  lt <- .qual_access(x, 'locus_tag', fixed=TRUE)
+  gene <- .qual_access(x, 'gene', fixed=TRUE)
   names <- ifelse(is.na(lt), gene, lt)
     
   if (is.list(start)) {

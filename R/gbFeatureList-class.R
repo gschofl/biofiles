@@ -6,7 +6,7 @@ NULL
 
 setOldClass("list")
 
-#' gbFeatureList
+#' gbFeatureList-class
 #' 
 #' \dQuote{gbFeatureList} is an S4 class that provides a container for
 #' \dQuote{\linkS4class{gbFeature}}s retrived from GenBank flat files.
@@ -16,10 +16,9 @@ setOldClass("list")
 #' as a \code{\linkS4class{gbHeader}} object.
 #' @slot .Data A list of \code{\linkS4class{gbFeature}} objects.
 #' 
-#' @rdname gbFeatureList
-#' @export
-#' @classHierarchy
-#' @classMethods
+#' @name gbFeatureList-class
+#' @rdname gbFeatureList-class
+#' @exportClass gbFeatureList
 setClass("gbFeatureList",
          representation(.seqinfo="seqinfo"),
          contains="list")
@@ -56,7 +55,6 @@ setMethod("show", "gbFeatureList",
 # summary ----------------------------------------------------------------
 
 
-#' @importFrom rmisc "%||%"
 setMethod("summary", "gbFeatureList",
           function (object, n=8, ...) {
             olen <- length(object)
@@ -206,7 +204,7 @@ setMethod("key", "gbFeatureList",
 
 setMethod("qualif", "gbFeatureList",
           function (x, which = "", fixed = FALSE, use.names = TRUE) {
-            ans <- .qualAccess(x, which, fixed, use.names)
+            ans <- .qual_access(x, which, fixed, use.names)
             if (use.names) {
               .simplify(ans, unlist=FALSE)
             }
@@ -230,7 +228,7 @@ setMethod("dbxref", "gbFeatureList",
           })
 
 
-setMethod("getSequence", "gbFeatureList", function (x) .seqAccess(x))
+setMethod("getSequence", "gbFeatureList", function (x) .seq_access(x))
 
 
 setMethod('.dbSource', 'gbFeatureList', function (x) parse_dbsource(getDBSource(x)) )

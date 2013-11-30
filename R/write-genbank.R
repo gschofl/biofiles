@@ -1,4 +1,4 @@
-#' @autoImports
+
 setMethod("write.GenBank", "gbRecord", 
           function (x, file, header = TRUE, sequence = TRUE, append = FALSE) {
             # write header
@@ -15,7 +15,7 @@ setMethod("write.GenBank", "gbRecord",
           })
 
 
-#' @autoImports
+
 .writeHeader <- function (x, outfile = "out.gbk") {
   type <- if (getMoltype(x) == "DNA") "bp" else "  "
   loc_line <- sprintf("%-12s%-17s %+10s %s    %-6s  %-8s %s %s",
@@ -54,7 +54,7 @@ setMethod("write.GenBank", "gbRecord",
 }
 
 
-#' @autoImports
+
 .writeFeature <- function (f) {
   loc_line <- sprintf("%s%-16s%s",
                       blanks(5),
@@ -71,7 +71,7 @@ setMethod("write.GenBank", "gbRecord",
 }
 
 
-#' @autoImports
+
 .writeSequence <- function (x, outfile = "out.gbk") {
   
   if (exists("sequence", envir=x@seqinfo)) {

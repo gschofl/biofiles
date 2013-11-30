@@ -47,7 +47,7 @@
   }
   
   col_names <- c(col_names, cols)
-  q <- .simplify( .qualAccess(x, cols, TRUE) )
+  q <- .simplify( .qual_access(x, cols, TRUE) )
   
   ## special treatment for db_xref
   if ("db_xref" %in% cols) {
@@ -69,18 +69,14 @@
 
 # args = compact(list(i, k, l, q))
 #' @keywords internal
-#' @autoImports
 .return <- function (..., .Names) {
-  args <- rmisc::compact(list(...))
-  if (!any(hasList(args)) && length(args) == 1L)
-  {
+  args <- compact(list(...))
+  if (!any(hasList(args)) && length(args) == 1L) {
     structure(
       args[[1L]],
       names = rep(.Names, length(args[[1L]]))
     )
-  }
-  else if (!any(hasListOfLists(args)))
-  {
+  } else if (!any(hasListOfLists(args))) {
     args <- rmisc::flatten(args)
     r <- vapply(args, is, "GRanges", FUN.VALUE=logical(1))
     if ( any(r) ) {
@@ -96,9 +92,7 @@
         names=.Names
       )
     }
-  }
-  else
-  {
+  } else {
     args <- rmisc::flatten(args, stop.at = 2)
     r <- vapply(args, is, "GRanges", FUN.VALUE=logical(1))
     if ( any(r) ) {

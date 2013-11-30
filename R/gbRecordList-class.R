@@ -1,21 +1,21 @@
 #' @include gbRecord-class.R
 NULL
 
-#' gbRecordList
+#' gbRecordList-class
 #' 
 #' \dQuote{gbRecordList} is an S4 class that provides a container for
 #' \dQuote{\linkS4class{gbRecord}}s retrived from GenBank flat files.
 #'
-#' @rdname gbRecordList
-#' @export
-#' @classHierarchy
-#' @classMethods
+#' @name gbRecordList-class
+#' @rdname gbRecordList-class
+#' @exportClass gbRecordList
 setClass("gbRecordList", contains="list")
 
 
 #' @param ... \dQuote{\linkS4class{gbRecord}} elements.
+#' @rdname gbRecordList-class
 #' @export
-gbRecordList <- function (...) {
+gbRecordList <- function(...) {
   listData <- list(...)
   if (length(listData) == 0L) {
     return( new('gbRecordList', .Data = list(new("gbRecord"))) )
@@ -38,7 +38,6 @@ setValidity2("gbRecordList", function (object) {
 })
 
 
-#' @autoImports
 setMethod("show", "gbRecordList",
           function (object) { 
             if (all(is.na(getAccession(object)))) {
