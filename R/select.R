@@ -1,6 +1,6 @@
 #' @keywords internal
 #' @importFrom IRanges IRanges ranges IntervalTree findOverlaps subjectHits
-.select <- function (x, ..., keys = NULL) {
+.select <- function(x, ..., keys = NULL) {
   args <- parse_args(..., keys = keys)
   if (is.null(args)) {
     return(x)
@@ -57,16 +57,16 @@
   x  
 }
 
-is_range <- function (x) grepl("^range", x)
+is_range <- function(x) grepl("^range", x)
 
-is_key <- function (x) grepl("^key", x)
+is_key <- function(x) grepl("^key", x)
 
-is_index <- function (x) grepl("^idx|^index", x)
+is_index <- function(x) grepl("^idx|^index", x)
 
-is_feature <- function (x) !(is_range(x) | is_key(x) | is_index(x))
+is_feature <- function(x) !(is_range(x) | is_key(x) | is_index(x))
 
 #' @keywords internal
-parse_args <- function (..., keys) {
+parse_args <- function(..., keys) {
   args <- list(...)
   args <- merge_dups(c(parse_tags(args), parse_tags(keys)))
   
@@ -104,7 +104,7 @@ parse_args <- function (..., keys) {
 
 
 #' @keywords internal
-parse_tags <- function (keys) {
+parse_tags <- function(keys) {
   if (all_empty(keys)) {
     return(NULL)
   }
@@ -136,7 +136,7 @@ parse_tags <- function (keys) {
 
 
 #' @keywords internal
-parse_index <- function (index) {
+parse_index <- function(index) {
   if (all_empty(index)) {
     return(NULL)
   }
@@ -182,7 +182,7 @@ prepare_features <- function(feature) {
 
 
 #' @keywords internal
-parse_range <- function (range) {
+parse_range <- function(range) {
   if (all_empty(range)) {
     return(NULL)
   }

@@ -1,6 +1,9 @@
-#' @importFrom rmisc Partial
-NULL
-#' @importFrom IRanges IRanges follow precede split queryHits subjectHits
+#' @importFrom IRanges IRanges
+#' @importFrom IRanges follow
+#' @importFrom IRanges precede
+#' @importFrom IRanges split
+#' @importFrom IRanges queryHits
+#' @importFrom IRanges subjectHits
 NULL
 
 #' @keywords internal

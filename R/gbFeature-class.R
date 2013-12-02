@@ -29,7 +29,7 @@ setClass("gbFeature",
                         qualifiers="character"))
 
 
-setValidity2("gbFeature", function (object) {
+setValidity2("gbFeature", function(object) {
   TRUE
 })
 
@@ -47,13 +47,11 @@ setValidity2("gbFeature", function (object) {
         sprintf("%-16s%s\n", key(object), loc))
   } else {
     qua <- names(object@qualifiers)
-    val <- linebreak(dQuote(object@qualifiers),
-                     width=getOption("width") - 4, offset=17, 
-                     indent=-(nchar(qua) + 2), FORCE=TRUE)
-    
+    val <- .mapply(linebreak, list(s=dQuote(object@qualifiers), indent=-(nchar(qua)+2)),
+                   list(width=getOption("width")-4, offset=17, FORCE=TRUE))
     cat("Feature:         Location/Qualifiers:\n",
         sprintf("%-16s%s\n", key(object), loc),
-        sprintf("%+17s%s=%s\n", "/", qua, val))
+        sprintf("%+17s%s=%s\n", "/", qua, unlist(val)))
   }
   if (showInfo) {
     cat("Seqinfo:\n")
@@ -64,7 +62,7 @@ setValidity2("gbFeature", function (object) {
 
 
 setMethod("show", "gbFeature",
-          function (object) {
+          function(object) {
             .showGbFeature(object, showInfo=TRUE)
           })
 
@@ -73,7 +71,7 @@ setMethod("show", "gbFeature",
 
 
 setMethod("summary", "gbFeature",
-          function (object, ...) {
+          function(object, ...) {
             idx  <- c("N", index(object))
             key  <- c("Key", key(object))
             loc  <- c("Location", as(location(object), "character"))
@@ -91,91 +89,120 @@ setMethod("summary", "gbFeature",
           })
 
 
+# Internal getters ----------------------------------------------------------
+
+
+setMethod('.seqinfo', 'gbFeature', function(x) {
+  x@.seqinfo
+})
+
+setMethod('.locus', 'gbFeature', function(x) {
+  .locus(.seqinfo(x))
+})
+
+setMethod('.header', 'gbFeature', function(x) {
+  .header(.seqinfo(x))
+})
+
+setMethod('.sequence', 'gbFeature', function(x) {
+  .sequence(.seqinfo(x))
+})
+
+setMethod('.dbSource', 'gbFeature', function(x) {
+  parse_dbsource(getDBSource(x))
+})
+
+setMethod(".defline", "gbFeature", function(x) {
+  paste0("lcl|", key(x), '.', index(x), .dbSource(x), getAccession(x), ' ',
+         getDefinition(x))
+})
+
+
 # getters ----------------------------------------------------------------
 
-setMethod(".sequence", "gbFeature", function (x) .sequence(x@.seqinfo) )
 
-setMethod("getLocus", "gbFeature", function (x) getLocus(x@.seqinfo) )
 
-setMethod("getLength", "gbFeature", function (x) getLength(x@.seqinfo) )
+setMethod("getLocus", "gbFeature", function(x) getLocus(.seqinfo(x)) )
 
-setMethod("getMoltype", "gbFeature", function (x) getMoltype(x@.seqinfo) )
+setMethod("getLength", "gbFeature", function(x) getLength(.seqinfo(x)) )
 
-setMethod("getTopology", "gbFeature", function (x) getTopology(x@.seqinfo) )
+setMethod("getMoltype", "gbFeature", function(x) getMoltype(.seqinfo(x)) )
 
-setMethod("getDivision", "gbFeature", function (x) getDivision(x@.seqinfo) )
+setMethod("getTopology", "gbFeature", function(x) getTopology(.seqinfo(x)) )
 
-setMethod("getDate", "gbFeature", function (x) getDate(x@.seqinfo) )
+setMethod("getDivision", "gbFeature", function(x) getDivision(.seqinfo(x)) )
 
-setMethod("getDefinition", "gbFeature", function (x) getDefinition(x@.seqinfo) )
+setMethod("getDate", "gbFeature", function(x) getDate(.seqinfo(x)) )
 
-setMethod("getAccession", "gbFeature", function (x) getAccession(x@.seqinfo) )
+setMethod("getDefinition", "gbFeature", function(x) getDefinition(.seqinfo(x)) )
 
-setMethod("getVersion", "gbFeature", function (x) getVersion(x@.seqinfo) )
+setMethod("getAccession", "gbFeature", function(x) getAccession(.seqinfo(x)) )
 
-setMethod("getGeneID", "gbFeature", function (x, db='gi') getGeneID(x@.seqinfo, db=db) )
+setMethod("getVersion", "gbFeature", function(x) getVersion(.seqinfo(x)) )
 
-setMethod("getDBLink", "gbFeature", function (x) getDBLink(x@.seqinfo) )
+setMethod("getGeneID", "gbFeature", function(x, db='gi') getGeneID(.seqinfo(x), db=db) )
 
-setMethod("getDBSource", "gbFeature", function (x) getDBSource(x@.seqinfo) )
+setMethod("getDBLink", "gbFeature", function(x) getDBLink(.seqinfo(x)) )
 
-setMethod("getSource", "gbFeature", function (x) getSource(x@.seqinfo) )
+setMethod("getDBSource", "gbFeature", function(x) getDBSource(.seqinfo(x)) )
 
-setMethod("getOrganism", "gbFeature", function (x) getOrganism(x@.seqinfo) )
+setMethod("getSource", "gbFeature", function(x) getSource(.seqinfo(x)) )
 
-setMethod("getTaxonomy", "gbFeature", function (x) getTaxonomy(x@.seqinfo) )
+setMethod("getOrganism", "gbFeature", function(x) getOrganism(.seqinfo(x)) )
 
-setMethod("getReference", "gbFeature", function (x) getReference(x@.seqinfo) )
+setMethod("getTaxonomy", "gbFeature", function(x) getTaxonomy(.seqinfo(x)) )
 
-setMethod("getKeywords", "gbFeature", function (x) getKeywords(x@.seqinfo) )
+setMethod("getReference", "gbFeature", function(x) getReference(.seqinfo(x)) )
 
-setMethod("getComment", "gbFeature", function (x) getComment(x@.seqinfo) )
+setMethod("getKeywords", "gbFeature", function(x) getKeywords(.seqinfo(x)) )
+
+setMethod("getComment", "gbFeature", function(x) getComment(.seqinfo(x)) )
 
 setMethod("start", "gbFeature",
-          function (x, join = FALSE, drop = TRUE) 
+          function(x, join = FALSE, drop = TRUE) 
             start(x@location, join = join, drop = drop))
 
 
 setMethod("end", "gbFeature",
-          function (x, join = FALSE, drop = TRUE) 
+          function(x, join = FALSE, drop = TRUE) 
             end(x@location, join = join, drop = drop))
 
 
 setMethod("strand", "gbFeature",
-          function (x, join = FALSE)
+          function(x, join = FALSE)
             strand(x@location, join = join))
 
 
 setMethod("width", "gbFeature",
-          function (x, join = FALSE)
+          function(x, join = FALSE)
             width(x@location, join = join))
 
 
 setMethod("fuzzy", "gbFeature",
-          function (x)
+          function(x)
             fuzzy(x@location))
 
 
 setMethod("ranges", "gbFeature",
-          function (x, include = "none", exclude = "", join = FALSE) {
+          function(x, include = "none", exclude = "", join = FALSE) {
             .make_GRanges(x, include = include, exclude = exclude, join = join)
           })
 
 
 setMethod("location", "gbFeature",
-          function (x) x@location)
+          function(x) x@location)
 
 
 setMethod("index", "gbFeature",
-          function (x) x@.id)
+          function(x) x@.id)
 
 
 setMethod("key", "gbFeature", 
-          function (x) structure(x@key, names=NULL) )
+          function(x) structure(x@key, names=NULL) )
 
 
 setMethod("qualif", "gbFeature", 
-          function (x, which, fixed=FALSE, use.names=TRUE) {
+          function(x, which, fixed=FALSE, use.names=TRUE) {
             if (missing(which)) {
               x@qualifiers
             } else {
@@ -185,7 +212,7 @@ setMethod("qualif", "gbFeature",
 
 
 setMethod("dbxref", "gbFeature",
-          function (x, db = NULL, ...) {     
+          function(x, db = NULL, ...) {     
             ans <- .qual_access(x, "db_xref")
             if (all(is.na(ans))) {
               return( NA_character_ )
@@ -207,14 +234,8 @@ setMethod("dbxref", "gbFeature",
           })
 
 
-setMethod("getSequence", "gbFeature", function (x) .seq_access(x))
+setMethod("getSequence", "gbFeature", function(x) .seq_access(x))
 
-setMethod('.dbSource', 'gbFeature', function (x) parse_dbsource(getDBSource(x)) )
-
-setMethod(".defline", "gbFeature", function (x) {
-  paste0("lcl|", key(x), '.', index(x), .dbSource(x), getAccession(x), ' ',
-         getDefinition(x))
-})
 
 # setters ----------------------------------------------------------------
 
@@ -245,7 +266,7 @@ setReplaceMethod("strand", "gbFeature",
 
 
 setReplaceMethod("key", "gbFeature",
-                 function (x, check=TRUE, value) {
+                 function(x, check=TRUE, value) {
                    x <- initialize(x, key=value)
                    if (check)
                      validObject(x)
@@ -254,7 +275,7 @@ setReplaceMethod("key", "gbFeature",
 
 
 setReplaceMethod("qualif", "gbFeature",
-                 function (x, which, check=TRUE, value) {
+                 function(x, which, check=TRUE, value) {
                    x@qualifiers[which] <- value
                    if (check)
                      validObject(x)
@@ -266,7 +287,7 @@ setReplaceMethod("qualif", "gbFeature",
 
 
 setMethod("listQualif", "gbFeature", 
-          function (x) {
+          function(x) {
             names(x@qualifiers)
           })
 
@@ -276,13 +297,13 @@ setMethod("listQualif", "gbFeature",
 
 
 setMethod("hasKey", "gbFeature", 
-          function (x, key) {
+          function(x, key) {
             !is.na(charmatch(key, x@key))
           })
 
 
 setMethod("hasQualif", "gbFeature",
-          function (x, qualifier) {
+          function(x, qualifier) {
             !is.na(charmatch(qualifier, names(x@qualifiers)))
           })
 

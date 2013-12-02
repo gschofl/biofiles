@@ -21,10 +21,45 @@ new_gbRecord <- setClass(
 )
 
 
-
-setValidity2("gbRecord", function (object) {
+setValidity2("gbRecord", function(object) {
   # at the moment do nothing but the default checks
   TRUE
+})
+
+
+# Internal getters ----------------------------------------------------------
+
+
+setMethod('.seqinfo', 'gbRecord', function(x) {
+  x@seqinfo
+})
+
+setMethod('.features', 'gbRecord', function(x) {
+  x@features
+})
+
+setMethod('.contig', 'gbRecord', function(x) {
+  x@contig
+})
+
+setMethod('.locus', 'gbRecord', function(x) {
+  .locus(.seqinfo(x))
+})
+
+setMethod('.header', 'gbRecord', function(x) {
+  .header(.seqinfo(x))
+})
+
+setMethod('.sequence', 'gbRecord', function(x) {
+  .sequence(.seqinfo(x))
+})
+
+setMethod('.dbSource', 'gbRecord', function(x) {
+  parse_dbsource(getDBSource(x))
+})
+
+setMethod(".defline", "gbRecord", function(x) {
+  paste0('gi|', getGeneID(x), .dbSource(x), getAccession(x), ' ', getDefinition(x))
 })
 
 
@@ -69,7 +104,7 @@ gbRecord <- function(gb, with_sequence = TRUE) {
   } else if (is(gb, "textConnection")) {
     con <- gb
     on.exit(close(con))
-    gb_list <- list(.parseGbRecord(readLines(con), with_sequence))
+    gb_list <- list(.parseGbRecord(gb_data=readLines(con), with_sequence))
   ##
   ## Parse GeneBank flat files  
   ##
@@ -95,58 +130,37 @@ gbRecord <- function(gb, with_sequence = TRUE) {
 
 # show -------------------------------------------------------------------
 
-#' @importFrom XVector toString  subseq
-.show_gbRecord <- function (x) {
-  if (is.na(getAccession(x))) {
+
+#' @importFrom Biostrings width
+#' @importFrom XVector toString
+#' @importFrom XVector subseq
+.show_gbRecord <- function(x) {
+  if (length(getAccession(x)) == 0L) {
     showme <- sprintf("%s instance with no features\n", sQuote(class(x)))
   } else {
-    S <- getSequence(x)
+    S <- .sequence(x)
     W <- getOption("width")
     type <- getMoltype(x)
     showme <- paste0(
-      sprintf("%s instance with %i features\n", sQuote(class(x)), length(getFeatures(x))),
-      sprintf("LOCUS       %s\n",
-              linebreak(paste(getLocus(x), getLength(x),
-                              if (type == 'AA') 'aa' else 'bp',
-                              type, getTopology(x), getDivision(x),
-                              unname(getDate(x)[2])),
-                        offset=13, FORCE=TRUE)),
-      sprintf("DEFINITION  %s\n",
-              linebreak(getDefinition(x), offset=13, FORCE=TRUE)),
-      sprintf("ACCESSION   %s\n", getAccession(x)),
-      sprintf("VERSION     %s GI:%s\n", getVersion(x), getGeneID(x)),
-      sprintf("DBLINK      Project: %s\n", getDBLink(x)),
-      if (type == "AA") {
-        sprintf("DBSOURCE    %s\n",
-                linebreak(getDBSource(x), offset=13, FORCE=TRUE))
-      },
-      sprintf("KEYWORDS    %s\n",
-              linebreak(getKeywords(x), offset=13, FORCE=TRUE)),
-      sprintf("SOURCE      %s\n",
-              linebreak(getSource(x), offset=13, FORCE=TRUE)),
-      sprintf("  ORGANISM  %s\n",
-              linebreak(getOrganism(x), offset=13, FORCE=TRUE)),
-      sprintf("            %s\n",
-              linebreak(getTaxonomy(x), offset=13, FORCE=TRUE)),
-      sprintf("REFERENCE   %s\n", getReference(x)),
-      sprintf("COMMENT     %s\n",
-              linebreak(getComment(x), offset=13, FORCE=TRUE)),
+      sprintf("%s instance with %i features\n", sQuote(class(x)), length(.features(x))),
+      .header(x)$to_string(write_to_file = FALSE),
       if (length(S) != 0) {
-        if (S@ranges@width[1L] < W - 14)
+        if (Biostrings::width(S) < W - 14) {
           sprintf("ORIGIN      %s\n", XVector::toString(S))
-        else
+        } else {
           sprintf("ORIGIN      %s\n            ...\n            %s\n",
                   XVector::toString(
                     XVector::subseq(S, start=1, end=W - 14)
                   ),
                   XVector::toString(
-                    subseq(S, start=length(S[[1L]]) -  W + 15,
-                           end=length(S[[1L]]))
+                    XVector::subseq(S, start=length(S[[1L]]) -  W + 15,
+                                    end=length(S[[1L]]))
                   )
           )
+        }
       },
       if (!is.null(x)) {
-        sprintf("CONTIG      %s\n", linebreak(as(x@contig, "character"),
+        sprintf("CONTIG      %s\n", linebreak(as(.contig(x), "character"),
                                               offset=13, split=",", FORCE=TRUE))
       })
   }
@@ -156,7 +170,7 @@ gbRecord <- function(gb, with_sequence = TRUE) {
 
 
 setMethod("show", "gbRecord",
-          function (object) { 
+          function(object) { 
             .show_gbRecord(object)
           })
 
@@ -165,14 +179,14 @@ setMethod("show", "gbRecord",
 
 
 setMethod("summary", "gbRecord",
-          function (object, n=7, ...) {
+          function(object, n=7, ...) {
             acc  <- getAccession(object)
             len  <- getLength(object)
             type <- if (getMoltype(object) == 'AA') 'aa' else 'bp'
             def  <- ellipsize(obj=getDefinition(object),
                               width=getOption("width") - nchar(len) - nchar(type) - 8)
             cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep="")
-            summary(getFeatures(object), n=n, setoff=2)
+            summary(.features(object), n=n, setoff=2)
             
             return(invisible(NULL))
           })
@@ -180,75 +194,75 @@ setMethod("summary", "gbRecord",
 
 # getters ----------------------------------------------------------------
 
-setMethod("getLocus", "gbRecord", function (x) getLocus(x@seqinfo) )
+setMethod("getLocus", "gbRecord", function(x) getLocus(.seqinfo(x)) )
 
-setMethod("getLength", "gbRecord", function (x) getLength(x@seqinfo) )
+setMethod("getLength", "gbRecord", function(x) getLength(.seqinfo(x)) )
 
-setMethod("getMoltype", "gbRecord", function (x) getMoltype(x@seqinfo) )
+setMethod("getMoltype", "gbRecord", function(x) getMoltype(.seqinfo(x)) )
 
-setMethod("getTopology", "gbRecord", function (x) getTopology(x@seqinfo) )
+setMethod("getTopology", "gbRecord", function(x) getTopology(.seqinfo(x)) )
 
-setMethod("getDivision", "gbRecord", function (x) getDivision(x@seqinfo) )
+setMethod("getDivision", "gbRecord", function(x) getDivision(.seqinfo(x)) )
 
-setMethod("getDate", "gbRecord", function (x) getDate(x@seqinfo) )
+setMethod("getDate", "gbRecord", function(x) getDate(.seqinfo(x)) )
   
-setMethod("getDefinition", "gbRecord", function (x) getDefinition(x@seqinfo) )
+setMethod("getDefinition", "gbRecord", function(x) getDefinition(.seqinfo(x)) )
 
-setMethod("getAccession", "gbRecord", function (x) getAccession(x@seqinfo) )
+setMethod("getAccession", "gbRecord", function(x) getAccession(.seqinfo(x)) )
 
-setMethod("getVersion", "gbRecord", function (x) getVersion(x@seqinfo) )
+setMethod("getVersion", "gbRecord", function(x) getVersion(.seqinfo(x)) )
 
-setMethod("getGeneID", "gbRecord", function (x, db='gi') getGeneID(x@seqinfo, db=db) )
+setMethod("getGeneID", "gbRecord", function(x, db='gi') getGeneID(.seqinfo(x), db=db) )
 
-setMethod("getDBLink", "gbRecord", function (x) getDBLink(x@seqinfo) )
+setMethod("getDBLink", "gbRecord", function(x) getDBLink(.seqinfo(x)) )
 
-setMethod("getDBSource", "gbRecord", function (x) getDBSource(x@seqinfo) )
+setMethod("getDBSource", "gbRecord", function(x) getDBSource(.seqinfo(x)) )
 
-setMethod("getSource", "gbRecord", function (x) getSource(x@seqinfo) )
+setMethod("getSource", "gbRecord", function(x) getSource(.seqinfo(x)) )
 
-setMethod("getOrganism", "gbRecord", function (x) getOrganism(x@seqinfo) )
+setMethod("getOrganism", "gbRecord", function(x) getOrganism(.seqinfo(x)) )
 
-setMethod("getTaxonomy", "gbRecord", function (x) getTaxonomy(x@seqinfo) )
+setMethod("getTaxonomy", "gbRecord", function(x) getTaxonomy(.seqinfo(x)) )
 
-setMethod("getReference", "gbRecord", function (x) getReference(x@seqinfo) )
+setMethod("getReference", "gbRecord", function(x) getReference(.seqinfo(x)) )
 
-setMethod("getKeywords", "gbRecord", function (x) getKeywords(x@seqinfo) )
+setMethod("getKeywords", "gbRecord", function(x) getKeywords(.seqinfo(x)) )
 
-setMethod("getComment", "gbRecord", function (x) getComment(x@seqinfo) )
+setMethod("getComment", "gbRecord", function(x) getComment(.seqinfo(x)) )
 
-setMethod("getFeatures", "gbRecord", function (x) x@features)
+setMethod("getFeatures", "gbRecord", function(x) .features(x))
 
-setMethod("getSequence", "gbRecord",  function (x) getSequence(x@seqinfo))
+setMethod("getSequence", "gbRecord",  function(x) .sequence(x))
 
 
 setMethod("ranges", "gbRecord",
-          function (x, join = FALSE, key = TRUE, include = "none", exclude = "") {
-            .make_GRanges(getFeatures(x), join = join, include = include,
+          function(x, join = FALSE, key = TRUE, include = "none", exclude = "") {
+            .make_GRanges(.features(x), join = join, include = include,
                           exclude = exclude, key = key)
           })
 
 
 setMethod("start", "gbRecord",
-          function (x, join = FALSE, drop = TRUE) {
-            start(getFeatures(x), join = join, drop = drop)
+          function(x, join = FALSE, drop = TRUE) {
+            start(.features(x), join = join, drop = drop)
           })
 
 
 setMethod("end", "gbRecord",
-          function (x, join = FALSE, drop = TRUE) {
-            end(getFeatures(x), join = join, drop = drop)
+          function(x, join = FALSE, drop = TRUE) {
+            end(.features(x), join = join, drop = drop)
           })
 
 
 setMethod("strand", "gbRecord",
-          function (x, join = FALSE) {
-            strand(getFeatures(x), join = join)
+          function(x, join = FALSE) {
+            strand(.features(x), join = join)
           })
 
 
 setMethod("width", "gbRecord",
-          function (x, join = FALSE) {
-            width(getFeatures(x), join = join)
+          function(x, join = FALSE) {
+            width(.features(x), join = join)
           })
 
 
@@ -256,8 +270,8 @@ setMethod("width", "gbRecord",
 
 
 setMethod("listQualif", "gbRecord", 
-          function (x) {
-            lapply(getFeatures(x), listQualif)
+          function(x) {
+            lapply(.features(x), listQualif)
           })
 
 
@@ -265,8 +279,8 @@ setMethod("listQualif", "gbRecord",
 
 
 setMethod("select", "gbRecord",
-          function (x, ..., keys = NULL, cols = NULL) {
-            ans <- getFeatures(x)
+          function(x, ..., keys = NULL, cols = NULL) {
+            ans <- .features(x)
             ans <- .select(ans, ..., keys = keys)
             ans <- .retrieve(ans, cols = cols)
             ans
@@ -283,18 +297,6 @@ setMethod("shift", "gbRecord", function(x, shift, split=FALSE, order=FALSE) {
 
 setMethod("revcomp", "gbRecord", function(x, order=TRUE) {
   .revcomp(x=x, order=order)
-})
-
-
-# internal ---------------------------------------------------------------
-
-
-setMethod('.dbSource', 'gbRecord', function (x) {
-  parse_dbsource(getDBSource(x))
-})
-
-setMethod(".defline", "gbRecord", function (x) {
-  paste0('gi|', getGeneID(x), .dbSource(x), getAccession(x), ' ', getDefinition(x))
 })
 
 

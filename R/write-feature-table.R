@@ -4,7 +4,7 @@ setMethod("write.FeatureTable", "gbRecord",
                     sequence = TRUE, append = FALSE) {
   
   # write header
-  header <- rmisc::trim(sprintf(">Feature %s %s", getAccession(x), tablename))
+  header <- trim(sprintf(">Feature %s %s", getAccession(x), tablename))
   cat(paste0(header, sep="\n"), file=file)
   
   # kick out source if present

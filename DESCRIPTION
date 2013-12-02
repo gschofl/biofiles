@@ -5,8 +5,8 @@ Authors@R: person("Gerhard", "Schöfl", role=c("aut","cre"),
     email="gschofl@yahoo.de")
 Description: Parse GenBank records into native R objects to easily access
     the sequence and annotation information.
-License: MIT
-Encoding: latin1
+License: MIT + file LICENSE
+Encoding: UTF-8
 Depends:
     R (>= 2.15),
     Rcpp (>= 0.10.1)
@@ -19,12 +19,12 @@ Imports:
     methods,
     parallel,
     plyr,
-    rmisc,
     stats,
     stringr,
     XVector
 Suggests:
-    reutils
+    reutils,
+    testthat
 Collate:
     'RcppExports.R'
     'utils.R'

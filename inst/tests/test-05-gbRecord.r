@@ -1,71 +1,84 @@
-context("gbFeature getter checks")
+context("gbRecord parser checks (gbk files)")
 
-x <- select(gbRecord("sequences/nucleotide.gbk"), key='CDS')[[3]]
+#nuc.efetch <- efetch('457866357', 'nuccore', 'gb')
+#save(nuc.efetch, file="inst/tests/sequences/nuc.efetch.RData")
+load("sequences/nuc.efetch.RData")
+nuc.efetch <- gbRecord(nuc.efetch)
+nuc <- gbRecord("sequences/nucleotide.gbk")
 
-test_that("Sequence, and Seqinfo can be extracted", {
-  expect_is(x@.seqinfo, 'seqinfo')
-  expect_is(getSequence(x), 'DNAStringSet')
+test_that("GenBank records parse correctly from file and efetch", {
+  expect_is(nuc, 'gbRecord')
+  expect_is(nuc.efetch, 'gbRecord')
+  expect_is(gbRecordList(nuc, nuc.efetch), 'gbRecordList')
 })
 
-test_that(".dbSource and .defline work for gbFeatures", {
-  expect_equal(.dbSource(x), '|gb|')
-  expect_match(.defline(x), "lcl|CDS.+|gb|AF229646")
+test_that("Feature list, Sequence, and Seqinfo can be extracted", {
+  expect_is(.locus(nuc@seqinfo), 'gbLocus')
+  expect_is(.locus(nuc), 'gbLocus')
+  
+  expect_is(.header(nuc@seqinfo), 'gbHeader')
+  expect_is(.header(nuc), 'gbHeader')
+  
+  expect_is(.sequence(nuc@seqinfo), 'DNAStringSet')
+  expect_is(.sequence(nuc), 'DNAStringSet')
+  
+  expect_is(.features(nuc), 'gbFeatureList')
+  expect_identical(.contig(nuc), NULL)
 })
 
-test_that("Accessors work for gbFeatures", {
-  expect_equal(getAccession(x), "AF229646")
-  expect_equal(getLength(x), 8959)
-  expect_equal(getDefinition(x), "Caulobacter crescentus pilus assembly gene cluster.")
-  
-  expect_true(end(x) - start(x) + 1 == width(x))
-  expect_equal(strand(x), 1)
-  expect_equal(fuzzy(x), matrix(c(FALSE,FALSE), nrow=1))
-  
-  expect_equal(index(x), 7)
-  expect_equal(key(x), 'CDS')
-  expect_output(show(location(x)), "1521..2414")
-  
-  expect_equal(qualif(x, 'gene', use.names=FALSE), 'cpaB')
-  expect_equal(qualif(x, 'bla', use.names=FALSE), NA_character_)
-  expect_equal(length(qualif(x, c("gene","protein_id"))), 2)
-  
-  expect_equal(unname(dbxref(x)), "7208424")
-  expect_equal(dbxref(x, 'bla'), NA_character_)
-  
-  expect_equal(locusTag(x), NA_character_)
-  expect_equal(product(x), "CpaB")
-  expect_equal(proteinID(x), "AAF40191.1")
-  expect_equal(note(x), "required for pilus assembly in Caulobacter")
-  expect_is(translation(x), "AAStringSet")
-  
+test_that(".dbSource and .defline work for gbRecords", {
+  expect_equal(.dbSource(nuc), '|gb|')
+  expect_equal(.defline(nuc),
+               "gi|7208421|gb|AF229646 Caulobacter crescentus pilus assembly gene cluster.")
 })
 
-
-test_that("Ranges work for gbFeatures", {
-  range <- ranges(x)
-  expect_is(range, 'GRanges')
-  expect_equal(start(range), 1521)
-  expect_equal(end(range), 2414)
-  expect_equal(width(ranges(range)), 894)
-  expect_equal(names(range), "cpaB")
+test_that("Accessors work for GenBank records", {
+  expect_equal(getAccession(nuc), "AF229646")
+  expect_equal(getGeneID(nuc), "7208421")
+  expect_equal(getLength(nuc), 8959)
+  expect_equal(getDefinition(nuc), "Caulobacter crescentus pilus assembly gene cluster.")
+  
+  expect_true( all(end(nuc) - start(nuc) + 1 == width(nuc)) )
+  expect_equal(unique(strand(nuc)), 1)
+  
+  expect_is(listQualif(nuc), 'list')
 })
 
 
-test_that("getSequence works for gbFeatures", {
-  seq <- getSequence(x)
-  expect_is(seq, "DNAStringSet")
-  expect_equal(names(seq), .defline(x))
-  expect_equal(length(seq[[1]]), width(x))  
+context("gbRecord parser checks (GenPept files)")
+
+#prot.efetch <- efetch(c('459479542','379049216'), 'protein', 'gp')
+#save(prot.efetch, file="inst/tests/sequences/prot.efetch.RData")
+load("sequences/prot.efetch.RData")
+prot.efetch <- gbRecord(prot.efetch)
+prot <- gbRecord("sequences/protein.gp")
+
+test_that("GenPept records parse correctely from file and efetch", {
+  expect_is(prot, 'gbRecord')
+  expect_is(prot.efetch, 'gbRecordList')
+  expect_error(gbRecordList(prot, prot.efetch),
+               "All elements in '...' must be gbRecord objects")
+  
 })
 
-
-context("gbFeature setter checks")
-
-test_that("Setters work for gbFeatures", {
+test_that("Feature list, Sequence, and Seqinfo can be extracted", {
+  expect_is(.locus(prot@seqinfo), 'gbLocus')
+  expect_is(.locus(prot), 'gbLocus')
   
-  strand(x) <- -1
-  expect_output(show(location(x)), "complement\\(1521..2414\\)")
+  expect_is(.header(prot@seqinfo), 'gbHeader')
+  expect_is(.header(prot), 'gbHeader')
   
-})  
+  expect_is(.sequence(prot@seqinfo), 'AAStringSet')
+  expect_is(.sequence(prot), 'AAStringSet')
+  
+  expect_is(.features(prot), 'gbFeatureList')
+  expect_identical(.contig(prot), NULL)
+})
 
+test_that(".dbSource and .defline work", {
+  expect_equal(.dbSource(prot), '|gb|')
+  expect_equal(.defline(prot),
+               "gi|404302394|gb|EJZ56356 CpaF [Pseudomonas fluorescens R124].")
+  expect_equal(.dbSource(prot.efetch), c('|gb|', '|gb|'))
+})
 

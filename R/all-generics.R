@@ -45,8 +45,7 @@ NULL
 
 # getter/setter generics -------------------------------------------------
 
-### "start" and "end" are defined as S3 generics in the stats package.
-### Here we explicitely set them S4.
+## "start" is defined as an S3 generics in the stats package.
 #' Get or set the start of genomic features
 #' 
 #' @usage start(x, join = FALSE, ...)
@@ -54,13 +53,13 @@ NULL
 #' @param join Join compound genomic locations into a single range.
 #' @param ... Further arguments passed to methods.
 #' @return An integer vector
-#' @rdname start-methods
+#' @rdname start-method
 #' @export
 #' @docType methods
-#' @importFrom IRanges start
+#' @importFrom stats start
 setGeneric("start")
 
-#' @rdname start-methods
+#' @rdname start-method
 #' @export
 #' @docType methods
 #' @importFrom IRanges "start<-"
@@ -73,13 +72,13 @@ setGeneric("start<-")
 #' @param join Join compound genomic locations into a single range.
 #' @param ... Further arguments passed to methods.
 #' @return An integer vector
-#' @rdname end-methods
+#' @rdname end-method
 #' @export
 #' @docType methods
-#' @importFrom IRanges end
+#' @importFrom stats end
 setGeneric("end")
 
-#' @rdname end-methods
+#' @rdname end-method
 #' @export
 #' @docType methods
 #' @importFrom IRanges "end<-"
@@ -94,13 +93,13 @@ setGeneric("end<-")
 #' @param ... Further arguments passed to methods.
 #' @return An integer vector of 1 (plus strand), -1 (minus strand), or
 #' \code{NA}
-#' @rdname strand-methods
+#' @rdname strand-method
 #' @export
 #' @docType methods
 #' @importFrom BiocGenerics strand
 setGeneric("strand")
 
-#' @rdname strand-methods
+#' @rdname strand-method
 #' @export
 #' @docType methods
 #' @importFrom BiocGenerics "strand<-"
@@ -114,7 +113,7 @@ setGeneric("strand<-")
 #' @param x A \code{gbFeature} or \code{gbFeatureList}object.
 #' @param ... Further arguments passed to methods.
 #' @return An integer vector.
-#' @rdname width-methods
+#' @rdname width-method
 #' @export
 #' @docType methods
 #' @importFrom IRanges width
@@ -134,20 +133,21 @@ setGeneric("width", signature="x", function (x, ...) {
 #' @param exclude Exclude specific qualifiers.
 #' @param ... Further arguments passed to methods.
 #' @return A \code{\linkS4class{GRanges}} object.
-#' @rdname ranges-methods
+#' @rdname ranges-method
 #' @export
 #' @importFrom IRanges ranges
 setGeneric("ranges")
 
 
-#' @rdname ranges-methods
+#' @rdname ranges-method
 #' @export
 #' @importFrom IRanges "ranges<-"
 setGeneric("ranges<-")
 
 #' Fuzzy location
 #' 
-#' @rdname fuzzy-methods
+#' @usage fuzzy(x)
+#' @rdname fuzzy-method
 #' @export
 #' @docType methods
 setGeneric("fuzzy", signature="x", function (x, ...) {
@@ -617,20 +617,36 @@ setGeneric("select", signature="x",
 
 # internal ---------------------------------------------------------------
 
-#' @keywords internal
-setGeneric('.header', function (x) standardGeneric('.header'))
-
 
 #' @keywords internal
-setGeneric('.sequence', function (x) standardGeneric('.sequence'))
-
+setGeneric('.seqinfo', function(x) standardGeneric('.seqinfo'))
 
 #' @keywords internal
-setGeneric('.dbSource', function (x) standardGeneric('.dbSource'))
+setGeneric('.header', function(x) standardGeneric('.header'))
 
 
 #' @keywords internal
-setGeneric('.defline', function (x) standardGeneric('.defline'))
+setGeneric('.sequence', function(x) standardGeneric('.sequence'))
+
+
+#' @keywords internal
+setGeneric('.locus', function(x) standardGeneric('.locus'))
+
+
+#' @keywords internal
+setGeneric('.features', function(x) standardGeneric('.features'))
+
+
+#' @keywords internal
+setGeneric('.contig', function(x) standardGeneric('.contig'))
+
+
+#' @keywords internal
+setGeneric('.dbSource', function(x) standardGeneric('.dbSource'))
+
+
+#' @keywords internal
+setGeneric('.defline', function(x) standardGeneric('.defline'))
 
 
 

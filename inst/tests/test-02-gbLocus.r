@@ -6,6 +6,8 @@ l3 <- "LOCUS       FQ311868             2988332 bp    DNA     circular BCT 10-JA
 l4 <- "LOCUS       AAD51968                 143 aa            linear   BCT 21-AUG-2001"
 
 test_that("Locus lines are parsed and rendered correctly", {
+  expect_is(gbLocus(l1), 'gbLocus')
+  
   expect_equal(gbLocus(l1)$to_string(), l1)
   expect_equal(gbLocus(l2)$to_string(), l2)
   expect_equal(gbLocus(l3)$to_string(), l3)

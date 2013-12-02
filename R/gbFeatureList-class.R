@@ -86,45 +86,72 @@ setMethod("summary", "gbFeatureList",
           })
 
 
+# Internal getters ----------------------------------------------------------
+
+
+setMethod('.seqinfo', 'gbFeatureList', function(x) {
+  x@.seqinfo
+})
+
+setMethod('.locus', 'gbFeatureList', function(x) {
+  .locus(.seqinfo(x))
+})
+
+setMethod('.header', 'gbFeatureList', function(x) {
+  .header(.seqinfo(x))
+})
+
+setMethod('.sequence', 'gbFeatureList', function(x) {
+  .sequence(.seqinfo(x))
+})
+
+setMethod('.dbSource', 'gbFeatureList', function(x) {
+  parse_dbsource(getDBSource(x))
+})
+
+setMethod(".defline", "gbFeatureList", function(x) {
+  vapply(x, .defline, "", USE.NAMES=FALSE)
+})
+
+
 # getters ----------------------------------------------------------------
 
-setMethod(".sequence", "gbFeatureList", function (x) .sequence(x@.seqinfo) )
 
-setMethod("getLocus", "gbFeatureList", function (x) getLocus(x@.seqinfo) )
+setMethod("getLocus", "gbFeatureList", function (x) getLocus(.seqinfo(x)) )
 
-setMethod("getLength", "gbFeatureList", function (x) getLength(x@.seqinfo) )
+setMethod("getLength", "gbFeatureList", function (x) getLength(.seqinfo(x)) )
 
-setMethod("getMoltype", "gbFeatureList", function (x) getMoltype(x@.seqinfo) )
+setMethod("getMoltype", "gbFeatureList", function (x) getMoltype(.seqinfo(x)) )
 
-setMethod("getTopology", "gbFeatureList", function (x) getTopology(x@.seqinfo) )
+setMethod("getTopology", "gbFeatureList", function (x) getTopology(.seqinfo(x)) )
 
-setMethod("getDivision", "gbFeatureList", function (x) getDivision(x@.seqinfo) )
+setMethod("getDivision", "gbFeatureList", function (x) getDivision(.seqinfo(x)) )
 
-setMethod("getDate", "gbFeatureList", function (x) getDate(x@.seqinfo) )
+setMethod("getDate", "gbFeatureList", function (x) getDate(.seqinfo(x)) )
 
-setMethod("getDefinition", "gbFeatureList", function (x) getDefinition(x@.seqinfo) )
+setMethod("getDefinition", "gbFeatureList", function (x) getDefinition(.seqinfo(x)) )
 
-setMethod("getAccession", "gbFeatureList", function (x) getAccession(x@.seqinfo) )
+setMethod("getAccession", "gbFeatureList", function (x) getAccession(.seqinfo(x)) )
 
-setMethod("getVersion", "gbFeatureList", function (x) getVersion(x@.seqinfo) )
+setMethod("getVersion", "gbFeatureList", function (x) getVersion(.seqinfo(x)) )
 
-setMethod("getGeneID", "gbFeatureList", function (x, db='gi') getGeneID(x@.seqinfo, db=db) )
+setMethod("getGeneID", "gbFeatureList", function (x, db='gi') getGeneID(.seqinfo(x), db=db) )
 
-setMethod("getDBLink", "gbFeatureList", function (x) getDBLink(x@.seqinfo) )
+setMethod("getDBLink", "gbFeatureList", function (x) getDBLink(.seqinfo(x)) )
 
-setMethod("getDBSource", "gbFeatureList", function (x) getDBSource(x@.seqinfo) )
+setMethod("getDBSource", "gbFeatureList", function (x) getDBSource(.seqinfo(x)) )
 
-setMethod("getSource", "gbFeatureList", function (x) getSource(x@.seqinfo) )
+setMethod("getSource", "gbFeatureList", function (x) getSource(.seqinfo(x)) )
 
-setMethod("getOrganism", "gbFeatureList", function (x) getOrganism(x@.seqinfo) )
+setMethod("getOrganism", "gbFeatureList", function (x) getOrganism(.seqinfo(x)) )
 
-setMethod("getTaxonomy", "gbFeatureList", function (x) getTaxonomy(x@.seqinfo) )
+setMethod("getTaxonomy", "gbFeatureList", function (x) getTaxonomy(.seqinfo(x)) )
 
-setMethod("getReference", "gbFeatureList", function (x) getReference(x@.seqinfo) )
+setMethod("getReference", "gbFeatureList", function (x) getReference(.seqinfo(x)) )
 
-setMethod("getKeywords", "gbFeatureList", function (x) getKeywords(x@.seqinfo) )
+setMethod("getKeywords", "gbFeatureList", function (x) getKeywords(.seqinfo(x)) )
 
-setMethod("getComment", "gbFeatureList", function (x) getComment(x@.seqinfo) )
+setMethod("getComment", "gbFeatureList", function (x) getComment(.seqinfo(x)) )
 
 setMethod("start", "gbFeatureList",
           function (x, join = FALSE, drop = TRUE) {
@@ -228,15 +255,8 @@ setMethod("dbxref", "gbFeatureList",
           })
 
 
-setMethod("getSequence", "gbFeatureList", function (x) .seq_access(x))
+setMethod("getSequence", "gbFeatureList", function(x) .seq_access(x))
 
-
-setMethod('.dbSource', 'gbFeatureList', function (x) parse_dbsource(getDBSource(x)) )
-
-
-setMethod(".defline", "gbFeatureList", function (x) {
-  vapply(x, .defline, character(1), USE.NAMES=FALSE)
-})
 
 
 # setters ----------------------------------------------------------------
@@ -307,16 +327,16 @@ setMethod("hasQualif", "gbFeatureList",
 
 #' @export
 setMethod("[", c("gbFeatureList", "character", "missing", "ANY"),
-          function (x, i, j, ..., drop = TRUE) {
+          function(x, i, j, ..., drop = TRUE) {
             check <- list(...)$check %||% TRUE
-            idx <- which(vapply(x@.Data, function(f) f@key, character(1L)) == i)
+            idx <- which(vapply(x@.Data, function(f) f@key, "") == i)
             IRanges::new2('gbFeatureList', .Data=x@.Data[idx], .seqinfo=x@.seqinfo,
                           check=check)
           })
 
 #' @export
 setMethod("[", c("gbFeatureList", "numeric", "missing", "ANY"),
-          function (x, i, j, ..., drop = TRUE) {
+          function(x, i, j, ..., drop = TRUE) {
             check <- list(...)$check %||% TRUE
             IRanges::new2('gbFeatureList', .Data=x@.Data[i], .seqinfo=x@.seqinfo,
                           check=check)
@@ -325,7 +345,7 @@ setMethod("[", c("gbFeatureList", "numeric", "missing", "ANY"),
 
 #' @export
 setMethod("[", c("gbFeatureList", "logical", "missing", "ANY"),
-          function (x, i, j, ..., drop = TRUE) {
+          function(x, i, j, ..., drop = TRUE) {
             check <- list(...)$check %||% TRUE
             IRanges::new2('gbFeatureList', .Data=x@.Data[i], .seqinfo=x@.seqinfo, 
                           check=check)
@@ -334,8 +354,29 @@ setMethod("[", c("gbFeatureList", "logical", "missing", "ANY"),
 
 #' @export
 setMethod("[", c("gbFeatureList", "missing", "missing", "ANY"),
-          function (x, i, j, ..., drop = TRUE) x
+          function(x, i, j, ..., drop = TRUE) x
           )
+
+
+#' @export
+setMethod("[[", "gbFeatureList",
+          function(x, i, j, ...) {
+            if (missing(i)) {
+              stop("subscript is missing")
+            }
+            if (!is.numeric(i)) {
+              stop("invalid subscript type '", class(i), "'")
+            }
+            if (length(i) > 1) {
+              stop("attempt to extract more than one element")
+            } 
+            res <- callNextMethod()
+            ## inject seqinfo
+            res@.seqinfo <- .seqinfo(x)
+            validObject(res)
+            res
+          })
+
 
 
 # select -----------------------------------------------------------------

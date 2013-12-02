@@ -27,6 +27,11 @@ on_failure(all_empty) <- function(call, env) {
 }
 
 
+is.string <- function(x) {
+  length(x) == 1 && is.character(x)
+}
+
+
 "%||%" <- function(a, b) {
   if (is.empty(a)) force(b) else a
 }
@@ -53,6 +58,34 @@ compactChar <- function(x) {
 
 compactNA <- function(x) {
   x[!is.na(x)]
+}
+
+
+merge_dups <- function(x) {
+  if (all_empty(x)) {
+    return(NULL)
+  }
+  x_names <- names(x)
+  a <- x[!duplicated(x_names)]
+  b <- x[duplicated(x_names)]
+  modify_list(a, b, "merge")
+}
+
+
+modify_list <- function(a, b, mode=c("replace", "merge")) {
+  stopifnot(is.list(a), is.list(b))
+  mode <- match.arg(mode)
+  a_names <- names(a)
+  for (v in names(b)) {
+    a[[v]] <- if (v %in% a_names && is.list(a[[v]]) && is.list(b[[v]])) {
+      modify_list(a[[v]], b[[v]])
+    } else {
+      switch(mode,
+             replace=b[[v]],
+             merge=unique(c(a[[v]], b[[v]])))
+    }
+  }
+  a
 }
 
 
@@ -91,7 +124,7 @@ usplit <- Compose("unlist", "strsplit")
 uusplit <- Compose("unique", "unlist", "strsplit")
 
 
-ellipsize <- function(obj, width=getOption("width"), ellipsis="...") {
+ellipsize <- function(obj, width=getOption("width"), ellipsis=" ...") {
   str <- encodeString(obj)
   ifelse(nchar(str) > width - 1,
          paste0(substring(str, 1, width - nchar(ellipsis) - 1), ellipsis),
@@ -99,8 +132,7 @@ ellipsize <- function(obj, width=getOption("width"), ellipsis="...") {
 }
 
 
-dup <- function (x, n) {
-  assert_that(is.string(x))
+dup <- function(x, n) {
   if (any(n < 0)) n[n < 0] <- 0
   vapply(.mapply(rep.int, list(rep.int(x, length(n)), n), NULL), paste0, collapse="", "")
 }
@@ -110,19 +142,17 @@ blanks <- Partial(dup, x = " ")
 
 
 trim <- function(x, trim = '\\s+') {
-  assert_that(is.vector(x))
   gsub(paste0("^", trim, "|", trim, "$"), '', x)
 }
 
 
-wrap <- function (x, wrap = '"') {
-  assert_that(is.vector(x))
+wrap <- function(x, wrap = '"') {
   sprintf('%s%s%s', wrap, x, wrap)
 }
 
 
 count_re <- function(x, re) {
-  vapply(gregexpr(re, x), function (x) sum(x > 0L), 1, USE.NAMES=FALSE)
+  vapply(gregexpr(re, x), function(x) sum(x > 0L), 0, USE.NAMES=FALSE)
 }
 
 
@@ -134,7 +164,7 @@ count_re <- function(x, re) {
 #' @param cmd The exececutable to test for.
 #' @param msg Additional message if the test fails.
 #' @keywords internal
-has_command <- function (cmd, msg = "") {
+has_command <- function(cmd, msg = "") {
   assert_that(is.string(cmd))
   unname(Sys.which(cmd) != "")
 }
@@ -159,30 +189,24 @@ on_failure(has_command) <- function(call, env) {
 #' but the first line
 #' @param split regular expression used for splitting. Defaults to
 #' a whitespace character.
-#' @param FORCE Words are force split if the available width is too small.
+#' @param FORCE Words are force-split if the available width is too small.
 #' @param FULL_FORCE Lines are split exactly at the specified width
 #' irrespective of whether there is whitespace or not.
 #' 
 #' @return a character vector
 #' @keywords internal
 linebreak <- function(s, width = getOption("width") - 2,
-                      indent = 0, offset = 0, split = " ",
+                      indent = 0, offset = 0, split = ' ',
                       FORCE = FALSE, FULL_FORCE = FALSE) {
-  if (!is.character(s)) {
-    s <- as.character(s)
-  }
-  if (all_empty(s)) {
+  first_pass <- TRUE
+  s <- as.character(s)
+  if (length(s) == 0) {
     return("")
   }
-  .first_iteration <- TRUE
-  # set indent string to "" if a negative value is given
-  # this lets us shrink the available width for the first line by that value
-  indent_string <- blanks(indent)
-  offset_string <- paste0("\n", blanks(offset))
+  indent_string <- dup(' ', indent)
+  offset_string <- paste0("\n", dup(' ', offset))
   
-  ans <- Map(function(s, width, offset, indent,
-                      indent_string, split, FORCE,
-                      FULL_FORCE) {
+  (function(s) {
     # remove leading and trailing blanks
     # convert newlines, tabs, spaces to " "
     # find first position where 'split' applies
@@ -190,60 +214,48 @@ linebreak <- function(s, width = getOption("width") - 2,
       s <- gsub("\\s+", " ", trim(s), perl=TRUE)
     }
     fws <- regexpr(split, s, perl=TRUE)
-    
-    if (.first_iteration) {
+    if (first_pass) {
       string_width <- indent + nchar(s)
     } else {
       string_width <- offset + nchar(s)
     }
     if (string_width > width) {
       # if not everything fits on one line
-      .first_iteration <- FALSE
-      if (FULL_FORCE ||
-            ((fws == -1 || fws >= (width - string_width)) && FORCE)) {
-        # if no whitespace or first word too long and force break
-        # cut through the middle of a word
-        pat1 <- paste0("^.{", width - offset - indent, "}(?=.+)")
+      first_pass <<- FALSE
+      if (FULL_FORCE || (FORCE && (fws == -1 || fws >= width - offset + indent))) {
+        # if no whitespace or first word too long and force break cut through the
+        # middle of a word
+        pat1 <- paste0("^.{", width - offset + indent, "}(?=.+)")
         pat2 <- paste0("(?<=^.{", width - offset - indent, "}).+")
         leading_string <- regmatches(s, regexpr(pat1, s, perl=TRUE))
         trailing_string <- regmatches(s, regexpr(pat2, s, perl=TRUE)) 
-        s <- paste0(indent_string, leading_string, offset_string,
-                    linebreak(s=trailing_string, width=width, indent=0,
-                              offset=offset, split=split, FORCE=FORCE, 
-                              FULL_FORCE=FULL_FORCE))
-      } else if ((fws == -1 || fws >= (width - offset + indent)) && !FORCE) {
-        # if no whitespace or first word too long and NO force break
-        # stop right here
+      } else if (!FORCE && (fws == -1 || fws >= (width - offset + indent))) {
+        # if no whitespace or first word too long and NO force break stop right here
         stop("Can't break in the middle of a word. Use the force!")
       } else {
         # break the line
-        s_split <- unlist(strsplit(s, split))
-        s_cum <- cumsum(nchar(s_split) + 1)
+        s_split <- usplit(s, split=split)
+        s_cum   <- cumsum(nchar(s_split) + 1)
         leading_string <- 
-          paste0(s_split[s_cum < width - offset - indent],
-                 ifelse(split == " ", "", split), collapse=split)
+          paste0(s_split[s_cum < width - offset + indent],
+                 ifelse(split == " ", "", split), collapse = split)
         trailing_string <- 
-          paste0(s_split[s_cum >= width - offset - indent], collapse=split)
-        s <- paste0(indent_string, leading_string, offset_string,
-                    linebreak(s=trailing_string, width=width, indent=0,
-                              offset=offset, split=split, FORCE=FORCE, FULL_FORCE=FULL_FORCE))
+          paste0(s_split[s_cum >= width - offset - indent], collapse = split)
       }
+      indent <- 0
+      s <- paste0(indent_string, leading_string, offset_string, Recall(trailing_string))
     } else {
       # if everything fits on one line go with the string + indent
       paste0(indent_string, s)
     }
-  }, s, width, offset, abs(indent), indent_string, split,
-             FORCE, FULL_FORCE, USE.NAMES=FALSE)
-  unlist(ans)
+  })(s)
 }
 
 
-strsplitN <- function (x, split, n, from = "start", collapse = split, ...) {
-  assert_that(is.vector(x))
+strsplitN <- function(x, split, n, from = "start", collapse = split, ...) {
   from <- match.arg(from, c("start", "end"))
   xs <- strsplit(x, split, ...)
   end <- vapply(xs, length, integer(1))
-  
   if (from == "end") {
     end <- end + 1L
     n <- lapply(end, `-`, n)
@@ -382,11 +394,10 @@ get_compounds <- function(x) {
 }
 
 # merge Sequences
-#' @importFrom XVector subseq
 #' @importFrom Biostrings xscat
 merge_seq <- function(seq, x, SEQFUN) {
   if (length(start(x)) == 1L) {
-    outseq <- subseq(x=seq, start=start(x), end=end(x))
+    outseq <- XVector::subseq(x=seq, start=start(x), end=end(x))
   } else {
     outseq <- do.call(xscat, Map(subseq, x=seq, start=start(x), end=end(x)))
   }

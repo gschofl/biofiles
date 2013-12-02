@@ -37,5 +37,5 @@ proteinID <- Partial("qualif", which="protein_id", use.names=FALSE)
 #' @rdname qualif
 #' @importFrom Biostrings AAStringSet
 #' @export
-translation <- Compose("AAStringSet", ".translation")
+translation <- function(x) AAStringSet(.translation(x))
 

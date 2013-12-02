@@ -6,17 +6,16 @@
 using namespace Rcpp;
 
 // gbFeature
-SEXP gbFeature(std::vector<std::string> feature, Rcpp::S4 seqinfo, std::string accession = "", int id = 0);
-RcppExport SEXP biofiles_gbFeature(SEXP featureSEXP, SEXP seqinfoSEXP, SEXP accessionSEXP, SEXP idSEXP) {
+SEXP gbFeature(std::vector<std::string> feature, std::string accession = "", int id = 0);
+RcppExport SEXP biofiles_gbFeature(SEXP featureSEXP, SEXP accessionSEXP, SEXP idSEXP) {
 BEGIN_RCPP
     SEXP __sexp_result;
     {
         Rcpp::RNGScope __rngScope;
         Rcpp::traits::input_parameter< std::vector<std::string> >::type feature(featureSEXP );
-        Rcpp::traits::input_parameter< Rcpp::S4 >::type seqinfo(seqinfoSEXP );
         Rcpp::traits::input_parameter< std::string >::type accession(accessionSEXP );
         Rcpp::traits::input_parameter< int >::type id(idSEXP );
-        SEXP __result = gbFeature(feature, seqinfo, accession, id);
+        SEXP __result = gbFeature(feature, accession, id);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);

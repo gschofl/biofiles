@@ -23,7 +23,7 @@ linebreak(s, width = getOption("width") - 2, indent = 0, offset = 0,
   \item{split}{regular expression used for splitting.
   Defaults to a whitespace character.}
 
-  \item{FORCE}{Words are force split if the available width
+  \item{FORCE}{Words are force-split if the available width
   is too small.}
 
   \item{FULL_FORCE}{Lines are split exactly at the

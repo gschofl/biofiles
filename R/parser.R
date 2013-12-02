@@ -12,22 +12,17 @@ NULL
   names(gbf) <- gbf_names
   gb_contig <- gb_sequence <-  NULL
   
-  # Check the presence of a number of the absolutely essential data fields
-  essential <- c("DEFINITION", "ACCESSION", "FEATURES")
-  if (any(is.na(charmatch(essential, gbf_names))))
+  # Check the presence of mandatory fields
+  essential <- c("LOCUS", "DEFINITION", "ACCESSION", "VERSION", "FEATURES")
+  if (any(is.na(charmatch(essential, gbf_names)))) {
     stop("Some fields seem to be missing from the GenBank file")
-  
-  # Split the GenBank file into HEADER, FEATURES, ORIGIN
-  gb_header <- gb_data[seq.int(gbf["FEATURES"]) - 1]
-  
-  if (match("FEATURES", gbf_names) == length(gbf)) {
-    gb_features <- gb_data[seq.int(gbf["FEATURES"] + 1, length(gb_data) - 1)]
-  } else {
-    gb_features <- gb_data[seq.int(gbf["FEATURES"] + 1, gbf[match("FEATURES", gbf_names) + 1] - 1)]
   }
-  if (length(gb_features) < 2L) {
-    stop("No features in the GenBank file")
-  }
+  
+  ## HEADER
+  seqenv <- new("seqinfo")
+  seqenv$header <- gbHeader(gb_data[seq.int(gbf["FEATURES"]) - 1])
+    
+  ## ORIGIN
   if (!is.na(origin <- gbf["ORIGIN"])) {
     seq_idx <- seq.int(origin + 1, gbf["//"] - 1)
     if (length(seq_idx) > 1L && seq_idx[2] < seq_idx[1]) {
@@ -39,102 +34,20 @@ NULL
   } else if (!is.na(contig <- gbf["CONTIG"])) {
     gb_contig <- gbLocation(strsplitN(gb_data[contig], "CONTIG", 2))
   }
-
-  # generate the seqenv environment that will hold the Header and Sequence
-  # information.
-  e <- new('seqinfo')
-  ## parse HEADER, FEATURES, and ORIGIN and construct 'gbData' object
-  e$header <- .parseGbHeader(gb_header, gb_fields=gbf)
-  e$sequence <- .parseGbSequence(gb_sequence=gb_sequence,
-                                 accession_no=getAccession(e),
-                                 seq_type=getMoltype(e))
+  seqenv$sequence <- gbSequence(gb_sequence, getAccession(seqenv), getMoltype(seqenv))
   
-  features <- .parseGbFeatures(gb_features, seqinfo=e)
-  new_gbRecord(seqinfo=e, features=features, contig=gb_contig)
-}
-
-
-.parseGbHeader <- function (gb_header, gb_fields) {
-  #### LOCUS
-  locus <- gbLocus(gb_header[gb_fields[names(gb_fields) == "LOCUS"]])
-  
-  #### DEFINITION
-  def_idx <- which(names(gb_fields) == "DEFINITION")
-  def_line <- gb_header[seq.int(gb_fields[def_idx], gb_fields[def_idx + 1] - 1)]
-  definition <- paste(gsub(" +", " ", sub("DEFINITION  ", "", def_line)), collapse=" ")
-  
-  #### ACCESSION
-  acc_line <- gb_header[gb_fields[names(gb_fields) == "ACCESSION"]]
-  accession <- strsplit(acc_line, " +")[[1]][2]
-  if (is.na(accession)) accession <- locus
-  
-  #### VERSION and GI
-  ver_line <- gb_header[gb_fields[names(gb_fields) == "VERSION"]]
-  version <- strsplit(ver_line, " +")[[1]][2]
-  seqid <- paste0('gi|', strsplit(ver_line, "GI:")[[1]][2])
-  
-  #### DBLINK (not seen everywhere)
-  if (length(db_line <- gb_header[gb_fields[names(gb_fields) == "DBLINK"]]) > 0L) {
-    dblink <- strsplit(db_line, "Project: ")[[1]][2]
+  ## FEATURES
+  if (match("FEATURES", gbf_names) == length(gbf)) {
+    gb_features <- gb_data[seq.int(gbf["FEATURES"] + 1, length(gb_data) - 1)]
   } else {
-    dblink <- NA_character_
+    gb_features <- gb_data[seq.int(gbf["FEATURES"] + 1, gbf[match("FEATURES", gbf_names) + 1] - 1)]
   }
-  
-  #### DBSOURCE (only in GenPept files)
-  # sometimes more than one line, but always followed by "KEYWORDS"?
-  if (length(dbsrc_idx <- which(names(gb_fields) == "DBSOURCE")) > 0L) {
-    dbs_lines <- 
-      gb_header[seq.int(gb_fields[dbsrc_idx], gb_fields[dbsrc_idx + 1] - 1)]
-    dbsource <- paste(gsub("^ +", "", sub("DBSOURCE", "", dbs_lines)), collapse="\n")
-  } else {
-    dbsource <- NA_character_
+  if (length(gb_features) < 2L) {
+    stop("No features in the GenBank file")
   }
+  features <- gbFeatures(gb_features, seqinfo=seqenv)
   
-  #### KEYWORDS
-  key_line <- gb_header[gb_fields[names(gb_fields) == "KEYWORDS"]]
-  keywords <- sub("KEYWORDS    ", "", key_line)
-  
-  #### SOURCE with ORGANISM and the complete lineage
-  src_idx <- which(names(gb_fields) == 'SOURCE')
-  source_lines <- 
-    gb_header[seq.int(gb_fields[src_idx], gb_fields[src_idx + 1] - 1)]                  
-  source <- sub("SOURCE      ", "", source_lines[1L])
-  organism <- sub("  ORGANISM  ", "", source_lines[2L])
-  taxonomy <- paste(gsub("^ +", "", source_lines[-c(1L,2L)]), collapse=" ")
-  
-  #### REFERENCES (not seen everywhere)
-  if (length(ref_idx <- which(names(gb_fields) == "REFERENCE")) > 0L) {
-    
-    ref_lines <- gb_header[seq.int(gb_fields[ref_idx[1]],
-                                   gb_fields[ref_idx[length(ref_idx)] + 1] - 1)]
-    references <- .parseGbReferences(ref_lines)
-  } else {
-    references <- "Not available"
-  }
-  
-  #### COMMENT (not always there)
-  if (length(gb_fields[names(gb_fields) == "COMMENT"]) > 0L) {
-    com_lines <- 
-      gb_header[seq.int(gb_fields[names(gb_fields) == "COMMENT"],
-                        length(gb_header))]
-    comment <- paste(gsub("^ +", "", sub("COMMENT", "", com_lines)), collapse="\n")
-  } else {
-    comment <- NA_character_
-  }
-  
-  new("gbHeader", locus=locus, definition=definition, accession=accession,
-      version=version, seqid=seqid, dblink=dblink, dbsource=dbsource,
-      keywords=keywords, source=source, organism=organism, taxonomy=taxonomy,
-      references=references, comment=comment)
-} 
-
-.parseGbReferences <- function (ref_lines) {
-  return("Not implemented yet")
-  ref_idx <- grep("^REFERENCE", ref_lines)
-  idx <- Map(seq, ref_idx, c(ref_idx[-1] - 1, length(ref_lines)))
-  ref <- ref_lines[idx[[1]]]
-  auth_line <- grep("^  AUTHORS", ref, value=TRUE)
-  .parseAuthors <- function (auth_line) {}
+  new_gbRecord(seqinfo=seqenv, features=features, contig=gb_contig)
 }
 
 ## characters permitted to occur in feature table component names:
@@ -171,25 +84,40 @@ NULL
 ##   /citation=[number] e.g. /citation=[3]
 ##   /compare=[accession-number.sequence-version] e.g. /compare=AJ634337.1
 ##
-.parseGbFeatures <- function (gb_features, seqinfo) {
+gbFeatures <- function(gb_features, seqinfo) {
   # where do all the features start
   feature_start <- which(substr(gb_features, 6, 6) != " ")
   # where do all the features end
   feature_end <- c(feature_start[-1] - 1, length(gb_features))
   # indeces for all features
-  feature_idx <- mapply(seq.int, feature_start, feature_end,
-                        SIMPLIFY=FALSE, USE.NAMES=FALSE)
+  feature_idx <- .mapply(seq.int, list(from=feature_start, to=feature_end), NULL)
   accession <- getAccession(seqinfo)
-  ftbl <- mcmapply(function (idx, n) {
-    gbFeature(gb_features[idx], seqinfo, accession, n)
-  }, idx=feature_idx, n=seq_along(feature_start),
-    SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=detectCores())
   
+#   ftbl <- mapply(function(idx, n) {
+#     gbFeature(gb_features[idx], seqinfo, accession, n)
+#   }, idx=feature_idx, n=seq_along(feature_start),
+#                    SIMPLIFY=FALSE, USE.NAMES=FALSE)
+  
+#   p <- MulticoreParam(workers=floor(detectCores()*0.75), verbose=TRUE)
+#   ftbl <- bpmapply(function(idx, n) {
+#     gbFeature(feature=gb_features[idx], seqinfo=seqinfo, accession=accession, id=n)
+#   },
+#   idx = feature_idx, n = seq_along(feature_start),
+#   SIMPLIFY=FALSE, USE.NAMES=FALSE, PBPARAM=p)
+  
+  mc_cores <- floor(detectCores()*0.75)
+  ftbl <- mcmapply(function(idx, n) {
+    gbFeature(gb_features[idx], accession, n)
+  },
+  idx = feature_idx, n = seq_along(feature_start),
+  SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=mc_cores, mc.silent=FALSE)
+                   
   IRanges::new2('gbFeatureList', .Data=ftbl, .seqinfo=seqinfo, check=FALSE) 
 }
 
-.joinSeq <- function (seq, accession_no) {
-  mc_cores <- detectCores()
+
+join_seq <- function(seq, accession_no) {
+  mc_cores <- floor(detectCores()*0.75)
   s <- unlist(mclapply(seq, function(x) {
     paste0(strsplit(substr(x, 11, 75), " ")[[1L]], collapse="")
   }, mc.cores=mc_cores))
@@ -197,9 +125,10 @@ NULL
   s
 }
 
-
-#' @importFrom Biostrings BStringSet readAAStringSet readDNAStringSet
-.parseGbSequence <- function (gb_sequence, accession_no, seq_type) {
+#' @importFrom Biostrings readDNAStringSet
+#' @importFrom Biostrings readAAStringSet
+#' @importFrom Biostrings BStringSet
+gbSequence <- function(gb_sequence, accession_no, seq_type) {
   # read.BStringSet() does not support connections and
   # currently only accepts fasta format. So we write out gb_sequence as
   # a temporary fasta file and read it back in as an AAStringSet or
@@ -210,7 +139,7 @@ NULL
   } else {
     tmp <- tempfile()
     on.exit(unlink(tmp))
-    writeLines(text=.joinSeq( gb_sequence, accession_no ), tmp)
+    writeLines(text=join_seq(gb_sequence, accession_no), tmp)
     origin <- switch(seq_type,
                      AA=readAAStringSet(tmp, format="fasta"),
                      readDNAStringSet(tmp, format="fasta"))

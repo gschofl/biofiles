@@ -3,7 +3,7 @@
 \alias{fuzzy}
 \title{Fuzzy location}
 \usage{
-fuzzy(x, ...)
+fuzzy(x)
 }
 \description{
 Fuzzy location

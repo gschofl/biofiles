@@ -49,7 +49,7 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
   assert_that(is(x, "gbRecord") || is(x, "gbFeatureList"))
   was.gbRecord <- FALSE
   if (is(x, "gbRecord")) {
-    x <- getFeatures(x)
+    x <- .features(x)
     was.gbRecord <- TRUE
   }
   len <- getLength(x)
@@ -111,13 +111,13 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
   assert_that(is(x, "gbRecord") || is(x, "gbFeatureList"))
   was.gbRecord <- FALSE
   if (is(x, "gbRecord")) {
-    x <- getFeatures(x)
+    x <- .features(x)
     was.gbRecord <- TRUE
   }
   cmpnd <- which(is_compound(x))
   if (length(cmpnd) > 0) {
     x[cmpnd] <- merge_split(x[cmpnd], omit_unmergables=TRUE)
-    x <- rmisc::compact(x)
+    x <- compact(x)
   }
   len <- getLength(x)
   new_end <- len - start(x) + 1

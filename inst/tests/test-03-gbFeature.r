@@ -4,22 +4,21 @@ src <- readLines("sequences/source.gbk")
 cds <- readLines("sequences/CDS.gbk")
 
 test_that("GenBank feature tables parse correctly", {
-  expect_is(
-    gbFeature(src, seqinfo=new('seqinfo')),
-    'gbFeature')
-  
-  expect_is(
-    gbFeature(cds, seqinfo=new('seqinfo')),
-    'gbFeature')
+  expect_is(gbFeature(src), 'gbFeature')
+  expect_is(gbFeature(cds), 'gbFeature')
 })
 
 context("gbFeature getter checks")
 
 test_that("gbFeature accessors work", {
-  x <- gbFeature(cds, seqinfo=new('seqinfo'), id=10)
+  x <- gbFeature(cds, id=10)
+  
+  expect_warning(.seqinfo(x), "No header associated with this object")
+  expect_output(.header(x), "An empty .gbHeader. instance.")
+  expect_output(.locus(x), "An empty .gbLocus. instance.")
+  expect_output(.sequence(x), "A BStringSet instance of length 0")
   
   expect_equal(index(x), 10)
-  
   expect_equal(key(x), 'CDS')
   expect_equal(x[['key']], 'CDS')
   
