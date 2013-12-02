@@ -46,7 +46,6 @@ setMethod("show", "gbFeatureList",
                 .showGbFeature(object[[lo]], showInfo=FALSE)
               }
             }
-            cat("Seqinfo:\n")
             show(object@.seqinfo)
             return(invisible(object))
           })
@@ -372,7 +371,8 @@ setMethod("[[", "gbFeatureList",
             } 
             res <- callNextMethod()
             ## inject seqinfo
-            res@.seqinfo <- .seqinfo(x)
+            res@.seqinfo$header <- .header(x)
+            res@.seqinfo$sequence <- .sequence(x)
             validObject(res)
             res
           })

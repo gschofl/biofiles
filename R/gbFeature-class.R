@@ -54,7 +54,6 @@ setValidity2("gbFeature", function(object) {
         sprintf("%+17s%s=%s\n", "/", qua, unlist(val)))
   }
   if (showInfo) {
-    cat("Seqinfo:\n")
     show(object@.seqinfo)
   }
   options(op)

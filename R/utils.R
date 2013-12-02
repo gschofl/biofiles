@@ -151,6 +151,26 @@ wrap <- function(x, wrap = '"') {
 }
 
 
+#' Pad a string
+#' 
+#' @param x Input character vector.
+#' @param n Pad \code{x} to this (minimum) width.
+#' @param where Side where the padding is added.
+#' @param pad Padding character.
+#' @return A character vector.
+#' @keywords internal
+pad <- function (x, n = 10, where = 'left', pad = ' ') {
+  x <- as.character(x)
+  where <- match.arg(where, c("left", "right", "both"))
+  needed <- pmax(0, n - nchar(x))
+  left <- switch(where, left = needed, right = 0, both = floor(needed/2))
+  right <- switch(where, left = 0, right = needed, both = ceiling(needed/2))
+  lengths <- unique(c(left, right))
+  padding <- dup(pad, lengths)
+  paste0(padding[match(left, lengths)], x, padding[match(right, lengths)])
+}
+
+
 count_re <- function(x, re) {
   vapply(gregexpr(re, x), function(x) sum(x > 0L), 0, USE.NAMES=FALSE)
 }

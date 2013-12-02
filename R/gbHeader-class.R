@@ -448,35 +448,94 @@ gbHeader <- function(gb_header) {
 } 
 
 
-setOldClass("environment")
-
-#' seqinfo-class
+#' Generator object for the \code{\linkS4class{seqinfo}} class
+#'
+#' The generator object for the \code{\linkS4class{seqinfo}} reference class.
+#'
+#' @param ... List of arguments; must be named arguments
+#' corresponding to the fields of a \code{\linkS4class{gbHeader}} object
+#' @section Methods:
+#' \describe{
+#' \item{\code{#new(header = NULL, sequence = NULL)}:}{
+#'    Create a new \code{\linkS4class{gbHeader}} object}
+#' }
 #' 
+#' @seealso
+#'    \code{\linkS4class{seqinfo}}
+#' @rdname seqinfo
+#' @keywords classes internal
+seqinfo <- setRefClass(
+  'seqinfo',
+  fields = list(
+    header = 'ANY',
+    sequence = 'ANY'
+  ),
+  methods = list(
+    initialize = function(header = NULL, sequence = NULL) {
+      header <<- header
+      sequence <<- sequence
+    },
+    header_is_empty = function() {
+      is.null(header)
+    },
+    sequence_is_empty = function() {
+      is.null(sequence)
+    },
+    show = function() {
+      if (header_is_empty()) {
+        acc <- len <- def <- ''
+      } else {
+        acc <- getAccession(.self)
+        len <- paste0(getLength(.self), ' ', getMoltype(.self))
+        def <- getDefinition(.self)
+        acc <- pad(acc, nchar(acc) + 2, "right")
+        len <- pad(len, nchar(len) + 2, "right")
+        def <- ellipsize(def, width=getOption("width") - 
+                           nchar(acc) - nchar(len) - 3)
+      }
+      cat(sprintf("%s\n%s%s%s", "Seqinfo:", acc, len, def))
+    }
+  )
+)
+
+
+#' Class \code{"seqinfo"}
+#'
+#' A container for shared date: Header and Sequence.  
 #' @name seqinfo-class
-#' @rdname seqinfo-class
-#' @exportClass seqinfo
-setClass("seqinfo", contains="environment")
+#' @section Fields:
+#' \describe{
+#' \item{\code{header}:}{ A \code{\linkS4class{gbHeader}} object or \code{NULL}. }
+#' \item{\code{sequence}:}{  A \code{\linkS4class[Biostrings]{XStringSet}} object or \code{NULL}. }
+#' }
+#' @section Extends: All reference classes extend and inherit methods from
+#'    \code{"\linkS4class{envRefClass}"}.
+#' @seealso
+#'    \code{\link{seqinfo}}
+#' @keywords classes
+#' @examples
+#'
+#' showClass("seqinfo")
+#'
+NULL
 
-
-setMethod('initialize', 'seqinfo', function(.Object) {
-  .Object@.xData <- new.env(parent=emptyenv())
-  .Object
-})
 
 ## Internal Getters
 
 setMethod('.header', 'seqinfo', function(x) {
-  tryCatch(get("header", x), error = function(e) {
+  if (x$header_is_empty()) {
     warning("No header associated with this object", call.=FALSE)
-    .gbHeader$new()
-  })
+    return(.gbHeader$new())
+  }
+  x$header
 })
 
 setMethod('.sequence', 'seqinfo', function(x) {
-  tryCatch(get("sequence", x), error = function(e) {
-    warning("No sequence associated with this object", call.=FALSE)
-    new('BStringSet')
-  })
+  if (x$sequence_is_empty()) {
+    warning("No header associated with this object", call.=FALSE)
+    return(new("BStringSet"))
+  }
+  x$sequence
 })
 
 setMethod('.locus', 'seqinfo', function(x) .header(x)$locus)
@@ -549,20 +608,7 @@ setMethod("getKeywords", "seqinfo", function(x) .header(x)$keywords)
 setMethod("getComment", "seqinfo", function(x) .header(x)$comment)
 
 
-setMethod("show", "seqinfo", function(object) {
-  if (length(getAccession(object)) == 0L) {
-    acc <- len <- def <- ""
-  } else {
-    acc <- getAccession(object)
-    len <- paste0(getLength(object), " ", getMoltype(object))
-    def <- getDefinition(object)
-    acc <- pad(acc, nchar(acc) + 2, "right")
-    len <- pad(len, nchar(len) + 2, "right")
-    def <- ellipsize(def, width=getOption("width") - 
-                     nchar(acc) - nchar(len) - 3)
-  }
-  cat(sprintf("%s%s%s", acc, len, def))
-})
+
 
 
 

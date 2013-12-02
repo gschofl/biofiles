@@ -19,8 +19,7 @@ NULL
   }
   
   ## HEADER
-  seqenv <- new("seqinfo")
-  seqenv$header <- gbHeader(gb_data[seq.int(gbf["FEATURES"]) - 1])
+  seqenv <- seqinfo(gbHeader(gb_data[seq.int(gbf["FEATURES"]) - 1]), NULL)
     
   ## ORIGIN
   if (!is.na(origin <- gbf["ORIGIN"])) {
