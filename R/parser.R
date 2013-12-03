@@ -1,11 +1,9 @@
 #' @importFrom Biostrings DNAStringSet
-NULL
 #' @importFrom IRanges new2
-NULL
 #' @importFrom parallel mclapply mcmapply detectCores
 NULL
 
-.parseGbRecord <- function (gb_data, with_sequence = TRUE) {
+parse_gb_record <- function(gb_data, with_sequence = TRUE) {
   # get a vector with the positions of the main GenBank fields
   gbf <- grep("^[A-Z//]+", gb_data)
   gbf_names <- strsplitN(gb_data[gbf], split=" +", 1)
@@ -31,7 +29,7 @@ NULL
       gb_sequence <- gb_data[seq_idx]
     }
   } else if (!is.na(contig <- gbf["CONTIG"])) {
-    gb_contig <- gbLocation(strsplitN(gb_data[contig], "CONTIG", 2))
+    gb_contig <- gbLocation(strsplitN(gb_data[contig], "CONTIG", 2, fixed=TRUE))
   }
   seqenv$sequence <- gbSequence(gb_sequence, getAccession(seqenv), getMoltype(seqenv))
   

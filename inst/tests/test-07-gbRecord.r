@@ -31,7 +31,7 @@ test_that("Global accessors work for gbFeatureLists", {
   expect_equal(getOrganism(x), 'Caulobacter crescentus CB15')
   expect_equal(getTaxonomy(x), 'Bacteria; Proteobacteria; Alphaproteobacteria; Caulobacterales; Caulobacteraceae; Caulobacter.')
   expect_equal(getOrganism(x), 'Caulobacter crescentus CB15')
-  expect_equal(getReference(x), 'Not implemented yet')
+  expect_is(getReference(x), 'gbReferenceList')
   expect_equal(getKeywords(x), '.')
   expect_equal(getComment(x), NA_character_)
 })

@@ -66,23 +66,23 @@ setMethod("summary", "gbRecordList",
 
 
 setMethod("getLocus", "gbRecordList", function (x) {
-  vapply(x, getLocus, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getLocus, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getLength", "gbRecordList", function (x) {
-  vapply(x, getLength, FUN.VALUE=integer(1), USE.NAMES=FALSE)
+  vapply(x, getLength, FUN.VALUE=0L, USE.NAMES=FALSE)
 })
 
 setMethod("getMoltype", "gbRecordList", function (x) {
-  vapply(x, getMoltype, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getMoltype, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getTopology", "gbRecordList", function (x) {
-  vapply(x, getTopology, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getTopology, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getDivision", "gbRecordList", function (x) {
-  vapply(x, getDivision, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getDivision, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getDate", "gbRecordList", function (x) {
@@ -90,39 +90,39 @@ setMethod("getDate", "gbRecordList", function (x) {
 })
 
 setMethod("getDefinition", "gbRecordList", function (x) {
-  vapply(x, getDefinition, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getDefinition, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getAccession", "gbRecordList", function (x) {
-  vapply(x, getAccession, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getAccession, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getVersion", "gbRecordList", function (x) {
-  vapply(x, getVersion, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getVersion, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getGeneID", "gbRecordList", function (x, db='gi') {
-  vapply(x, getGeneID, db=db, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getGeneID, db=db, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getDBLink", "gbRecordList", function (x) {
-  vapply(x, getDBLink, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getDBLink, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getDBSource", "gbRecordList", function (x) {
-  vapply(x, getDBSource, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getDBSource, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getSource", "gbRecordList", function (x) {
-  vapply(x, getSource, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getSource, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getOrganism", "gbRecordList", function (x) {
-  vapply(x, getOrganism, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getOrganism, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getTaxonomy", "gbRecordList", function (x) {
-  vapply(x, getTaxonomy, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getTaxonomy, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getReference", "gbRecordList", function (x) {
@@ -130,11 +130,11 @@ setMethod("getReference", "gbRecordList", function (x) {
 })
 
 setMethod("getKeywords", "gbRecordList", function (x) {
-  vapply(x, getKeywords, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getKeywords, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 setMethod("getComment", "gbRecordList", function (x) {
-  vapply(x, getComment, FUN.VALUE=character(1), USE.NAMES=FALSE)
+  vapply(x, getComment, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
 

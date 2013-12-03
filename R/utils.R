@@ -89,6 +89,32 @@ modify_list <- function(a, b, mode=c("replace", "merge")) {
 }
 
 
+## divide the data in vector x into groups, where the start of
+## each group is defined by an element of index i
+##
+## e.g. x = (a, b, c, d, e, f, g)
+##      i = (1, 3, 6)
+##    res = (a,b), (c,d,e), (f,g)  
+ixsplit <- function(x, i, include_i = TRUE, collapse_x = FALSE, ...) {
+  l <- length(x)
+  if (max(i) > l) {
+    stop("index '", max(i), "' out of range")
+  }
+  j <- c(i[-1] - 1, l)
+  if (!include_i) {
+    i <- i + 1
+  }
+  if (any(i > j)) {
+    stop("start point large than end point")
+  }
+  FUN <- if (collapse_x) {
+    function(i) collapse(x[i], ...)
+  } else {
+    function(i) x[i]
+  }
+  lapply(.mapply(seq.int, list(i, j), NULL), FUN)
+}
+
 Call <- function(fn, ...) {
   fn <- match.fun(fn)
   fn(...)
@@ -124,14 +150,6 @@ usplit <- Compose("unlist", "strsplit")
 uusplit <- Compose("unique", "unlist", "strsplit")
 
 
-ellipsize <- function(obj, width=getOption("width"), ellipsis=" ...") {
-  str <- encodeString(obj)
-  ifelse(nchar(str) > width - 1,
-         paste0(substring(str, 1, width - nchar(ellipsis) - 1), ellipsis),
-         str)
-}
-
-
 dup <- function(x, n) {
   if (any(n < 0)) n[n < 0] <- 0
   vapply(.mapply(rep.int, list(rep.int(x, length(n)), n), NULL), paste0, collapse="", "")
@@ -148,6 +166,22 @@ trim <- function(x, trim = '\\s+') {
 
 wrap <- function(x, wrap = '"') {
   sprintf('%s%s%s', wrap, x, wrap)
+}
+
+
+collapse <- function(x, trim = TRUE, collapse = ' ') {
+  if (trim) {
+    x <- trim(x)
+  }
+  paste0(x, collapse=collapse)
+}
+
+
+ellipsize <- function(obj, width=getOption("width"), ellipsis=" ...") {
+  str <- encodeString(obj)
+  ifelse(nchar(str) > width - 1,
+         paste0(substring(str, 1, width - nchar(ellipsis) - 1), ellipsis),
+         str)
 }
 
 

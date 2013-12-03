@@ -3,10 +3,10 @@ NULL
 
 setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
 
-#' gbRecord-class
-#' 
+#' Class \code{"gbRecord"}
+#'
 #' \dQuote{gbRecord} is an S4 class that provides a container for data
-#' parsed from a GenBank record.
+#' parsed from a GenBank or GenPept record.
 #'
 #' @name gbRecord-class
 #' @rdname gbRecord-class
@@ -14,9 +14,9 @@ setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
 new_gbRecord <- setClass(
   "gbRecord",
   slots=c(
-    seqinfo = "seqinfo",
+    seqinfo  = "seqinfo",
     features = "gbFeatureList",
-    contig = "gbLocationOrNull"
+    contig   = "gbLocationOrNull"
   )
 )
 
@@ -74,7 +74,7 @@ setMethod(".defline", "gbRecord", function(x) {
 #' For a description of the GenBank format see
 #' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
 #'
-#' @param gb A vector of paths to GenBank record files,
+#' @param gbk A vector of paths to GenBank record files,
 #' an \code{\linkS4class{efetch}} object containing GenBank record(s), or
 #' a \code{textConnection} to a character vector that can be parsed as
 #' a Genbank record.
@@ -82,48 +82,48 @@ setMethod(".defline", "gbRecord", function(x) {
 #' @return A \code{\linkS4class{gbRecord}} or
 #' \code{\linkS4class{gbRecordList}} 
 #' @export
-gbRecord <- function(gb, with_sequence = TRUE) {
+gbRecord <- function(gbk, with_sequence = TRUE) {
   ##
   ## Parse 'efetch' objects
   ##
-  if (is(gb, "efetch")) {
+  if (is(gbk, "efetch")) {
     stopifnot(require(reutils))
-    if (rettype(gb) %ni% c('gb', 'gbwithparts', 'gp') || retmode(gb) != "text") {
+    if (rettype(gbk) %ni% c('gb', 'gbwithparts', 'gp') || retmode(gbk) != "text") {
       stop("Must use efetch with rettype='gbwithparts','gb', or 'gp' and retmode='text'")
     }
-    gb <- usplit(content(gb, "text"), "\n\n")
-    n <- length(gb)
-    gb_list <- vector("list", n)
+    gbk <- usplit(content(gbk, "text"), "\n\n")
+    n <- length(gbk)
+    gbk_list <- vector("list", n)
     for (i in seq_len(n)) {
-      gb_data <- usplit(gb[i], "\n")
-      gb_list[[i]] <- .parseGbRecord(gb_data, with_sequence)
+      gbk_data <- usplit(gbk[i], "\n")
+      gbk_list[[i]] <- parse_gb_record(gbk_data, with_sequence)
     }
   ##
   ## Parse random textConnections
   ##
-  } else if (is(gb, "textConnection")) {
-    con <- gb
+  } else if (is(gbk, "textConnection")) {
+    con <- gbk
     on.exit(close(con))
-    gb_list <- list(.parseGbRecord(gb_data=readLines(con), with_sequence))
+    gbk_list <- list(parse_gb_record(readLines(con), with_sequence))
   ##
   ## Parse GeneBank flat files  
   ##
-  } else if (tryCatch(all(file.exists(gb)), error = function() FALSE)) {
-    n <- length(gb)
-    gb_list <- vector("list", n)
+  } else if (tryCatch(all(file.exists(gbk)), error = function(e) FALSE)) {
+    n <- length(gbk)
+    gbk_list <- vector("list", n)
     for (i in seq_len(n)) {
-      con <- file(gb[i], open="rt")
-      gb_list[[i]] <- .parseGbRecord(gb_data=readLines(con), with_sequence)
+      con <- file(gbk[i], open="rt")
+      gbk_list[[i]] <- parse_gb_record(readLines(con), with_sequence)
       close(con)
     }
   } else {
     stop(paste0("'gb' must be the path to a GenBank flat file or an 'efetch' ",
                 "object containing GenBank records"))
   }
-  if (length(gb_list) == 1L) {
-    gb_list[[1L]]
+  if (length(gbk_list) == 1L) {
+    gbk_list[[1L]]
   } else {
-    gbRecordList(gb_list)
+    gbRecordList(gbk_list)
   }
 }
 
@@ -145,15 +145,15 @@ gbRecord <- function(gb, with_sequence = TRUE) {
       sprintf("%s instance with %i features\n", sQuote(class(x)), length(.features(x))),
       .header(x)$to_string(write_to_file = FALSE),
       if (length(S) != 0) {
-        if (Biostrings::width(S) < W - 14) {
+        if (Biostrings::width(S) < W - 16) {
           sprintf("ORIGIN      %s\n", XVector::toString(S))
         } else {
           sprintf("ORIGIN      %s\n            ...\n            %s\n",
                   XVector::toString(
-                    XVector::subseq(S, start=1, end=W - 14)
+                    XVector::subseq(S, start=1, end=W - 16)
                   ),
                   XVector::toString(
-                    XVector::subseq(S, start=length(S[[1L]]) -  W + 15,
+                    XVector::subseq(S, start=length(S[[1L]]) -  W + 17,
                                     end=length(S[[1L]]))
                   )
           )
@@ -269,25 +269,18 @@ setMethod("width", "gbRecord",
 # listers ----------------------------------------------------------------
 
 
-setMethod("listQualif", "gbRecord", 
-          function(x) {
-            lapply(.features(x), listQualif)
-          })
+setMethod("listQualif", "gbRecord", function(x) {
+  lapply(.features(x), listQualif)
+})
 
 
-# select -----------------------------------------------------------------
+
+# select, shift, revcomp ----------------------------------------------------
 
 
-setMethod("select", "gbRecord",
-          function(x, ..., keys = NULL, cols = NULL) {
-            ans <- .features(x)
-            ans <- .select(ans, ..., keys = keys)
-            ans <- .retrieve(ans, cols = cols)
-            ans
-          })
-
-
-# shift ------------------------------------------------------------------
+setMethod("select", "gbRecord", function(x, ..., keys = NULL, cols = NULL) {
+  .retrieve(.select(.features(x), ..., keys = keys), cols = cols)
+})
 
 
 setMethod("shift", "gbRecord", function(x, shift, split=FALSE, order=FALSE) {

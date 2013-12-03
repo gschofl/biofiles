@@ -25,21 +25,7 @@
 #   ORGANISM - Formal scientific name of the organism.
 #            - Taxonomic classification levels.
 #
-# REFERENCE - Citations for all articles containing the data reported
-# in this entry. Mandatory keyword. Six subkeywords. 
-# 
-#   AUTHORS	- Authors of the citation. Optional subkeyword.
-# 
-#   CONSRTM	- The collective names of consortia. Optional subkeyword.
-# 
-#   TITLE	- Full title of citation. Optional subkeyword.
-# 
-#   JOURNAL	- The journal name, volume, year, and page numbers of the citation.
-#   Mandatory subkeyword.
-# 
-#   PUBMED - The PubMed unique identifier for a citation. Optional subkeyword.
-# 
-#   REMARK	- The relevance of a citation. Optional subkeyword.
+# REFERENCE - See below
 #
 # COMMENT  - Cross-references to other sequence entries, comparisons to
 # other collections, notes of changes in LOCUS names, and other remarks.
@@ -169,7 +155,7 @@
 #' @name gbLocus-class
 #' @section Fields:
 #' \describe{
-#' \item{\code{lnm}:}{ Locus name. Usually the accession number.}
+#' \item{\code{lnm}:}{ Locus name. Usually the accession number. }
 #' \item{\code{len}:}{ Sequence length; In bp or aa, depending on \code{mtp}. }
 #' \item{\code{mtp}:}{ Molecule type; NA, DNA, RNA, tRNA (transfer RNA), rRNA (ribosomal RNA), 
 #'  mRNA (messenger RNA), uRNA (small nuclear RNA), or AA (protein sequence). RNAs
@@ -215,13 +201,274 @@ gbLocus <- function(locus_line) {
 }
 
 
-gbReferences <- function(ref_lines) {
-  return("Not implemented yet")
-  ref_idx <- grep("^REFERENCE", ref_lines)
-  idx <- Map(seq, ref_idx, c(ref_idx[-1] - 1, length(ref_lines)))
-  ref <- ref_lines[idx[[1]]]
-  auth_line <- grep("^  AUTHORS", ref, value=TRUE)
-  .parseAuthors <- function(auth_line) {}
+#### Layout of GenBank REFERENCE fields ####
+#
+# REFERENCE - Citations for all articles containing the data reported
+# in this entry. Mandatory keyword. Six subkeywords. 
+# 
+#   AUTHORS  - Authors of the citation. Mandatory subkeyword (or CONSRTM).
+# 
+#   CONSRTM  - The collective names of consortia. Optional subkeyword.
+# 
+#   TITLE  - Full title of citation. Optional subkeyword.
+# 
+#   JOURNAL	- The journal name, volume, year, and page numbers of the citation.
+#   Mandatory subkeyword.
+# 
+#   PUBMED - The PubMed unique identifier for a citation. Optional subkeyword.
+# 
+#   REMARK	- The relevance of a citation. Optional subkeyword.
+#
+#' Generator object for the \code{\linkS4class{gbReference}} class
+#'
+#' The generator object for the \code{\linkS4class{gbReference}} reference class.
+#'
+#' @param ... List of arguments.
+#' @section Methods:
+#' \describe{
+#' \item{\code{#new(refline, authors, consrtm, title, journal, pubmed, remark)}:}{
+#'    Create a new \code{\linkS4class{gbReference}} object}
+#' \item{\code{#to_string(write_to_file = FALSE)}:}{ Generate a character string
+#'    representation of a GenBank reference. }
+#' }
+#'  
+#' @seealso
+#'    \code{\linkS4class{gbReference}}
+#' @rdname gbReference
+#' @keywords classes internal
+#' @export
+.gbReference <- setRefClass(
+  'gbReference',
+  fields = list(
+    refline = 'character',
+    authors = 'character',
+    consrtm = 'character',
+    title   = 'character',
+    journal = 'character',
+    pubmed  = 'character',
+    remark  = 'character' 
+  ),
+  methods = list(
+    has_authors = function() {
+      length(authors) > 0L && !all(is.na(authors))
+    },
+    has_consrtm = function() {
+      length(consrtm) > 0L && !all(is.na(consrtm))
+    },
+    is_empty = function() {
+      (!has_authors() && !has_consrtm()) || length(journal) == 0L || all(is.na(journal))
+    },
+    to_string = function(write_to_file = FALSE) {
+      'Generate a character string representation of a GenBank reference'
+      if (write_to_file) {
+        w <- 79
+        f <- FALSE
+      } else {
+        w <- getOption("width") - 2
+        f <- TRUE
+      }
+      o <- i <- 12
+      paste0(
+        sprintf('%-12s%s\n', 'REFERENCE', refline),
+        if (has_authors()) {
+          if (length(authors) > 1) {
+            auth <- paste0(
+              paste0(authors[-length(authors)], collapse=", "), ' and ', authors[length(authors)]
+            )
+          } else {
+            auth <- authors
+          }
+          sprintf('  %-10s%s\n', 'AUTHORS', linebreak(auth, width=w, offset=o, FORCE=f))
+        } else '',
+        if (has_consrtm()) {
+          sprintf('  %-10s%s\n', 'CONSRTM', linebreak(consrtm, width=w, offset=o, FORCE=f))
+        } else '',
+        if (!is.na(title)) {
+          sprintf('  %-10s%s\n', 'TITLE', linebreak(title, width=w, offset=o, FORCE=f))
+        } else '',
+        sprintf('  %-10s%s\n', 'JOURNAL', linebreak(journal, width=w, offset=o, FORCE=f)),
+        if (!is.na(pubmed)) {
+          sprintf('  %-10s%s\n', 'PUBMED', pubmed)
+        } else '',
+        if (!is.na(remark)) {
+          sprintf('  %-10s%s\n', 'REMARK', linebreak(remark, width=w, offset=o, FORCE=f))
+        } else ''
+      )
+    },
+    show = function() {
+      'Method for automatically printing a Genbank file reference.'
+      if (is_empty()) {
+        showme <- sprintf("An empty %s instance.\n", sQuote(class(.self)))
+      } else {
+        showme <- paste0(
+          sprintf("A %s instance:\n", sQuote(class(.self))),
+          to_string(write_to_file = FALSE)
+        )
+      }
+      cat(showme, "\n")
+    }
+  )
+)
+
+
+#' Class \code{"gbReference"}
+#'
+#' A container for GenBank REFERENCE fields. 
+#' @name gbReference-class
+#' @section Fields:
+#' \describe{
+#' \item{\code{refline}:}{ Top line of a reference entry.}
+#' \item{\code{authors}:}{ Authors of the citation. Mandatory or \code{consrtm}. }
+#' \item{\code{consrtm}:}{ The collective names of consortiums. Optional.}
+#' \item{\code{title}:}  { Full title of citation. Optional. }
+#' \item{\code{journal}:}{ The journal name, volume, year, and page numbers of
+#'      the citation. Mandatory. }
+#' \item{\code{pubmed}:} { The PubMed unique identifier for a citation. Optional. }
+#' \item{\code{remark}:} { The relevance of a citation. Optional. }
+#' }
+#' @section Extends: All reference classes extend and inherit methods from
+#'    \code{"\linkS4class{envRefClass}"}.
+#' @seealso
+#'    \code{\link{.gbReference}}
+#' @keywords classes
+#' @examples
+#'
+#' showClass("gbReference")
+#'
+NULL
+
+
+set_reference <- function() {
+  ref <- .gbReference()
+  list(
+    refline=function(refline) {
+      if (is.empty(refline)) {
+        stop("field 'REFERENCE' missing")
+      }
+      ref$refline <- refline
+    },
+    authors=function(authors) {
+      ref$authors <- usplit(authors, ', | and ') %||% NA_character_
+    },
+    consrtm=function(consrtm) {
+      ref$consrtm <- consrtm %||% NA_character_
+    },
+    title=function(title) {
+      ref$title <- title %||% NA_character_
+    },
+    journal=function(journal) {
+      if (is.empty(journal)) {
+        stop("manadatory field 'JOURNAL' missing")
+      }
+      ref$journal <- journal
+    },
+    pubmed=function(pubmed) {
+      ref$pubmed <- pubmed %||% NA_character_
+    },
+    remark=function(remark) {
+      ref$remark <- remark %||% NA_character_
+    },
+    yield=function() {
+      return(ref)
+    }
+  )
+}
+
+
+#' @keywords internal
+gbReference <- function(ref) {
+  ## split by subkeywords
+  ref_idx <- grep("^ {0,3}[A-Z]+", ref)
+  ref_list <- ixsplit(ref, ref_idx, include_i=TRUE, collapse_x=TRUE)
+  ## 
+  kwd   <- vapply(ref_list, strsplitN, '\\s+', 1L, FUN.VALUE="")
+  field <- vapply(ref_list, strsplitN, '^[A-Z]+[^A-Z]\\s+', 2L, FUN.VALUE="")
+  ##
+  ref <- set_reference()
+  ref$refline(field[kwd == "REFERENCE"])
+  ref$authors(field[kwd == "AUTHORS"])
+  ref$consrtm(field[kwd == "CONSRTM"])
+  ref$title(field[kwd == "TITLE"])
+  ref$journal(field[kwd == "JOURNAL"])
+  ref$pubmed(field[kwd == "PUBMED"])
+  ref$remark(field[kwd == "REMARK"])
+  ref$yield()
+}
+
+
+#' Generator object for the \code{\linkS4class{gbReferenceList}} class
+#'
+#' The generator object for the \code{\linkS4class{gbReferenceList}} reference class.
+#'
+#' @param ... List of arguments
+#' @section Methods:
+#' \describe{
+#' \item{\code{#new(ref)}:}{
+#'    Create a new \code{\linkS4class{gbReferenceList}} object }
+#' \item{\code{#to_string(write_to_file = FALSE)}:}{
+#'    Create a character string representation of a GenBank reference list }
+#' }
+#'  
+#' @seealso
+#'    \code{\linkS4class{gbReferenceList}}
+#' @rdname gbReferenceList
+#' @keywords classes internal
+#' @export
+.gbReferenceList <- setRefClass(
+  'gbReferenceList',
+  fields = list('ref' = 'list'),
+  methods = list(
+    is_empty = function() {
+      length(ref) == 0L
+    },
+    to_string = function(write_to_file = FALSE) {
+      'Generate a character string representation of a GenBank reference list'
+      paste0(
+        vapply(ref, function(r) r$to_string(write_to_file = write_to_file), ""),
+        collapse=""
+      ) 
+    },
+    show = function() {
+      'Method for automatically printing Genbank file references.'
+      if (is_empty()) {
+        showme <- sprintf("An empty %s instance.\n", sQuote(class(.self)))
+      } else {
+        showme <- paste0(
+          sprintf("A %s instance:\n", sQuote(class(.self))),
+          to_string(write_to_file = FALSE)
+        )
+      }
+      cat(showme, "\n")
+    }
+  )
+)
+
+#' Class \code{"gbReferenceList"}
+#'
+#' A container for a set of GenBank REFERENCE fields. 
+#' @name gbReferenceList-class
+#' @section Fields:
+#' \describe{
+#' \item{\code{ref}:}{ A list of \code{\linkS4class{gbReference}} objects. }
+#' }
+#' @section Extends: All reference classes extend and inherit methods from
+#'    \code{"\linkS4class{envRefClass}"}.
+#' @seealso
+#'    \code{\link{.gbReferenceList}}
+#' @keywords classes
+#' @examples
+#'
+#' showClass("gbReferenceList")
+#'
+NULL
+
+
+#' @keywords internal
+gbReferenceList <- function(ref_lines) {
+  ## split references
+  ref_idx <- grep("REFERENCE", ref_lines, fixed=TRUE, ignore.case=FALSE)
+  ref_list <- ixsplit(ref_lines, ref_idx)
+  .gbReferenceList(ref = lapply(ref_list, gbReference))
 }
 
 
@@ -234,7 +481,11 @@ gbReferences <- function(ref_lines) {
 #' @section Methods:
 #' \describe{
 #' \item{\code{#new(...)}:}{
-#'    Create a new \code{\linkS4class{gbHeader}} object}
+#'    Create a new \code{\linkS4class{gbHeader}} object. }
+#' \item{\code{#to_string(write_to_file = FALSE)}:}{
+#'    Generate a character string representation of a GenBank file header. }
+#' \item{\code{#write(file = "", append = FALSE, sep = "\n"}:}{
+#'    Write a GenBank header to file. }
 #' }
 #' 
 #' @seealso
@@ -256,7 +507,7 @@ gbReferences <- function(ref_lines) {
     source = 'character',
     organism = 'character',
     taxonomy = 'character',
-    references = 'character',
+    references = 'gbReferenceList',
     comment = 'character'
   ),
   methods = list(
@@ -282,23 +533,15 @@ gbReferences <- function(ref_lines) {
         sprintf("%-12s%-12s%s%s\n", "VERSION", version, "GI:", strsplitN(seqid, "|", 2, fixed = TRUE)),
         if (!all(is.na(dblink))) {
           sprintf("%-12s%s%s\n", "DBLINK", "Project: ", dblink)
-        } else {
-          ""
-        },
+        } else '',
         sprintf("%-12s%s\n", "KEYWORDS", linebreak(keywords, width=w, offset=o, FORCE=f)),
         sprintf("%-12s%s\n", "SOURCE", linebreak(source, width=w, offset=o, FORCE=f)),
         sprintf("%-12s%s\n", "  ORGANISM",
                 paste0(organism, '\n', linebreak(taxonomy, width=w, indent=i, offset=o, FORCE=f))),
-        sprintf("%-12s%-3s(bases %s to %s)\n%-12s%s\n%-12s%s\n%-12s%s\n",
-                "REFERENCE", 1, 1, locus$len,
-                "  AUTHORS", "authors",
-                "  TITLE", "title",
-                "  JOURNAL", "journal"),
+        references$to_string(write_to_file = write_to_file),
         if (!is.na(comment)) {
           sprintf("%-12s%s\n", "COMMENTS", linebreak(comment, width=w, offset=o, FORCE=f))
-        } else {
-          ""
-        })
+        } else '')
     },
     show = function() {
       'Method for automatically printing a Genbank file header.'
@@ -345,7 +588,7 @@ gbReferences <- function(ref_lines) {
 #'      organism. }
 #' \item{\code{taxonomy}:}{ \code{character}; Taxonomic classification levels. }
 #' \item{\code{references}:}{ Citations for all articles containing data
-#'      reported in the entry. Yet to be implemented. }
+#'      reported in the entry.A \code{\linkS4class{gbReferenceList}} object. }
 #' \item{\code{comment}:}{ \code{character}; Remarks. }
 #' }
 #' @section Extends: All reference classes extend and inherit methods from
@@ -418,9 +661,9 @@ gbHeader <- function(gb_header) {
           gbk_idx[ref_idx[1]],
           (gbk_idx[ref_idx[length(ref_idx)] + 1] - 1) %|NA|% length(gb_header)
         )]
-    references <- gbReferences(ref_lines)
+    references <- gbReferenceList(ref_lines)
   } else {
-    references <- "Not available"
+    references <- .gbReferenceList()
   }
   ##
   ## COMMENT (Optional)
@@ -501,12 +744,12 @@ seqinfo <- setRefClass(
 
 #' Class \code{"seqinfo"}
 #'
-#' A container for shared date: Header and Sequence.  
+#' A container for shared data: Header and Sequence.  
 #' @name seqinfo-class
 #' @section Fields:
 #' \describe{
 #' \item{\code{header}:}{ A \code{\linkS4class{gbHeader}} object or \code{NULL}. }
-#' \item{\code{sequence}:}{  A \code{\linkS4class[Biostrings]{XStringSet}} object or \code{NULL}. }
+#' \item{\code{sequence}:}{  A \code{\linkS4class{XStringSet}} object or \code{NULL}. }
 #' }
 #' @section Extends: All reference classes extend and inherit methods from
 #'    \code{"\linkS4class{envRefClass}"}.
@@ -525,14 +768,14 @@ NULL
 setMethod('.header', 'seqinfo', function(x) {
   if (x$header_is_empty()) {
     warning("No header associated with this object", call.=FALSE)
-    return(.gbHeader$new())
+    return(.gbHeader())
   }
   x$header
 })
 
 setMethod('.sequence', 'seqinfo', function(x) {
   if (x$sequence_is_empty()) {
-    warning("No header associated with this object", call.=FALSE)
+    warning("No sequence associated with this object", call.=FALSE)
     return(new("BStringSet"))
   }
   x$sequence
@@ -558,8 +801,7 @@ setMethod("getDivision", "seqinfo", function(x) .locus(x)$div)
 
 
 setMethod("getDate", "seqinfo", function(x) {
-  c(create_date = .locus(x)$cdt,
-    update_date = .locus(x)$mdt)
+  c(create_date = .locus(x)$cdt, update_date = .locus(x)$mdt)
 })
 
 
@@ -606,12 +848,4 @@ setMethod("getKeywords", "seqinfo", function(x) .header(x)$keywords)
 
 
 setMethod("getComment", "seqinfo", function(x) .header(x)$comment)
-
-
-
-
-
-
-
-
 

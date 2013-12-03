@@ -46,8 +46,8 @@ setMethod("show", "gbFeatureList",
                 .showGbFeature(object[[lo]], showInfo=FALSE)
               }
             }
-            show(object@.seqinfo)
-            return(invisible(object))
+            show(.seqinfo(object))
+            invisible()
           })
 
 
@@ -300,10 +300,9 @@ setReplaceMethod("strand", "gbFeatureList",
 # listers ----------------------------------------------------------------
 
 
-setMethod("listQualif", "gbFeatureList", 
-          function (x) {
-            lapply(x, listQualif)
-          })
+setMethod("listQualif", "gbFeatureList", function (x) {
+  lapply(x, listQualif)
+})
 
 
 # testers ----------------------------------------------------------------
@@ -378,31 +377,23 @@ setMethod("[[", "gbFeatureList",
           })
 
 
-
-# select -----------------------------------------------------------------
-
-
-setMethod("select", "gbFeatureList", 
-          function (x, ..., keys = NULL, cols = NULL) {
-            ans <- .select(x, ..., keys = keys)
-            ans <- .retrieve(ans, cols = cols)
-            ans
-          })
-
-    
 # view -------------------------------------------------------------------
 
 
-setMethod("view", "gbFeatureList", 
-          function (x, n)  {
-            for (i in x[seq(if (missing(n)) length(x) else n)]){
-              show(i)
-              cat("\n")
-            }
-          })
+setMethod("view", "gbFeatureList", function (x, n)  {
+  for (i in x[seq(if (missing(n)) length(x) else n)]) {
+    show(i)
+    cat("\n")
+  }
+})
 
 
-# shift and revcomp --------------------------------------------------------
+# select, shift, revcomp ----------------------------------------------------
+
+
+setMethod("select", "gbFeatureList", function (x, ..., keys = NULL, cols = NULL) {
+  .retrieve(.select(x, ..., keys = keys), cols = cols)
+})
 
 
 setMethod("shift", "gbFeatureList", function(x, shift=0L, split=FALSE, order=FALSE) {
