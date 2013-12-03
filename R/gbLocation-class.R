@@ -4,7 +4,7 @@
 NULL
 
 
-#' gbLocation
+#' Class \code{"gbLocation"}
 #' 
 #' \dQuote{gbLocation} is an S4 class that provides a container for
 #' GenBank feature location descriptors.
@@ -15,13 +15,14 @@ NULL
 #' (e.g. <1..200).
 #' @slot strand An integer vector containing -1, 1, or NA.
 #' @slot compound A character code specifying how multiple ranges
-#' are joined. One of \sQuote{join}, \sQuote{order}, or \sQuote{bond}.
+#' are joined. One of \sQuote{join}, \sQuote{order}, \sQuote{bond}, or \sQuote(gap).
 #' @slot accession A character vector; the accession number of the sequence
 #' of the feature this location lives on.
 #' @slot remote A logical vector
 #' @slot type A character vector describing the type of the position. Normally
-#' an "R" for \sQuote{range} (e.g., 1..200 or point position 200) and "B"
-#' for \sQuote{between bases} (e.g., 36^37).
+#' an "R" for \sQuote{range} (e.g., \code{1..200} or point position \code{200}),
+#' a "B" for \sQuote{between bases} (e.g., \code{36^37}), or a "G" for gaps
+#' (e.g., \code{gap()}, \code{gap(30)}, or \code{gap(unk30)}).
 #'
 #' @details
 #' For more information see the 
@@ -49,7 +50,7 @@ setClass("gbLocation",
 
 #' @keywords internal
 #' @importFrom IRanges setValidity2
-setValidity2("gbLocation", function (object) {
+setValidity2("gbLocation", function(object) {
   # check range matrix
   if (!is.integer(object@range) || dim(object@range)[2] != 2 )
     return( "The 'range' slot should be a two-column, integer matrix." )
@@ -65,7 +66,7 @@ setValidity2("gbLocation", function (object) {
   # check compound character
   if (length(object@compound) > 1L || all_empty(object@compound) ||
         !object@compound %in% c("join", "order", "bond", NA_character_))
-    return("The 'compound' slot should contain either 'join', 'order', 'bond', or NA")
+    return("The 'compound' slot should contain either 'join', 'order', 'bond', 'gap', or NA")
   # For type 'B', check that nucleotides are adjoining
   if (any(object@type == "B") && any(object@range[,2] - object@range[,1][object@type == 'B'] != 1))
     return( "For span type 'B', start and end position must be adjacent" )
@@ -78,7 +79,7 @@ setValidity2("gbLocation", function (object) {
 
 
 setMethod("start", "gbLocation",
-          function (x, join = FALSE, drop = TRUE) {
+          function(x, join = FALSE, drop = TRUE) {
             if (join)
               min(x@range[, 1, drop = drop])
             else
@@ -87,7 +88,7 @@ setMethod("start", "gbLocation",
 
 
 setMethod("end", "gbLocation",
-          function (x, join = FALSE, drop = TRUE) {
+          function(x, join = FALSE, drop = TRUE) {
             if (join)
               max(x@range[, 2, drop = drop])
             else
@@ -96,7 +97,7 @@ setMethod("end", "gbLocation",
 
 
 setMethod("width", "gbLocation",
-          function (x, join = FALSE) {
+          function(x, join = FALSE) {
             if (join) 
               max(x@range[, 2]) - min(x@range[, 1]) + 1L
             else
@@ -105,7 +106,7 @@ setMethod("width", "gbLocation",
 
 
 setMethod("strand", "gbLocation",
-          function (x, join = FALSE) {
+          function(x, join = FALSE) {
             if (join || dim(x@range)[1] == 1L)
               unique(x@strand)
             else
@@ -114,18 +115,18 @@ setMethod("strand", "gbLocation",
 
 
 setMethod("fuzzy", "gbLocation",
-          function (x) x@fuzzy)
+          function(x) x@fuzzy)
 
 
 setMethod("getAccession", "gbLocation",
-          function (x) x@accession)
+          function(x) x@accession)
 
 
 # Replace methods -----------------------------------------------------
 
 
 setReplaceMethod("start", "gbLocation",
-                 function (x, check=TRUE, value) {
+                 function(x, check=TRUE, value) {
                    nrow <- dim(x@range)[1]
                    if (!is.numeric(value))
                      stop("replacement 'value' must be numeric")
@@ -145,7 +146,7 @@ setReplaceMethod("start", "gbLocation",
 
 
 setReplaceMethod("end", "gbLocation",
-                 function (x, check=TRUE, value) {
+                 function(x, check=TRUE, value) {
                    nrow <- dim(x@range)[1]
                    if (!is.numeric(value))
                      stop("replacement 'value' must be numeric")
@@ -165,7 +166,7 @@ setReplaceMethod("end", "gbLocation",
 
 
 setReplaceMethod("strand", "gbLocation",
-                 function (x, value) {
+                 function(x, value) {
                    nrow <- dim(x@range)[1]
                    if (length(value) > nrow)
                      value <- value[seq_len(nrow)]
@@ -183,7 +184,7 @@ setReplaceMethod("strand", "gbLocation",
 
 
 setAs("gbLocation", "character",
-      function (from) {
+      function(from) {
         nrow <- dim(from@range)[1]
         if (nrow == 0)
           return(character())
@@ -194,28 +195,32 @@ setAs("gbLocation", "character",
           cmp <- from@compound
           acc <- from@accession
           rem <- from@remote
-          span <- ifelse(from@type == 'B', "^", "..")
+          typ <- from@type
+          span <- vapply(typ, switch, "R"="..", "B"="^", "G"="",
+                         FUN.VALUE="", USE.NAMES=FALSE)
           pos <- ifelse(rng[,1] == rng[,2],
                         paste0(
-                          ifelse(fuz[,1], 
+                          ifelse(fuz[,1],
                                  "<",
-                                 ifelse(fuz[,2], 
-                                        ">",
-                                        "")
-                                 ),
-                          rng[,1]
-                        ), 
+                                 ifelse(fuz[,2], ">", "")
+                          ),
+                          ifelse(typ == "G", "", rng[,1])
+                        ),
                         paste0(
-                          ifelse(fuz[,1], "<", "" ),
-                          rng[,1],
+                          ifelse(fuz[,1],
+                                 ifelse(typ == "G", "unk", "<"),
+                                 ""),
+                          ifelse(typ == "G", "", rng[,1]),
                           span,
                           ifelse(fuz[,2], ">", "" ),
                           rng[,2]
                         )
           )
+          pos[pos == "<"] <- ""
           pos <- ifelse(rem,
                         paste0(acc, ":", pos),
                         pos)
+          pos <- ifelse(typ == "G", paste0("gap(", pos, ")"), pos)
           res <- 
             if (length(unique(str)) == 1) {
               paste0(
@@ -243,11 +248,11 @@ setAs("gbLocation", "character",
 
 
 setAs("character", "gbLocation",
-      function (from) gbLocation(from))
+      function(from) gbLocation(from))
 
 
 #' @export
-as.gbLocation <- function (base_span) {
+as.gbLocation <- function(base_span) {
   as(as.character(base_span), "gbLocation")
 }
 
@@ -256,7 +261,7 @@ as.gbLocation <- function (base_span) {
 
 
 setMethod("shift", "gbLocation",
-          function (x, shift = 0L, ...) {
+          function(x, shift = 0L, ...) {
             if (!is.numeric(shift))
               stop("'shift' must be an integer")
             if (!is.integer(shift))
@@ -276,7 +281,7 @@ setMethod("shift", "gbLocation",
 
 
 setMethod("show", "gbLocation",
-          function (object) {
+          function(object) {
             res <- as(object, "character")
             cat(linebreak(res, FORCE=TRUE), "\n" )
           })

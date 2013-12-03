@@ -1,7 +1,7 @@
 \docType{class}
 \name{gbLocation-class}
 \alias{gbLocation-class}
-\title{gbLocation}
+\title{Class \code{"gbLocation"}}
 \description{
 \dQuote{gbLocation} is an S4 class that provides a
 container for GenBank feature location descriptors.
@@ -23,7 +23,7 @@ sequence span.}
 \item{\code{strand}}{An integer vector containing -1, 1, or NA.}
 
 \item{\code{compound}}{A character code specifying how multiple ranges
-are joined. One of \sQuote{join}, \sQuote{order}, or \sQuote{bond}.}
+are joined. One of \sQuote{join}, \sQuote{order}, \sQuote{bond}, or \sQuote(gap).}
 
 \item{\code{accession}}{A character vector; the accession number of the sequence
 of the feature this location lives on.}
@@ -31,7 +31,8 @@ of the feature this location lives on.}
 \item{\code{remote}}{A logical vector}
 
 \item{\code{type}}{A character vector describing the type of the position. Normally
-an "R" for \sQuote{range} (e.g., 1..200 or point position 200) and "B"
-for \sQuote{between bases} (e.g., 36^37).}
+an "R" for \sQuote{range} (e.g., \code{1..200} or point position \code{200}),
+a "B" for \sQuote{between bases} (e.g., \code{36^37}), or a "G" for gaps
+(e.g., \code{gap()}, \code{gap(30)}, or \code{gap(unk30)}).}
 }}
 

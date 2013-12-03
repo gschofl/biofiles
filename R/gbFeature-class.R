@@ -157,6 +157,10 @@ setMethod("getKeywords", "gbFeature", function(x) getKeywords(.seqinfo(x)) )
 
 setMethod("getComment", "gbFeature", function(x) getComment(.seqinfo(x)) )
 
+setMethod("header", "gbFeature", function(x) .header(.seqinfo(x)))
+
+setMethod("getHeader", "gbFeature", function(x) .header(.seqinfo(x)))
+
 setMethod("start", "gbFeature",
           function(x, join = FALSE, drop = TRUE) 
             start(x@location, join = join, drop = drop))

@@ -12,7 +12,7 @@ struct BaseSpan {
     int strand;
     std::string accession;
     bool remote;
-    char type;
+    std::string type;
 };
 
 void parse_simple_span(
@@ -61,10 +61,14 @@ unsigned int extractNumber(const std::string& str);
  *   join(location,location,...)
  *   order(location,location,...)
  *   bond(location,location,...) only in GenPept files
+ *   gap(), gap(X), gap(unkX)    in contigs
  */
 
 // complement
 static const boost::regex COMPL("^complement");
+
+// gap
+static const boost::regex GAP("^gap");
 
 // compound
 static const boost::regex CMPND("(join|order|bond)");
@@ -75,6 +79,9 @@ static const boost::regex BETWEEN_BASES("\\d+\\^\\d+");
 // split bases 
 static const boost::regex BASESPLIT(
     "([<>]?\\d+)(\\.\\.|\\^)?([<>]?\\d+)?");
+    
+// gap length
+static const boost::regex GAPLEN("gap\\((unk)?(\\d+)?\\)");
 
 // remote accession
 static const boost::regex RA(
@@ -91,9 +98,9 @@ static const boost::regex PCSL(
         "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"  
         "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
     "|"
-        "complement\\("
+        "(complement|gap)\\("
             "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"
-            "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
+            "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+|(unk)?(\\d+)?)"
         "\\)"
     ")$");
 
@@ -103,9 +110,9 @@ static const boost::regex SLC(
         "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"  
         "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
     "|"
-        "complement\\("
+        "(complement|gap)\\("
             "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"
-            "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
+            "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+|(unk)?(\\d+)?)"
         "\\)"
     ")"
     "(,"
@@ -113,9 +120,9 @@ static const boost::regex SLC(
             "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"  
             "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
         "|"
-            "complement\\("
+            "(complement|gap)\\("
                 "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"
-                "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
+                "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+|(unk)?(\\d+)?)"
             "\\)"
         ")"
     ")*");
@@ -127,9 +134,9 @@ static const boost::regex CL(
             "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"  
             "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
         "|"
-            "complement\\("
+            "(complement|gap)\\("
                 "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"
-                "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
+                "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+|(unk)?(\\d+)?)"
             "\\)"
         ")"
         "(,"
@@ -137,9 +144,9 @@ static const boost::regex CL(
                 "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"  
                 "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
             "|"
-                "complement\\("
+                "(complement|gap)\\("
                     "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"
-                    "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
+                    "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+|(unk)?(\\d+)?)"
                 "\\)"
             ")"
         ")*"
@@ -153,9 +160,9 @@ static const boost::regex PCCL(
                 "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"  
                 "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
             "|"
-                "complement\\("
+                "(complement|gap)\\("
                     "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"
-                    "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
+                    "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+|(unk)?(\\d+)?)"
                 "\\)"
             ")"
             "(,"
@@ -163,9 +170,9 @@ static const boost::regex PCCL(
                       "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"  
                       "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
                 "|"
-                    "complement\\("
+                    "(complement|gap)\\("
                         "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"
-                        "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+)"
+                        "([<>]?\\d+\\.\\.[<>]?\\d+|\\d+\\^\\d+|[<>]?\\d+|(unk)?(\\d+)?)"
                     "\\)"
                 ")"
             ")*"

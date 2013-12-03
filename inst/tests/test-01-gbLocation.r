@@ -55,6 +55,19 @@ test_that("Location descriptors parse correctly", {
     "bond\\(12,63\\)")
 })
 
+test_that("Contig descriptors parse correctly", {
+  expect_output( 
+    show(gbLocation("join(AACY020610556.1:1..761,gap(51),complement(AACY020885497.1:1..846))")),
+    "join\\(AACY020610556.1:1..761,gap\\(51\\),complement\\(AACY020885497.1:1..846\\)\\)")
+  
+  expect_output( 
+    show(gbLocation("join(complement(AADE01002756.1:1..10234),gap(1206),
+      AADE01006160.1:1..1963,gap(unk323),AADE01002525.1:1..11915,gap(),
+      AADE01005641.1:1..2377)")),
+    "join\\(complement\\(AADE01002756.1:1..10234\\),gap\\(1206\\),AADE01006160.1:1..1963,gap\\(unk323\\),AADE01002525.1:1..11915,gap\\(\\),AADE01005641.1:1..2377\\)")
+  
+})
+
 a <- gbLocation("join(1..100,J00194.1:100..202)")
 b <- gbLocation("complement(join(2691..4571,4918..5163))")
 c <- gbLocation("join(<2691..4571,4918..>5163)")

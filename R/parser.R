@@ -5,8 +5,9 @@ NULL
 
 parse_gb_record <- function(gb_data, with_sequence = TRUE) {
   # get a vector with the positions of the main GenBank fields
+  l <- length(gb_data)
   gbf <- grep("^[A-Z//]+", gb_data)
-  gbf_names <- strsplitN(gb_data[gbf], split=" +", 1)
+  gbf_names <- strsplitN(gb_data[gbf], split=" +", 1L)
   names(gbf) <- gbf_names
   gb_contig <- gb_sequence <-  NULL
   
@@ -29,13 +30,16 @@ parse_gb_record <- function(gb_data, with_sequence = TRUE) {
       gb_sequence <- gb_data[seq_idx]
     }
   } else if (!is.na(contig <- gbf["CONTIG"])) {
-    gb_contig <- gbLocation(strsplitN(gb_data[contig], "CONTIG", 2, fixed=TRUE))
+    contig_line <- strsplitN(collapse(gb_data[seq.int(contig, l-1)], collapse=''),
+                             'CONTIG', 2L, fixed=TRUE)
+    gb_contig <- gbLocation(contig_line)
   }
+  
   seqenv$sequence <- gbSequence(gb_sequence, getAccession(seqenv), getMoltype(seqenv))
   
   ## FEATURES
   if (match("FEATURES", gbf_names) == length(gbf)) {
-    gb_features <- gb_data[seq.int(gbf["FEATURES"] + 1, length(gb_data) - 1)]
+    gb_features <- gb_data[seq.int(gbf["FEATURES"] + 1, l - 1)]
   } else {
     gb_features <- gb_data[seq.int(gbf["FEATURES"] + 1, gbf[match("FEATURES", gbf_names) + 1] - 1)]
   }

@@ -6,7 +6,15 @@ setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
 #' Class \code{"gbRecord"}
 #'
 #' \dQuote{gbRecord} is an S4 class that provides a container for data
-#' parsed from a GenBank or GenPept record.
+#' parsed from a GenBank or GenPept records. For instantiation a gbRecord
+#' object use the import function \code{\link{gbRecord}}.
+#' 
+#' @slot seqinfo A \code{\linkS4class{seqinfo}} instance; This is a 
+#' reference class holding the sequence as an \code{\linkS4class{XStringSet}}
+#' instance and header of the file containing metadata as a
+#' \code{\linkS4class{gbHeader}} object.
+#' @slot features A \code{\linkS4class{gbFeatureList}} instance.
+#' @slot contig If present, a CONTIG record.
 #'
 #' @name gbRecord-class
 #' @rdname gbRecord-class
@@ -27,61 +35,50 @@ setValidity2("gbRecord", function(object) {
 })
 
 
-# Internal getters ----------------------------------------------------------
-
-
-setMethod('.seqinfo', 'gbRecord', function(x) {
-  x@seqinfo
-})
-
-setMethod('.features', 'gbRecord', function(x) {
-  x@features
-})
-
-setMethod('.contig', 'gbRecord', function(x) {
-  x@contig
-})
-
-setMethod('.locus', 'gbRecord', function(x) {
-  .locus(.seqinfo(x))
-})
-
-setMethod('.header', 'gbRecord', function(x) {
-  .header(.seqinfo(x))
-})
-
-setMethod('.sequence', 'gbRecord', function(x) {
-  .sequence(.seqinfo(x))
-})
-
-setMethod('.dbSource', 'gbRecord', function(x) {
-  parse_dbsource(getDBSource(x))
-})
-
-setMethod(".defline", "gbRecord", function(x) {
-  paste0('gi|', getGeneID(x), .dbSource(x), getAccession(x), ' ', getDefinition(x))
-})
-
-
 # constructor ------------------------------------------------------------
 
 
-#' \code{gbRecord} or \code{\linkS4class{gbRecordList}} objects can be
-#' construced by parsing GenBank flat files or an \code{\linkS4class{efetch}}
-#' object containing one or more GenBank records.
-#'
+#' Read a GenBank/GenPept-format file.
+#' 
+#' Import data from GenBank/GenPept files into R, represented as an instance
+#' of the \code{\linkS4class{gbRecord}} or \code{\linkS4class{gbRecordList}}
+#' classes.
+#' 
 #' @details
-#' For a description of the GenBank format see
+#' For a sample GenBank record see
+#' \url{http://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html},
+#' for a detailed description of the GenBank feature table format see
 #' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
 #'
-#' @param gbk A vector of paths to GenBank record files,
-#' an \code{\linkS4class{efetch}} object containing GenBank record(s), or
+#' @param gbk A vector of paths to GenBank format files,
+#' an \code{\link[reutils]{efetch}} object containing GenBank record(s), or
 #' a \code{textConnection} to a character vector that can be parsed as
 #' a Genbank record.
 #' @param with_sequence Include sequence information if avaliable.
-#' @return A \code{\linkS4class{gbRecord}} or
-#' \code{\linkS4class{gbRecordList}} 
+#' @return An instance of the \code{\linkS4class{gbRecord}} or
+#' \code{\linkS4class{gbRecordList}} classes.
+#' @rdname gbRecord
 #' @export
+#' @examples
+#' ### import from file
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' x <- gbRecord(gbk_file)
+#' getHeader(x)
+#' getFeatures(x)
+#' 
+#' ### quickly extract features as GRanges
+#' ranges(x["CDS"], include=c("product", "note", "protein_id"))
+#' 
+#' ### import directly from NCBI
+#' \dontrun{
+#' require(reutils)
+#' x <- gbRecord(efetch("139189709", "protein", rettype="gp", retmode="text"))
+#' x
+#' }
+#' 
+#' ## Directly subset features
+#' x[[1]]
+#' 
 gbRecord <- function(gbk, with_sequence = TRUE) {
   ##
   ## Parse 'efetch' objects
@@ -104,7 +101,7 @@ gbRecord <- function(gbk, with_sequence = TRUE) {
   } else if (is(gbk, "textConnection")) {
     con <- gbk
     on.exit(close(con))
-    gbk_list <- list(parse_gb_record(readLines(con), with_sequence))
+    gbk_list <- list(parse_gb_record(gb_data=readLines(con), with_sequence))
   ##
   ## Parse GeneBank flat files  
   ##
@@ -192,45 +189,88 @@ setMethod("summary", "gbRecord",
           })
 
 
+# Internal getters ----------------------------------------------------------
+
+
+setMethod('.seqinfo', 'gbRecord', function(x) {
+  x@seqinfo
+})
+
+setMethod('.features', 'gbRecord', function(x) {
+  x@features
+})
+
+setMethod('.contig', 'gbRecord', function(x) {
+  x@contig
+})
+
+setMethod('.locus', 'gbRecord', function(x) {
+  .locus(.seqinfo(x))
+})
+
+setMethod('.header', 'gbRecord', function(x) {
+  .header(.seqinfo(x))
+})
+
+setMethod('.sequence', 'gbRecord', function(x) {
+  .sequence(.seqinfo(x))
+})
+
+setMethod('.dbSource', 'gbRecord', function(x) {
+  parse_dbsource(getDBSource(x))
+})
+
+setMethod(".defline", "gbRecord", function(x) {
+  paste0('gi|', getGeneID(x), .dbSource(x), getAccession(x), ' ', getDefinition(x))
+})
+
+
 # getters ----------------------------------------------------------------
 
-setMethod("getLocus", "gbRecord", function(x) getLocus(.seqinfo(x)) )
 
-setMethod("getLength", "gbRecord", function(x) getLength(.seqinfo(x)) )
+setMethod("getLocus", "gbRecord", function(x) getLocus(.seqinfo(x)))
 
-setMethod("getMoltype", "gbRecord", function(x) getMoltype(.seqinfo(x)) )
+setMethod("getLength", "gbRecord", function(x) getLength(.seqinfo(x)))
 
-setMethod("getTopology", "gbRecord", function(x) getTopology(.seqinfo(x)) )
+setMethod("getMoltype", "gbRecord", function(x) getMoltype(.seqinfo(x)))
 
-setMethod("getDivision", "gbRecord", function(x) getDivision(.seqinfo(x)) )
+setMethod("getTopology", "gbRecord", function(x) getTopology(.seqinfo(x)))
 
-setMethod("getDate", "gbRecord", function(x) getDate(.seqinfo(x)) )
+setMethod("getDivision", "gbRecord", function(x) getDivision(.seqinfo(x)))
+
+setMethod("getDate", "gbRecord", function(x) getDate(.seqinfo(x)))
   
-setMethod("getDefinition", "gbRecord", function(x) getDefinition(.seqinfo(x)) )
+setMethod("getDefinition", "gbRecord", function(x) getDefinition(.seqinfo(x)))
 
-setMethod("getAccession", "gbRecord", function(x) getAccession(.seqinfo(x)) )
+setMethod("getAccession", "gbRecord", function(x) getAccession(.seqinfo(x)))
 
-setMethod("getVersion", "gbRecord", function(x) getVersion(.seqinfo(x)) )
+setMethod("getVersion", "gbRecord", function(x) getVersion(.seqinfo(x)))
 
 setMethod("getGeneID", "gbRecord", function(x, db='gi') getGeneID(.seqinfo(x), db=db) )
 
-setMethod("getDBLink", "gbRecord", function(x) getDBLink(.seqinfo(x)) )
+setMethod("getDBLink", "gbRecord", function(x) getDBLink(.seqinfo(x)))
 
-setMethod("getDBSource", "gbRecord", function(x) getDBSource(.seqinfo(x)) )
+setMethod("getDBSource", "gbRecord", function(x) getDBSource(.seqinfo(x)))
 
-setMethod("getSource", "gbRecord", function(x) getSource(.seqinfo(x)) )
+setMethod("getSource", "gbRecord", function(x) getSource(.seqinfo(x)))
 
-setMethod("getOrganism", "gbRecord", function(x) getOrganism(.seqinfo(x)) )
+setMethod("getOrganism", "gbRecord", function(x) getOrganism(.seqinfo(x)))
 
-setMethod("getTaxonomy", "gbRecord", function(x) getTaxonomy(.seqinfo(x)) )
+setMethod("getTaxonomy", "gbRecord", function(x) getTaxonomy(.seqinfo(x)))
 
-setMethod("getReference", "gbRecord", function(x) getReference(.seqinfo(x)) )
+setMethod("getReference", "gbRecord", function(x) getReference(.seqinfo(x)))
 
-setMethod("getKeywords", "gbRecord", function(x) getKeywords(.seqinfo(x)) )
+setMethod("getKeywords", "gbRecord", function(x) getKeywords(.seqinfo(x)))
 
-setMethod("getComment", "gbRecord", function(x) getComment(.seqinfo(x)) )
+setMethod("getComment", "gbRecord", function(x) getComment(.seqinfo(x)))
+
+setMethod("getHeader", "gbRecord", function(x) .header(x))
+
+setMethod("header", "gbRecord", function(x) .header(x))
 
 setMethod("getFeatures", "gbRecord", function(x) .features(x))
+
+setMethod("ft", "gbRecord", function(x) .features(x))
 
 setMethod("getSequence", "gbRecord",  function(x) .sequence(x))
 
@@ -264,6 +304,45 @@ setMethod("width", "gbRecord",
           function(x, join = FALSE) {
             width(.features(x), join = join)
           })
+
+
+# subsetting ----------------------------------------------------------------
+
+
+#' @export
+setMethod("[", c("gbRecord", "character", "missing", "ANY"),
+          function(x, i, j, ..., drop = TRUE) {
+            .features(x)[i, ...]
+          })
+
+
+#' @export
+setMethod("[", c("gbRecord", "numeric", "missing", "ANY"),
+          function(x, i, j, ..., drop = TRUE) {
+            .features(x)[i, ...]
+          })
+
+
+#' @export
+setMethod("[", c("gbRecord", "logical", "missing", "ANY"),
+          function(x, i, j, ..., drop = TRUE) {
+            .features(x)[i, ...]
+          })
+
+
+#' @export
+setMethod("[", c("gbRecord", "missing", "missing", "ANY"),
+          function(x, i, j, ..., drop = TRUE) {
+            .features(x)
+          })
+
+
+#' @export
+setMethod("[[", "gbRecord",
+          function(x, i, j, ...) {
+            .features(x)[[i]]
+          })
+
 
 
 # listers ----------------------------------------------------------------

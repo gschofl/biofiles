@@ -39,3 +39,54 @@ proteinID <- Partial("qualif", which="protein_id", use.names=FALSE)
 #' @export
 translation <- function(x) AAStringSet(.translation(x))
 
+
+#' Retrieve the sequence of a contig
+#' 
+#' ## EXPERIMENTAL ##
+#' 
+#' @param x gbRecord
+#' @keywords internal
+#' @importFrom Biostrings width unlist DNAStringSet
+#' @importFrom IRanges metadata "metadata<-"
+getContigSeq <- function(x, merge = TRUE) {
+  stopifnot(require(reutils)) 
+  db <- switch(getMoltype(x), AA="protein", "nuccore")
+  contig <- .contig(x)
+  s <- start(contig)
+  e <- end(contig)
+  w <- biofiles::width(contig)
+  str <- strand(contig)
+  acc <- getAccession(contig)
+  dna <- DNAStringSet()
+  for (i in seq_along(acc)) {
+    if (!nzchar(acc[i])) {
+      dna <- c(dna, DNAStringSet(dup('N', w[i])))
+      dna@ranges@NAMES[i] <- paste0('Gap:', w[i])
+    } else {
+      f <- efetch(acc[i], db, "fasta", "xml", seqstart=s[i], seqstop=e[i])
+      if (str[i] == -1) {
+        dna <- c(dna, reverseComplement(DNAStringSet(f$xmlValue("//TSeq_sequence"))))
+      } else {
+        dna <- c(dna, DNAStringSet(f$xmlValue("//TSeq_sequence")))
+      }
+      dna@ranges@NAMES[i] <- paste0('Acc:', f$xmlValue("//TSeq_accver"),
+                                    ';GI:', f$xmlValue("//TSeq_gi"),
+                                    ';SID:', f$xmlValue("//TSeq_sid"),
+                                    ';TaxId:', f$xmlValue("//TSeq_taxid"),
+                                    ';defline:', f$xmlValue("//TSeq_defline"))
+    }
+  }
+  
+  if (merge) {
+    is <- c(1, cumsum(Biostrings::width(dna)) + 1)
+    is <- is[-length(is)]
+    ie <- cumsum(Biostrings::width(dna))
+    r <- IRanges(start=is, end=ie, names=names(dna))
+    res <- DNAStringSet(Biostrings::unlist(dna))
+    metadata(res) <- list(ranges = r)
+    return(res)
+  }
+  
+  dna
+}
+

@@ -1,4 +1,5 @@
 #' @keywords internal
+#' @importFrom IRanges elementMetadata "elementMetadata<-"
 .retrieve <- function (x, cols = NULL) {
   
   if (all_empty(x) || is.null(cols))

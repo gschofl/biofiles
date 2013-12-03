@@ -143,58 +143,76 @@ void parse_simple_span(
     std::vector<bool> fuzzy(2, false);
     int strand(1);
     bool remote(false);
-    char type = 'R';
+    std::string type("R");
   
     // test for complement
     if ( boost::regex_search(b_it, e_it, m, COMPL) ) {
         strand = -1;
     }
     
-    // match remote accession (capture group 1) and
-    // genomic span (capture group 4)
-    boost::regex_search(b_it, e_it, m, RASL);
-    if (m[1].matched) {
-        remote = true;
-        accession = m[2];  // remote accession without colon
-        b_it = m[4].first;
-        e_it = m[4].second;
+    // test for gap
+    if ( boost::regex_search(b_it, e_it, m, GAP) ) {
+        // we have matched a gap -> gap(), gap(X), gap(unkX)
+        type = "G";
+        accession = "";
+        start = "1";
+        // gap length
+        boost::regex_search(b_it, e_it, m, GAPLEN);
+        if (m[1].matched /* gap(unkX) */ | !m[2].matched /* gap() */) {
+            fuzzy[0] = true;
+        }
+        if (m[2].matched /* gap(34) | gap(unk34) */) {
+            end = m[2];
+        } else { /* gap() */
+            end = "1";
+        }
     } else {
-        b_it = m[0].first;
-        e_it = m[0].second;
-    }
-    //Rcpp::Rcout << accn << std::endl;
-    //Rcpp::Rcout << *b_it << " ... " << *e_it << std::endl;
+        // match remote accession (capture group 1) and
+        // genomic span (capture group 4)
+        boost::regex_search(b_it, e_it, m, RASL);
+        if (m[1].matched) {
+            remote = true;
+            accession = m[2];  // remote accession without colon
+            b_it = m[4].first;
+            e_it = m[4].second;
+        } else {
+            b_it = m[0].first;
+            e_it = m[0].second;
+        }
+        //Rcpp::Rcout << accn << std::endl;
+        //Rcpp::Rcout << *b_it << " ... " << *e_it << std::endl;
 
-    // get type
-    if( boost::regex_search(b_it, e_it, m, BETWEEN_BASES) ) {
-        type = 'B';
+        // get type
+        if ( boost::regex_search(b_it, e_it, m, BETWEEN_BASES) ) {
+            type = "B";
+        }
+  
+        // split span
+        boost::regex_search(b_it, e_it, m, BASESPLIT);
+        start = m[1];
+        if ( m[3].matched ) {
+            end = m[3];
+        } else {
+            end = start;
+        }
+        
+        // get fuzzy
+        static const boost::regex FUZZY_START("^<\\d+$");
+        static const boost::regex FUZZY_END("^>\\d+$");
+        fuzzy[0] = boost::regex_match(start, m, FUZZY_START );
+        fuzzy[1] = boost::regex_match(end, m, FUZZY_END );
     }
-  
-    // split span
-    boost::regex_search(b_it, e_it, m, BASESPLIT);
-    start = m[1];
-    if ( m[3].matched ) {
-        end = m[3];
-    } else {
-        end = start;
-    }
-  
-    // get fuzzy
-    static const boost::regex FUZZY_START("^<\\d+$");
-    static const boost::regex FUZZY_END("^>\\d+$");
-    fuzzy[0] = boost::regex_match(start, m, FUZZY_START );
-    fuzzy[1] = boost::regex_match(end, m, FUZZY_END );
-  
+
     // get range
     range[0] = extractNumber(start);
     range[1] = extractNumber(end);
-    
+
     try {
       // throw error if the end point comes before the start point.
       if (range[0] > range[1])
         throw std::range_error("Inadmissible range: start point is larger than end point.");
       // throw error if type = 'B' and end point is not adjacent to start point.
-      if ((type == 'B') & (range[1] - range[0] != 1))
+      if ((type == "B") & (range[1] - range[0] != 1))
         throw std::range_error("Inadmissible range: For span of type '36^37', start and end positions must be adjacent");
       
       bs.range = range;

@@ -7,12 +7,13 @@ NULL
 # The biofiles API -------------------------------------------------------
 
 ##    Basic getters/setters in
-##    gbLocation-class, gbFeature-class, gbFeatureList-class
+##    gbLocation, gbFeature, gbFeatureList, gbRecord
 ##      start, end, strand, width
 ##      start<-, end<-, strand<-
+##      ranges
 ##
 ##    Getters/setters in gbLocation-class
-##      ranges, fuzzy, accession
+##      fuzzy, accession
 ##
 ##    Getters/setters in gbFeature-class, gbFeatureList-class
 ##      index, key, location, ranges, sequence, seqinfo
@@ -20,7 +21,7 @@ NULL
 ##      key<-, qualif<-
 ##
 ##    Getters/setters in gbRecord-class
-##      features, sequence, accession, definition
+##      locus, reference accession, definition
 ##
 ##    Testing methods in gbFeature-class, gbFeatureList-class
 ##      hasKey, hasQualif
@@ -264,29 +265,53 @@ setGeneric('getReference', function (x) standardGeneric('getReference'))
 #' @docType methods
 setGeneric('getComment', function (x) standardGeneric('getComment'))
 
-#' Retrieve feature tables from a GenBank record.
+#' Get the feature table from a GenBank record.
 #'
 #' @param x A \code{\linkS4class{gbRecord}} instance.
 #' @param ... Additional arguments passed to methods.
-#' @return The \code{\linkS4class{gbFeatureList}} object contained in a
-#' gbRecord database.
-#' @rdname accessors
+#' @return The \code{\linkS4class{gbFeatureList}} of a Genbank record.
+#' @rdname feature-methods
 #' @export
 #' @docType methods
-setGeneric("getFeatures", function (x, ...) standardGeneric("getFeatures"))
+setGeneric("getFeatures", function(x, ...) standardGeneric("getFeatures"))
 
 
-#' Retrieve sequence from a GenBank record or a Feature.
+#' @rdname feature-methods
+#' @export
+#' @docType methods
+setGeneric("ft", function(x, ...) standardGeneric("ft"))
+
+
+#' Get the sequence from a GenBank record.
 #' 
 #' @param x A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeature}},
 #'  or \code{\linkS4class{gbFeatureList}} instance.
 #' @param ... Additional arguments passed to methods.
 #' @return An \code{\linkS4class{XStringSet}} object.
-#' @rdname accessors
+#' @rdname sequence-methods
 #' @export
 #' @docType methods
 setGeneric("getSequence", function(x, ...) standardGeneric("getSequence"))
 
+
+#' Get the header from a GenBank record.
+#' 
+#' @param x A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeature}},
+#'  or \code{\linkS4class{gbFeatureList}} instance.
+#' @param ... Additional arguments passed to methods.
+#' @return An \code{\linkS4class{gbHeader}} object.
+#' @rdname header-methods
+#' @export
+#' @docType methods
+#' @rdname header-methods
+#' @export
+#' @docType methods
+setGeneric("getHeader", function(x, ...) standardGeneric("getHeader"))
+
+#' @rdname header-methods
+#' @export
+#' @docType methods
+setGeneric("header", function(x, ...) standardGeneric("header"))
 
 ### The "annotation" generic is defined in the BiocGenerics package.
 #' Retrieve annotation
@@ -369,19 +394,17 @@ setGeneric("key<-", signature="x",
 #' @rdname qualif
 #' @export
 #' @docType methods
-setGeneric("qualif", signature=c("x", "which"),
-           function(x, which, ...) {
-             standardGeneric("qualif")
-           })
+setGeneric("qualif", signature=c("x", "which"), function(x, which, ...) {
+  standardGeneric("qualif")
+})
 
 
 #' @rdname qualif
 #' @export
 #' @docType methods
-setGeneric("qualif<-", signature=c("x", "which"),
-           function(x, which, value, ...) {
-             standardGeneric("qualif<-")
-           })
+setGeneric("qualif<-", signature=c("x", "which"), function(x, which, value, ...) {
+  standardGeneric("qualif<-")
+})
 
 
 #' Get the \code{db_xref}s of GenBank features
@@ -394,10 +417,9 @@ setGeneric("qualif<-", signature=c("x", "which"),
 #' @rdname dbxref
 #' @export
 #' @docType methods
-setGeneric("dbxref", signature="x",
-           function(x, db = NULL, ...) {
-             standardGeneric("dbxref")
-           })
+setGeneric("dbxref", signature="x", function(x, db = NULL, ...) {
+  standardGeneric("dbxref")
+})
 
 
 # write generics ---------------------------------------------------------
