@@ -15,7 +15,11 @@ reference class.
 }
 \section{Methods}{
   \describe{ \item{\code{#new(...)}:}{ Create a new
-  \code{\linkS4class{gbHeader}} object} }
+  \code{\linkS4class{gbHeader}} object. }
+  \item{\code{#to_string(write_to_file = FALSE)}:}{
+  Generate a character string representation of a GenBank
+  file header. } \item{\code{#write(file = "", append =
+  FALSE, sep = "\n"}:}{ Write a GenBank header to file. } }
 }
 \seealso{
 \code{\linkS4class{gbHeader}}

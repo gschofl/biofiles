@@ -29,8 +29,8 @@ A container for GenBank file headers.
   } \item{\code{taxonomy}:}{ \code{character}; Taxonomic
   classification levels. } \item{\code{references}:}{
   Citations for all articles containing data reported in
-  the entry. Yet to be implemented. }
-  \item{\code{comment}:}{ \code{character}; Remarks. } }
+  the entry.A \code{\linkS4class{gbReferenceList}} object.
+  } \item{\code{comment}:}{ \code{character}; Remarks. } }
 }
 
 \section{Extends}{

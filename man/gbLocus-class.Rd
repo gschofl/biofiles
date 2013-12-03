@@ -6,7 +6,7 @@ A container for GenBank LOCUS records
 }
 \section{Fields}{
   \describe{ \item{\code{lnm}:}{ Locus name. Usually the
-  accession number.} \item{\code{len}:}{ Sequence length;
+  accession number. } \item{\code{len}:}{ Sequence length;
   In bp or aa, depending on \code{mtp}. }
   \item{\code{mtp}:}{ Molecule type; NA, DNA, RNA, tRNA
   (transfer RNA), rRNA (ribosomal RNA), mRNA (messenger
