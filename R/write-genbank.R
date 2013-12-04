@@ -82,7 +82,7 @@ setMethod("write.GenBank", "gbRecord",
     s <- character(n_lines)
     
     for (i in lines) {
-      seqw <- base::ifelse(i <  n_lines, i*60, seq@ranges@width)
+      seqw <- ifelse(i <  n_lines, i*60, seq@ranges@width)
       seqs <- XVector::toString(XVector::subseq(seq, 1 + (i - 1)*60, seqw))
       s[i] <- paste0(strsplit(seqs, "(?<=.{10})(?=.)", perl=TRUE)[[1]], collapse=" ")     
     }

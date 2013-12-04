@@ -124,8 +124,8 @@ gbRecord <- function(gbk) {
     gbk_list <- vector("list", n)
     for (i in seq_len(n)) {
       con <- file(gbk[i], open="rt")
-      gbk_list[[i]] <- parse_gb_record(readLines(con))
-      close(con)
+      on.exit(close(con))
+      gbk_list[[i]] <- parse_gb_record(gb_record=readLines(con))
     }
     if (length(gbk_list) == 1L) {
       return(gbk_list[[1L]])
@@ -142,7 +142,6 @@ gbRecord <- function(gbk) {
 # show -------------------------------------------------------------------
 
 
-#' @importFrom Biostrings width
 #' @importFrom XVector toString subseq
 .show_gbRecord <- function(x) {
   if (length(getAccession(x)) == 0L) {
@@ -154,7 +153,7 @@ gbRecord <- function(gbk) {
       sprintf("%s instance with %i features\n", sQuote(class(x)), length(x)),
       .header(x)$to_string(write_to_file = FALSE),
       if (length(S) != 0) {
-        if (Biostrings::width(S) < W - 16) {
+        if (width(S) < W - 16) {
           sprintf("ORIGIN      %s\n", XVector::toString(S))
         } else {
           sprintf("ORIGIN      %s\n            ...\n            %s\n",
@@ -338,8 +337,15 @@ setMethod("strand", "gbRecord", function(x, join = FALSE) {
 #' @export
 #' @aliases width,gbRecord-method
 #' @rdname width-methods
-setMethod("width", "gbRecord", function(x, join = FALSE) {
-  width(.features(x), join = join)
+setMethod("width", "gbRecord", function(x) {
+  width(.features(x))
+})
+
+#' @export
+#' @aliases width,gbRecord-method
+#' @rdname width-methods
+setMethod("joint_width", "gbRecord", function(x) {
+  joint_width(.features(x))
 })
 
 #' @export

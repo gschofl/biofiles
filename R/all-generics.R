@@ -137,13 +137,12 @@ setGeneric("strand")
 setGeneric("strand<-")
 
 ### The "width" generic is defined in the IRanges package. We need
-### to override it because they don't provide a dotdotdot interface.
+### to define joint_width internally instead of width(x, join=TRUE)
 #' Get the width of genomic features
 #'
-#' @usage width(x, ...)
+#' @usage width(x)
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureList}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
-#' @param ... Further arguments passed to methods.
 #' @return An integer vector or a list of integer vectors.
 #' @seealso
 #'   \code{\link{start}}, \code{\link{end}}, \code{\link{strand}}, \code{\link{ranges}}
@@ -155,10 +154,13 @@ setGeneric("strand<-")
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
 #' x <- gbRecord(gbk_file)
 #' width(x)
-#' 
-setGeneric("width", signature="x", function (x, ...) {
-  standardGeneric("width")
-})
+#'
+setGeneric("width")
+
+#' @rdname width-methods
+#' @export
+#' @docType methods
+setGeneric("joint_width", signature="x", function(x) standardGeneric("joint_width"))
 
 ### The "ranges" generic is defined in the IRanges package.
 #' Extract features as \code{"\linkS4class{GRanges}"} objects.

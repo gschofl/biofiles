@@ -203,8 +203,12 @@ setMethod("strand", "gbRecordList", function (x, join = FALSE) {
 #' @export
 #' @aliases width,gbRecordList-method
 #' @rdname width-methods
-setMethod("width", "gbRecordList", function (x, join = FALSE) {
-  lapply(x, width, join = join)
+setMethod("width", "gbRecordList", function(x) {
+  lapply(x, width)
+})
+
+setMethod("joint_width", "gbRecordList", function(x) {
+  lapply(x, joint_width)
 })
 
 #' @export

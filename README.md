@@ -56,7 +56,7 @@ rec
  ##  SOURCE      Chlamydia psittaci 02DC15
  ##    ORGANISM  Chlamydia psittaci 02DC15
  ##              Bacteria; Chlamydiae; Chlamydiales; Chlamydiaceae;
- ##                          Chlamydiaceae; Chlamydia/Chlamydophila group; Chlamydia.
+ ##              Chlamydiaceae; Chlamydia/Chlamydophila group; Chlamydia.
  ##  REFERENCE   1  (bases 1 to 1172182)
  ##    AUTHORS   Schofl,G., Voigt,A., Litsche,K., Sachse,K. and Saluz,H.P.
  ##    TITLE     Complete Genome Sequences of Four Mammalian Isolates of

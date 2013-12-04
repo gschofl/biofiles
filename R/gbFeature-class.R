@@ -244,8 +244,15 @@ setReplaceMethod("strand", "gbFeature", function(x, value) {
 #' @export
 #' @aliases width,gbFeature-method
 #' @rdname width-methods
-setMethod("width", "gbFeature", function(x, join = FALSE) {
-  width(x@location, join = join)
+setMethod("width", "gbFeature", function(x) {
+  width(x@location)
+})
+
+#' @export
+#' @aliases width,gbFeature-method
+#' @rdname width-methods
+setMethod("joint_width", "gbFeature", function(x) {
+  joint_width(x@location)
 })
 
 #' @export

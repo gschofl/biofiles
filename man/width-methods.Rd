@@ -1,5 +1,9 @@
 \docType{methods}
 \name{width}
+\alias{joint_width}
+\alias{joint_width,gbFeature-method}
+\alias{joint_width,gbFeatureList-method}
+\alias{joint_width,gbRecord-method}
 \alias{width}
 \alias{width,gbFeature-method}
 \alias{width,gbFeatureList-method}
@@ -7,23 +11,29 @@
 \alias{width,gbRecordList-method}
 \title{Get the width of genomic features}
 \usage{
-width(x, ...)
+width(x)
 
-\S4method{width}{gbFeature}(x, join = FALSE)
+joint_width(x)
 
-\S4method{width}{gbFeatureList}(x, join = FALSE)
+\S4method{width}{gbFeature}(x)
 
-\S4method{width}{gbRecord}(x, join = FALSE)
+\S4method{joint_width}{gbFeature}(x)
 
-\S4method{width}{gbRecordList}(x, join = FALSE)
+\S4method{width}{gbFeatureList}(x)
+
+\S4method{joint_width}{gbFeatureList}(x)
+
+\S4method{width}{gbRecord}(x)
+
+\S4method{joint_width}{gbRecord}(x)
+
+\S4method{width}{gbRecordList}(x)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbFeature}},
   \code{\linkS4class{gbFeatureList}},
   \code{\linkS4class{gbRecord}}, or
   \code{\linkS4class{gbRecordList}} object.}
-
-  \item{...}{Further arguments passed to methods.}
 }
 \value{
 An integer vector or a list of integer vectors.

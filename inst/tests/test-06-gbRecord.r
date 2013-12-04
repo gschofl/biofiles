@@ -48,7 +48,7 @@ test_that("Ranges work for gbFeatures", {
   expect_is(range, 'GRanges')
   expect_equal(start(range), 1521)
   expect_equal(end(range), 2414)
-  expect_equal(IRanges::width(ranges(range)), 894)
+  expect_equal(width(ranges(range)), 894)
   expect_equal(names(range), "cpaB")
 })
 

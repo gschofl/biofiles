@@ -99,33 +99,12 @@ parse_gb_record <- function(gb_record) {
 ##   /compare=[accession-number.sequence-version] e.g. /compare=AJ634337.1
 ##
 gbFeatures <- function(gb_features, seqinfo) {
-  # where do all the features start
   feature_start <- which(substr(gb_features, 6, 6) != " ")
-  # where do all the features end
-  feature_end <- c(feature_start[-1] - 1, length(gb_features))
-  # indeces for all features
-  feature_idx <- .mapply(seq.int, list(from=feature_start, to=feature_end), NULL)
-  accession <- getAccession(seqinfo)
-  
-#   ftbl <- mapply(function(idx, n) {
-#     gbFeature(gb_features[idx], seqinfo, accession, n)
-#   }, idx=feature_idx, n=seq_along(feature_start),
-#                    SIMPLIFY=FALSE, USE.NAMES=FALSE)
-  
-#   p <- MulticoreParam(workers=floor(detectCores()*0.75), verbose=TRUE)
-#   ftbl <- bpmapply(function(idx, n) {
-#     gbFeature(feature=gb_features[idx], seqinfo=seqinfo, accession=accession, id=n)
-#   },
-#   idx = feature_idx, n = seq_along(feature_start),
-#   SIMPLIFY=FALSE, USE.NAMES=FALSE, PBPARAM=p)
-  
+  fl <- ixsplit(gb_features, feature_start)
   mc_cores <- floor(detectCores()*0.75)
-  ftbl <- mcmapply(function(idx, n) {
-    gbFeature(gb_features[idx], accession, n)
-  },
-  idx = feature_idx, n = seq_along(feature_start),
-  SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=mc_cores, mc.silent=FALSE)
-                   
+  ftbl <- mcmapply(gbFeature, feature=fl, id=seq_along(feature_start),
+                   MoreArgs=list(accession=getAccession(seqinfo)),
+                   SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=mc_cores)                   
   IRanges::new2('gbFeatureList', .Data=ftbl, .seqinfo=seqinfo, check=FALSE) 
 }
 

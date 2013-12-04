@@ -46,7 +46,7 @@ translation <- function(x) AAStringSet(.translation(x))
 #' 
 #' @param x gbRecord
 #' @keywords internal
-#' @importFrom Biostrings width unlist DNAStringSet
+#' @importFrom Biostrings unlist DNAStringSet
 #' @importFrom IRanges metadata "metadata<-"
 #' @importFrom reutils efetch
 getContigSeq <- function(x, merge = TRUE) { 
@@ -54,7 +54,7 @@ getContigSeq <- function(x, merge = TRUE) {
   contig <- .contig(x)
   s <- start(contig)
   e <- end(contig)
-  w <- biofiles::width(contig)
+  w <- width(contig)
   str <- strand(contig)
   acc <- getAccession(contig)
   dna <- DNAStringSet()
@@ -78,11 +78,11 @@ getContigSeq <- function(x, merge = TRUE) {
   }
   
   if (merge) {
-    is <- c(1, cumsum(Biostrings::width(dna)) + 1)
+    is <- c(1, cumsum(width(dna)) + 1)
     is <- is[-length(is)]
-    ie <- cumsum(Biostrings::width(dna))
+    ie <- cumsum(width(dna))
     r <- IRanges(start=is, end=ie, names=names(dna))
-    res <- DNAStringSet(Biostrings::unlist(dna))
+    res <- DNAStringSet(unlist(dna))
     metadata(res) <- list(ranges = r)
     return(res)
   }

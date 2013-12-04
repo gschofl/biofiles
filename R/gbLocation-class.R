@@ -96,12 +96,12 @@ setMethod("end", "gbLocation", function(x, join = FALSE, drop = TRUE) {
 })
 
 
-setMethod("width", "gbLocation", function(x, join = FALSE) {
-  if (join) {
-    max(x@range[, 2]) - min(x@range[, 1]) + 1L
-  } else {
-    x@range[, 2] - x@range[, 1] + 1L
-  }
+setMethod("width", "gbLocation", function(x) {
+  x@range[, 2] - x@range[, 1] + 1L
+})
+
+setMethod("joint_width", "gbLocation", function(x) {
+  max(x@range[, 2]) - min(x@range[, 1]) + 1L
 })
 
 

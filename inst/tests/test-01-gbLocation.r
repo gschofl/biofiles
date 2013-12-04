@@ -81,7 +81,7 @@ test_that("gbLocation accessors work", {
   expect_equal(end(a), c(100, 202))
   expect_equal(end(a, join=TRUE), 202)
   expect_equal(width(a), c(100, 103))
-  expect_equal(width(a, join=TRUE), 202)
+  expect_equal(joint_width(a), 202)
   expect_equal(strand(a), c(1, 1))
   expect_equal(strand(b), c(-1, -1))
   expect_equal(fuzzy(c), matrix(c(TRUE,FALSE,FALSE,TRUE), nrow=2))

@@ -263,15 +263,21 @@ setReplaceMethod("strand", "gbFeatureList", function(x, value) {
 #' @export
 #' @aliases width,gbFeatureList-method
 #' @rdname width-methods
-setMethod("width", "gbFeatureList",
-          function(x, join = FALSE) {
-            ans <- lapply(x, width, join = join)
-            if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
-              unlist(ans)
-            } else {
-              ans
-            }
-          })
+setMethod("width", "gbFeatureList", function(x) {
+  ans <- lapply(x, width)
+  if (all(vapply(ans, length, 0) == 1L)) {
+    unlist(ans)
+  } else {
+    ans
+  }
+})
+
+#' @export
+#' @aliases width,gbFeatureList-method
+#' @rdname width-methods
+setMethod("joint_width", "gbFeatureList", function(x) {
+  unlist(lapply(x, joint_width))
+})
 
 #' @export
 #' @aliases dbxref,gbFeatureList-method
