@@ -230,7 +230,6 @@ feat
  ##                   /db_xref="taxon:1112254"
  ##  ...
 
- ##  Error: argument is of length zero
 ```
 
 
@@ -319,7 +318,7 @@ summary(hyp)
  ##  2028 CDS complement(1165683..1167527) conserved hypothetical protein
  ##  2038 CDS complement(1170106..1170360) conserved hypothetical protein
  ##  2040 CDS complement(1170443..1172035) conserved hypothetical protein
-r
+
 length(hyp)
 
  ##  [1] 249
