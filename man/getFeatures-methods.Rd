@@ -1,0 +1,41 @@
+\docType{methods}
+\name{getFeatures}
+\alias{ft}
+\alias{ft,gbRecord-method}
+\alias{ft,gbRecordList-method}
+\alias{getFeatures}
+\alias{getFeatures,gbRecord-method}
+\alias{getFeatures,gbRecordList-method}
+\alias{getFeatures-method,gbRecordList-method}
+\title{Get the feature table from a GenBank record.}
+\usage{
+getFeatures(x, ...)
+
+ft(x, ...)
+
+\S4method{getFeatures}{gbRecord}(x)
+
+\S4method{ft}{gbRecord}(x)
+
+\S4method{getFeatures}{gbRecordList}(x)
+
+\S4method{ft}{gbRecordList}(x)
+}
+\arguments{
+  \item{x}{A \code{\linkS4class{gbRecord}} instance.}
+
+  \item{...}{Additional arguments passed to methods.}
+}
+\value{
+The \code{\linkS4class{gbFeatureList}} of a Genbank record.
+}
+\description{
+Get the feature table from a GenBank record.
+}
+\examples{
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+x <- gbRecord(gbk_file)
+getFeatures(x)
+ft(x)
+}
+

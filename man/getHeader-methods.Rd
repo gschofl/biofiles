@@ -1,0 +1,49 @@
+\docType{methods}
+\name{getHeader}
+\alias{getHeader}
+\alias{getHeader,gbFeature-method}
+\alias{getHeader,gbFeatureList-method}
+\alias{getHeader,gbRecord-method}
+\alias{header}
+\alias{header,gbFeature-method}
+\alias{header,gbFeatureList-method}
+\alias{header,gbRecord-method}
+\title{Extract the header from a \code{"\linkS4class{gbRecord}"} object.}
+\usage{
+getHeader(x, ...)
+
+header(x, ...)
+
+\S4method{header}{gbFeature}(x)
+
+\S4method{getHeader}{gbFeature}(x)
+
+\S4method{getHeader}{gbFeatureList}(x)
+
+\S4method{header}{gbFeatureList}(x)
+
+\S4method{getHeader}{gbRecord}(x)
+
+\S4method{header}{gbRecord}(x)
+}
+\arguments{
+  \item{x}{A \code{"\linkS4class{gbRecord}"},
+  \code{"\linkS4class{gbFeature}"}, or
+  \code{"\linkS4class{gbFeatureList}"} instance.}
+
+  \item{...}{Additional arguments passed to methods.}
+}
+\value{
+A \code{"\linkS4class{gbHeader}"} instance
+}
+\description{
+Extract the header from a \code{"\linkS4class{gbRecord}"}
+object.
+}
+\examples{
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+x <- gbRecord(gbk_file)
+getHeader(x)
+header(x)
+}
+

@@ -1,6 +1,6 @@
 \name{.gbLocus}
 \alias{.gbLocus}
-\title{Generator object for the \code{\linkS4class{gbLocus}} class}
+\title{Generator object for the \code{"\linkS4class{gbLocus}"} class}
 \usage{
 .gbLocus(...)
 }
@@ -8,7 +8,7 @@
   \item{...}{List of arguments (see NOTE)}
 }
 \description{
-The generator object for the \code{\linkS4class{gbLocus}}
+The generator object for the \code{"\linkS4class{gbLocus}"}
 reference class.
 }
 \note{
@@ -25,10 +25,11 @@ date; stored in the \code{cdt} field. } }
 \section{Methods}{
   \describe{ \item{\code{#new(lnm, len, mtp, div, top, mdt,
   cdt)}:}{ Create a new \code{\linkS4class{gbLocus}}
-  object} }
+  object} \item{\code{#to_string()}:}{ Create a string
+  representation of a GenBank LOCUS field. } }
 }
 \seealso{
-\code{\linkS4class{gbLocus}}
+\code{"\linkS4class{gbLocus}"}
 }
 \keyword{classes}
 \keyword{internal}

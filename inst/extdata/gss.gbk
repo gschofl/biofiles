@@ -1,0 +1,1034 @@
+LOCUS       ED821275                 794 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P140I23Sp6_CN149_088 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-140I23, genomic survey
+            sequence.
+ACCESSION   ED821275
+VERSION     ED821275.1  GI:117927053
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 794)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P140I23T7_CN149_088
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 140  row: I  column: 23
+            Seq primer: SP6 : CTGGCCGTCGACATTTAGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..794
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-140I23"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 ctgccctggc aggtttccct catttttgtt acaaacaata cactaaaccc aaactactaa
+       61 tcatcaagga ctggaacagg ttttggacat tcgtccccag gctgctgaga actgttctag
+      121 tgatgacagt tagaaagggt agccctccga ggcaaaaaaa atgagacatc tagatttttt
+      181 cgctccgcat ctgggcgctg cagcatccac ggcgataaga agacatcact ggtctccatc
+      241 tttcgagggg gaaaggcccg cgctgcacta gccctgactg ggtagctggg taaacagccc
+      301 acgctcggga gaggcctgag ggaaagtgac ctcccccggg gcccaggccg accagcagcg
+      361 cagctgctcc gccaccagat gcgcggactc gcgcgctccc tcgccgcgcc cgggcactcc
+      421 caagctcagc cgcccgcctc ggccccgacc cctcggccgc cacaacacac gccattccgc
+      481 ccgcaaaatg gaggcgaaag cacgaggcgc ccccgccccc agggagcctt tgtgcccttg
+      541 ccggcgggga cgcgaggcca gacggcccgc accgcaaggg ccccgcaggc accgaagaga
+      601 aggggcggag ggggccgggc tgcgcgcgcg gatctagccc cggccaccgc ccccaaggcc
+      661 gcgggcaccc cgaacgccag caccagggcg cgggacgctg cctacctacc gcaccgcgaa
+      721 cgcttcgcac gtccggaacg gcctcagcag ccccatgcgg tggccccaag ctgaggggcc
+      781 ctgactgcaa ccgc
+//
+LOCUS       ED821276                 845 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I08Sp6_CN167_024 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I8, genomic survey
+            sequence.
+ACCESSION   ED821276
+VERSION     ED821276.1  GI:117927054
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 845)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I08T7_CN167_024
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 8
+            Seq primer: SP6 : CTGGCCGTCGACATTTAGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..845
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I8"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 tgtgaggcgt ctgaacagta atacagagct attctgctat ggtccgaata cctgcaggag
+       61 atttagcgtg tttggtaaat taacaataat gacccagaat ttgtttccag gtgcatttta
+      121 tcttaagtag ctccattcaa tccaagacct gaacttttct acaataacta agatgtttgg
+      181 acttttgcta gcattttatg gggttgcctg gctaagctag catgtctttg tctatttcct
+      241 cctgagtatt acgcttgcaa gtattagctg caaaataggt ggatgctttt ttggaagtat
+      301 agcgatagct ttgtagtcca taaagagctg gcctttctaa aggcatggga tatttgtttc
+      361 ctattatagc tgtaagaaag caccacaaac cttgtggctt aaaacgacac atttattatc
+      421 ttacactttt gttgatcaga agtccaaaat gagccttaca gggttcagtt caaggtgtca
+      481 gtagggctgc atccctttta aaggctccag cagataatcc actttcttgc ctttttcagc
+      541 ttctagaggc cacctgcatt ccttggcctc acagcccttc ctccactttg agaggtgtca
+      601 atctaacccc tgctttcatc gtcacatctc ctttttctga ctttgacctg cttgtctcct
+      661 tcatgcaaag acattacatt tggcccacct agataatcct gaataatctc catgtgttaa
+      721 aatacttaac tatcacatct acagagtccc ttttgccatg taagaaaacg tgctgacagg
+      781 ttccagggat tagacatgaa tatcttcggg acaggagagg tgttattcta tctgccactt
+      841 atggt
+//
+LOCUS       ED821277                 817 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I08T7_CN167_024 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I8, genomic survey
+            sequence.
+ACCESSION   ED821277
+VERSION     ED821277.1  GI:117927055
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 817)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I08Sp6_CN167_024
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 8
+            Seq primer: T7 : TAATACGACTCACTATAGGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..817
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I8"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 gatctgtgga tttttgcttt tcttctgttt caagtgattg aaattcattg aatattttgg
+       61 acctgtggat ttttacattt cattgaattt tgagaaattg tggcccccta tttatttaaa
+      121 taatttttct agtctcctcc acagtctctt ttcttttggg aactacagtt acatttttga
+      181 gagcctgctt gcaattgtcc cacagttcat aatgctttat atttttcttt gtgtttcagt
+      241 ctctacttct ctttgtgttt catttttgat agtctacact gttgtatctt tattttatta
+      301 tttttttatt attattatcc tttaagttct agggtacacg tgcacaacgt gcaggtttgt
+      361 tacatatgta tacatgttcc atgttggtgt gctgtaccta ttaactcatc atttacatta
+      421 ggtatatctc ccagtgttat ccctccccac tccccccacc ccacaacagg ccccggtgtg
+      481 tgatgttccc cttcatgtgt ccaagtgatc ttattgttca attcccacct atgagtgaga
+      541 acatgcggtg cttggttttc tgttcttgca atagtttgct gagaatgatg gtttccagct
+      601 gcatccgtgt ccctataaag gacatgaact aatcatttta tatgactgca tagtgttcca
+      661 tggtgtgtat gtgccacatt ttcttaatcc agtctgtcat tgatggacat tcggattggt
+      721 tccaagtctt tgctattgtg aatagtgcca caataaacat atgtgtgaat gtgtctttat
+      781 agcagaatga tttataatcc tttgggtata tacccag
+//
+LOCUS       ED821278                 960 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I10Sp6_CN167_039 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I10, genomic survey
+            sequence.
+ACCESSION   ED821278
+VERSION     ED821278.1  GI:117927056
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 960)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I10T7_CN167_039
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 10
+            Seq primer: SP6 : CTGGCCGTCGACATTTAGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..960
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I10"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 cacttcctgc acaaaaacac cccacaaacc cctttcccat acacaggaaa gcttacctgc
+       61 tattaagtga tgttgaaaaa cttcacttgt ttttttccat tgctcaaata attaaaatag
+      121 agtattttaa attgcaagat ttcacttata ttttttcagt ttaaagttgc ataaaagaca
+      181 tctttcaatt tcttcagtaa gacaccaatt gagggaaagt atgttaaaac agttaagtac
+      241 aactggatcc tggacttctc atatcatttt attcaattat gaagttaaat aaatattact
+      301 aagttcaatg ctttcatgta gaacagtcgg aaaaccctgt catatatttt aaagtcaaca
+      361 ttatatgtca ttcttatttt ccatccaagc atattgaaat attccgcatg tcatggttat
+      421 aataattgta accatatgac atctaccttc tgggaagatg cacatttcac atttaaatat
+      481 tttgtacaat tgaatttaag agactggcag gatattcacc caatatttta atctgtttgc
+      541 agtggttatt ataatataat gtacctgtga tgctcttatt aaataggttt accttagtat
+      601 gtcaatttac actgtgcatc tgttctgatt ggctggtgtc taaaccatat agcttaatca
+      661 gtgttttgaa tatcctcttg caacatgaaa gtaactatta aatggtgaga ggaaaaaaaa
+      721 ccaaaacaac aagaaaatgc attcaataaa tttgaaataa tgtagtaaaa taagttagct
+      781 tgtcagaatg tttcagagat atttcctgtc tggcctatat gttcatgaat gttttccatc
+      841 tcagatgcac agggttgaat taacgctgct acccagttga tggcatgtta ctgtcaacaa
+      901 tctgtacaat gcagtccttc atttgtttat tctctttcat cttcatacca catacttgtt
+//
+LOCUS       ED821279                 799 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I10T7_CN167_039 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I10, genomic survey
+            sequence.
+ACCESSION   ED821279
+VERSION     ED821279.1  GI:117927057
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 799)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I10Sp6_CN167_039
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 10
+            Seq primer: T7 : TAATACGACTCACTATAGGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..799
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I10"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 attctagctc cttgtaataa tctaggtcaa agatctttac aagaataata tcttgtttcg
+       61 ttttttactg gttatttgac ataaggatcc caaagtgacc aaagtcagtt gaaggttggt
+      121 ttcattatcc taatattaca taacagctat tagttaaata catataacac aacgttatat
+      181 aacagccact gttacaggat tctttcctta gttcagctaa agagggaagt ccttcacaca
+      241 gccacaaaat atttaactca cagacaattt gaagggtgag gagggcaggg tttattgggt
+      301 gaaaatgaaa agagaaaaac agggactctc cataaggcca gagtccctgc tcatgcactt
+      361 cccaccatgc agactgaatc ccaggtacca cccaggaaga ggaggggcca ggctcctccc
+      421 cactgcaaat ggcatgaact tcccaaggct ccatcccagt gtgcattcct cccagtgtgc
+      481 aggtcagtgg gaggctctct cagggagccc ttcccacctg gctgtctctc cattagttaa
+      541 atatatataa cacagctggg agaacagagc cccaatccat aggttaccat ctccatcctg
+      601 gcatttgagt tgaactttta ataggccact caactaatcc ggccaactgt ttcctgttat
+      661 atagtataca ataatataag agtattctgt gctgttttta acttctctat ctcaaaatga
+      721 gatctttggt ttgaaatgtt tttaggttgg gattgcatgg gtaattatca tgttttgtaa
+      781 gccctttgca tactagcag
+//
+LOCUS       ED821280                 747 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I12Sp6_CN167_040 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I12, genomic survey
+            sequence.
+ACCESSION   ED821280
+VERSION     ED821280.1  GI:117927058
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 747)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I12T7_CN167_040
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 12
+            Seq primer: SP6 : CTGGCCGTCGACATTTAGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..747
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I12"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 cagcgtttat gtagacaggc aagagaaaga aacattttgt ctatgtagaa gcagcagaag
+       61 acatgtttta acagaaaagg gagaagatac caccgtgtga atctggaaat tctgtcctca
+      121 tcttgttcac acacacagaa aacacccaag cacgtgccta gtgtccaaca ggagcacaga
+      181 aaggacgagg atccctccag ttgtttaatg accagccccc atatgtcacc gccacataac
+      241 aaaatccgca cggcaacttc agcacgtttc attcacgatt tcacggaaat caggctgaag
+      301 aacatacaga tgttttgccc acatttaaaa atccaagtgt gggattcaca gaaataaaac
+      361 acattatggg ttcacttaac ttttccaaat tgttacttgg agaaacctat aaatttcttg
+      421 tcagttacat ccttaagttt ttcaataatt tttaaatgca aaggtcaggc aagacttgta
+      481 aagaggttca cacatacggc ccggtgcggt ggctcacacc tataatccca gcactttggg
+      541 aggccgaggt gggcagatca cgaggtcagg aaaccgagac catcctggct aacacggtga
+      601 aaccccgtct ctactaaaaa tacaattagc caggcgtggt ggcaggtgcc tgtagtccca
+      661 gctacttggg aggctgaggc tggagaatgg catgaacccg ggaggcagag cttgcagtga
+      721 gctgagatcg taccaccgca ctccagc
+//
+LOCUS       ED821281                 793 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I12T7_CN167_040 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I12, genomic survey
+            sequence.
+ACCESSION   ED821281
+VERSION     ED821281.1  GI:117927059
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 793)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I12Sp6_CN167_040
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 12
+            Seq primer: T7 : TAATACGACTCACTATAGGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..793
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I12"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 aaccatgagc tgaatgcaca tgttagcaca accaaagttc tgctttcata agcagcacag
+       61 gcgtctctgg agaggatttt aattgggact acaatgcgca cggtggtggt aagaggtttc
+      121 atgccggctg ttctccaagg tgcaacacag aaacaccact aacctcgaag acacctttgt
+      181 aacgagatga tgagagacga tgtggacaga atactggaaa tatttgaaaa ggagaaacaa
+      241 tgcaaggaaa gaatcttatc agttaccctt taacacgctt agaaaaaacc gatttctctt
+      301 ttgggatgat taaagaagaa aatgacattt ctggattttt tttttttttt ttttacattt
+      361 ttctttctga gacagggtct tggctctgtc accaagactg gagtacagtg gagcaatcac
+      421 agctcaccgt agccttaagt gttcttccca cctcggactc cagagtagca gggaccacag
+      481 gcacgcacca ccatactcag ctaatttttc tgttgtgaga gagatggggt gtcttgctct
+      541 gttgtccagg ctgctcttga actccttggc ctcacaaagg gctgcgatta cattacgggc
+      601 ataagccagc gtgcccaacc aacctttttc ttaattctat aacaattacg ccgcattcag
+      661 aggaaggata actattagtg agaagaaact tggcgaagca atatgttgat acgaaaacaa
+      721 aatggtaaca attcctcatt gtgacatttg agtttgaaac tgttaacata ccaagcaaaa
+      781 atgatagctc aaa
+//
+LOCUS       ED821282                 722 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I14Sp6_CN167_055 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I14, genomic survey
+            sequence.
+ACCESSION   ED821282
+VERSION     ED821282.1  GI:117927060
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 722)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I14T7_CN167_055
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 14
+            Seq primer: SP6 : CTGGCCGTCGACATTTAGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..722
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I14"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 ctcatcagac atgataatca ggaggcaggc tgcttctgac attcagataa aaggggcttg
+       61 cctggggtga gggggcagtg agggtaggga aaactgctga tttgtggcta agttatttca
+      121 gccaagtctt aacacacaat catgtaacat caccaacact ttcaatagac ttttgaagga
+      181 ggaaaaaaaa aaaaacactg atcactcctc acttaccaca tccaactcgc agaaataaaa
+      241 atacctaaag cacatacatg aatggctttt taaaaagcct gagagagcag agttgatctt
+      301 tattttctta ttaaaaatgt ggggtgtttt tctttagagt taatatgcag tcttttattt
+      361 tacattaagt actcatgatt tcacgtcttc acaaaattgc gtttaacttt tgaagtagga
+      421 ggtactttaa acaaaaatac tgtgcaatgt cagcactttt ttccttttaa atattgaaat
+      481 aaataaaata gttaactctt tttttccatc agtttgtttg tgttcagtta tttctactgt
+      541 agagcatttc caggctgacc tgggtacttt ctcatagaca atcaaagaaa atataatgaa
+      601 gaattttaaa aagaaaaaaa aatcttctta ttgcacaaac tgaggccatt cccgaggctt
+      661 ctgtgggctg agctgagttg cgctgcagga ttttccactc ctgtgctagc tcctgtgttg
+      721 tc
+//
+LOCUS       ED821283                 869 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I14T7_CN167_055 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I14, genomic survey
+            sequence.
+ACCESSION   ED821283
+VERSION     ED821283.1  GI:117927061
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 869)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I14Sp6_CN167_055
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 14
+            Seq primer: T7 : TAATACGACTCACTATAGGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..869
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I14"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 agaaatggaa acggcaacct acttactgga aagatccaga tagtgccgtg tgcgttaaga
+       61 acctgagggc tctatggaga agatggataa gaaaaagaaa aagaaaaggc ttgttttgag
+      121 gacagagcaa atagggatta cgaaaaatat cagtcaaaga cattcttagg ctggaaggca
+      181 aagccagcca agcacactgg ggtcctcttc aaagtccttg gatagggtga tgaggggttg
+      241 aggacataat tctgacctca ccaatgggac gttcaaaggg gaaccttcat ttcctggcat
+      301 tctctagcac ctgatcctcg taaagtcgct caagcactta ggaacttgtt tctcagcaca
+      361 ggtctgtaga gacctttgct cccctcttct cagttatatt cctggcttct tgaaaagttg
+      421 aaagatctgg caaccctgaa tcttcattcc accaaggcaa ccatcagcag ctgctgcccc
+      481 tttagatggg gcagtgcgac tgatgctttc tggttctcta actggggcaa atgttgactt
+      541 ctcacctgtc tgggaagtta atgagaagaa agagtgttaa tctagaagca catgcgtgag
+      601 tgagttcaca tgtgtacaca cacgtgcaca cacacacaca tgcacacaca ccccatcagt
+      661 atttaggtcc aggggagatt agccttattg agaggtcacc cctcagcagc ttcagggtgt
+      721 ataatctgaa ccacagattt gagaagagtt aatcttgggg tgacgtgagg agaatcagat
+      781 tgtcatggca cacaataaaa gagatgtttg tgaccagtgt gttgaaagag tgaggtgtct
+      841 ctctggcatg ccaaaggcat tggggcagc
+//
+LOCUS       ED821284                 654 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I16Sp6_CN167_056 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I16, genomic survey
+            sequence.
+ACCESSION   ED821284
+VERSION     ED821284.1  GI:117927062
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 654)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I16T7_CN167_056
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 16
+            Seq primer: SP6 : CTGGCCGTCGACATTTAGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..654
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I16"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 ctaatcccag actgaaggtg aggaggaggc tgagtgagtc ttacagattt gaaaagccat
+       61 gaaatcctga tcggagaaca tctgagtcca aagggccctc agagaccgtc tgatgtcttc
+      121 attacatatg aagaaatcaa gagggtgctg ccagggagtg aggaagagaa cactgaattt
+      181 agtgtcaaac ggccctcggc ttgcagcctg gctctatttc ttactggctg caaggcccca
+      241 ggccagtgac ctcacctctc taagccacag tttccatctc tttcaaatgg agtctgccat
+      301 ctggccggct tccgttttcc gggaatgcca tgccaagttc ctcagatcaa ttctcctatt
+      361 gaaaacaact aaaggccagg cgcggtgact caggccagta atcccagcac tttgtgagac
+      421 cgaggtgggc aggtgacttg aggtcaggag ttcaagacca gcctgtccaa catggggaaa
+      481 gccagtctct actaaaaata caaaaattag ctgggcgtgg tggcgcgtgc ctgtaatccc
+      541 ggctactcag gaggccaagg cacaagaatc gcttgaacct gggaggcaga ggttgcagtg
+      601 agtagagatc aggtcactgc actccagcct gggtgccaga gcaagacttg tctc
+//
+LOCUS       ED821285                 820 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I16T7_CN167_056 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I16, genomic survey
+            sequence.
+ACCESSION   ED821285
+VERSION     ED821285.1  GI:117927063
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 820)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I16Sp6_CN167_056
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 16
+            Seq primer: T7 : TAATACGACTCACTATAGGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..820
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I16"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 gtctttttca ggttttaaga ggaaaatctg aaaagcctca tgtagcagta cacacctcta
+       61 gtcccagcta cttgggagga taaggtggga ggattgctgg aggccagaag tttaaggctg
+      121 cagtgagcta tgattatgcc tgtaaatagc cactgcgttc cactctgagc agcatagtga
+      181 gacctaatct ctaagaataa ttttttttta ttaaaaaaaa tgaaaaatga aaatgtgctt
+      241 tttgcagaaa ttttagaaat actgaaaaac atgatgaagc aaaccaagat cttctttaat
+      301 ctttccaccc aaagaaactc ttatagcatt ttgtgatata ttctaatctt ttttcttttt
+      361 ttgagacagg gtatcttgca gtggcacgat cttggctcac tgtaacctct gcctcccagg
+      421 ttcaagtgat tttcatgcct cagccacctg agtagctgga ctacaggcat gcgccaccat
+      481 gcccggctaa tttttgtatt tttagtagag atgagagttt tgccttgtgg gccaggctga
+      541 tctcaaactc ctggcctcaa gtgacccacc cgccttggcc tctgaaagtg ctgggattac
+      601 aggcatgagc cacgacaccc atccactttt ttctaggtaa taataaatgc agatatatat
+      661 agctacacat acatgtaaat acaaaattgt ggtcatacta ggtatagttt ataccttttt
+      721 ttcatttcac ttatcaaaag aatttcctag tatccttaag tattcaaaaa cttgatttaa
+      781 gagcaacata atattctacc ctatggctgt gtgatgatat
+//
+LOCUS       ED821286                 784 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P140I23T7_CN149_088 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-140I23, genomic survey
+            sequence.
+ACCESSION   ED821286
+VERSION     ED821286.1  GI:117927064
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 784)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P140I23Sp6_CN149_088
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 140  row: I  column: 23
+            Seq primer: T7 : TAATACGACTCACTATAGGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..784
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-140I23"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 gtaggttgca aatgacttgc tttctttctg atcccaggct gcgctctccc tatcagatag
+       61 taagtcccaa gtaacatacc tgctgttgac agatctgagc tttcttcttg gacactttat
+      121 acccacagtc ctccaggtgc cagagcaggg tatccattcc cttggtgcac ccaaatgctg
+      181 tggggtatcc cagcaggagg tcatcgacgt gctggagcaa cacacagcct aggtctctag
+      241 aggggaactt ttggaggtct caagccaatg cctccccaaa gatgttgggg gaattcttga
+      301 acccttgggg aagccgggtc caagtgtact gagtggtgac acctgacccc ggattctccc
+      361 actgaaaggc aaacagcttc tggctctcag gggctagtct gatgctaaag aaagtgtcct
+      421 tcaggtccag gcaggtgaac cagctgtcct cagctggcag taaccccaac aatgtgtacg
+      481 ggttaggtac cattgggtgc agccactgca gcttgattga ccaagcacaa gtcctgtact
+      541 ggcctatagt ccttggtccc tggcttggga acaggcagga ggggagtgtt ccacggagac
+      601 tgacaaggga ctataattcc aaaggcccac aggcacttga gatggacctg gataccttta
+      661 agagcttcgc tggggaccgg atactgtttt tgcctgacag gctgggcccc aggcttaact
+      721 tctatgagta cgggggcctg gttgattgcc aaccctggag ggttatcttc cgcccacacc
+      781 cttg
+//
+LOCUS       ED821287                 821 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I18Sp6_CN167_071 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I18, genomic survey
+            sequence.
+ACCESSION   ED821287
+VERSION     ED821287.1  GI:117927065
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 821)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I18T7_CN167_071
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 18
+            Seq primer: SP6 : CTGGCCGTCGACATTTAGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..821
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I18"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 gggagaaaca ctatcaattc tacataaagt tttcaaggaa aatgaagacg tgggaatact
+       61 tttcaactca ttccctgaaa ccagtattac tctgatacca aaaccagaaa aagactttac
+      121 aagaaaacta caaaccaata tccattgtaa atatttatgc aaaaatttaa aataaaagtt
+      181 tagcaaatcc actgaaacaa taaaaagaaa acatgttagg actaagttaa ttttatccca
+      241 ggaatgcaaa cctgtcttaa tatttaaaaa ttcaatcaaa tataattcat catataaact
+      301 aaaacagtaa aaccatatga tcatccaacg aacagaagtt tgacaacatt cagtattaat
+      361 tccataaaaa aactcagcaa aataagaaca aaagagagtt tctcaaccag aaaaagggta
+      421 tctacaaaaa aacctacagg tatcattatg atcaacggca aaaaatggca tgctttcccc
+      481 tcacatcaaa aaaaaaaaat aagaacgttt gccctcttat attcaatggt gtattgaaag
+      541 ttctagtctg tacaataagg caaaaacaaa acaaaacctt caaattagaa agaaagaagt
+      601 aaaactgtct ttattcacaa ctaatataat cacagtagta gaaaatctaa tggaatctac
+      661 aaaaaagcta ccagaaataa taagtgagtt taacgaggct gcaggatgca agatcagtgt
+      721 acactattga atttctacat acaataaaaa atcagaaatt gaaattgaaa atataatata
+      781 taatagcatc aaaatatgaa atacttagga ataagtttga c
+//
+LOCUS       ED821288                 774 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I18T7_CN167_071 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I18, genomic survey
+            sequence.
+ACCESSION   ED821288
+VERSION     ED821288.1  GI:117927066
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 774)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I18Sp6_CN167_071
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 18
+            Seq primer: T7 : TAATACGACTCACTATAGGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..774
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I18"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 ttctgcctgt ggcctcctta aagccagagc tctccattgt gtgtgccttc tgtagactcc
+       61 agcacagctc tttctacata gaaatacata gttactttca gtggcaaaca ccacaattac
+      121 ttttgcacca actgaatagc tgtcaactcc cctaaaggct gcctccaacc tcctcctccc
+      181 taccctcact attcaaactc tctctgctcc tctctattct ccctagatca ccccatgata
+      241 caacaaccga aaggttaatg cctgccctgg caggggactt cagacccttc ctagccctac
+      301 tgccttgcaa atcactcccg ctgcttaaat agcattgaga gaggcataag attagggtaa
+      361 ttaacatttg ccgaaccctc taaggcaagg aattatggag gggaagcctt tgacaccacc
+      421 tgggcatgct ctgggctttt ctacatggat cttcctctgt ggaggaagaa gctaactagc
+      481 ttttcatgta gtttcatgat ttgatgatct ttttgtctgc catatacata aagagaggaa
+      541 tatattttcc ttctttcagg ggccagtaga taatgccctc ttcacagaag tctcatactt
+      601 gttggaaaaa ttctcaatag ggccactaga gcaggtgagt ctctgagggg gcggggaggg
+      661 tggtggtgga tcttagctgg tgccaagact gtctggaaag ggcacacaga gcaaggagac
+      721 aggatcatgt gctcccttgt gaaggagtgg aggtgaggtt aggaagtcgg ggag
+//
+LOCUS       ED821289                 877 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I20Sp6_CN167_072 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I20, genomic survey
+            sequence.
+ACCESSION   ED821289
+VERSION     ED821289.1  GI:117927067
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 877)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I20T7_CN167_072
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 20
+            Seq primer: SP6 : CTGGCCGTCGACATTTAGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..877
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I20"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 cagagaaata gaagagagat aattttagag ggaaaatgtc tgagaaattc cagaattcca
+       61 gatgacatga atcctaagac ttatgaagca aagcaaatcc caatcttaac tgtagaacac
+      121 cagtgaaaaa taactttaaa aaattcagag agaaaaacat tgcctccaaa taaatattta
+      181 cagtgatagc tgaatctaaa caacagtaga aagcagcaaa ctgtgagatc atattaaatc
+      241 catgaaaaaa tgcttatagt tacatatcta gaattttaaa attgtataat gtcactttta
+      301 gattaaaaaa gatcaagaga atcctcagaa acatcttttc cctacacaag cttctaaaat
+      361 acatacttca gaaataagga aaatgctttc agaaaaactg agttcaagaa gaaagggtga
+      421 gcaaaaataa agtgacaaat gtgagtaaaa tctaaacaaa tgttaaatat aatcatactc
+      481 aataataata gtctaatttt agagtatatt aattttttat tgccatgtaa caaagtgcca
+      541 caaatttagt ggcttaaaac aacacaaatt tattgacctt aagtttccat gtgtcatgag
+      601 ttgtgggcac aggttaattg ggttccctga tctggtctca cagcctgtgt atcagcagac
+      661 tgtgttctca cctggacggc cactgaggaa gaatccactt ccaagctcat tcaggctatt
+      721 agcagcatta atttccttta agctctacgc tgaggaccca gactttttgc tagctgtcag
+      781 ctggaggcag gccaccccat tccatagacc tcctcacagt atgacagctg ttttcttcaa
+      841 gccaccaaag aggatttctc tccaggatgt atacgat
+//
+LOCUS       ED821290                 752 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I20T7_CN167_072 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I20, genomic survey
+            sequence.
+ACCESSION   ED821290
+VERSION     ED821290.1  GI:117927068
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 752)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I20Sp6_CN167_072
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 20
+            Seq primer: T7 : TAATACGACTCACTATAGGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..752
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I20"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 tggtcctggg ctttttttgg ttggtaggct atttattact gcctcaattt cagaactaat
+       61 tattggtcta ttcagagatt caattttttc ctggttcagt cttgagagag tgtatatgtc
+      121 caggaattta tcaatttctt ctagattttc tagtttattt gcatagaagt gtttataata
+      181 ttctctgata gtttgtattt ctgtagggtc agtggtaata tcccctttgt cattttgtat
+      241 tgtgtctatt tgattcttcc cttttcttta ttagtctagc caactagcag tctattttat
+      301 taattttttt caaaaaacca cctcctggat tctttgattt ttttgaaggg tttttcagtt
+      361 ccactctgat cttggttatt tcttatattc ttctagattt ggggtttgtt tgctgttggt
+      421 tctctagttg ttttagttgt gatgtaaaga tgttgttgat ttgagatctt tctagctttt
+      481 tgatgtgggc acttagtgct ataaatttcc ctcttaacac tggtttacct gcatccccga
+      541 gattctggta cattgtcttt gttctcattg gtttcaaaga actttttgat ttctgcctta
+      601 atttcattat ttacacagga atcattcagg agtagattgt tcaatttcca cgtagctgtg
+      661 tggtttgagt ggatttcttg agctctaatt tgattgcact gagatctgag agactgttat
+      721 gatttcagtt cttttgcatt tgctgaggag tg
+//
+LOCUS       ED821291                 733 bp    DNA     linear   GSS 13-NOV-2006
+DEFINITION  MUGQ_CH252P150I22Sp6_CN167_087 CHORI-252 Vervet Monkey Library
+            Chlorocebus aethiops genomic clone CH252-150I22, genomic survey
+            sequence.
+ACCESSION   ED821291
+VERSION     ED821291.1  GI:117927069
+KEYWORDS    GSS.
+SOURCE      Chlorocebus aethiops (Cercopithecus aethiops)
+  ORGANISM  Chlorocebus aethiops
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Cercopithecidae; Cercopithecinae; Chlorocebus.
+REFERENCE   1  (bases 1 to 733)
+  AUTHORS   Leveque,G., Badhwar,A., Nagy,C., Forgetta,V., McKee,K.H.,
+            Wasserscheid,J. and Dewar,K.
+  TITLE     Genome Quebec/Genome Canada Vervet Monkey Genome Map, 2006-11-09
+  JOURNAL   Unpublished (2006)
+COMMENT     Other_GSSs: MUGQ_CH252P150I22T7_CN167_087
+            Contact: Dewar K
+            McGill University and Genome Quebec Innovation Centre
+            McGill University
+            740 Dr. Penfield Room 7214, Montreal, QC, Canada, H3A 1A4
+            Tel: 514 398 3311 x00089
+            Fax: 514 398 1795
+            Email: ken.dewar@mcgill.ca
+            Website:
+            http://www.genomequebec.mcgill.ca/compgen/submit_db/vervet_web
+            Plate: 150  row: I  column: 22
+            Seq primer: SP6 : CTGGCCGTCGACATTTAGG
+            Class: BAC ends.
+FEATURES             Location/Qualifiers
+     source          1..733
+                     /organism="Chlorocebus aethiops"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:9534"
+                     /db_xref="biosample:187996"
+                     /clone="CH252-150I22"
+                     /sex="male"
+                     /cell_type="White blood cell"
+                     /dev_stage="Adult"
+                     /clone_lib="LIBGSS_007550 CHORI-252 Vervet Monkey Library"
+                     /note="Vector: pTARBAC2.1; Site_1: EcoR1; Site_2: EcoR1;
+                     Constructed by Michael Nefedov in Pieter de Jong's
+                     laboratory at BACPAC Resources, Children's Hospital in
+                     Oakland Research Institute."
+ORIGIN      
+        1 agatcatctt ggaacaaaag atggcaagag ttatagttgg ataatctgtt tgacaagtga
+       61 ctggttattt cagtgtattt tgccataatc tgcttaaaaa tgtaaggagt aaaacacaca
+      121 gcattttttg agagtaagta aaattccata ttttggactt aacataaaaa tatgcagata
+      181 agctattgat aatttgcaga ctgagaaagt ttcagaggtg atagattctt tttttttttg
+      241 agacggagtt tcgctcttgt ccagcctgga gtgcaatggc atgaccttgg ctcatggctt
+      301 actgcaacct ctgtctccca gattcaactg attctcctgc ttcaacctcc caagtagctg
+      361 ggattacagg ctcccaccac cacgcccggc taattttgtt ttttttgtat ttttagtaga
+      421 gatggggttt cgccatgttg gccagactgg tcttgaactc ctgacctcag gtgatctgcc
+      481 cgcctcggcc tcccatagtg ctgggattac aggtgtgagc caccgtgcct ggccagaggt
+      541 gatagattga aaacatgtat taggtactca gcactcctaa ttttcttaca gatactgaca
+      601 gccagaagga gcattgtagt aggtgggcta ctactttact tttgaagaat tttgttttaa
+      661 aatgtaattt gatgcaacca ctgatgcttt tactggggat gttttgctat agtggaagga
+      721 aactcaaact gag
+//

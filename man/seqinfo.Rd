@@ -1,6 +1,6 @@
 \name{seqinfo}
 \alias{seqinfo}
-\title{Generator object for the \code{\linkS4class{seqinfo}} class}
+\title{Generator object for the \code{"\linkS4class{seqinfo}"} class}
 \usage{
 seqinfo(...)
 }
@@ -10,7 +10,7 @@ seqinfo(...)
   \code{\linkS4class{gbHeader}} object}
 }
 \description{
-The generator object for the \code{\linkS4class{seqinfo}}
+The generator object for the \code{"\linkS4class{seqinfo}"}
 reference class.
 }
 \section{Methods}{
@@ -19,7 +19,7 @@ reference class.
   object} }
 }
 \seealso{
-\code{\linkS4class{seqinfo}}
+\code{"\linkS4class{seqinfo}"}
 }
 \keyword{classes}
 \keyword{internal}

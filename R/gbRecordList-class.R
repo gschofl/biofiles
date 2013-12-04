@@ -1,30 +1,42 @@
 #' @include gbRecord-class.R
 NULL
 
-#' gbRecordList-class
+#' Class \code{"gbRecordList"}
 #' 
 #' \dQuote{gbRecordList} is an S4 class that provides a container for
 #' \dQuote{\linkS4class{gbRecord}}s retrived from GenBank flat files.
+#' For instantiation of a gbRecordList object use the import function
+#' \code{\link{gbRecord}} or combine \code{gbRecord} objects using
+#' \code{gbRecordList}.
 #'
 #' @name gbRecordList-class
 #' @rdname gbRecordList-class
 #' @exportClass gbRecordList
 setClass("gbRecordList", contains="list")
 
-
 #' @param ... \dQuote{\linkS4class{gbRecord}} elements.
+#' @return A \dQuote{\linkS4class{gbRecordList}} instance.
 #' @rdname gbRecordList-class
 #' @export
+#' @examples
+#' 
+#' ###
+#' 
 gbRecordList <- function(...) {
   listData <- list(...)
   if (length(listData) == 0L) {
     return( new('gbRecordList', .Data = list(new("gbRecord"))) )
   } else {
-    if (length(listData) == 1L && is.list(listData[[1L]])) 
+    if (length(listData) == 1L && is.list(listData[[1L]])) {
       listData <- listData[[1L]]
-    if (!all(vapply(listData, is, "gbRecord", FUN.VALUE=logical(1)))) 
+    }
+    if (any(vapply(listData, is, "gbRecordList", FUN.VALUE=FALSE))) {
+      listData <- flatten1(listData)
+    }
+    if (!all(vapply(listData, is, "gbRecord", FUN.VALUE=FALSE))) {
       stop("All elements in '...' must be gbRecord objects")
-    names(listData) <- sapply(listData, getAccession)
+    }
+    names(listData) <- vapply(listData, getAccession, "", USE.NAMES=FALSE)
     return( new('gbRecordList', .Data = listData) )
   }
 }
@@ -137,49 +149,115 @@ setMethod("getComment", "gbRecordList", function (x) {
   vapply(x, getComment, FUN.VALUE="", USE.NAMES=FALSE)
 })
 
+#' @export
+#' @aliases getFeatures-method,gbRecordList-method
+#' @rdname getFeatures-methods
+setMethod("getFeatures", "gbRecordList", function(x) {
+  .mapply(.features, list(x = x), NULL)
+})
 
-setMethod("getFeatures", "gbRecordList", 
-          function (x) Map(getFeatures, x))
+#' @export
+#' @aliases getFeatures-method,gbRecordList-method
+#' @rdname getFeatures-methods
+setMethod("ft", "gbRecordList", function(x) {
+  .mapply(.features(), list(x = x), NULL)
+})
+          
+#' @export
+#' @aliases getSequence-method,gbRecordList-method
+#' @rdname getSequence-methods
+setMethod("getSequence", "gbRecordList", function (x) {
+  Reduce(append, .mapply(.sequence, list(x = x), NULL))
+})
 
-
-setMethod("getSequence", "gbRecordList", 
-          function (x) {
-            Reduce(append, Map(getSequence, x))
-            })
-
-
+# ' @export
+# ' @aliases ranges,gbRecordList-method
+# ' @rdname ranges-methods
 setMethod("ranges", "gbRecordList",
           function (x, join = FALSE, key = TRUE, include = "none", exclude = "") {
             GRangesList(lapply(x, ranges, join = join, key = key,
                                include = include, exclude = exclude))
           })
 
+#' @export
+#' @aliases start,gbRecordList-method
+#' @rdname start-methods
+setMethod("start", "gbRecordList", function (x, join = FALSE, drop = TRUE) {
+  lapply(x, start, join = join, drop = drop)
+})
 
-setMethod("start", "gbRecordList",
-          function (x, join = FALSE, drop = TRUE) {
-            lapply(x, start, join = join, drop = drop)
-          })
+#' @export
+#' @aliases end,gbRecordList-method
+#' @rdname end-methods
+setMethod("end", "gbRecordList", function (x, join = FALSE, drop = TRUE) {
+  lapply(x, end, join = join, drop = drop)
+})
+
+#' @export
+#' @aliases strand,gbRecordList-method
+#' @rdname strand-methods
+setMethod("strand", "gbRecordList", function (x, join = FALSE) {
+  lapply(x, strand, join = join)
+})
+
+#' @export
+#' @aliases width,gbRecordList-method
+#' @rdname width-methods
+setMethod("width", "gbRecordList", function (x, join = FALSE) {
+  lapply(x, width, join = join)
+})
+
+#' @export
+#' @aliases fuzzy,gbRecordList-method
+#' @rdname fuzzy-methods
+setMethod("fuzzy", "gbRecordList", function(x) {
+  lapply(x, fuzzy)
+})
+
+#' @export
+#' @aliases index,gbRecordList-method
+#' @rdname index-methods
+setMethod("index", "gbRecordList", function(x) {
+  lapply(x, index)
+})
+
+#' @export
+#' @aliases key,gbRecordList-method
+#' @rdname key-methods
+setMethod("key", "gbRecordList", function(x) {
+  lapply(x, key)
+})
 
 
-setMethod("end", "gbRecordList",
-          function (x, join = FALSE, drop = TRUE) {
-            lapply(x, end, join = join, drop = drop)
-          })
+# listers -------------------------------------------------------------------
 
 
-setMethod("strand", "gbRecordList",
-          function (x, join = FALSE) {
-            lapply(x, strand, join = join)
-          })
+##
+## listQualif would return a list of lists for gbRecordList
+## users should "lapply" over gbRecordLists
+##
 
 
-setMethod("width", "gbRecordList",
-          function (x, join = FALSE) {
-            lapply(x, width, join = join)
-          })
+# testers ----------------------------------------------------------------
+
+
+#' @export
+#' @aliases hasKey,gbRecordList-method
+#' @rdname hasKey-methods
+setMethod("hasKey", "gbRecordList", function(x, key) {
+  .mapply(hasKey, list(x = x), list(key = key))
+})
+
+#' @export
+#' @aliases hasQualif,gbRecordList-method
+#' @rdname hasQualif-methods
+setMethod("hasQualif", "gbRecordList", function(x, qualifier) {
+  .mapply(hasQualif, list(x = x), list(qualifier = qualifier))
+})
 
 
 # internal ---------------------------------------------------------------
+
 
 setMethod('.dbSource', 'gbRecordList', function (x) {
   vapply(x, .dbSource, character(1), USE.NAMES=FALSE)

@@ -1,55 +1,68 @@
 #' @importFrom Biostrings DNAStringSet
 #' @importFrom IRanges new2
 #' @importFrom parallel mclapply mcmapply detectCores
+#' @importFrom foreach foreach registerDoSEQ
+#' @importFrom iterators iter
 NULL
 
-parse_gb_record <- function(gb_data, with_sequence = TRUE) {
-  # get a vector with the positions of the main GenBank fields
-  l <- length(gb_data)
-  gbf <- grep("^[A-Z//]+", gb_data)
-  gbf_names <- strsplitN(gb_data[gbf], split=" +", 1L)
-  names(gbf) <- gbf_names
-  gb_contig <- gb_sequence <-  NULL
-  
-  # Check the presence of mandatory fields
-  essential <- c("LOCUS", "DEFINITION", "ACCESSION", "VERSION", "FEATURES")
-  if (any(is.na(charmatch(essential, gbf_names)))) {
-    stop("Some fields seem to be missing from the GenBank file")
-  }
-  
-  ## HEADER
-  seqenv <- seqinfo(gbHeader(gb_data[seq.int(gbf["FEATURES"]) - 1]), NULL)
-    
-  ## ORIGIN
-  if (!is.na(origin <- gbf["ORIGIN"])) {
-    seq_idx <- seq.int(origin + 1, gbf["//"] - 1)
-    if (length(seq_idx) > 1L && seq_idx[2] < seq_idx[1]) {
-      # happens if "//" is next after "ORIGIN", i.e. no  sequence is present
-      gb_sequence <- NULL
-    } else {
-      gb_sequence <- gb_data[seq_idx]
-    }
-  } else if (!is.na(contig <- gbf["CONTIG"])) {
-    contig_line <- strsplitN(collapse(gb_data[seq.int(contig, l-1)], collapse=''),
-                             'CONTIG', 2L, fixed=TRUE)
-    gb_contig <- gbLocation(contig_line)
-  }
-  
-  seqenv$sequence <- gbSequence(gb_sequence, getAccession(seqenv), getMoltype(seqenv))
-  
-  ## FEATURES
-  if (match("FEATURES", gbf_names) == length(gbf)) {
-    gb_features <- gb_data[seq.int(gbf["FEATURES"] + 1, l - 1)]
+.mandatory <- c("LOCUS", "DEFINITION", "ACCESSION", "VERSION", "FEATURES", "//")
+
+parse_gb_record <- function(gb_record) {
+  ## check if gb_record contains multiple entries
+  end_of_record <- grep('^//$', gb_record)
+  n_records <- length(end_of_record)
+  if (n_records > 1L) {
+    start_of_record <- c(1, end_of_record[-n_records] + 1)
+    irec <- iter(ixsplit(gb_record, start_of_record))
   } else {
-    gb_features <- gb_data[seq.int(gbf["FEATURES"] + 1, gbf[match("FEATURES", gbf_names) + 1] - 1)]
+    registerDoSEQ()
+    irec <- iter(list(gb_record))
   }
-  if (length(gb_features) < 2L) {
-    stop("No features in the GenBank file")
+  gbk_list <- foreach(rec = irec, .inorder=FALSE) %dopar% {
+    # get a vector with the positions of the main GenBank fields
+    rec_idx <- grep("^[A-Z//]+", rec)
+    rec_kwd <- strsplitN(rec[rec_idx], " +", 1L)
+    gb_contig <- gb_sequence <-  NULL
+    # Check the presence of mandatory fields
+    if (any(is.na(charmatch(.mandatory, rec_kwd)))) {
+      stop("mandatory fields are be missing from the GenBank file")
+    }
+    ## get positions of features, origin, contig and end_of_record
+    ftb_idx <- rec_idx[rec_kwd == "FEATURES"]
+    ori_idx <- rec_idx[rec_kwd == "ORIGIN"]
+    ctg_idx <- rec_idx[rec_kwd == "CONTIG"]
+    end_idx <- rec_idx[rec_kwd == "//"]
+    ftb_end_idx <- rec_idx[which(rec_kwd == "FEATURES") + 1] - 1
+    
+    ## HEADER
+    seqenv <- seqinfo(gbHeader(rec[seq.int(ftb_idx - 1)]), NULL)
+    ## SEQUENCE
+    if (length(ori_idx) > 0L) {
+      # if "//" is right after "ORIGIN" there is no sequence
+      # and gb_sequence stays set to NULL
+      if (end_idx - ori_idx > 1L) {
+        gb_sequence <- rec[seq.int(ori_idx + 1, end_idx - 1)]
+      }
+      ## CONTIG
+    } else if (length(ctg_idx) > 0L) {
+      contig_line <- strsplitN(collapse(rec[seq.int(ctg_idx, end_idx-1)], collapse=''),
+                               'CONTIG', 2L, fixed=TRUE)
+      gb_contig <- gbLocation(contig_line)
+    }
+    seqenv$sequence <- gbSequence(gb_sequence, getAccession(seqenv), getMoltype(seqenv))
+    ## FEATURES
+    gb_features <- rec[seq.int(ftb_idx + 1, ftb_end_idx)]
+    gb_features <- gbFeatures(gb_features, seqinfo=seqenv)
+    new_gbRecord(seqinfo=seqenv, features=gb_features, contig=gb_contig) 
   }
-  features <- gbFeatures(gb_features, seqinfo=seqenv)
-  
-  new_gbRecord(seqinfo=seqenv, features=features, contig=gb_contig)
+   
+  if (length(gbk_list) == 1L) {
+    gbk_list[[1L]]
+  } else {
+    gbRecordList(gbk_list)
+  }
 }
+
 
 ## characters permitted to occur in feature table component names:
 ## [A-Z], [a-z], [0-9], [_'*-] --> [[:alnum]_'*\\-]

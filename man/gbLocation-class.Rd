@@ -23,7 +23,7 @@ sequence span.}
 \item{\code{strand}}{An integer vector containing -1, 1, or NA.}
 
 \item{\code{compound}}{A character code specifying how multiple ranges
-are joined. One of \sQuote{join}, \sQuote{order}, \sQuote{bond}, or \sQuote(gap).}
+are joined. One of \sQuote{join}, \sQuote{order}, or \sQuote{bond}.}
 
 \item{\code{accession}}{A character vector; the accession number of the sequence
 of the feature this location lives on.}
@@ -35,4 +35,6 @@ an "R" for \sQuote{range} (e.g., \code{1..200} or point position \code{200}),
 a "B" for \sQuote{between bases} (e.g., \code{36^37}), or a "G" for gaps
 (e.g., \code{gap()}, \code{gap(30)}, or \code{gap(unk30)}).}
 }}
+\keyword{classes}
+\keyword{internal}
 

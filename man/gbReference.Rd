@@ -1,6 +1,6 @@
 \name{.gbReference}
 \alias{.gbReference}
-\title{Generator object for the \code{\linkS4class{gbReference}} class}
+\title{Generator object for the \code{"\linkS4class{gbReference}"} class}
 \usage{
 .gbReference(...)
 }
@@ -9,18 +9,18 @@
 }
 \description{
 The generator object for the
-\code{\linkS4class{gbReference}} reference class.
+\code{"\linkS4class{gbReference}"} reference class.
 }
 \section{Methods}{
   \describe{ \item{\code{#new(refline, authors, consrtm,
   title, journal, pubmed, remark)}:}{ Create a new
   \code{\linkS4class{gbReference}} object}
-  \item{\code{#to_string(write_to_file = FALSE)}:}{
-  Generate a character string representation of a GenBank
-  reference. } }
+  \item{\code{#to_string(write_to_file = FALSE)}:}{ Create
+  a string representation of for GenBank article citations.
+  } }
 }
 \seealso{
-\code{\linkS4class{gbReference}}
+\code{"\linkS4class{gbReference}"}
 }
 \keyword{classes}
 \keyword{internal}

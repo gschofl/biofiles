@@ -1,0 +1,53 @@
+\docType{methods}
+\name{strand}
+\alias{strand}
+\alias{strand,gbFeature-method}
+\alias{strand,gbFeatureList-method}
+\alias{strand,gbRecord-method}
+\alias{strand,gbRecordList-method}
+\alias{strand<-}
+\title{Get or set the strand of genomic features}
+\usage{
+strand(x, join = FALSE, ...)
+
+strand(x, ...) <- value
+
+\S4method{strand}{gbFeature}(x, join = FALSE)
+
+\S4method{strand}{gbFeatureList}(x, join = FALSE)
+
+\S4method{strand}{gbRecord}(x, join = FALSE)
+
+\S4method{strand}{gbRecordList}(x, join = FALSE)
+}
+\arguments{
+  \item{x}{A \code{\linkS4class{gbFeature}},
+  \code{\linkS4class{gbFeatureList}},
+  \code{\linkS4class{gbRecord}}, or
+  \code{\linkS4class{gbRecordList}} object.}
+
+  \item{join}{Join compound genomic locations into a single
+  range.}
+
+  \item{...}{Further arguments passed to methods.}
+
+  \item{value}{ The strand information to set on \code{x}.
+  }
+}
+\value{
+An integer vector (or a list thereof) of 1 (plus strand),
+-1 (minus strand), or \code{NA}
+}
+\description{
+Get or set the strand of genomic features
+}
+\examples{
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+x <- gbRecord(gbk_file)
+strand(x)
+}
+\seealso{
+\code{\link{start}}, \code{\link{end}},
+\code{\link{width}}, \code{\link{ranges}}
+}
+

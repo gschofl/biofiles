@@ -74,15 +74,17 @@
 # CON - Constructed sequences
 # TSA - Transcriptome Shotgun Assembly sequences
 #
-#' Generator object for the \code{\linkS4class{gbLocus}} class
+#' Generator object for the \code{"\linkS4class{gbLocus}"} class
 #'
-#' The generator object for the \code{\linkS4class{gbLocus}} reference class.
+#' The generator object for the \code{"\linkS4class{gbLocus}"} reference class.
 #'
 #' @param ... List of arguments (see NOTE)
 #' @section Methods:
 #' \describe{
-#' \item{\code{#new(lnm, len, mtp, div, top, mdt, cdt)}:}{
+#'  \item{\code{#new(lnm, len, mtp, div, top, mdt, cdt)}:}{
 #'    Create a new \code{\linkS4class{gbLocus}} object}
+#'  \item{\code{#to_string()}:}{
+#'    Create a string representation of a GenBank LOCUS field. }
 #' }
 #' 
 #' @note Arguments to the \code{#new} method must be named arguments:
@@ -97,10 +99,9 @@
 #' } 
 #'  
 #' @seealso
-#'    \code{\linkS4class{gbLocus}}
+#'    \code{"\linkS4class{gbLocus}"}
 #' @rdname gbLocus
 #' @keywords classes internal
-#' @export
 .gbLocus <- setRefClass(
   'gbLocus',
   fields = list(
@@ -151,15 +152,17 @@
 
 #' Class \code{"gbLocus"}
 #'
-#' A container for GenBank LOCUS records 
+#' A class representing a GenBank LOCUS line. 
 #' @name gbLocus-class
 #' @section Fields:
 #' \describe{
-#' \item{\code{lnm}:}{ Locus name. Usually the accession number. }
-#' \item{\code{len}:}{ Sequence length; In bp or aa, depending on \code{mtp}. }
-#' \item{\code{mtp}:}{ Molecule type; NA, DNA, RNA, tRNA (transfer RNA), rRNA (ribosomal RNA), 
-#'  mRNA (messenger RNA), uRNA (small nuclear RNA), or AA (protein sequence). RNAs
-#'  can be prefixes ss- (single-stranded), ds- (double-stranded), or ms- (mixed-stranded)}
+#'  \item{\code{lnm}:}{ Locus name. Usually the accession number. }
+#'  \item{\code{len}:}{ Sequence length; In bp or aa, depending on \code{mtp}. }
+#'  \item{\code{mtp}:}{ Molecule type; \emph{NA}, \emph{DNA}, \emph{RNA},
+#'      \emph{tRNA} (transfer RNA), \emph{rRNA} (ribosomal RNA), \emph{mRNA}
+#'      (messenger RNA), \emph{uRNA} (small nuclear RNA), or \emph{AA}
+#'      (protein sequence). RNAs can be prefixes ss- (single-stranded),
+#'      ds- (double-stranded), or ms- (mixed-stranded)}
 #' \item{\code{div}:}{ Genbank division. }
 #' \item{\code{top}:}{ Topology; linear, circular, or missing (\code{NA}). }
 #' \item{\code{mdt}:}{ Modification date. }
@@ -169,7 +172,7 @@
 #'    \code{"\linkS4class{envRefClass}"}.
 #' @seealso
 #'    \code{\link{.gbLocus}}
-#' @keywords classes
+#' @keywords classes internal
 #' @examples
 #'
 #' showClass("gbLocus")
@@ -219,24 +222,23 @@ gbLocus <- function(locus_line) {
 # 
 #   REMARK	- The relevance of a citation. Optional subkeyword.
 #
-#' Generator object for the \code{\linkS4class{gbReference}} class
+#' Generator object for the \code{"\linkS4class{gbReference}"} class
 #'
-#' The generator object for the \code{\linkS4class{gbReference}} reference class.
+#' The generator object for the \code{"\linkS4class{gbReference}"} reference class.
 #'
 #' @param ... List of arguments.
 #' @section Methods:
 #' \describe{
 #' \item{\code{#new(refline, authors, consrtm, title, journal, pubmed, remark)}:}{
 #'    Create a new \code{\linkS4class{gbReference}} object}
-#' \item{\code{#to_string(write_to_file = FALSE)}:}{ Generate a character string
-#'    representation of a GenBank reference. }
+#' \item{\code{#to_string(write_to_file = FALSE)}:}{
+#'    Create a string representation of for GenBank article citations. }
 #' }
 #'  
 #' @seealso
-#'    \code{\linkS4class{gbReference}}
+#'    \code{"\linkS4class{gbReference}"}
 #' @rdname gbReference
 #' @keywords classes internal
-#' @export
 .gbReference <- setRefClass(
   'gbReference',
   fields = list(
@@ -313,24 +315,24 @@ gbLocus <- function(locus_line) {
 
 #' Class \code{"gbReference"}
 #'
-#' A container for GenBank REFERENCE fields. 
+#' A class representing a GenBank REFERENCE field. 
 #' @name gbReference-class
 #' @section Fields:
 #' \describe{
 #' \item{\code{refline}:}{ Top line of a reference entry.}
 #' \item{\code{authors}:}{ Authors of the citation. Mandatory or \code{consrtm}. }
 #' \item{\code{consrtm}:}{ The collective names of consortiums. Optional.}
-#' \item{\code{title}:}  { Full title of citation. Optional. }
+#' \item{\code{title}:}{ Full title of citation. Optional. }
 #' \item{\code{journal}:}{ The journal name, volume, year, and page numbers of
 #'      the citation. Mandatory. }
-#' \item{\code{pubmed}:} { The PubMed unique identifier for a citation. Optional. }
-#' \item{\code{remark}:} { The relevance of a citation. Optional. }
+#' \item{\code{pubmed}:}{ The PubMed unique identifier for a citation. Optional. }
+#' \item{\code{remark}:}{ The relevance of a citation. Optional. }
 #' }
 #' @section Extends: All reference classes extend and inherit methods from
 #'    \code{"\linkS4class{envRefClass}"}.
 #' @seealso
 #'    \code{\link{.gbReference}}
-#' @keywords classes
+#' @keywords classes internal
 #' @examples
 #'
 #' showClass("gbReference")
@@ -396,9 +398,9 @@ gbReference <- function(ref) {
 }
 
 
-#' Generator object for the \code{\linkS4class{gbReferenceList}} class
+#' Generator object for the \code{"\linkS4class{gbReferenceList}"} class
 #'
-#' The generator object for the \code{\linkS4class{gbReferenceList}} reference class.
+#' The generator object for the \code{"\linkS4class{gbReferenceList}"} reference class.
 #'
 #' @param ... List of arguments
 #' @section Methods:
@@ -406,14 +408,13 @@ gbReference <- function(ref) {
 #' \item{\code{#new(ref)}:}{
 #'    Create a new \code{\linkS4class{gbReferenceList}} object }
 #' \item{\code{#to_string(write_to_file = FALSE)}:}{
-#'    Create a character string representation of a GenBank reference list }
+#'    Create a string representation of a GenBank REFERENCE list. }
 #' }
 #'  
 #' @seealso
-#'    \code{\linkS4class{gbReferenceList}}
+#'    \code{"\linkS4class{gbReferenceList}"}
 #' @rdname gbReferenceList
 #' @keywords classes internal
-#' @export
 .gbReferenceList <- setRefClass(
   'gbReferenceList',
   fields = list('ref' = 'list'),
@@ -445,17 +446,17 @@ gbReference <- function(ref) {
 
 #' Class \code{"gbReferenceList"}
 #'
-#' A container for a set of GenBank REFERENCE fields. 
+#' A class representing a set of GenBank REFERENCE fields. 
 #' @name gbReferenceList-class
 #' @section Fields:
 #' \describe{
-#' \item{\code{ref}:}{ A list of \code{\linkS4class{gbReference}} objects. }
+#' \item{\code{ref}:}{ A list of \code{"\linkS4class{gbReference}"} objects. }
 #' }
 #' @section Extends: All reference classes extend and inherit methods from
 #'    \code{"\linkS4class{envRefClass}"}.
 #' @seealso
 #'    \code{\link{.gbReferenceList}}
-#' @keywords classes
+#' @keywords classes internal
 #' @examples
 #'
 #' showClass("gbReferenceList")
@@ -489,10 +490,9 @@ gbReferenceList <- function(ref_lines) {
 #' }
 #' 
 #' @seealso
-#'    \code{\linkS4class{gbHeader}}
+#'    \code{"\linkS4class{gbHeader}"}
 #' @rdname gbHeader
 #' @keywords classes internal
-#' @export
 .gbHeader <- setRefClass(
   'gbHeader',
   fields = list(
@@ -565,11 +565,11 @@ gbReferenceList <- function(ref_lines) {
 
 #' Class \code{"gbHeader"}
 #'
-#' A container for GenBank file headers. 
+#' A class representing a GenBank/GenPept-format file header. 
 #' @name gbHeader-class
 #' @section Fields:
 #' \describe{
-#' \item{\code{locus}:}{ A \code{\linkS4class{gbLocus}} object. }
+#' \item{\code{locus}:}{ A \code{"\linkS4class{gbLocus}"} object. }
 #' \item{\code{definition}:}{ \code{character}; Description of the sequence. }
 #' \item{\code{accession}:}{ \code{character}; The primary accession number.
 #'      A unique, unchanging identifier assigned to each GenBank sequence record. }
@@ -595,7 +595,7 @@ gbReferenceList <- function(ref_lines) {
 #'    \code{"\linkS4class{envRefClass}"}.
 #' @seealso
 #'    \code{\link{.gbHeader}}
-#' @keywords classes
+#' @keywords classes internal
 #' @examples
 #'
 #' showClass("gbHeader")
@@ -691,9 +691,9 @@ gbHeader <- function(gb_header) {
 } 
 
 
-#' Generator object for the \code{\linkS4class{seqinfo}} class
+#' Generator object for the \code{"\linkS4class{seqinfo}"} class
 #'
-#' The generator object for the \code{\linkS4class{seqinfo}} reference class.
+#' The generator object for the \code{"\linkS4class{seqinfo}"} reference class.
 #'
 #' @param ... List of arguments; must be named arguments
 #' corresponding to the fields of a \code{\linkS4class{gbHeader}} object
@@ -704,7 +704,7 @@ gbHeader <- function(gb_header) {
 #' }
 #' 
 #' @seealso
-#'    \code{\linkS4class{seqinfo}}
+#'    \code{"\linkS4class{seqinfo}"}
 #' @rdname seqinfo
 #' @keywords classes internal
 seqinfo <- setRefClass(
@@ -755,7 +755,7 @@ seqinfo <- setRefClass(
 #'    \code{"\linkS4class{envRefClass}"}.
 #' @seealso
 #'    \code{\link{seqinfo}}
-#' @keywords classes
+#' @keywords classes internal
 #' @examples
 #'
 #' showClass("seqinfo")

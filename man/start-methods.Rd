@@ -1,0 +1,52 @@
+\docType{methods}
+\name{start}
+\alias{start}
+\alias{start,gbFeature-method}
+\alias{start,gbFeatureList-method}
+\alias{start,gbRecord-method}
+\alias{start,gbRecordList-method}
+\alias{start<-}
+\title{Get or set the start of genomic features}
+\usage{
+start(x, join = FALSE, ...)
+
+start(x, check = TRUE) <- value
+
+\S4method{start}{gbFeature}(x, join = FALSE, drop = TRUE)
+
+\S4method{start}{gbFeatureList}(x, join = FALSE, drop = TRUE)
+
+\S4method{start}{gbRecord}(x, join = FALSE, drop = TRUE)
+
+\S4method{start}{gbRecordList}(x, join = FALSE, drop = TRUE)
+}
+\arguments{
+  \item{x}{A \code{\linkS4class{gbFeature}},
+  \code{\linkS4class{gbFeatureList}},
+  \code{\linkS4class{gbRecord}}, or
+  \code{\linkS4class{gbRecordList}} object.}
+
+  \item{join}{Join compound genomic locations into a single
+  range.}
+
+  \item{...}{Further arguments passed to methods.}
+}
+\value{
+An integer vector or a list of integer vectors.
+}
+\description{
+Get or set the start of genomic features
+}
+\examples{
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+x <- gbRecord(gbk_file)
+start(x)
+
+cds <- x["CDS"]
+start(cds)
+}
+\seealso{
+\code{\link{end}}, \code{\link{strand}},
+\code{\link{width}}, \code{\link{ranges}}
+}
+

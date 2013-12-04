@@ -15,7 +15,7 @@ NULL
 #' (e.g. <1..200).
 #' @slot strand An integer vector containing -1, 1, or NA.
 #' @slot compound A character code specifying how multiple ranges
-#' are joined. One of \sQuote{join}, \sQuote{order}, \sQuote{bond}, or \sQuote(gap).
+#' are joined. One of \sQuote{join}, \sQuote{order}, or \sQuote{bond}.
 #' @slot accession A character vector; the accession number of the sequence
 #' of the feature this location lives on.
 #' @slot remote A logical vector
@@ -27,10 +27,10 @@ NULL
 #' @details
 #' For more information see the 
 #' \href{ftp://ftp.ncbi.nih.gov/genbank/gbrel.txt}{GenBank Release Note}
-#'
+#' 
 #' @name gbLocation-class
 #' @rdname gbLocation-class
-#' @exportClass gbLocation
+#' @keywords classes internal
 setClass("gbLocation",
          representation(range = "matrix",
                         fuzzy = "matrix",
@@ -78,48 +78,46 @@ setValidity2("gbLocation", function(object) {
 # Getter-methods ---------------------------------------------------------
 
 
-setMethod("start", "gbLocation",
-          function(x, join = FALSE, drop = TRUE) {
-            if (join)
-              min(x@range[, 1, drop = drop])
-            else
-              x@range[, 1, drop = drop]
-          })
+setMethod("start", "gbLocation", function(x, join = FALSE, drop = TRUE) {
+  if (join) {
+    min(x@range[, 1, drop = drop])
+  } else {
+    x@range[, 1, drop = drop]
+  }
+})
 
 
-setMethod("end", "gbLocation",
-          function(x, join = FALSE, drop = TRUE) {
-            if (join)
-              max(x@range[, 2, drop = drop])
-            else
-              x@range[, 2, drop = drop]
-          })
+setMethod("end", "gbLocation", function(x, join = FALSE, drop = TRUE) {
+  if (join) {
+    max(x@range[, 2, drop = drop])
+  } else {
+    x@range[, 2, drop = drop]
+  }
+})
 
 
-setMethod("width", "gbLocation",
-          function(x, join = FALSE) {
-            if (join) 
-              max(x@range[, 2]) - min(x@range[, 1]) + 1L
-            else
-              x@range[, 2] - x@range[, 1] + 1L
-          })
+setMethod("width", "gbLocation", function(x, join = FALSE) {
+  if (join) {
+    max(x@range[, 2]) - min(x@range[, 1]) + 1L
+  } else {
+    x@range[, 2] - x@range[, 1] + 1L
+  }
+})
 
 
-setMethod("strand", "gbLocation",
-          function(x, join = FALSE) {
-            if (join || dim(x@range)[1] == 1L)
-              unique(x@strand)
-            else
-              x@strand     
-          })
+setMethod("strand", "gbLocation", function(x, join = FALSE) {
+  if (join || dim(x@range)[1] == 1L) {
+    unique(x@strand)
+  } else {
+    x@strand
+  }
+})
 
 
-setMethod("fuzzy", "gbLocation",
-          function(x) x@fuzzy)
+setMethod("fuzzy", "gbLocation", function(x) x@fuzzy)
 
 
-setMethod("getAccession", "gbLocation",
-          function(x) x@accession)
+setMethod("getAccession", "gbLocation", function(x) x@accession)
 
 
 # Replace methods -----------------------------------------------------

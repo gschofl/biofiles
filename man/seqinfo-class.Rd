@@ -23,4 +23,5 @@ showClass("seqinfo")
 \code{\link{seqinfo}}
 }
 \keyword{classes}
+\keyword{internal}
 

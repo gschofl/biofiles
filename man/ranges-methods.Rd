@@ -1,0 +1,55 @@
+\name{ranges}
+\alias{ranges}
+\alias{ranges<-}
+\title{Extract features as \code{"\linkS4class{GRanges}"} objects.}
+\usage{
+ranges(x, join = FALSE, key = TRUE, include = "none", exclude = "")
+
+ranges(x, ...) <- value
+}
+\arguments{
+  \item{x}{A \code{\linkS4class{gbFeature}},
+  \code{\linkS4class{gbFeatureList}},
+  \code{\linkS4class{gbRecord}}, or
+  \code{\linkS4class{gbRecordList}} object.}
+
+  \item{join}{Join compound genomic locations into a single
+  range.}
+
+  \item{key}{Include feature keys with ranges.}
+
+  \item{include}{Include qualifiers as metadata columns.
+  Can be "none", "all", or a character vector of qualifier
+  tags.}
+
+  \item{exclude}{Exclude specific qualifiers.}
+
+  \item{...}{Further arguments passed to methods.}
+}
+\value{
+A \code{\linkS4class{GRanges}} or
+\code{\linkS4class{GRangesList}} object.
+}
+\description{
+Extract features as \code{"\linkS4class{GRanges}"} objects.
+}
+\examples{
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+x <- gbRecord(gbk_file)
+
+## default "GRanges" object
+ranges(x)
+
+## subset CDSs and include "product", "note", "protein_id"
+ranges(x["CDS"], include=c("product", "note", "protein_id"))
+
+## subset CDSs and exclude "translation"
+ranges(x["CDS"], include="all", exclude="translation")
+}
+\seealso{
+\code{\link{start}}, \code{\link{end}},
+\code{\link{width}}, \code{\link{strand}},
+\code{\link{location}}, \code{\link{key}},
+\code{\link{qualif}}
+}
+

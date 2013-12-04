@@ -2,11 +2,11 @@
 \alias{gbReferenceList-class}
 \title{Class \code{"gbReferenceList"}}
 \description{
-A container for a set of GenBank REFERENCE fields.
+A class representing a set of GenBank REFERENCE fields.
 }
 \section{Fields}{
   \describe{ \item{\code{ref}:}{ A list of
-  \code{\linkS4class{gbReference}} objects. } }
+  \code{"\linkS4class{gbReference}"} objects. } }
 }
 
 \section{Extends}{
@@ -20,4 +20,5 @@ showClass("gbReferenceList")
 \code{\link{.gbReferenceList}}
 }
 \keyword{classes}
+\keyword{internal}
 

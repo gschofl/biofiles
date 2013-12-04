@@ -18,7 +18,7 @@
 \alias{getTaxonomy}
 \alias{getTopology}
 \alias{getVersion}
-\title{Access slots of a GenBank record.}
+\title{Access the various fields of a GenBank record.}
 \usage{
 getLocus(x)
 
@@ -56,7 +56,22 @@ getReference(x)
 
 getComment(x)
 }
+\arguments{
+  \item{x}{A \code{\linkS4class{gbFeature}},
+  \code{\linkS4class{gbFeatureList}},
+  \code{\linkS4class{gbRecord}}, or
+  \code{\linkS4class{gbRecordList}} object.}
+}
 \description{
-Access slots of a GenBank record.
+Access the various fields of a GenBank record.
+}
+\examples{
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+x <- gbRecord(gbk_file)
+
+getLocus(x)
+getLength(x)
+getGeneID(x)
+getReference(x)
 }
 

@@ -152,51 +152,117 @@ setMethod("getKeywords", "gbFeatureList", function(x) getKeywords(.seqinfo(x)))
 
 setMethod("getComment", "gbFeatureList", function(x) getComment(.seqinfo(x)))
 
+#' @export
+#' @aliases getHeader,gbFeatureList-method
+#' @rdname getHeader-methods
 setMethod("getHeader", "gbFeatureList", function(x) .header(.seqinfo(x)))
 
+#' @export
+#' @aliases getHeader,gbFeatureList-method
+#' @rdname getHeader-methods
 setMethod("header", "gbFeatureList", function(x) .header(.seqinfo(x)))
 
-setMethod("start", "gbFeatureList",
-          function(x, join = FALSE, drop = TRUE) {
-            ans <- lapply(x, start, join = join, drop = drop)
-            if (drop) {
-              if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
-                unlist(ans)
-              } else {
-                ans
-              }
-            } else {
-              setNames(data.frame(do.call(rbind, ans)), "start")
-            }
+
+#' @export
+#' @aliases getSequence,gbFeatureList-method
+#' @rdname getSequence-methods
+setMethod("getSequence", "gbFeatureList", function(x) .seq_access(x))
+
+
+# ' @export
+# ' @aliases ranges,gbFeatureList-method
+# ' @rdname ranges-methods
+setMethod("ranges", "gbFeatureList",
+          function(x, join = FALSE, key = TRUE, include = "none", exclude = "") {
+            .make_GRanges(x, join = join, include = include, exclude = exclude, key = key)
           })
 
+#' @export
+#' @aliases start,gbFeatureList-method
+#' @rdname start-methods
+setMethod("start", "gbFeatureList", function(x, join = FALSE, drop = TRUE) {
+  ans <- lapply(x, start, join = join, drop = drop)
+  if (drop) {
+    if (join || all(vapply(ans, length, 0) == 1L)) {
+      unlist(ans)
+    } else {
+      ans
+    }
+  } else {
+    setNames(data.frame(do.call(rbind, ans)), "start")
+  }
+})
 
-setMethod("end", "gbFeatureList",
-          function(x, join = FALSE, drop = TRUE) {
-            ans <- lapply(x, end, join = join, drop = drop)
-            if (drop) {
-              if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
-                unlist(ans)
-              } else {
-                ans
-              }
-            } else {
-              setNames(data.frame(do.call(rbind, ans)), "end")
-            }
-          })
+# ' @export
+# ' @aliases start<-,gbFeatureList-method
+# ' @rdname start-methods
+setReplaceMethod("start", "gbFeatureList", function(x, check=TRUE, value) {
+  value <- recycle(value, length(x))
+  new_x <- Map(function(Feature, check, val) { 
+    start(Feature, check=check) <- val
+    Feature
+  }, Feature=x, check=list(check), val=value)
+  
+  new('gbFeatureList', .Data=new_x, .seqinfo=x@.seqinfo)
+})
 
+#' @export
+#' @aliases end,gbFeatureList-method
+#' @rdname end-methods
+setMethod("end", "gbFeatureList", function(x, join = FALSE, drop = TRUE) {
+  ans <- lapply(x, end, join = join, drop = drop)
+  if (drop) {
+    if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
+      unlist(ans)
+    } else {
+      ans
+    }
+  } else {
+    setNames(data.frame(do.call(rbind, ans)), "end")
+  }
+})
 
-setMethod("strand", "gbFeatureList",
-          function(x, join = FALSE) {
-            ans <- lapply(x, strand, join = join)        
-            if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
-              unlist(ans)
-            } else {
-              ans
-            }
-          })
+# ' @export
+# ' @aliases end<-,gbFeatureList-method
+# ' @rdname end-methods
+setReplaceMethod("end", "gbFeatureList", function(x, check=TRUE, value) {
+  value <- recycle(value, length(x))
+  new_x <- Map(function(Feature, check, val) { 
+    end(Feature, check=check) <- val
+    Feature
+  }, Feature=x, check=list(check), val=value)
+  
+  new('gbFeatureList', .Data=new_x, .seqinfo=x@.seqinfo)
+})
 
+#' @export
+#' @aliases strand,gbFeatureList-method
+#' @rdname strand-methods
+setMethod("strand", "gbFeatureList", function(x, join = FALSE) {
+  ans <- lapply(x, strand, join = join)        
+  if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
+    unlist(ans)
+  } else {
+    ans
+  }
+})
 
+# ' @export
+# ' @aliases strand<-,gbFeatureList-method
+# ' @rdname strand-methods
+setReplaceMethod("strand", "gbFeatureList", function(x, value) {
+  value <- recycle(value, length(x))
+  new_x <- Map(function(Feature, val) { 
+    strand(Feature) <- val
+    Feature
+  }, Feature=x, val=value)
+  
+  new('gbFeatureList', .Data=new_x, .seqinfo=x@.seqinfo)
+})
+
+#' @export
+#' @aliases width,gbFeatureList-method
+#' @rdname width-methods
 setMethod("width", "gbFeatureList",
           function(x, join = FALSE) {
             ans <- lapply(x, width, join = join)
@@ -207,103 +273,67 @@ setMethod("width", "gbFeatureList",
             }
           })
 
+#' @export
+#' @aliases dbxref,gbFeatureList-method
+#' @rdname dbxref-methods
+setMethod("dbxref", "gbFeatureList", function(x, db = NULL, na.rm = TRUE, ...) {     
+  ans <- lapply(x, dbxref, db=db)
+  names(ans) <- lapply(x, function(f) sprintf("%s.%s", f@key, f@.id))
+  if (na.rm)
+    ans <- compactNA(ans)
+  if (all_empty(ans)) {
+    return(NA_character_)
+  }
+  ans
+})
 
-setMethod("ranges", "gbFeatureList",
-          function(x, join = FALSE, key = TRUE, include = "none", exclude = "") {
-            .make_GRanges(x, join = join, include = include, exclude = exclude, key = key)
-          })
+#' @export
+#' @aliases location,gbFeatureList-method
+#' @rdname location-methods
+setMethod("location", "gbFeatureList", function(x, join = FALSE) {
+  lapply(x, location)
+})
 
+#' @export
+#' @aliases fuzzy,gbFeatureList-method
+#' @rdname fuzzy-methods
+setMethod("fuzzy", "gbFeatureList", function(x) {
+  do.call(rbind, lapply(x, fuzzy))
+})
 
-setMethod("location", "gbFeatureList",
-          function(x, join = FALSE) {
-            lapply(x, location)
-          })
+#' @export
+#' @aliases index,gbFeatureList-method
+#' @rdname index-methods
+setMethod("index", "gbFeatureList", function(x) {
+  vapply(x, function(x) x@.id, numeric(1))
+})
 
+#' @export
+#' @aliases key,gbFeatureList-method
+#' @rdname key-methods
+setMethod("key", "gbFeatureList", function(x) {
+  vapply(x, function(f) f@key, character(1))
+})
 
-setMethod("index", "gbFeatureList",
-          function(x) {
-            vapply(x, function(x) x@.id, numeric(1))
-          })
-
-
-setMethod("key", "gbFeatureList",
-          function(x) {
-            vapply(x, function(f) f@key, character(1))
-          })
-
-
-setMethod("qualif", "gbFeatureList",
-          function(x, which = "", fixed = FALSE, use.names = TRUE) {
-            ans <- .qual_access(x, which, fixed, use.names)
-            if (use.names) {
-              .simplify(ans, unlist=FALSE)
-            }
-            else {
-              .simplify(ans, unlist=TRUE)
-            }
-          })
-
-
-setMethod("dbxref", "gbFeatureList",
-          function(x, db = NULL, na.rm = TRUE, ...) {     
-            ans <- lapply(x, dbxref, db=db)
-            names(ans) <- lapply(x, function(f) sprintf("%s.%s", f@key, f@.id))
-            if (na.rm)
-              ans <- compact(ans, filter=function(x) all(is.na(x)))
-            if (all_empty(ans)) {
-              return(NA_character_)
-            }
-            
-            ans
-          })
-
-
-setMethod("getSequence", "gbFeatureList", function(x) .seq_access(x))
-
-
-
-# setters ----------------------------------------------------------------
-
-
-setReplaceMethod("start", "gbFeatureList",
-                 function(x, check=TRUE, value) {
-                   value <- recycle(value, length(x))
-                   new_x <- Map(function(Feature, check, val) { 
-                     start(Feature, check=check) <- val
-                     Feature
-                   }, Feature=x, check=list(check), val=value)
-                   
-                   new('gbFeatureList', .Data=new_x, .seqinfo=x@.seqinfo)
-                 })
-
-
-setReplaceMethod("end", "gbFeatureList",
-                 function(x, check=TRUE, value) {
-                   value <- recycle(value, length(x))
-                   new_x <- Map(function(Feature, check, val) { 
-                     end(Feature, check=check) <- val
-                     Feature
-                   }, Feature=x, check=list(check), val=value)
-                   
-                   new('gbFeatureList', .Data=new_x, .seqinfo=x@.seqinfo)
-                 })
-
-
-setReplaceMethod("strand", "gbFeatureList",
-                 function(x, value) {
-                   value <- recycle(value, length(x))
-                   new_x <- Map(function(Feature, val) { 
-                     strand(Feature) <- val
-                     Feature
-                   }, Feature=x, val=value)
-                   
-                   new('gbFeatureList', .Data=new_x, .seqinfo=x@.seqinfo)
-                 })
+#' @export
+#' @aliases qualif,gbFeatureList-method
+#' @rdname qualif-methods
+setMethod("qualif", "gbFeatureList", function(x, which = "", fixed = FALSE, use.names = TRUE) {
+  ans <- .qual_access(x, which, fixed, use.names)
+  if (use.names) {
+    .simplify(ans, unlist=FALSE)
+  } else {
+    .simplify(ans, unlist=TRUE)
+  }
+})
 
 
 # listers ----------------------------------------------------------------
 
 
+#' @export
+#' @aliases listQualif,gbFeatureList-method
+#' @rdname listQualif-methods
 setMethod("listQualif", "gbFeatureList", function(x) {
   lapply(x, listQualif)
 })
@@ -312,23 +342,28 @@ setMethod("listQualif", "gbFeatureList", function(x) {
 # testers ----------------------------------------------------------------
 
 
-setMethod("hasKey", "gbFeatureList", 
-          function(x, key) {
-            vapply(x, hasKey, key, FUN.VALUE=logical(1))
+#' @export
+#' @aliases hasKey,gbFeatureList-method
+#' @rdname hasKey-methods
+setMethod("hasKey", "gbFeatureList", function(x, key) {
+            vapply(x, hasKey, key, FUN.VALUE=FALSE)
           })
 
-
-setMethod("hasQualif", "gbFeatureList", 
-          function(x, qualifier) {
-            vapply(x, hasQualif, qualifier, FUN.VALUE=logical(1))
+#' @export
+#' @aliases hasQualif,gbFeatureList-method
+#' @rdname hasQualif-methods
+setMethod("hasQualif", "gbFeatureList", function(x, qualifier) {
+            vapply(x, hasQualif, qualifier, FUN.VALUE=FALSE)
           })
 
 
 # subsetting ----------------------------------------------------------
 
 
-#' @export
-setMethod("[", c("gbFeatureList", "character", "missing", "ANY"),
+# ' @export
+# ' @aliases [,gbFeatureList,missing,ANY,ANY-method
+# ' @rdname extract-methods
+setMethod("[", c("gbFeatureList", "character", "ANY", "ANY"),
           function(x, i, j, ..., drop = TRUE) {
             check <- list(...)$check %||% TRUE
             idx <- which(vapply(x@.Data, function(f) f@key, "") == i)
@@ -336,31 +371,37 @@ setMethod("[", c("gbFeatureList", "character", "missing", "ANY"),
                           check=check)
           })
 
-#' @export
-setMethod("[", c("gbFeatureList", "numeric", "missing", "ANY"),
+# ' @export
+# ' @aliases [,gbFeatureList,numeric,ANY,ANY-method
+# ' @rdname extract-methods
+setMethod("[", c("gbFeatureList", "numeric", "ANY", "ANY"),
           function(x, i, j, ..., drop = TRUE) {
             check <- list(...)$check %||% TRUE
             IRanges::new2('gbFeatureList', .Data=x@.Data[i], .seqinfo=x@.seqinfo,
                           check=check)
           })
 
-
-#' @export
-setMethod("[", c("gbFeatureList", "logical", "missing", "ANY"),
+# ' @export
+# ' @aliases [,gbFeatureList,logical,ANY,ANY-method
+# ' @rdname extract-methods
+setMethod("[", c("gbFeatureList", "logical", "ANY", "ANY"),
           function(x, i, j, ..., drop = TRUE) {
             check <- list(...)$check %||% TRUE
             IRanges::new2('gbFeatureList', .Data=x@.Data[i], .seqinfo=x@.seqinfo, 
                           check=check)
           })
 
-
-#' @export
-setMethod("[", c("gbFeatureList", "missing", "missing", "ANY"),
+# ' @export
+# ' @aliases [,gbFeatureList,missing,ANY,ANY-method
+# ' @rdname extract-methods
+setMethod("[", c("gbFeatureList", "missing", "ANY", "ANY"),
           function(x, i, j, ..., drop = TRUE) x
           )
 
 
-#' @export
+# ' @export
+# ' @aliases [[,gbFeatureList-method
+# ' @rdname extract-methods
 setMethod("[[", "gbFeatureList",
           function(x, i, j, ...) {
             if (missing(i)) {

@@ -1,0 +1,35 @@
+\docType{methods}
+\name{location}
+\alias{location}
+\alias{location,gbFeature-method}
+\alias{location,gbFeatureList-method}
+\alias{location,gbRecord-method}
+\title{Access genomic locations of GenBank features}
+\usage{
+location(x, ...)
+
+\S4method{location}{gbFeature}(x)
+
+\S4method{location}{gbFeatureList}(x, join = FALSE)
+
+\S4method{location}{gbRecord}(x, join = FALSE)
+}
+\arguments{
+  \item{x}{A \code{\linkS4class{gbFeature}},
+  \code{\linkS4class{gbFeatureList}}, or
+  \code{\linkS4class{gbRecord}} object.}
+
+  \item{...}{Additional arguments passed to methods.}
+}
+\value{
+A list of \code{\linkS4class{gbLocation}} objects
+}
+\description{
+Access genomic locations of GenBank features
+}
+\examples{
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+x <- gbRecord(gbk_file)
+location(x)
+}
+

@@ -1,0 +1,47 @@
+\docType{methods}
+\name{getSequence}
+\alias{getSequence}
+\alias{getSequence,gbFeature-method}
+\alias{getSequence,gbFeatureList-method}
+\alias{getSequence,gbRecord-method}
+\alias{getSequence,gbRecordList-method}
+\alias{getSequence-method,gbRecordList-method}
+\title{Get the sequence from a GenBank record.}
+\usage{
+getSequence(x, ...)
+
+\S4method{getSequence}{gbFeature}(x)
+
+\S4method{getSequence}{gbFeatureList}(x)
+
+\S4method{getSequence}{gbRecord}(x)
+
+\S4method{getSequence}{gbRecordList}(x)
+}
+\arguments{
+  \item{x}{A \code{\linkS4class{gbFeature}},
+  \code{\linkS4class{gbFeatureList}},
+  \code{\linkS4class{gbRecord}}, or
+  \code{\linkS4class{gbRecordList}} instance.}
+
+  \item{...}{Additional arguments passed to methods.}
+}
+\value{
+An \code{\linkS4class{XStringSet}} object, containing
+either the complete sequence(s) of the record(s), or of the
+selected feature(s)
+}
+\description{
+Get the sequence from a GenBank record.
+}
+\examples{
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+x <- gbRecord(gbk_file)
+
+## extract the full-length sequence of the record.
+getSequence(x)
+
+## extract coding sequences only
+getSequence(x["CDS"])
+}
+

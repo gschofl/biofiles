@@ -1,6 +1,6 @@
 \name{.gbReferenceList}
 \alias{.gbReferenceList}
-\title{Generator object for the \code{\linkS4class{gbReferenceList}} class}
+\title{Generator object for the \code{"\linkS4class{gbReferenceList}"} class}
 \usage{
 .gbReferenceList(...)
 }
@@ -9,17 +9,16 @@
 }
 \description{
 The generator object for the
-\code{\linkS4class{gbReferenceList}} reference class.
+\code{"\linkS4class{gbReferenceList}"} reference class.
 }
 \section{Methods}{
   \describe{ \item{\code{#new(ref)}:}{ Create a new
   \code{\linkS4class{gbReferenceList}} object }
   \item{\code{#to_string(write_to_file = FALSE)}:}{ Create
-  a character string representation of a GenBank reference
-  list } }
+  a string representation of a GenBank REFERENCE list. } }
 }
 \seealso{
-\code{\linkS4class{gbReferenceList}}
+\code{"\linkS4class{gbReferenceList}"}
 }
 \keyword{classes}
 \keyword{internal}

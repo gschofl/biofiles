@@ -12,18 +12,22 @@ Depends:
     Rcpp (>= 0.10.1)
 LinkingTo: Rcpp
 Imports:
+    assertthat,
     BiocGenerics,
     Biostrings,
+    foreach,
     GenomicRanges,
     IRanges,
+    iterators,
     methods,
     parallel,
     plyr,
+    reutils,
     stats,
     stringr,
     XVector
 Suggests:
-    reutils,
+    doParallel,
     testthat
 Collate:
     'RcppExports.R'

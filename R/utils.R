@@ -36,15 +36,19 @@ is.string <- function(x) {
   if (is.empty(a)) force(b) else a
 }
 
+
 "%|NA|%" <- function(a, b) {
   if (is.na(a)) force(b) else a
 }
+
 
 "%|AA|%" <- function(a, b) {
   if (a == 'AA') force(b) else a
 }
 
+
 "%ni%" <- Negate("%in%")
+
 
 compact <- function(x) {
   x[!vapply(x, is.empty, FALSE, USE.NAMES=FALSE)]
@@ -89,6 +93,10 @@ modify_list <- function(a, b, mode=c("replace", "merge")) {
 }
 
 
+#' @importFrom reutils make_flattener
+flatten1 <- make_flattener(flatten.at=1)
+
+
 ## divide the data in vector x into groups, where the start of
 ## each group is defined by an element of index i
 ##
@@ -114,6 +122,7 @@ ixsplit <- function(x, i, include_i = TRUE, collapse_x = FALSE, ...) {
   }
   lapply(.mapply(seq.int, list(i, j), NULL), FUN)
 }
+
 
 Call <- function(fn, ...) {
   fn <- match.fun(fn)
@@ -309,7 +318,7 @@ linebreak <- function(s, width = getOption("width") - 2,
 strsplitN <- function(x, split, n, from = "start", collapse = split, ...) {
   from <- match.arg(from, c("start", "end"))
   xs <- strsplit(x, split, ...)
-  end <- vapply(xs, length, integer(1))
+  end <- vapply(xs, length, 0L)
   if (from == "end") {
     end <- end + 1L
     n <- lapply(end, `-`, n)

@@ -22,7 +22,7 @@ reference class.
   FALSE, sep = "\n"}:}{ Write a GenBank header to file. } }
 }
 \seealso{
-\code{\linkS4class{gbHeader}}
+\code{"\linkS4class{gbHeader}"}
 }
 \keyword{classes}
 \keyword{internal}

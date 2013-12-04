@@ -2,16 +2,13 @@
 \alias{gbRecord}
 \title{Read a GenBank/GenPept-format file.}
 \usage{
-gbRecord(gbk, with_sequence = TRUE)
+gbRecord(gbk)
 }
 \arguments{
   \item{gbk}{A vector of paths to GenBank format files, an
   \code{\link[reutils]{efetch}} object containing GenBank
   record(s), or a \code{textConnection} to a character
   vector that can be parsed as a Genbank record.}
-
-  \item{with_sequence}{Include sequence information if
-  avaliable.}
 }
 \value{
 An instance of the \code{\linkS4class{gbRecord}} or
@@ -47,5 +44,18 @@ x
 
 ## Directly subset features
 x[[1]]
+
+## import a file containing multiple GenBank records as a
+## gbRecordList. With many short records it pays of to
+## run the parsing in paralle
+gss_file <- system.file("extdata", "gss.gbk", package="biofiles")
+
+\dontrun{
+   require(doParallel)
+   registerDoParallel(cores=4)
+}
+
+gss <- gbRecord(gss_file)
+gss
 }
 

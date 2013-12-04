@@ -2,16 +2,25 @@
 \name{gbRecordList-class}
 \alias{gbRecordList}
 \alias{gbRecordList-class}
-\title{gbRecordList-class}
+\title{Class \code{"gbRecordList"}}
 \usage{
 gbRecordList(...)
 }
 \arguments{
   \item{...}{\dQuote{\linkS4class{gbRecord}} elements.}
 }
+\value{
+A \dQuote{\linkS4class{gbRecordList}} instance.
+}
 \description{
 \dQuote{gbRecordList} is an S4 class that provides a
 container for \dQuote{\linkS4class{gbRecord}}s retrived
-from GenBank flat files.
+from GenBank flat files. For instantiation of a
+gbRecordList object use the import function
+\code{\link{gbRecord}} or combine \code{gbRecord} objects
+using \code{gbRecordList}.
+}
+\examples{
+###
 }
 

@@ -2,11 +2,11 @@
 \alias{gbHeader-class}
 \title{Class \code{"gbHeader"}}
 \description{
-A container for GenBank file headers.
+A class representing a GenBank/GenPept-format file header.
 }
 \section{Fields}{
   \describe{ \item{\code{locus}:}{ A
-  \code{\linkS4class{gbLocus}} object. }
+  \code{"\linkS4class{gbLocus}"} object. }
   \item{\code{definition}:}{ \code{character}; Description
   of the sequence. } \item{\code{accession}:}{
   \code{character}; The primary accession number.  A
@@ -44,4 +44,5 @@ showClass("gbHeader")
 \code{\link{.gbHeader}}
 }
 \keyword{classes}
+\keyword{internal}
 

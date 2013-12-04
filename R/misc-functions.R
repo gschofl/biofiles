@@ -9,32 +9,32 @@ listUniqueQualifs <- Compose("unique", "unlist", "listQualif")
 
 
 #' @usage locusTag(x)
-#' @rdname qualif
+#' @rdname qualif-methods
 #' @export
 locusTag <- Partial("qualif", which="locus_tag", use.names=FALSE)
 
 
 #' @usage product(x)
-#' @rdname qualif
+#' @rdname qualif-methods
 #' @export
 product <- Partial("qualif", which="product", use.names=FALSE)
 
 
 #' @usage note(x)
-#' @rdname qualif
+#' @rdname qualif-methods
 #' @export
 note <- Partial("qualif", which="note", use.names=FALSE)
 
 
 #' @usage proteinID(x)
-#' @rdname qualif
+#' @rdname qualif-methods
 #' @export
 proteinID <- Partial("qualif", which="protein_id", use.names=FALSE)
 
 
 .translation <- Partial("qualif", which="translation", use.names=FALSE)
 #' @usage translation(x)
-#' @rdname qualif
+#' @rdname qualif-methods
 #' @importFrom Biostrings AAStringSet
 #' @export
 translation <- function(x) AAStringSet(.translation(x))
@@ -48,8 +48,8 @@ translation <- function(x) AAStringSet(.translation(x))
 #' @keywords internal
 #' @importFrom Biostrings width unlist DNAStringSet
 #' @importFrom IRanges metadata "metadata<-"
-getContigSeq <- function(x, merge = TRUE) {
-  stopifnot(require(reutils)) 
+#' @importFrom reutils efetch
+getContigSeq <- function(x, merge = TRUE) { 
   db <- switch(getMoltype(x), AA="protein", "nuccore")
   contig <- .contig(x)
   s <- start(contig)

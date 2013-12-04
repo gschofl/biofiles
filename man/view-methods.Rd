@@ -15,4 +15,5 @@ view(x, n, ...)
 \description{
 View all features in a \code{gbFeatureList}
 }
+\keyword{internal}
 

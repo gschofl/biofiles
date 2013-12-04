@@ -1,7 +1,7 @@
 \docType{class}
 \name{gbFeature-class}
 \alias{gbFeature-class}
-\title{gbFeature-class}
+\title{Class \code{"gbFeature"}}
 \description{
 \dQuote{gbFeature} is an S4 class that provides a container
 for GenBank feature tables.
@@ -9,12 +9,13 @@ for GenBank feature tables.
 \section{Slots}{
 
 \describe{
-\item{\code{.seqinfo}}{An \code{environment} containing the genome sequence as
-an \code{\linkS4class{XStringSet}} object and sequence metadata
+\item{\code{.seqinfo}}{An \code{\linkS4class{seqinfo}} object containing the
+full-lenght sequence of the GenBank record that the feature is part
+of as an \code{\linkS4class{XStringSet}} object, and sequence metadata
 as a \code{\linkS4class{gbHeader}} object.}
 
-\item{\code{.id}}{Identifier (index) of the feature in the
-GenBank record the feature is part of.}
+\item{\code{.id}}{Identifier (index) of the feature in the GenBank record
+the feature is part of.}
 
 \item{\code{key}}{The feature key.}
 
@@ -23,7 +24,13 @@ GenBank record the feature is part of.}
 \item{\code{qualifiers}}{A named character vector. Name attributes
 correspond to GenBank qualifier tags.}
 }}
+\section{Accessor functions}{
+  \code{\link{getHeader}}, \code{\link{getSequence}},
+  \code{\link{ranges}}, \code{\link{key}},
+  \code{\link{index}}, \code{\link{qualif}}
+}
 \seealso{
-\code{\linkS4class{gbFeatureList}}
+\code{\linkS4class{gbFeatureList}},
+\code{\linkS4class{gbRecord}}
 }
 
