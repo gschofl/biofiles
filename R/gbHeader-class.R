@@ -384,7 +384,7 @@ gbReference <- function(ref) {
   ref_list <- ixsplit(ref, ref_idx, include_i=TRUE, collapse_x=TRUE)
   ## 
   kwd   <- vapply(ref_list, strsplitN, '\\s+', 1L, FUN.VALUE="")
-  field <- vapply(ref_list, strsplitN, '^[A-Z]+[^A-Z]\\s+', 2L, FUN.VALUE="")
+  field <- vapply(ref_list, strsplitN, '^[A-Z]+\\s+(?!\\S)\\s', 2L, perl=TRUE, FUN.VALUE="")
   ##
   ref <- set_reference()
   ref$refline(field[kwd == "REFERENCE"])
