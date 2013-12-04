@@ -1,9 +1,7 @@
-\name{.gbHeader}
-\alias{.gbHeader}
+\docType{class}
+\name{gbHeader-ref-class}
+\alias{gbHeader-ref-class}
 \title{Generator object for the \code{\linkS4class{gbHeader}} class}
-\usage{
-.gbHeader(...)
-}
 \arguments{
   \item{...}{List of arguments; must be named arguments
   corresponding to the fields of a

@@ -1,7 +1,7 @@
 #' @importFrom Biostrings DNAStringSet
 #' @importFrom IRanges new2
 #' @importFrom parallel mclapply mcmapply detectCores
-#' @importFrom foreach foreach registerDoSEQ
+#' @importFrom foreach foreach registerDoSEQ "%dopar%"
 #' @importFrom iterators iter
 NULL
 
