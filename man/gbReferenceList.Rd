@@ -1,6 +1,6 @@
 \docType{class}
-\name{gbReferenceList-ref-class}
-\alias{gbReferenceList-ref-class}
+\name{gbReferenceList-class}
+\alias{gbReferenceList-class}
 \title{Generator object for the \code{"\linkS4class{gbReferenceList}"} class}
 \arguments{
   \item{...}{List of arguments}

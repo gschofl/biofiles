@@ -1,6 +1,6 @@
 \docType{class}
-\name{gbHeader-ref-class}
-\alias{gbHeader-ref-class}
+\name{gbHeader-class}
+\alias{gbHeader-class}
 \title{Generator object for the \code{\linkS4class{gbHeader}} class}
 \arguments{
   \item{...}{List of arguments; must be named arguments

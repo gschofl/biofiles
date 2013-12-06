@@ -1,6 +1,6 @@
 \docType{class}
-\name{gbLocus-ref-class}
-\alias{gbLocus-ref-class}
+\name{gbLocus-class}
+\alias{gbLocus-class}
 \title{Generator object for the \code{"\linkS4class{gbLocus}"} class}
 \arguments{
   \item{...}{List of arguments (see NOTE)}

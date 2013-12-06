@@ -101,31 +101,19 @@ setValidity2("gbRecord", function(object) {
 #' 
 gbRecord <- function(gbk) {
   if (is(gbk, "efetch")) {
-    ##
-    ## Parse'efetch' objects
-    ##
-    if (rettype(gbk) %ni% c('gb','gbwithparts','gp') || retmode(gbk) != "text") {
-      stop("Use efetch with rettype='gbwithparts','gb', or'gp' and retmode='text'")
-    }
-    gbk_data <- readLines(textConnection(content(gbk, "text")))
-    return(parse_gb_record(gbk_data))
-  } else if (is(gbk, "textConnection")) {
-    ##
-    ## Parse textConnections
-    ##
+    assert_that(retmode(gbk) == "text", rettype(gbk) %is_in% c('gb','gbwithparts','gp'))
+    gbk <- content(gbk, "textConnection")
+  }
+  if (is(gbk, "textConnection")) {
     on.exit(close(gbk))
-    gbk_data <- readLines(gbk)
-    return(parse_gb_record(gbk_data))
+    return(parse_gb_record(readLines(gbk)))
   } else if (tryCatch(all(file.exists(gbk)), error = function(e) FALSE)) {
-    ##
-    ## Parse GeneBank flat files  
-    ##
     n <- length(gbk)
     gbk_list <- vector("list", n)
     for (i in seq_len(n)) {
       con <- file(gbk[i], open="rt")
       on.exit(close(con))
-      gbk_list[[i]] <- parse_gb_record(gb_record=readLines(con))
+      gbk_list[[i]] <- parse_gb_record(readLines(con))
     }
     if (length(gbk_list) == 1L) {
       return(gbk_list[[1L]])

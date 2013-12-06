@@ -1,6 +1,6 @@
 \docType{class}
-\name{seqinfo-ref-class}
-\alias{seqinfo-ref-class}
+\name{seqinfo-class}
+\alias{seqinfo-class}
 \title{Generator object for the \code{"\linkS4class{seqinfo}"} class}
 \arguments{
   \item{...}{List of arguments; must be named arguments

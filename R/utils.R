@@ -1,5 +1,5 @@
 #' @import methods
-#' @importFrom assertthat assert_that "on_failure<-"
+#' @importFrom assertthat assert_that "on_failure<-" is.string
 #' @importFrom stats setNames
 NULL
 
@@ -27,9 +27,17 @@ on_failure(all_empty) <- function(call, env) {
 }
 
 
-is.string <- function(x) {
-  length(x) == 1 && is.character(x)
+is_in <- function(x, table) {
+  assert_that(is.scalar(x))
+  x %in% table
 }
+on_failure(is_in) <- function(call, env) {
+  paste0(sQuote(deparse(call$x)), " is not an element of ",
+         paste0(sQuote(eval(call$table, env)), collapse=", "))
+}
+
+
+"%is_in%" <- is_in
 
 
 "%||%" <- function(a, b) {
