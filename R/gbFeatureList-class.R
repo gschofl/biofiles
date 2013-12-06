@@ -35,20 +35,19 @@ setValidity2("gbFeatureList", function(object) {
 # show -------------------------------------------------------------------
 
 
-setMethod("show", "gbFeatureList", 
-          function(object) {
-            lo <- length(object)
-            cat(sprintf("%s with %i features:\n",  sQuote(class(object)), lo))
-            if (lo > 0L) {
-              .showGbFeature(object[[1L]], showInfo=FALSE)
-              if (lo > 1L) {
-                cat("...\n")
-                .showGbFeature(object[[lo]], showInfo=FALSE)
-              }
-            }
-            show(.seqinfo(object))
-            invisible()
-          })
+setMethod("show", "gbFeatureList", function(object) {
+  lo <- length(object)
+  cat(sprintf("%s with %i features:\n",  sQuote(class(object)), lo))
+  if (lo > 0L) {
+    show_gbFeature(object[[1L]], showInfo=FALSE, write_to_file=FALSE)
+    if (lo > 1L) {
+      cat("...\n")
+      show_gbFeature(object[[lo]], showInfo=FALSE, write_to_file=FALSE)
+    }
+  }
+  show(.seqinfo(object))
+  invisible()
+})
 
 
 # summary ----------------------------------------------------------------
@@ -172,10 +171,10 @@ setMethod("getSequence", "gbFeatureList", function(x) .seq_access(x))
 # ' @export
 # ' @aliases ranges,gbFeatureList-method
 # ' @rdname ranges-methods
-setMethod("ranges", "gbFeatureList",
-          function(x, join = FALSE, key = TRUE, include = "none", exclude = "") {
-            .make_GRanges(x, join = join, include = include, exclude = exclude, key = key)
-          })
+setMethod("ranges", "gbFeatureList", function(x, join = FALSE, key = TRUE,
+                                              include = "none", exclude = "") {
+  .make_GRanges(x, join = join, include = include, exclude = exclude, key = key)
+})
 
 #' @export
 #' @aliases start,gbFeatureList-method

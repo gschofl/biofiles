@@ -57,7 +57,7 @@ setMethod("write.GenBank", "gbRecord",
 
 .writeFeature <- function (f) {
   loc_line <- sprintf("%s%-16s%s",
-                      blanks(5),
+                      dup(' ', 5),
                       f@key,
                       linebreak(as(f@location, "character"),
                                 width=79, offset=21, indent=0, split=","))

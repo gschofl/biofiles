@@ -683,7 +683,8 @@ setGeneric("shift", signature="x", function(x, shift=0L, use.names=TRUE, ...) {
 #' @rdname revcomp-methods
 #' @export
 #' @docType methods
-setGeneric("revcomp", signature="x", function(x, ...)  standardGeneric("revcomp"))
+setGeneric("revcomp", signature="x", function(x, ...) standardGeneric("revcomp"))
+
 
 # view -------------------------------------------------------------------
 
@@ -697,7 +698,7 @@ setGeneric("revcomp", signature="x", function(x, ...)  standardGeneric("revcomp"
 #' @keywords internal
 #' @export
 #' @docType methods
-setGeneric("view", signature="x", function (x, n, ...){
+setGeneric("view", signature="x", function(x, n, ...) {
   standardGeneric("view")
 })
 
@@ -782,10 +783,9 @@ setGeneric("view", signature="x", function (x, n, ...){
 #' @rdname select-methods
 #' @export
 #' @docType methods
-setGeneric("select", signature="x",
-           function(x, ..., keys = NULL, cols = NULL) {
-             standardGeneric("select")
-           })
+setGeneric("select", signature="x", function(x, ..., keys = NULL, cols = NULL) {
+  standardGeneric("select")
+})
 
 
 # internal ---------------------------------------------------------------

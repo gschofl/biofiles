@@ -47,34 +47,50 @@ setValidity2("gbFeature", function(object) {
 # show -------------------------------------------------------------------
 
 
-.showGbFeature <- function(object, showInfo=TRUE) {
+show_gbFeature <- function(object, showInfo=TRUE, write_to_file=FALSE) {
   op <- options("useFancyQuotes")
   options(useFancyQuotes=FALSE)
-  loc <- linebreak(as(location(object), "character"),
-                   width=getOption("width") - 4,
-                   offset=17, indent=0, split=",", FORCE=TRUE)
+  on.exit(options(op))
+  
+  if (write_to_file) {
+    ws <- 5       ## added whitespace if we write to file
+    width <- 80
+  } else {
+    ws <- 0
+    width <- getOption("width") - 4
+    cat("Feature:        Location/Qualifiers:\n")
+  }
+  
+  loc_fmt <- paste0("%s%-16s%s")
+  qua_fmt <- paste0("%s%+17s%s=%s")
+  loc <- linebreak(as(location(object), "character"), width = width,
+                   offset = 17 + ws, indent = 0, split = ",", FORCE = FALSE)
+  loc_line <- sprintf(loc_fmt, dup(' ', ws), key(object), loc)
   if (all_empty(object@qualifiers)) {
-    cat("Feature:         Location/Qualifiers:\n",
-        sprintf("%-16s%s\n", key(object), loc))
+    qua_line <- ""
   } else {
     qua <- names(object@qualifiers)
-    val <- .mapply(linebreak, list(s=dQuote(object@qualifiers), indent=-(nchar(qua)+2)),
-                   list(width=getOption("width")-4, offset=17, FORCE=TRUE))
-    cat("Feature:         Location/Qualifiers:\n",
-        sprintf("%-16s%s\n", key(object), loc),
-        sprintf("%+17s%s=%s\n", "/", qua, unlist(val)))
+    indent <- -(nchar(qua) + 17 + ws + 2)
+    val <- unlist(.mapply(linebreak,
+                          list(s = dQuote(object@qualifiers), indent = indent),
+                          list(width = width, offset = 16 + ws, FORCE = TRUE)))
+    qua_line <- sprintf(qua_fmt, dup(' ', ws), "/", qua, val)
   }
-  if (showInfo) {
-    show(object@.seqinfo)
+  ft <- paste0(loc_line, "\n", paste0(qua_line, collapse="\n"))
+  
+  if (!write_to_file) {
+    cat(ft, sep="\n")
+    if (showInfo) {
+      show(.seqinfo(object))
+    }
   }
-  options(op)
+  invisible(ft)
 }
 
 
-setMethod("show", "gbFeature",
-          function(object) {
-            .showGbFeature(object, showInfo=TRUE)
-          })
+setMethod("show", "gbFeature", function(object) {
+  show_gbFeature(object, showInfo=TRUE, write_to_file=FALSE)
+})
 
 
 # summary ----------------------------------------------------------------

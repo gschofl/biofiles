@@ -266,10 +266,11 @@ gbLocus <- function(locus_line) {
         w <- 79
         f <- FALSE
       } else {
-        w <- getOption("width") - 2
+        w <- getOption("width") - 4
         f <- TRUE
       }
-      o <- i <- 12
+      o <- 12
+      i <- -o
       paste0(
         sprintf('%-12s%s\n', 'REFERENCE', refline),
         if (has_authors()) {
@@ -280,20 +281,20 @@ gbLocus <- function(locus_line) {
           } else {
             auth <- authors
           }
-          sprintf('  %-10s%s\n', 'AUTHORS', linebreak(auth, width=w, offset=o, FORCE=f))
+          sprintf('  %-10s%s\n', 'AUTHORS', linebreak(auth, width=w, indent=i, offset=o, FORCE=f))
         } else '',
         if (has_consrtm()) {
-          sprintf('  %-10s%s\n', 'CONSRTM', linebreak(consrtm, width=w, offset=o, FORCE=f))
+          sprintf('  %-10s%s\n', 'CONSRTM', linebreak(consrtm, width=w, indent=i, offset=o, FORCE=f))
         } else '',
         if (!is.na(title)) {
-          sprintf('  %-10s%s\n', 'TITLE', linebreak(title, width=w, offset=o, FORCE=f))
+          sprintf('  %-10s%s\n', 'TITLE', linebreak(title, width=w, indent=i, offset=o, FORCE=f))
         } else '',
-        sprintf('  %-10s%s\n', 'JOURNAL', linebreak(journal, width=w, offset=o, FORCE=f)),
+        sprintf('  %-10s%s\n', 'JOURNAL', linebreak(journal, width=w, indent=i, offset=o, FORCE=f)),
         if (!is.na(pubmed)) {
           sprintf('  %-10s%s\n', 'PUBMED', pubmed)
         } else '',
         if (!is.na(remark)) {
-          sprintf('  %-10s%s\n', 'REMARK', linebreak(remark, width=w, offset=o, FORCE=f))
+          sprintf('  %-10s%s\n', 'REMARK', linebreak(remark, width=w, indent=i, offset=o, FORCE=f))
         } else ''
       )
     },
@@ -522,25 +523,26 @@ gbReferenceList <- function(ref_lines) {
         f <- FALSE
       } else {
         loc <- ellipsize(locus$to_string())
-        w <- getOption("width") - 2
+        w <- getOption("width") - 4
         f <- TRUE
       }
-      o <- i <- 12
+      o <- 12
+      i <- -o
       paste0(
         loc,
-        sprintf("\n%-12s%s\n", "DEFINITION", linebreak(definition, width=w, indent=0, offset=o, FORCE=f)),
+        sprintf("\n%-12s%s\n", "DEFINITION", linebreak(definition, width=w, indent=i, offset=o, FORCE=f)),
         sprintf("%-12s%s\n", "ACCESSION", accession),
         sprintf("%-12s%-12s%s%s\n", "VERSION", version, "GI:", strsplitN(seqid, "|", 2, fixed = TRUE)),
         if (!all(is.na(dblink))) {
           sprintf("%-12s%s%s\n", "DBLINK", "Project: ", dblink)
         } else '',
-        sprintf("%-12s%s\n", "KEYWORDS", linebreak(keywords, width=w, offset=o, FORCE=f)),
-        sprintf("%-12s%s\n", "SOURCE", linebreak(source, width=w, offset=o, FORCE=f)),
+        sprintf("%-12s%s\n", "KEYWORDS", linebreak(keywords, width=w, indent=i, offset=o, FORCE=f)),
+        sprintf("%-12s%s\n", "SOURCE", linebreak(source, width=w, indent=i, offset=o, FORCE=f)),
         sprintf("%-12s%s\n", "  ORGANISM",
-                paste0(organism, '\n', linebreak(taxonomy, width=w, indent=i, offset=o, FORCE=f))),
+                paste0(organism, '\n', dup(' ', 12), linebreak(taxonomy, width=w, indent=i, offset=o, FORCE=f))),
         references$to_string(write_to_file = write_to_file),
         if (!is.na(comment)) {
-          sprintf("%-12s%s\n", "COMMENTS", linebreak(comment, width=w, offset=o, FORCE=f))
+          sprintf("%-12s%s\n", "COMMENTS", linebreak(comment, width=w, indent=i, offset=o, FORCE=f))
         } else '')
     },
     show = function() {

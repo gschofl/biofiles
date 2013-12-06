@@ -224,7 +224,7 @@ setMethod('.dbSource','gbRecord', function(x) {
 })
 
 setMethod(".defline", "gbRecord", function(x) {
-  paste0('gi|', getGeneID(x), .dbSource(x), getAccession(x),'', getDefinition(x))
+  paste0('gi|', getGeneID(x), .dbSource(x), getAccession(x), ' ', getDefinition(x))
 })
 
 

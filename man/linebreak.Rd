@@ -6,8 +6,7 @@ linebreak(s, width = getOption("width") - 2, indent = 0, offset = 0,
   split = " ", FORCE = FALSE, FULL_FORCE = FALSE)
 }
 \arguments{
-  \item{s}{a character vector or a list of character
-  vectors}
+  \item{s}{a character vector.}
 
   \item{width}{a positive integer giving the column for
   inserting linefeeds}
@@ -18,10 +17,10 @@ linebreak(s, width = getOption("width") - 2, indent = 0, offset = 0,
   first line by that value.}
 
   \item{offset}{a non-negative integer giving the
-  indentation of all but the first line}
+  indentation of all but the first line.}
 
   \item{split}{regular expression used for splitting.
-  Defaults to a whitespace character.}
+  Defaults to whitespace.}
 
   \item{FORCE}{Words are force-split if the available width
   is too small.}
