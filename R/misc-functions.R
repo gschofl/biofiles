@@ -32,6 +32,12 @@ note <- Partial("qualif", which="note", use.names=FALSE)
 proteinID <- Partial("qualif", which="protein_id", use.names=FALSE)
 
 
+#' @usage geneID(x)
+#' @rdname qualif-methods
+#' @export
+geneID <- Partial("qualif", which="gene", use.names=FALSE)
+
+
 .translation <- Partial("qualif", which="translation", use.names=FALSE)
 #' @usage translation(x)
 #' @rdname qualif-methods

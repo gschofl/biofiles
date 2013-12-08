@@ -53,35 +53,38 @@ setMethod("show", "gbFeatureList", function(object) {
 # summary ----------------------------------------------------------------
 
 
-setMethod("summary", "gbFeatureList",
-          function(object, n=8, ...) {
-            olen <- length(object)
-            if (olen > 2*n) {
-              hd <- object[seq_len(n), check=FALSE]
-              tl <- object[seq.int(to = olen, length.out = min(n, olen)), check=FALSE]
-              idx <- c("N", index(hd), "...", index(tl))
-              key <- c("Key", key(hd), "...", key(tl))
-              loc <- c(location(hd), "...", location(tl))
-              loc <- c("Location", unlist(lapply(loc, as, "character")))
-              prod <- c("Product", product(hd), "...", product(tl))
-            } else {
-              idx <- c("N", index(object))
-              key <- c("Key", key(object))
-              loc <- c("Location", unlist(lapply(location(object), as, "character")))
-              prod <- c("Product", unlist(product(object), use.names=FALSE))
-            }
-            setoff <- rep(dup(" ", list(...)$setoff %||% 0), length(idx))
-            max_idx_len <- max(nchar(idx))
-            max_key_len <- max(nchar(key))
-            max_loc_len <- max(nchar(loc))
-            idx <- pad(idx, max_idx_len + 1, "right")
-            key <- pad(key, max_key_len + 1, "right")
-            loc <- pad(loc, max_loc_len + 1, "right")
-            showme <- ellipsize(sprintf("%s%s%s%s%s", setoff, idx, key, loc, prod),
-                                width=getOption("width") - 1)
-            cat(showme, sep="\n")
-            return(invisible(NULL))
-          })
+setMethod("summary", "gbFeatureList", function(object, n=8, ...) {
+  olen <- length(object)
+  if (olen > 2*n) {
+    hd  <- object[seq_len(n), check=FALSE]
+    tl  <- object[seq.int(to = olen, length.out = min(n, olen)), check=FALSE]
+    idx  <- c("Id", index(hd), "...", index(tl))
+    key  <- c("Feature", key(hd), "...", key(tl))
+    loc  <- c(location(hd), "...", location(tl))
+    loc  <- c("Location", unlist(lapply(loc, as, "character")))
+    gene <- c("GeneId", geneID(hd), "...", geneID(tl))
+    prod <- c("Product", product(hd), "...", product(tl))
+    note <- c("Note", note(hd), "...", note(tl))
+  } else {
+    idx <- c("Id", index(object))
+    key <- c("Feature", key(object))
+    loc <- c("Location", unlist(lapply(location(object), as, "character")))
+    gene <- c("GeneId", geneID(object))
+    prod <- c("Product", product(object))
+    note <- c("note", note(object))
+  }
+  max_idx_len    <- max(nchar(idx))
+  max_key_len    <- max(nchar(key))
+  max_loc_len    <- max(nchar(loc))
+  max_geneid_len <- max(nchar(gene))
+  max_prod_len   <- max(nchar(prod))
+  fmt <- paste0('%+', max_idx_len + 1, 's %-', max_key_len + 1, 's%-',
+                max_loc_len + 1, 's%-', max_geneid_len + 1, 's%-',
+                max_prod_len + 1, 's%s')
+  showme <- ellipsize(sprintf(fmt, idx, key, loc, gene, prod, note))
+  cat(showme, sep="\n")
+  return(invisible(NULL))
+})
 
 
 # Internal getters ----------------------------------------------------------
