@@ -670,7 +670,7 @@ gbHeader <- function(gb_header) {
   ##
   ## COMMENT (Optional)
   if (length(gbk_idx[gbk_kwd == "COMMENT"]) > 0L) {
-    com_lines <- gb_header[seq.int(gbk_idx[gbk_kwd == "COMMENT"], length(gb_header))]
+    com_lines <- gb_header[seq.int(min(gbk_idx[gbk_kwd == "COMMENT"]), length(gb_header))]
     comment <- paste(gsub("^ +", "", sub("COMMENT", "", com_lines)), collapse="\n")
   } else {
     comment <- NA_character_
@@ -725,6 +725,9 @@ seqinfo <- setRefClass(
     },
     sequence_is_empty = function() {
       is.null(sequence)
+    },
+    is_empty = function() {
+      header_is_empty() && sequence_is_empty()
     },
     show = function() {
       if (header_is_empty()) {

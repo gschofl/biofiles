@@ -35,7 +35,7 @@ parse_gb_record <- function(gb_record) {
     ftb_end_idx <- rec_idx[which(rec_kwd == "FEATURES") + 1] - 1
     
     ## HEADER
-    seqenv <- seqinfo(gbHeader(rec[seq.int(ftb_idx - 1)]), NULL)
+    seqenv <- seqinfo(gbHeader(gb_header=rec[seq.int(ftb_idx - 1)]), NULL)
     ## SEQUENCE
     if (length(ori_idx) > 0L) {
       # if "//" is right after "ORIGIN" there is no sequence

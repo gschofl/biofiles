@@ -100,6 +100,10 @@ setValidity2("gbRecord", function(object) {
 #' gss
 #' 
 gbRecord <- function(gbk) {
+  if (missing(gbk)) {
+    ## instantiate an empty gbRecord
+    return(new_gbRecord())
+  }
   if (is(gbk, "efetch")) {
     assert_that(retmode(gbk) == "text", rettype(gbk) %is_in% c('gb','gbwithparts','gp'))
     gbk <- content(gbk, "textConnection")
@@ -113,7 +117,7 @@ gbRecord <- function(gbk) {
     for (i in seq_len(n)) {
       con <- file(gbk[i], open="rt")
       on.exit(close(con))
-      gbk_list[[i]] <- parse_gb_record(readLines(con))
+      gbk_list[[i]] <- parse_gb_record(gb_record=readLines(con))
     }
     if (length(gbk_list) == 1L) {
       return(gbk_list[[1L]])
@@ -131,43 +135,35 @@ gbRecord <- function(gbk) {
 
 
 #' @importFrom XVector toString subseq
-.show_gbRecord <- function(x) {
-  if (length(getAccession(x)) == 0L) {
-    showme <- sprintf("%s instance with no features\n", sQuote(class(x)))
+show_gbRecord <- function(x) {
+  if (.header(x)$is_empty()) {
+    showme <- sprintf("An empty object of class %s.\n", sQuote(class(x)))
   } else {
     S <- .sequence(x)
     W <- getOption("width")
     showme <- paste0(
-      sprintf("%s instance with %i features\n", sQuote(class(x)), length(x)),
+      sprintf("An object of class %s, with %i features\n", sQuote(class(x)), length(x)),
       .header(x)$to_string(write_to_file = FALSE),
       if (length(S) != 0) {
         if (width(S) < W - 16) {
           sprintf("ORIGIN      %s\n", XVector::toString(S))
         } else {
           sprintf("ORIGIN      %s\n            ...\n            %s\n",
-                  XVector::toString(
-                    XVector::subseq(S, start=1, end=W-16)
-                  ),
-                  XVector::toString(
-                    XVector::subseq(S, start=length(S[[1L]])-W+17, end=length(S[[1L]]))
-                  )
-          )
+                  toString(subseq(S, start=1, end=W-16)),
+                  toString(subseq(S, start=length(S[[1L]])-W+17, end=length(S[[1L]]))))
         }
       },
-      if (!is.null(x)) {
-        sprintf("CONTIG      %s\n", linebreak(as(.contig(x), "character"),
-                                              offset=13, split=",", FORCE=TRUE))
-      })
+      sprintf("CONTIG      %s\n", linebreak(as(.contig(x), "character"), 
+                                            offset=13, split=",", FORCE=TRUE))
+    )
   }
-  
-  cat(showme)
+  cat(showme, sep="\n")
 }
 
 
-setMethod("show", "gbRecord",
-          function(object) { 
-            .show_gbRecord(object)
-          })
+setMethod("show", "gbRecord", function(object) { 
+  show_gbRecord(object)
+})
 
 
 
