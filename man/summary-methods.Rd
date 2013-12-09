@@ -1,11 +1,29 @@
 \docType{methods}
 \name{summary}
 \alias{summary}
-\title{Summary}
+\title{Summarise a GenBank record.}
 \usage{
-summary(object, ...)
+summary(object, n = 8, ...)
+}
+\arguments{
+  \item{object}{An object of
+  class\code{\linkS4class{gbFeature}},
+  \code{\linkS4class{gbFeatureList}},
+  \code{\linkS4class{gbRecord}}, or
+  \code{\linkS4class{gbRecordList}}.}
+
+  \item{n}{For \code{list}-like objects, how many elements
+  should be summarized in head and tail.}
+
+  \item{...}{Arguments to be passed to or from other
+  methods.}
 }
 \description{
-Summary
+Summarise a GenBank record.
+}
+\examples{
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+x <- gbRecord(gbk_file)
+summary(x)
 }
 

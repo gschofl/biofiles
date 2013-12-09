@@ -61,17 +61,17 @@ setMethod("summary", "gbFeatureList", function(object, n=8, ...) {
     idx  <- c("Id", index(hd), "...", index(tl))
     key  <- c("Feature", key(hd), "...", key(tl))
     loc  <- c(location(hd), "...", location(tl))
-    loc  <- c("Location", unlist(lapply(loc, as, "character")))
+    loc  <- c("Location", vapply(loc, as, "character", FUN.VALUE=""))
     gene <- c("GeneId", geneID(hd), "...", geneID(tl))
     prod <- c("Product", product(hd), "...", product(tl))
-    note <- c("Note", note(hd), "...", note(tl))
+    note <- c("Note", collapse(as.list(note(hd)), '; '), "...", collapse(as.list(note(tl)), '; '))
   } else {
     idx <- c("Id", index(object))
     key <- c("Feature", key(object))
-    loc <- c("Location", unlist(lapply(location(object), as, "character")))
+    loc <- c("Location", vapply(location(object), as, "character", FUN.VALUE=""))
     gene <- c("GeneId", geneID(object))
     prod <- c("Product", product(object))
-    note <- c("note", note(object))
+    note <- c("Note", collapse(as.list(note(object)), '; '))
   }
   max_idx_len    <- max(nchar(idx))
   max_key_len    <- max(nchar(key))
@@ -81,7 +81,8 @@ setMethod("summary", "gbFeatureList", function(object, n=8, ...) {
   fmt <- paste0('%+', max_idx_len + 1, 's %-', max_key_len + 1, 's%-',
                 max_loc_len + 1, 's%-', max_geneid_len + 1, 's%-',
                 max_prod_len + 1, 's%s')
-  showme <- ellipsize(sprintf(fmt, idx, key, loc, gene, prod, note))
+  showme <- ellipsize(sprintf(fmt, idx, key, loc, gene, prod, note),
+                      width=getOption("width") - 3)
   cat(showme, sep="\n")
   return(invisible(NULL))
 })

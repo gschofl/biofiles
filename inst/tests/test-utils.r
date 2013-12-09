@@ -1,4 +1,29 @@
-context("Test linebreak")
+context("Test \"collapse\"")
+
+test_that("collapse works on vectors", {
+  vec <- letters[1:3]
+  expect_that(collapse(vec), is_identical_to("a b c"))
+  expect_that(collapse(vec, ','), is_identical_to("a,b,c"))
+  
+  ## automatic trimming works
+  vec2 <- c("a ", " b ", " c") 
+  expect_that(collapse(vec2), is_identical_to("a b c"))
+  
+  ## NAs preserved
+  vec3 <- c("a ", NA, " c") 
+  expect_that(collapse(vec3), is_identical_to("a NA c"))
+})
+
+test_that("collapse works on lists", {
+  vec <- list(letters[1:2], letters[3:4], letters[5:6])
+  expect_that(collapse(vec), is_identical_to(c("a b", "c d", "e f")))
+  expect_that(collapse(vec, ','), is_identical_to(c("a,b", "c,d", "e,f")))
+  
+  vec2 <- list(c("a", "b"), NA, NULL, "c", c("d", "e")) 
+  expect_that(collapse(vec2), is_identical_to(c("a b", "NA", "", "c", "d e")))
+})
+
+context("Test \"linebreak\"")
 
 s1 <- "reverse complementary sequence cleaved during processing of trans-spliced tRNAs."
 s2 <- "TCTCGCAGAGTTCTTTTTTGTATTAACAAACCCAAAACCCATAGAATTTAATGAACCCAAACCGCAATCGTACAAAAATT"

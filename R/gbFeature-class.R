@@ -76,7 +76,7 @@ show_gbFeature <- function(object, showInfo=TRUE, write_to_file=FALSE) {
                           list(width = width, offset = 16 + ws, FORCE = TRUE)))
     qua_line <- sprintf(qua_fmt, dup(' ', ws), "/", qua, val)
   }
-  ft <- paste0(loc_line, "\n", paste0(qua_line, collapse="\n"))
+  ft <- paste0(loc_line, "\n", collapse(qua_line, "\n"))
   
   if (!write_to_file) {
     cat(ft, sep="\n")
@@ -96,23 +96,26 @@ setMethod("show", "gbFeature", function(object) {
 # summary ----------------------------------------------------------------
 
 
-setMethod("summary", "gbFeature",
-          function(object, ...) {
-            idx  <- c("N", index(object))
-            key  <- c("Key", key(object))
-            loc  <- c("Location", as(location(object), "character"))
-            prod <- c("Product", product(object))
-            idx_len <- max(nchar(idx))
-            key_len <- max(nchar(key))
-            loc_len <- max(nchar(loc))
-            idx <- pad(idx, idx_len + 2, "right")
-            key <- pad(key, key_len + 3, "right")
-            loc <- pad(loc, loc_len + 3, "right")
-            showme <- ellipsize(sprintf("%s%s%s%s", idx, key, loc, prod),
-                                width=getOption("width") - 1)
-            cat(showme, sep="\n")
-            return(invisible(NULL))
-          })
+setMethod("summary", "gbFeature", function(object, ...) {
+  idx  <- c("Id", index(object))
+  key  <- c("Feature", key(object))
+  loc  <- c("Location", as(location(object), "character"))
+  gene <- c("GeneId", geneID(object))
+  prod <- c("Product", product(object))
+  note <- c("Note", collapse(as.list(note(object)), '; '))
+  max_idx_len    <- max(nchar(idx))
+  max_key_len    <- max(nchar(key))
+  max_loc_len    <- max(nchar(loc))
+  max_geneid_len <- max(nchar(gene))
+  max_prod_len   <- max(nchar(prod))
+  fmt <- paste0('%+', max_idx_len + 1, 's %-', max_key_len + 1, 's%-',
+                max_loc_len + 1, 's%-', max_geneid_len + 1, 's%-',
+                max_prod_len + 1, 's%s')
+  showme <- ellipsize(sprintf(fmt, idx, key, loc, gene, prod, note),
+                      width=getOption("width") - 3)
+  cat(showme, sep="\n")
+  return(invisible(NULL))
+})
 
 
 # Internal getters ----------------------------------------------------------

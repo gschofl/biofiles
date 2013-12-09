@@ -618,7 +618,7 @@ gbHeader <- function(gb_header) {
   ## DEFINITION (Mandatory)
   def_idx <- which(gbk_kwd == "DEFINITION")
   def_line <- gb_header[seq.int(gbk_idx[def_idx], gbk_idx[def_idx + 1] - 1)]
-  definition <- paste0(trim(sub("DEFINITION  ", "", def_line)), collapse=" ")
+  definition <- collapse(sub("DEFINITION  ", "", def_line), ' ')
   ##
   ## ACCESSION (Mandatory)
   acc_line <- gb_header[gbk_idx[gbk_kwd == "ACCESSION"]]
@@ -639,7 +639,7 @@ gbHeader <- function(gb_header) {
   ## DBSOURCE (GenPept only; sometimes more than one line)
   if (length(dbsrc_idx <- which(gbk_kwd == "DBSOURCE")) > 0L) {
     dbs_lines <- gb_header[seq.int(gbk_idx[dbsrc_idx], gbk_idx[dbsrc_idx + 1] - 1)]
-    dbsource <- paste(gsub("^ +", "", sub("DBSOURCE", "", dbs_lines)), collapse="\n")
+    dbsource <- collapse(gsub("^ +", "", sub("DBSOURCE", "", dbs_lines)), "\n")
   } else {
     dbsource <- NA_character_
   }
@@ -653,7 +653,7 @@ gbHeader <- function(gb_header) {
   source_lines <- gb_header[seq.int(gbk_idx[src_idx], gbk_idx[src_idx + 1] - 1)]                  
   source <- sub("SOURCE      ", "", source_lines[1L])
   organism <- sub("  ORGANISM  ", "", source_lines[2L])
-  taxonomy <- paste(gsub("^ +", "", source_lines[-c(1L, 2L)]), collapse=" ")
+  taxonomy <- collapse(gsub("^ +", "", source_lines[-c(1L, 2L)]), ' ')
   ##
   ## REFERENCES (Mandatory?)
   if (length(ref_idx <- which(gbk_kwd == "REFERENCE")) > 0L) {
@@ -671,7 +671,7 @@ gbHeader <- function(gb_header) {
   ## COMMENT (Optional)
   if (length(gbk_idx[gbk_kwd == "COMMENT"]) > 0L) {
     com_lines <- gb_header[seq.int(min(gbk_idx[gbk_kwd == "COMMENT"]), length(gb_header))]
-    comment <- paste(gsub("^ +", "", sub("COMMENT", "", com_lines)), collapse="\n")
+    comment <- collapse(gsub("^ +", "", sub("COMMENT", "", com_lines)), "\n")
   } else {
     comment <- NA_character_
   }

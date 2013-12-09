@@ -166,7 +166,8 @@ uusplit <- Compose("unique", "unlist", "strsplit")
 
 dup <- function(x, n) {
   if (any(n < 0)) n[n < 0] <- 0
-  vapply(.mapply(rep.int, list(rep.int(x, length(n)), n), NULL), paste0, collapse="", "")
+  vapply(.mapply(rep.int, list(rep.int(x, length(n)), n), NULL),
+         paste0, collapse="", FUN.VALUE="")
 }
 
 
@@ -183,11 +184,13 @@ wrap <- function(x, wrap = '"') {
 }
 
 
-collapse <- function(x, trim = TRUE, collapse = ' ') {
-  if (trim) {
-    x <- trim(x)
+## UnitTests: inst/tests/test-utils.r
+collapse <- function(x, sep = ' ') {
+  if (is.list(x)) {
+    vapply(x, collapse, sep = sep, FUN.VALUE='')
+  } else {
+    paste0(trim(x), collapse=sep)
   }
-  paste0(x, collapse=collapse)
 }
 
 
@@ -242,6 +245,8 @@ on_failure(has_command) <- function(call, env) {
 }
 
 
+## UnitTests: inst/tests/test-utils.r
+##
 #' Format paragraphs
 #' 
 #' Similar to \code{\link{strwrap}} but returns a single string with

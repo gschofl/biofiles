@@ -1,5 +1,6 @@
 \docType{methods}
 \name{qualif}
+\alias{geneID}
 \alias{locusTag}
 \alias{note}
 \alias{product}
@@ -32,6 +33,8 @@ note(x)
 
 proteinID(x)
 
+geneID(x)
+
 translation(x)
 }
 \arguments{
@@ -42,6 +45,15 @@ translation(x)
   \item{which}{(Optional) A character vector giving the
   name(s) of the qualifiers to retrieve.}
 
+  \item{fixed}{If \code{TRUE}, \code{which} is matched
+  against qualifiers as is, if \code{FALSE} it is treated
+  as a regular expression.}
+
+  \item{use.names}{If \code{TRUE}, return a
+  \code{data.frame} using \code{which} as column names, if
+  \code{FALSE} return, if possible, a character vector or a
+  list.}
+
   \item{...}{Additional arguments passed to methods.}
 }
 \description{
@@ -51,5 +63,8 @@ Get/set qualifiers of GenBank features
 gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
 x <- gbRecord(gbk_file)
 qualif(x[[1]], 'db_xref')
+
+## use shortcuts to common qualifiers
+proteinID(x["CDS"])
 }
 

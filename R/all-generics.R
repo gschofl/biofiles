@@ -410,11 +410,23 @@ setGeneric("getHeader", function(x, ...) standardGeneric("getHeader"))
 setGeneric("header", function(x, ...) standardGeneric("header"))
 
 
-#' Summary
+#' Summarise a GenBank record. 
 #'
+#' @usage summary(object, n = 8, ...)
+#' @param object An object of class\code{\linkS4class{gbFeature}},
+#' \code{\linkS4class{gbFeatureList}}, \code{\linkS4class{gbRecord}}, or
+#' \code{\linkS4class{gbRecordList}}.
+#' @param n For \code{list}-like objects, how many elements should
+#' be summarized in head and tail.
+#' @param ... Arguments to be passed to or from other methods.
 #' @rdname summary-methods
 #' @export
 #' @docType methods
+#' @examples
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' x <- gbRecord(gbk_file)
+#' summary(x)
+#' 
 setGeneric("summary")
 
 
@@ -488,6 +500,11 @@ setGeneric("key<-", signature="x", function(x, value, ...) {
 #' \code{\linkS4class{gbRecord}} object.
 #' @param which (Optional) A character vector giving the name(s) of the
 #' qualifiers to retrieve.
+#' @param fixed If \code{TRUE}, \code{which} is matched against qualifiers as is,
+#' if \code{FALSE} it is treated as a regular expression.
+#' @param use.names If \code{TRUE}, return a \code{data.frame} using \code{which}
+#' as column names, if \code{FALSE} return, if possible, a character vector or
+#' a list.
 #' @param ... Additional arguments passed to methods.
 #' @rdname qualif-methods
 #' @export
@@ -496,6 +513,9 @@ setGeneric("key<-", signature="x", function(x, value, ...) {
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
 #' x <- gbRecord(gbk_file)
 #' qualif(x[[1]], 'db_xref')
+#' 
+#' ## use shortcuts to common qualifiers
+#' proteinID(x["CDS"])
 #'
 setGeneric("qualif", signature=c("x", "which"), function(x, which, ...) {
   standardGeneric("qualif")

@@ -45,7 +45,7 @@ parse_gb_record <- function(gb_record) {
       }
       ## CONTIG
     } else if (length(ctg_idx) > 0L) {
-      contig_line <- strsplitN(collapse(rec[seq.int(ctg_idx, end_idx-1)], collapse=''),
+      contig_line <- strsplitN(collapse(rec[seq.int(ctg_idx, end_idx-1)], ''),
                                'CONTIG', 2L, fixed=TRUE)
       gb_contig <- gbLocation(contig_line)
     }
@@ -112,7 +112,7 @@ gbFeatures <- function(gb_features, seqinfo) {
 join_seq <- function(seq, accession_no) {
   mc_cores <- floor(detectCores()*0.75)
   s <- unlist(mclapply(seq, function(x) {
-    paste0(strsplit(substr(x, 11, 75), " ")[[1L]], collapse="")
+    collapse(strsplit(substr(x, 11, 75), " ")[[1L]], '')
   }, mc.cores=mc_cores))
   s <- c(paste0(">", accession_no), s)
   s
