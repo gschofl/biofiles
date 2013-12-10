@@ -4,7 +4,7 @@
 \alias{listQualif,gbFeature-method}
 \alias{listQualif,gbFeatureList-method}
 \alias{listQualif,gbRecord-method}
-\title{Access the names of Genbank qualifiers}
+\title{List the names of Genbank qualifiers.}
 \usage{
 listQualif(x, ...)
 
@@ -16,7 +16,8 @@ listQualif(x, ...)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbFeature}},
-  \code{\linkS4class{gbFeatureList}}, or
+  \code{\linkS4class{gbFeatureList}},
+  \code{\linkS4class{gbRecord}}, or
   \code{\linkS4class{gbRecord}} object.}
 
   \item{...}{Additional arguments to be passed to or from
@@ -24,10 +25,10 @@ listQualif(x, ...)
 }
 \value{
 A character vector (or list of character vectors) of
-qualifiers.
+qualifier names.
 }
 \description{
-Access the names of Genbank qualifiers
+List the names of Genbank qualifiers.
 }
 \examples{
 gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")

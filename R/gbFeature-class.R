@@ -350,10 +350,16 @@ setReplaceMethod("qualif", "gbFeature", function(x, which, check=TRUE, value) {
 #' @export
 #' @aliases listQualif,gbFeature-method
 #' @rdname listQualif-methods
-setMethod("listQualif", "gbFeature",function(x) {
+setMethod("listQualif", "gbFeature", function(x) {
   names(x@qualifiers)
 })
 
+#' @export
+#' @aliases tableQualif,gbFeature-method
+#' @rdname tableQualif-methods
+setMethod("tableQualif", "gbFeature", function(x) {
+  table(names(x@qualifiers))
+})
 
 # testers ----------------------------------------------------------------
 

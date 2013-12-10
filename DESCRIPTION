@@ -1,5 +1,5 @@
 Package: biofiles
-Version: 0.2.2
+Version: 0.2.3
 Title: An interface for GenBank/GenPept flat files
 Authors@R: person("Gerhard", "Schöfl", role=c("aut","cre"),
     email="gschofl@yahoo.de")
@@ -22,6 +22,7 @@ Imports:
     methods,
     parallel,
     plyr,
+    RCurl,
     reutils,
     stats,
     stringr,

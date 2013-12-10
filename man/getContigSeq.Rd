@@ -6,9 +6,10 @@ getContigSeq(x, merge = TRUE)
 }
 \arguments{
   \item{x}{gbRecord}
+
+  \item{merge}{}
 }
 \description{
 ## EXPERIMENTAL ##
 }
-\keyword{internal}
 

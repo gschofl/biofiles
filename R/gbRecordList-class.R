@@ -241,6 +241,13 @@ setMethod("key", "gbRecordList", function(x) {
 ## users should "lapply" over gbRecordLists
 ##
 
+#' @export
+#' @aliases tableQualif,gbRecordList-method
+#' @rdname tableQualif-methods
+setMethod("tableQualif", "gbRecordList", function(x) {
+  lapply(x, tableQualif)
+})
+
 
 # testers ----------------------------------------------------------------
 

@@ -347,6 +347,26 @@ setMethod("listQualif", "gbFeatureList", function(x) {
   lapply(x, listQualif)
 })
 
+tbl_qual <- function(x) {
+  tblqnm <- Compose(Partial(table, deparse.level=0), "names", 
+                    Partial(slot, name="qualifiers"))
+  lapply(x, tblqnm)
+}
+
+tbl_merge <- function(a, b) {
+  n <- intersect(names(a), names(b)) 
+  res <- c(a[!(names(a) %in% n)], b[!(names(b) %in% n)], a[n] + b[n])
+  res[order(names(res))]
+}
+
+#' @export
+#' @aliases tableQualif,gbFeatureList-method
+#' @rdname tableQualif-methods
+setMethod("tableQualif", "gbFeatureList", function(x) {
+  tbls <- tbl_qual(x)
+  Reduce(tbl_merge, tbls)
+})
+
 
 # testers ----------------------------------------------------------------
 
@@ -355,15 +375,15 @@ setMethod("listQualif", "gbFeatureList", function(x) {
 #' @aliases hasKey,gbFeatureList-method
 #' @rdname hasKey-methods
 setMethod("hasKey", "gbFeatureList", function(x, key) {
-            vapply(x, hasKey, key, FUN.VALUE=FALSE)
-          })
+  vapply(x, hasKey, key, FUN.VALUE=FALSE)
+})
 
 #' @export
 #' @aliases hasQualif,gbFeatureList-method
 #' @rdname hasQualif-methods
 setMethod("hasQualif", "gbFeatureList", function(x, qualifier) {
-            vapply(x, hasQualif, qualifier, FUN.VALUE=FALSE)
-          })
+  vapply(x, hasQualif, qualifier, FUN.VALUE=FALSE)
+})
 
 
 # subsetting ----------------------------------------------------------

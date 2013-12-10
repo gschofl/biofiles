@@ -604,13 +604,13 @@ setGeneric("write.FeatureTable", signature="x",
 # list-generics ----------------------------------------------------------
 
 
-#' Access the names of Genbank qualifiers
+#' List the names of Genbank qualifiers.
 #'
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureList}},
-#' or \code{\linkS4class{gbRecord}} object.
+#' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecord}} object.
 #' @param ... Additional arguments to be passed to or from methods.
 #' @return A character vector (or list of character vectors) of 
-#'    qualifiers.
+#'    qualifier names.
 #' @seealso
 #'    \code{\link{listUniqueQualifs}}, \code{\link{hasQualif}}
 #' @rdname listQualif-methods
@@ -621,9 +621,30 @@ setGeneric("write.FeatureTable", signature="x",
 #' x <- gbRecord(gbk_file)
 #' listQualif(x["source"])
 #'
-setGeneric("listQualif", signature="x", function(x, ...) {
-  standardGeneric("listQualif")
-})
+setGeneric("listQualif", function(x, ...) standardGeneric("listQualif"))
+
+
+#' Tabulate the names of Genbank qualifiers
+#' 
+#' Extract a frequency table (or list of tables in the case of
+#' \code{gbRecordList}s) of qualifier names.
+#'
+#' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureList}},
+#' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
+#' @param ... Additional arguments to be passed to or from methods.
+#' @return A \code{\link{table}} (or list of \code{table}s) of 
+#'    qualifiers names.
+#' @seealso
+#'    \code{\link{listUniqueQualifs}}, \code{\link{hasQualif}}
+#' @rdname tableQualif-methods
+#' @export
+#' @docType methods
+#' @examples
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' x <- gbRecord(gbk_file)
+#' tableQualif(x)
+#'
+setGeneric("tableQualif", function(x, ...) standardGeneric("tableQualif"))
 
 
 # test-generics ----------------------------------------------------------

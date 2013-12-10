@@ -8,6 +8,10 @@ NULL
 .mandatory <- c("LOCUS", "DEFINITION", "ACCESSION", "VERSION", "FEATURES", "//")
 
 parse_gb_record <- function(gb_record) {
+  ## check that the gb_record is not empty
+  if (length(gb_record) == 0L) {
+    stop("This \"gbRecord\" is empty.")
+  }
   ## check if gb_record contains multiple entries
   end_of_record <- grep('^//$', gb_record)
   n_records <- length(end_of_record)
@@ -25,7 +29,7 @@ parse_gb_record <- function(gb_record) {
     gb_contig <- gb_sequence <-  NULL
     # Check the presence of mandatory fields
     if (any(is.na(charmatch(.mandatory, rec_kwd)))) {
-      stop("mandatory fields are be missing from the GenBank file")
+      stop("mandatory fields are missing from the GenBank file")
     }
     ## get positions of features, origin, contig and end_of_record
     ftb_idx <- rec_idx[rec_kwd == "FEATURES"]

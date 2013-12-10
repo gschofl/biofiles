@@ -390,6 +390,14 @@ setMethod("listQualif", "gbRecord", function(x) {
   lapply(.features(x), listQualif)
 })
 
+#' @export
+#' @aliases tableQualif,gbRecord-method
+#' @rdname tableQualif-methods
+setMethod("tableQualif", "gbRecord", function(x) {
+  tbls <- tbl_qual(.features(x))
+  Reduce(tbl_merge, tbls)
+})
+
 
 # testers ----------------------------------------------------------------
 
