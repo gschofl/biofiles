@@ -9,14 +9,12 @@ NULL
 #' \code{\link{gbRecord}} or combine \code{gbRecord} objects using
 #' \code{gbRecordList}.
 #'
-#' @name gbRecordList-class
-#' @rdname gbRecordList-class
-#' @exportClass gbRecordList
+#' @export
 setClass("gbRecordList", contains="list")
 
+#' @rdname gbRecordList-class
 #' @param ... \dQuote{\linkS4class{gbRecord}} elements.
 #' @return A \dQuote{\linkS4class{gbRecordList}} instance.
-#' @rdname gbRecordList-class
 #' @export
 #' @examples
 #' 
@@ -50,28 +48,29 @@ setValidity2("gbRecordList", function (object) {
 })
 
 
-setMethod("show", "gbRecordList",
-          function (object) { 
-            if (all(is.na(getAccession(object)))) {
-              cat(sprintf("%s instance with zero records\n", sQuote(class(object))))
-            } else {
-              cat(sprintf("%s instance with %i records\n", 
-                          sQuote(class(object)), length(object)))
-              acc <- getAccession(object)
-              len <- getLength(object)
-              type <- ifelse(getMoltype(object) == 'AA', 'aa', 'bp')
-              def <- ellipsize(obj=getDefinition(object),
-                               width=getOption("width") - nchar(len) - nchar(type) - 8)
-              cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep="")
-            }
-          })
+#' @export
+setMethod("show", "gbRecordList", function (object) { 
+  if (all(is.na(getAccession(object)))) {
+    cat(sprintf("%s instance with zero records\n", sQuote(class(object))))
+  } else {
+    cat(sprintf("%s instance with %i records\n", 
+                sQuote(class(object)), length(object)))
+    acc <- getAccession(object)
+    len <- getLength(object)
+    type <- ifelse(getMoltype(object) == 'AA', 'aa', 'bp')
+    def <- ellipsize(obj=getDefinition(object),
+                     width=getOption("width") - nchar(len) - nchar(type) - 8)
+    cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep="")
+  }
+})
 
 
-setMethod("summary", "gbRecordList",
-          function (object, n=2, ...) {
-            x <- lapply(object, summary, n=n, ...=...)
-            invisible(NULL)
-          })
+#' @export
+#' @rdname summary-methods
+setMethod("summary", "gbRecordList", function (object, n=2, ...) {
+  x <- lapply(object, summary, n=n, ...=...)
+  invisible(NULL)
+})
 
 
 # getters ----------------------------------------------------------------
@@ -150,29 +149,24 @@ setMethod("getComment", "gbRecordList", function (x) {
 })
 
 #' @export
-#' @aliases getFeatures-method,gbRecordList-method
 #' @rdname getFeatures-methods
 setMethod("getFeatures", "gbRecordList", function(x) {
   .mapply(.features, list(x = x), NULL)
 })
 
 #' @export
-#' @aliases getFeatures-method,gbRecordList-method
 #' @rdname getFeatures-methods
 setMethod("ft", "gbRecordList", function(x) {
   .mapply(.features(), list(x = x), NULL)
 })
           
 #' @export
-#' @aliases getSequence-method,gbRecordList-method
 #' @rdname getSequence-methods
 setMethod("getSequence", "gbRecordList", function (x) {
   Reduce(append, .mapply(.sequence, list(x = x), NULL))
 })
 
-# ' @export
-# ' @aliases ranges,gbRecordList-method
-# ' @rdname ranges-methods
+#' @export
 setMethod("ranges", "gbRecordList",
           function (x, join = FALSE, key = TRUE, include = "none", exclude = "") {
             GRangesList(lapply(x, ranges, join = join, key = key,
@@ -180,53 +174,48 @@ setMethod("ranges", "gbRecordList",
           })
 
 #' @export
-#' @aliases start,gbRecordList-method
 #' @rdname start-methods
 setMethod("start", "gbRecordList", function (x, join = FALSE, drop = TRUE) {
   lapply(x, start, join = join, drop = drop)
 })
 
 #' @export
-#' @aliases end,gbRecordList-method
 #' @rdname end-methods
 setMethod("end", "gbRecordList", function (x, join = FALSE, drop = TRUE) {
   lapply(x, end, join = join, drop = drop)
 })
 
 #' @export
-#' @aliases strand,gbRecordList-method
 #' @rdname strand-methods
 setMethod("strand", "gbRecordList", function (x, join = FALSE) {
   lapply(x, strand, join = join)
 })
 
 #' @export
-#' @aliases width,gbRecordList-method
 #' @rdname width-methods
 setMethod("width", "gbRecordList", function(x) {
   lapply(x, width)
 })
 
+#' @export
+#' @rdname width-methods
 setMethod("joint_width", "gbRecordList", function(x) {
   lapply(x, joint_width)
 })
 
 #' @export
-#' @aliases fuzzy,gbRecordList-method
 #' @rdname fuzzy-methods
 setMethod("fuzzy", "gbRecordList", function(x) {
   lapply(x, fuzzy)
 })
 
 #' @export
-#' @aliases index,gbRecordList-method
 #' @rdname index-methods
 setMethod("index", "gbRecordList", function(x) {
   lapply(x, index)
 })
 
 #' @export
-#' @aliases key,gbRecordList-method
 #' @rdname key-methods
 setMethod("key", "gbRecordList", function(x) {
   lapply(x, key)
@@ -242,7 +231,6 @@ setMethod("key", "gbRecordList", function(x) {
 ##
 
 #' @export
-#' @aliases tableQualif,gbRecordList-method
 #' @rdname tableQualif-methods
 setMethod("tableQualif", "gbRecordList", function(x) {
   lapply(x, tableQualif)
@@ -253,14 +241,12 @@ setMethod("tableQualif", "gbRecordList", function(x) {
 
 
 #' @export
-#' @aliases hasKey,gbRecordList-method
 #' @rdname hasKey-methods
 setMethod("hasKey", "gbRecordList", function(x, key) {
   .mapply(hasKey, list(x = x), list(key = key))
 })
 
 #' @export
-#' @aliases hasQualif,gbRecordList-method
 #' @rdname hasQualif-methods
 setMethod("hasQualif", "gbRecordList", function(x, qualifier) {
   .mapply(hasQualif, list(x = x), list(qualifier = qualifier))

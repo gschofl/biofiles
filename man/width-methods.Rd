@@ -4,6 +4,7 @@
 \alias{joint_width,gbFeature-method}
 \alias{joint_width,gbFeatureList-method}
 \alias{joint_width,gbRecord-method}
+\alias{joint_width,gbRecordList-method}
 \alias{width}
 \alias{width,gbFeature-method}
 \alias{width,gbFeatureList-method}
@@ -28,6 +29,8 @@ joint_width(x)
 \S4method{joint_width}{gbRecord}(x)
 
 \S4method{width}{gbRecordList}(x)
+
+\S4method{joint_width}{gbRecordList}(x)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbFeature}},

@@ -1,9 +1,13 @@
 \docType{methods}
 \name{write.GenBank}
 \alias{write.GenBank}
+\alias{write.GenBank,gbRecord-method}
 \title{Write GenBank records or features to file in GenBank format}
 \usage{
 write.GenBank(x, file, append = FALSE, ...)
+
+\S4method{write.GenBank}{gbRecord}(x, file, header = TRUE, sequence = TRUE,
+  append = FALSE)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbRecord}} instance.}

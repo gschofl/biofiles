@@ -5,7 +5,6 @@
 \alias{getSequence,gbFeatureList-method}
 \alias{getSequence,gbRecord-method}
 \alias{getSequence,gbRecordList-method}
-\alias{getSequence-method,gbRecordList-method}
 \title{Get the sequence from a GenBank record.}
 \usage{
 getSequence(x, ...)

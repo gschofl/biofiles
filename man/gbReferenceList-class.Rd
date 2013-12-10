@@ -1,9 +1,24 @@
+\docType{class}
 \name{gbReferenceList-class}
 \alias{gbReferenceList-class}
-\title{Class \code{"gbReferenceList"}}
-\description{
-A class representing a set of GenBank REFERENCE fields.
+\title{Generator object for the \code{"gbReferenceList"} reference class}
+\arguments{
+  \item{...}{List of arguments}
 }
+\description{
+Generator object for the \code{"gbReferenceList"} reference
+class
+
+Generates an object representing a set of GenBank REFERENCE
+fields.
+}
+\section{Methods}{
+  \describe{ \item{\code{#new(ref)}:}{ Create a new
+  \code{\linkS4class{gbReferenceList}} object }
+  \item{\code{#to_string(write_to_file = FALSE)}:}{ Create
+  a string representation of a GenBank REFERENCE list. } }
+}
+
 \section{Fields}{
   \describe{ \item{\code{ref}:}{ A list of
   \code{"\linkS4class{gbReference}"} objects. } }
@@ -15,9 +30,6 @@ A class representing a set of GenBank REFERENCE fields.
 }
 \examples{
 showClass("gbReferenceList")
-}
-\seealso{
-\code{\link{.gbReferenceList}}
 }
 \keyword{classes}
 \keyword{internal}

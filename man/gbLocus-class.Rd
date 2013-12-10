@@ -1,9 +1,33 @@
+\docType{class}
 \name{gbLocus-class}
 \alias{gbLocus-class}
-\title{Class \code{"gbLocus"}}
-\description{
-A class representing a GenBank LOCUS line.
+\title{Generator object for the \code{"gbLocus"} reference class}
+\arguments{
+  \item{...}{List of arguments (see NOTE)}
 }
+\description{
+Generator object for the \code{"gbLocus"} reference class
+
+Generates an object representing a GenBank LOCUS line.
+}
+\note{
+Arguments to the \code{#new} method must be named
+arguments: \itemize{ \item{lnm}{ Locus name; stored in the
+\code{lnm} field. } \item{len}{ Sequence lenght; stored in
+the \code{len} field. } \item{mtp}{ Molecule type; stored
+in the \code{mtp} field). } \item{div}{ Genbank division;
+stored in the \code{div} field. } \item{top}{ Topology;
+stored in the \code{top} field. } \item{mdt}{ Modification
+date; stored in the \code{mdt} field. } \item{cdt}{ Create
+date; stored in the \code{cdt} field. } }
+}
+\section{Methods}{
+  \describe{ \item{\code{#new(lnm, len, mtp, div, top, mdt,
+  cdt)}:}{ Create a new \code{\linkS4class{gbLocus}}
+  object} \item{\code{#to_string()}:}{ Create a string
+  representation of a GenBank LOCUS field. } }
+}
+
 \section{Fields}{
   \describe{ \item{\code{lnm}:}{ Locus name. Usually the
   accession number. } \item{\code{len}:}{ Sequence length;
@@ -26,9 +50,6 @@ A class representing a GenBank LOCUS line.
 }
 \examples{
 showClass("gbLocus")
-}
-\seealso{
-\code{\link{.gbLocus}}
 }
 \keyword{classes}
 \keyword{internal}

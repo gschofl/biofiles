@@ -6,7 +6,6 @@
 \alias{getFeatures}
 \alias{getFeatures,gbRecord-method}
 \alias{getFeatures,gbRecordList-method}
-\alias{getFeatures-method,gbRecordList-method}
 \title{Get the feature table from a GenBank record.}
 \usage{
 getFeatures(x, ...)

@@ -1,9 +1,19 @@
 \docType{methods}
 \name{shift}
 \alias{shift}
+\alias{shift,gbFeature-method}
+\alias{shift,gbFeatureList-method}
+\alias{shift,gbRecord-method}
 \title{Shift location of features in a GenBank record}
 \usage{
 shift(x, shift=0L, split=FALSE, order=FALSE)
+
+\S4method{shift}{gbFeature}(x, shift = 0L, ...)
+
+\S4method{shift}{gbFeatureList}(x, shift = 0L, split = FALSE,
+  order = FALSE)
+
+\S4method{shift}{gbRecord}(x, shift, split = FALSE, order = FALSE)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbFeatureList}} or

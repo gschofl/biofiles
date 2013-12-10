@@ -78,6 +78,7 @@ setValidity2("gbLocation", function(object) {
 # Getter-methods ---------------------------------------------------------
 
 
+#' @export
 setMethod("start", "gbLocation", function(x, join = FALSE, drop = TRUE) {
   if (join) {
     min(x@range[, 1, drop = drop])
@@ -86,7 +87,7 @@ setMethod("start", "gbLocation", function(x, join = FALSE, drop = TRUE) {
   }
 })
 
-
+#' @export
 setMethod("end", "gbLocation", function(x, join = FALSE, drop = TRUE) {
   if (join) {
     max(x@range[, 2, drop = drop])
@@ -95,7 +96,7 @@ setMethod("end", "gbLocation", function(x, join = FALSE, drop = TRUE) {
   }
 })
 
-
+#' @export
 setMethod("width", "gbLocation", function(x) {
   x@range[, 2] - x@range[, 1] + 1L
 })
@@ -104,7 +105,7 @@ setMethod("joint_width", "gbLocation", function(x) {
   max(x@range[, 2]) - min(x@range[, 1]) + 1L
 })
 
-
+#' @export
 setMethod("strand", "gbLocation", function(x, join = FALSE) {
   if (join || dim(x@range)[1] == 1L) {
     unique(x@strand)
@@ -113,10 +114,10 @@ setMethod("strand", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-
+#' @export
 setMethod("fuzzy", "gbLocation", function(x) x@fuzzy)
 
-
+#' @export
 setMethod("getAccession", "gbLocation", function(x) x@accession)
 
 
@@ -258,29 +259,29 @@ as.gbLocation <- function(base_span) {
 # shift ---------------------------------------------------------------
 
 
-setMethod("shift", "gbLocation",
-          function(x, shift = 0L, ...) {
-            if (!is.numeric(shift))
-              stop("'shift' must be an integer")
-            if (!is.integer(shift))
-              shift <- as.integer(shift)
-            if (length(shift) > 1L) {
-              warning("'shift' must be a single integer. Only the first element is used")
-              shift <- shift[[1L]]
-            }
-            
-            x@range <- x@range + shift
-            validObject(x)
-            x
-          })
+#' @export
+setMethod("shift", "gbLocation", function(x, shift = 0L, ...) {
+  if (!is.numeric(shift))
+    stop("'shift' must be an integer")
+  if (!is.integer(shift))
+    shift <- as.integer(shift)
+  if (length(shift) > 1L) {
+    warning("'shift' must be a single integer. Only the first element is used")
+    shift <- shift[[1L]]
+  }
+  
+  x@range <- x@range + shift
+  validObject(x)
+  x
+})
 
 
 # Show-method ---------------------------------------------------------
 
 
-setMethod("show", "gbLocation",
-          function(object) {
-            res <- as(object, "character")
-            cat(linebreak(res, FORCE=TRUE), "\n" )
-          })
+#' @export
+setMethod("show", "gbLocation", function(object) {
+  res <- as(object, "character")
+  cat(linebreak(res, FORCE=TRUE), "\n" )
+})
 

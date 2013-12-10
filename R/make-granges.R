@@ -1,13 +1,11 @@
 #' @importFrom IRanges DataFrame Rle
-NULL
 #' @importFrom GenomicRanges GRanges GRangesList Seqinfo
 NULL
 
 .make_GRanges <- function (x, join = FALSE, include = "none", exclude = "", key = TRUE) {
-  
-  if (length(x) == 0)
+  if (length(x) == 0) {
     return(GRanges())
-  
+  }
   if (key) {
     qual <- DataFrame(key = key(x))
   } else {

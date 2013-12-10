@@ -619,8 +619,11 @@ setGeneric("write.GenBank", function(x, file, append=FALSE, ...) {
 #' @param dbname Data base name associated with the CDS qualifier protein_id.
 #' @param sequence if \code{TRUE}, additionally autput fasta file
 #' @param append if \code{TRUE} the data is appended to the connection.
+#' @rdname write.FeatureTable-methods
 #' @export
 #' @docType methods
+#' @examples
+#' ###
 setGeneric("write.FeatureTable", signature="x",
            function(x, file, tablename = "", dbname = "",
                     sequence = FALSE, append = FALSE, ...) {

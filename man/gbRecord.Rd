@@ -58,4 +58,7 @@ gss_file <- system.file("extdata", "gss.gbk", package="biofiles")
 gss <- gbRecord(gss_file)
 gss
 }
+\seealso{
+\code{\link{genomeRecordFromNCBI}}
+}
 

@@ -1,9 +1,25 @@
+\docType{class}
 \name{gbReference-class}
 \alias{gbReference-class}
-\title{Class \code{"gbReference"}}
-\description{
-A class representing a GenBank REFERENCE field.
+\title{Generator object for the \code{"gbReference"} reference class}
+\arguments{
+  \item{...}{List of arguments.}
 }
+\description{
+Generator object for the \code{"gbReference"} reference
+class
+
+Generates an object representing a GenBank REFERENCE field.
+}
+\section{Methods}{
+  \describe{ \item{\code{#new(refline, authors, consrtm,
+  title, journal, pubmed, remark)}:}{ Create a new
+  \code{\linkS4class{gbReference}} object}
+  \item{\code{#to_string(write_to_file = FALSE)}:}{ Create
+  a string representation of for GenBank article citations.
+  } }
+}
+
 \section{Fields}{
   \describe{ \item{\code{refline}:}{ Top line of a
   reference entry.} \item{\code{authors}:}{ Authors of the
@@ -24,9 +40,6 @@ A class representing a GenBank REFERENCE field.
 }
 \examples{
 showClass("gbReference")
-}
-\seealso{
-\code{\link{.gbReference}}
 }
 \keyword{classes}
 \keyword{internal}

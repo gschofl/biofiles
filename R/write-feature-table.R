@@ -1,4 +1,6 @@
 #' @importFrom Biostrings writeXStringSet
+#' @export
+#' @rdname write.FeatureTable-methods
 setMethod("write.FeatureTable", "gbRecord", 
           function (x, file, tablename="", dbname="",
                     sequence = TRUE, append = FALSE) {

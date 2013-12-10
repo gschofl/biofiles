@@ -1,9 +1,23 @@
+\docType{class}
 \name{seqinfo-class}
 \alias{seqinfo-class}
-\title{Class \code{"seqinfo"}}
-\description{
-A container for shared data: Header and Sequence.
+\title{Generator object for the \code{"seqinfo"} reference class}
+\arguments{
+  \item{...}{List of arguments; must be named arguments
+  corresponding to the fields of a
+  \code{\linkS4class{gbHeader}} object}
 }
+\description{
+Generator object for the \code{"seqinfo"} reference class
+
+Generates a container for header and sequence information.
+}
+\section{Methods}{
+  \describe{ \item{\code{#new(header = NULL, sequence =
+  NULL)}:}{ Create a new \code{\linkS4class{gbHeader}}
+  object} }
+}
+
 \section{Fields}{
   \describe{ \item{\code{header}:}{ A
   \code{\linkS4class{gbHeader}} object or \code{NULL}. }
@@ -18,9 +32,6 @@ A container for shared data: Header and Sequence.
 }
 \examples{
 showClass("seqinfo")
-}
-\seealso{
-\code{\link{seqinfo}}
 }
 \keyword{classes}
 \keyword{internal}

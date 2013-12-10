@@ -74,9 +74,7 @@
 # CON - Constructed sequences
 # TSA - Transcriptome Shotgun Assembly sequences
 #
-#' Generator object for the \code{"\linkS4class{gbLocus}"} class
-#'
-#' The generator object for the \code{"\linkS4class{gbLocus}"} reference class.
+#' Generator object for the \code{"gbLocus"} reference class
 #'
 #' @param ... List of arguments (see NOTE)
 #' @section Methods:
@@ -97,10 +95,7 @@
 #' \item{mdt}{ Modification date; stored in the \code{mdt} field. }
 #' \item{cdt}{ Create date; stored in the \code{cdt} field. }
 #' } 
-#'  
-#' @seealso
-#'    \code{"\linkS4class{gbLocus}"}
-#' @rdname gbLocus
+#'
 #' @keywords classes internal
 .gbLocus <- setRefClass(
   'gbLocus',
@@ -149,10 +144,7 @@
   )
 )
 
-
-#' Class \code{"gbLocus"}
-#'
-#' A class representing a GenBank LOCUS line. 
+#' Generates an object representing a GenBank LOCUS line.
 #' @name gbLocus-class
 #' @section Fields:
 #' \describe{
@@ -170,8 +162,6 @@
 #' }
 #' @section Extends: All reference classes extend and inherit methods from
 #'    \code{"\linkS4class{envRefClass}"}.
-#' @seealso
-#'    \code{\link{.gbLocus}}
 #' @keywords classes internal
 #' @examples
 #'
@@ -222,9 +212,7 @@ gbLocus <- function(locus_line) {
 # 
 #   REMARK	- The relevance of a citation. Optional subkeyword.
 #
-#' Generator object for the \code{"\linkS4class{gbReference}"} class
-#'
-#' The generator object for the \code{"\linkS4class{gbReference}"} reference class.
+#' Generator object for the \code{"gbReference"} reference class
 #'
 #' @param ... List of arguments.
 #' @section Methods:
@@ -234,10 +222,7 @@ gbLocus <- function(locus_line) {
 #' \item{\code{#to_string(write_to_file = FALSE)}:}{
 #'    Create a string representation of for GenBank article citations. }
 #' }
-#'  
-#' @seealso
-#'    \code{"\linkS4class{gbReference}"}
-#' @rdname gbReference
+#' 
 #' @keywords classes internal
 .gbReference <- setRefClass(
   'gbReference',
@@ -313,10 +298,7 @@ gbLocus <- function(locus_line) {
   )
 )
 
-
-#' Class \code{"gbReference"}
-#'
-#' A class representing a GenBank REFERENCE field. 
+#' Generates an  object representing a GenBank REFERENCE field. 
 #' @name gbReference-class
 #' @section Fields:
 #' \describe{
@@ -331,8 +313,6 @@ gbLocus <- function(locus_line) {
 #' }
 #' @section Extends: All reference classes extend and inherit methods from
 #'    \code{"\linkS4class{envRefClass}"}.
-#' @seealso
-#'    \code{\link{.gbReference}}
 #' @keywords classes internal
 #' @examples
 #'
@@ -399,9 +379,7 @@ gbReference <- function(ref) {
 }
 
 
-#' Generator object for the \code{"\linkS4class{gbReferenceList}"} class
-#'
-#' The generator object for the \code{"\linkS4class{gbReferenceList}"} reference class.
+#' Generator object for the \code{"gbReferenceList"} reference class
 #'
 #' @param ... List of arguments
 #' @section Methods:
@@ -411,10 +389,7 @@ gbReference <- function(ref) {
 #' \item{\code{#to_string(write_to_file = FALSE)}:}{
 #'    Create a string representation of a GenBank REFERENCE list. }
 #' }
-#'  
-#' @seealso
-#'    \code{"\linkS4class{gbReferenceList}"}
-#' @rdname gbReferenceList
+#'
 #' @keywords classes internal
 .gbReferenceList <- setRefClass(
   'gbReferenceList',
@@ -445,9 +420,7 @@ gbReference <- function(ref) {
   )
 )
 
-#' Class \code{"gbReferenceList"}
-#'
-#' A class representing a set of GenBank REFERENCE fields. 
+#' Generates an object representing a set of GenBank REFERENCE fields. 
 #' @name gbReferenceList-class
 #' @section Fields:
 #' \describe{
@@ -455,8 +428,6 @@ gbReference <- function(ref) {
 #' }
 #' @section Extends: All reference classes extend and inherit methods from
 #'    \code{"\linkS4class{envRefClass}"}.
-#' @seealso
-#'    \code{\link{.gbReferenceList}}
 #' @keywords classes internal
 #' @examples
 #'
@@ -474,9 +445,7 @@ gbReferenceList <- function(ref_lines) {
 }
 
 
-#' Generator object for the \code{\linkS4class{gbHeader}} class
-#'
-#' The generator object for the \code{\linkS4class{gbHeader}} reference class.
+#' Generator object for the \code{"gbHeader"} reference class
 #'
 #' @param ... List of arguments; must be named arguments
 #' corresponding to the fields of a \code{\linkS4class{gbHeader}} object
@@ -490,9 +459,6 @@ gbReferenceList <- function(ref_lines) {
 #'    Write a GenBank header to file. }
 #' }
 #' 
-#' @seealso
-#'    \code{"\linkS4class{gbHeader}"}
-#' @rdname gbHeader
 #' @keywords classes internal
 .gbHeader <- setRefClass(
   'gbHeader',
@@ -565,9 +531,7 @@ gbReferenceList <- function(ref_lines) {
 )
 
 
-#' Class \code{"gbHeader"}
-#'
-#' A class representing a GenBank/GenPept-format file header. 
+#' Generates an object representing a GenBank/GenPept-format file header. 
 #' @name gbHeader-class
 #' @section Fields:
 #' \describe{
@@ -595,8 +559,6 @@ gbReferenceList <- function(ref_lines) {
 #' }
 #' @section Extends: All reference classes extend and inherit methods from
 #'    \code{"\linkS4class{envRefClass}"}.
-#' @seealso
-#'    \code{\link{.gbHeader}}
 #' @keywords classes internal
 #' @examples
 #'
@@ -693,21 +655,17 @@ gbHeader <- function(gb_header) {
 } 
 
 
-#' Generator object for the \code{"\linkS4class{seqinfo}"} class
-#'
-#' The generator object for the \code{"\linkS4class{seqinfo}"} reference class.
+#' Generator object for the \code{"seqinfo"} reference class
 #'
 #' @param ... List of arguments; must be named arguments
 #' corresponding to the fields of a \code{\linkS4class{gbHeader}} object
+#' 
 #' @section Methods:
 #' \describe{
 #' \item{\code{#new(header = NULL, sequence = NULL)}:}{
 #'    Create a new \code{\linkS4class{gbHeader}} object}
 #' }
-#' 
-#' @seealso
-#'    \code{"\linkS4class{seqinfo}"}
-#' @rdname seqinfo
+#'    
 #' @keywords classes internal
 seqinfo <- setRefClass(
   'seqinfo',
@@ -746,10 +704,7 @@ seqinfo <- setRefClass(
   )
 )
 
-
-#' Class \code{"seqinfo"}
-#'
-#' A container for shared data: Header and Sequence.  
+#' Generates a container for header and sequence information.
 #' @name seqinfo-class
 #' @section Fields:
 #' \describe{
@@ -758,8 +713,7 @@ seqinfo <- setRefClass(
 #' }
 #' @section Extends: All reference classes extend and inherit methods from
 #'    \code{"\linkS4class{envRefClass}"}.
-#' @seealso
-#'    \code{\link{seqinfo}}
+#' 
 #' @keywords classes internal
 #' @examples
 #'
@@ -819,16 +773,15 @@ setMethod("getAccession", "seqinfo", function(x) .header(x)$accession)
 setMethod("getVersion", "seqinfo", function(x) .header(x)$version)
 
 
-setMethod("getGeneID", "seqinfo", 
-          function(x, db = 'gi') {
-            seqid <- .header(x)$seqid
-            if (is.na(seqid)) {
-              seqid
-            } else {
-              db.idx <- which(strsplitN(seqid, "|", 1, fixed = TRUE) == db)
-              strsplitN(seqid, "|", 2, fixed = TRUE)[db.idx]
-            }
-          })
+setMethod("getGeneID", "seqinfo", function(x, db = 'gi') {
+  seqid <- .header(x)$seqid
+  if (is.na(seqid)) {
+    seqid
+  } else {
+    db.idx <- which(strsplitN(seqid, "|", 1, fixed = TRUE) == db)
+    strsplitN(seqid, "|", 2, fixed = TRUE)[db.idx]
+  }
+})
 
 
 setMethod("getDBLink", "seqinfo", function(x) .header(x)$dblink)

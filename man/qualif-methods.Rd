@@ -1,6 +1,7 @@
 \docType{methods}
 \name{qualif}
 \alias{geneID}
+\alias{key<-}
 \alias{locusTag}
 \alias{note}
 \alias{product}

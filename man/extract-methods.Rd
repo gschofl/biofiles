@@ -1,13 +1,25 @@
 \docType{methods}
-\name{[,gbRecord,ANY-method}
-\alias{[,gbRecord,ANY,ANY,ANY-method}
+\name{[,gbFeatureList,character-method}
+\alias{[,gbFeatureList,character-method}
+\alias{[,gbFeatureList,logical-method}
+\alias{[,gbFeatureList,missing-method}
+\alias{[,gbFeatureList,numeric-method}
 \alias{[,gbRecord,ANY-method}
-\alias{[,gbRecord,missing,ANY,ANY-method}
 \alias{[,gbRecord,missing-method}
+\alias{[[,gbFeatureList,ANY,ANY-method}
 \alias{[[,gbRecord,ANY,ANY-method}
-\alias{[[,gbRecord-method}
 \title{Method extensions to extraction operator for gbRecord objects.}
 \usage{
+\S4method{[}{gbFeatureList,character}(x, i, j, ..., drop = TRUE)
+
+\S4method{[}{gbFeatureList,numeric}(x, i, j, ..., drop = TRUE)
+
+\S4method{[}{gbFeatureList,logical}(x, i, j, ..., drop = TRUE)
+
+\S4method{[}{gbFeatureList,missing}(x, i, j, ..., drop = TRUE)
+
+\S4method{[[}{gbFeatureList,ANY,ANY}(x, i, j, ...)
+
 \S4method{[}{gbRecord,ANY}(x, i, j, ..., drop = TRUE)
 
 \S4method{[}{gbRecord,missing}(x, i, j, ..., drop = TRUE)

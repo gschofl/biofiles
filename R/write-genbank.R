@@ -1,4 +1,5 @@
-
+#' @export
+#' @rdname write.GenBank-methods
 setMethod("write.GenBank", "gbRecord", 
           function (x, file, header = TRUE, sequence = TRUE, append = FALSE) {
             # write header

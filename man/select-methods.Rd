@@ -1,9 +1,15 @@
 \docType{methods}
 \name{select}
 \alias{select}
+\alias{select,gbFeatureList-method}
+\alias{select,gbRecord-method}
 \title{Select features from a GenBank Record}
 \usage{
 select(x, ..., keys = NULL, cols = NULL)
+
+\S4method{select}{gbFeatureList}(x, ..., keys = NULL, cols = NULL)
+
+\S4method{select}{gbRecord}(x, ..., keys = NULL, cols = NULL)
 }
 \arguments{
   \item{x}{A \sQuote{\code{gbRecord}} or

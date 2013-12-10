@@ -1,9 +1,21 @@
 \docType{methods}
 \name{summary}
 \alias{summary}
+\alias{summary,gbFeature-method}
+\alias{summary,gbFeatureList-method}
+\alias{summary,gbRecord-method}
+\alias{summary,gbRecordList-method}
 \title{Summarise a GenBank record.}
 \usage{
 summary(object, n = 8, ...)
+
+\S4method{summary}{gbFeature}(object, ...)
+
+\S4method{summary}{gbFeatureList}(object, n = 8, ...)
+
+\S4method{summary}{gbRecord}(object, n = 7, ...)
+
+\S4method{summary}{gbRecordList}(object, n = 2, ...)
 }
 \arguments{
   \item{object}{An object of

@@ -1,9 +1,27 @@
+\docType{class}
 \name{gbHeader-class}
 \alias{gbHeader-class}
-\title{Class \code{"gbHeader"}}
-\description{
-A class representing a GenBank/GenPept-format file header.
+\title{Generator object for the \code{"gbHeader"} reference class}
+\arguments{
+  \item{...}{List of arguments; must be named arguments
+  corresponding to the fields of a
+  \code{\linkS4class{gbHeader}} object}
 }
+\description{
+Generator object for the \code{"gbHeader"} reference class
+
+Generates an object representing a GenBank/GenPept-format
+file header.
+}
+\section{Methods}{
+  \describe{ \item{\code{#new(...)}:}{ Create a new
+  \code{\linkS4class{gbHeader}} object. }
+  \item{\code{#to_string(write_to_file = FALSE)}:}{
+  Generate a character string representation of a GenBank
+  file header. } \item{\code{#write(file = "", append =
+  FALSE, sep = "\n"}:}{ Write a GenBank header to file. } }
+}
+
 \section{Fields}{
   \describe{ \item{\code{locus}:}{ A
   \code{"\linkS4class{gbLocus}"} object. }
@@ -39,9 +57,6 @@ A class representing a GenBank/GenPept-format file header.
 }
 \examples{
 showClass("gbHeader")
-}
-\seealso{
-\code{\link{.gbHeader}}
 }
 \keyword{classes}
 \keyword{internal}

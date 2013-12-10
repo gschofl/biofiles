@@ -1,10 +1,14 @@
 \docType{methods}
 \name{write.FeatureTable}
 \alias{write.FeatureTable}
+\alias{write.FeatureTable,gbRecord-method}
 \title{Write GenBank records or features to file in Feature Table format}
 \usage{
 write.FeatureTable(x, file, tablename = "", dbname = "", sequence = FALSE,
   append = FALSE, ...)
+
+\S4method{write.FeatureTable}{gbRecord}(x, file, tablename = "",
+  dbname = "", sequence = TRUE, append = FALSE)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbRecord}} instance.}
@@ -29,5 +33,8 @@ Feature Tables are simple five-column tab-delimited tables
 specifying the location and type of each feature. They can
 be used as input for tbl2asn or Sequin to generate
 annotation.
+}
+\examples{
+###
 }
 
