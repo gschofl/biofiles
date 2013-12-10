@@ -99,3 +99,44 @@ setMethod("write.GenBank", "gbRecord",
   invisible(s)
 }
 
+
+#' @export
+#' @rdname saveRecord-methods
+setMethod("saveRecord", "gbRecord", function(x, file = NULL, dir = ".", ...) {
+  if (!is.character(file)) {
+    fname <- paste0(getAccession(x), '.rds')
+    file <- normalizePath(file.path(dir, fname), mustWork=FALSE)
+  } else {
+    file <- normalizePath(file.path(dir, file), mustWork=FALSE)
+  }
+  saveRDS(object=x, file=file, ...)
+  return(invisible())
+})
+
+
+#' @export
+#' @rdname saveRecord-methods
+setMethod("saveRecord", "gbRecordList", function(x, file = NULL, dir = ".", ...) {
+  if(!is.character(file)) {
+    fname <- paste0(ellipsize(collapse(getAccession(x), '_'), width=60, ellipsis='__'), '.rds')
+    file <- normalizePath(file.path(dir, fname), mustWork=FALSE)
+  } else {
+    file <- normalizePath(file.path(dir, file), mustWork=FALSE)
+  }
+  saveRDS(object=x, file=file, ...)
+  return(invisible())
+})
+
+
+#' @export
+#' @rdname saveRecord-methods
+loadRecord <- function(file, ...) {
+  if (missing(file)) {
+    stop("No filename provided")
+  }
+  readRDS(file=file, ...)
+}
+
+
+
+

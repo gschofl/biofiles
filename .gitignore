@@ -10,4 +10,8 @@ playground/
 *.Rmd
 *.so
 *.o
+*.tex
+*.log
+*.pdf
+*.gz
 

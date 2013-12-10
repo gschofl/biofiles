@@ -1,11 +1,11 @@
 \name{genomeRecordFromNCBI}
 \alias{genomeRecordFromNCBI}
-\title{Retrieve genomes in GenBank format directly form NCBI}
+\title{Fetch genomes from NCBI}
 \usage{
 genomeRecordFromNCBI(which, ignore.case = TRUE, .parse = TRUE, ...)
 }
 \arguments{
-  \item{which}{Path to ftp directory on NCBI's
+  \item{which}{Path to an organism on NCBI's
   \href{ftp://ftp.ncbi.nih.gov/genomes/}{Genomes FTP site}.
   Examples would be \code{Bacteria/Acetinobacter*} or
   \code{Viruses/Bat_coronavirus*}. If there are multiple
@@ -23,7 +23,8 @@ A \code{\linkS4class{gbRecord}} or
 \code{\linkS4class{gbRecordList}} object.
 }
 \description{
-## EXPERIMENTAL ##
+Retrieve genomes in GenBank format directly from NCBI's
+\href{ftp://ftp.ncbi.nih.gov/genomes/}{Genomes FTP site}.
 }
 \examples{
 \dontrun{

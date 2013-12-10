@@ -7,6 +7,7 @@ Description: Parse GenBank/GenPept records into native R objects to
     easily access and manipulate the sequence and annotation information.
 License: MIT + file LICENSE
 Encoding: UTF-8
+VignetteBuilder: knitr
 Depends:
     R (>= 2.15),
     Rcpp (>= 0.10.1)
@@ -29,7 +30,8 @@ Imports:
     XVector
 Suggests:
     doParallel,
-    testthat
+    testthat,
+    knitr
 Collate:
     'RcppExports.R'
     'utils.R'
@@ -42,6 +44,7 @@ Collate:
     'gbFeatureList-class.R'
     'gbRecord-class.R'
     'gbRecordList-class.R'
+    'genome-record-from-ncbi.R'
     'make-granges.R'
     'misc-functions.R'
     'parser.R'

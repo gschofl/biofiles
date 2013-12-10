@@ -557,7 +557,32 @@ setGeneric("dbxref", signature="x", function(x, db = NULL, ...) {
 })
 
 
-# write generics ---------------------------------------------------------
+# write/save ----------------------------------------------------------------
+
+
+#' Save and load \code{gbRecord} objects.
+#' 
+#' Serialise and unserialise \code{\linkS4class{gbRecord}}s using
+#' \code{\link{saveRDS}} and \code{\link{readRDS}}
+#' 
+#' @param x A \code{\linkS4class{gbRecord}} or \code{\linkS4class{gbRecordList}} instance.
+#' @param file A character string naming the file to write to or read from.
+#' If \code{NULL}, the accession number will be used to construct a file name.
+#' @param dir Target directory. (Default: current working directory)
+#' @param ... Arguments passed to \code{\link{saveRDS}}.
+#' @rdname saveRecord-methods
+#' @export
+#' @docType methods
+#' @examples
+#' \dontrun{
+#' aca <- genomeRecordFromNCBI("Bacteria/Acaryochloris_marina", verbose=TRUE)
+#' aca
+#' saveRecord("aca")
+#' rm(aca)
+#' aca <- loadRecord("./NC_009925_NC_009926_NC_009927_NC_009928_NC_009929_NC_0099__.rds")
+#' aca
+#' }
+setGeneric("saveRecord", function(x, file = NULL, dir = ".", ...) standardGeneric("saveRecord"))
 
 
 #' Write GenBank records or features to file in GenBank format
@@ -571,12 +596,14 @@ setGeneric("dbxref", signature="x", function(x, db = NULL, ...) {
 #' @param header if \code{FALSE} exclude the Genbank header.
 #' @param sequence if \code{FALSE} exclude the sequence.
 #' @param append if \code{TRUE} the data is appended to the connection.
+#' @rdname write.GenBank-methods
 #' @export
 #' @docType methods
-setGeneric("write.GenBank", signature="x",
-           function(x, file, header = TRUE, sequence=TRUE, append = FALSE, ...) {
-             standardGeneric("write.GenBank")
-           })
+#' @examples
+#' ###
+setGeneric("write.GenBank", function(x, file, append=FALSE, ...) {
+  standardGeneric("write.GenBank")
+})
 
 
 #' Write GenBank records or features to file in Feature Table format

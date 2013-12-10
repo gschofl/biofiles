@@ -3,8 +3,7 @@
 \alias{write.GenBank}
 \title{Write GenBank records or features to file in GenBank format}
 \usage{
-write.GenBank(x, file, header = TRUE, sequence = TRUE, append = FALSE,
-  ...)
+write.GenBank(x, file, append = FALSE, ...)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbRecord}} instance.}
@@ -26,5 +25,8 @@ Write GenBank records or features to file in GenBank format
 \details{
 For a description of the GenBank format see
 \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
+}
+\examples{
+###
 }
 

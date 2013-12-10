@@ -1,0 +1,44 @@
+\docType{methods}
+\name{saveRecord}
+\alias{loadRecord}
+\alias{saveRecord}
+\alias{saveRecord,gbRecord-method}
+\alias{saveRecord,gbRecordList-method}
+\title{Save and load \code{gbRecord} objects.}
+\usage{
+saveRecord(x, file = NULL, dir = ".", ...)
+
+\S4method{saveRecord}{gbRecord}(x, file = NULL, dir = ".", ...)
+
+\S4method{saveRecord}{gbRecordList}(x, file = NULL, dir = ".", ...)
+
+loadRecord(file, ...)
+}
+\arguments{
+  \item{x}{A \code{\linkS4class{gbRecord}} or
+  \code{\linkS4class{gbRecordList}} instance.}
+
+  \item{file}{A character string naming the file to write
+  to or read from. If \code{NULL}, the accession number
+  will be used to construct a file name.}
+
+  \item{dir}{Target directory. (Default: current working
+  directory)}
+
+  \item{...}{Arguments passed to \code{\link{saveRDS}}.}
+}
+\description{
+Serialise and unserialise \code{\linkS4class{gbRecord}}s
+using \code{\link{saveRDS}} and \code{\link{readRDS}}
+}
+\examples{
+\dontrun{
+aca <- genomeRecordFromNCBI("Bacteria/Acaryochloris_marina", verbose=TRUE)
+aca
+saveRecord("aca")
+rm(aca)
+aca <- loadRecord("./NC_009925_NC_009926_NC_009927_NC_009928_NC_009929_NC_0099__.rds")
+aca
+}
+}
+
