@@ -1,0 +1,41 @@
+\docType{methods}
+\name{qualifTable}
+\alias{qualifTable}
+\alias{qualifTable,gbFeatureList-method}
+\alias{qualifTable,gbRecord-method}
+\alias{qualifTable,gbRecordList-method}
+\title{Tabulate Genbank qualifiers}
+\usage{
+qualifTable(x, ...)
+
+\S4method{qualifTable}{gbFeatureList}(x)
+
+\S4method{qualifTable}{gbRecord}(x)
+
+\S4method{qualifTable}{gbRecordList}(x)
+}
+\arguments{
+  \item{x}{A \code{\linkS4class{gbFeatureList}},
+  \code{\linkS4class{gbRecord}}, or
+  \code{\linkS4class{gbRecordList}} object.}
+
+  \item{...}{Additional arguments to be passed to or from
+  methods.}
+}
+\value{
+A \code{\link{table}} (or list of \code{table}s) of
+qualifiers names.
+}
+\description{
+Extract a frequency table (or list of tables in the case of
+\code{gbRecordList}s) of qualifier names.
+}
+\examples{
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+x <- gbRecord(gbk_file)
+qualifTable(x)
+}
+\seealso{
+\code{\link{uniqueQualifs}}, \code{\link{hasQualif}}
+}
+

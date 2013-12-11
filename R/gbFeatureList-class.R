@@ -326,9 +326,9 @@ setMethod("qualif", "gbFeatureList", function(x, which = "", fixed = FALSE, use.
 
 
 #' @export
-#' @rdname listQualif-methods
-setMethod("listQualif", "gbFeatureList", function(x) {
-  lapply(x, listQualif)
+#' @rdname qualifList-methods
+setMethod("qualifList", "gbFeatureList", function(x) {
+  lapply(x, qualifList)
 })
 
 tbl_qual <- function(x) {
@@ -344,10 +344,16 @@ tbl_merge <- function(a, b) {
 }
 
 #' @export
-#' @rdname tableQualif-methods
-setMethod("tableQualif", "gbFeatureList", function(x) {
+#' @rdname qualifTable-methods
+setMethod("qualifTable", "gbFeatureList", function(x) {
   tbls <- tbl_qual(x)
   Reduce(tbl_merge, tbls)
+})
+
+#' @export
+#' @rdname featureTable-methods
+setMethod("featureTable", "gbFeatureList", function(x) {
+  table(key(x))
 })
 
 

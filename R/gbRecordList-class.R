@@ -226,15 +226,22 @@ setMethod("key", "gbRecordList", function(x) {
 
 
 ##
-## listQualif would return a list of lists for gbRecordList
+## qualifList would return a list of lists for gbRecordList
 ## users should "lapply" over gbRecordLists
 ##
 
 #' @export
-#' @rdname tableQualif-methods
-setMethod("tableQualif", "gbRecordList", function(x) {
-  lapply(x, tableQualif)
+#' @rdname qualifTable-methods
+setMethod("qualifTable", "gbRecordList", function(x) {
+  lapply(x, qualifTable)
 })
+
+#' @export
+#' @rdname featureTable-methods
+setMethod("featureTable", "gbRecordList", function(x) {
+  lapply(x, featureTable)
+})
+
 
 
 # testers ----------------------------------------------------------------

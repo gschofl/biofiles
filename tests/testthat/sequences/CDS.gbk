@@ -1,0 +1,30 @@
+     CDS             338..2800
+                     /gene="thrA"
+                     /locus_tag="STMUK_0002"
+                     /note="multifunctional homotetrameric enzyme that
+                     catalyzes the phosphorylation of aspartate to form
+                     aspartyl-4-phosphate as well as conversion of aspartate
+                     semialdehyde to homoserine; functions in a number of amino
+                     acid biosynthetic pathways"
+                     /codon_start=1
+                     /transl_table=11
+                     /product="bifunctional aspartokinase I/homoserine
+                     dehydrogenase I"
+                     /protein_id="AEF05936.1"
+                     /db_xref="taxon:990282"
+                     /db_xref="GI:332986953"
+                     /translation="MRVLKFGGTSVANAERFLRVADILESNARQGQVATVLSAPAKIT
+                     NHLVAMIEKTIGGQDALPNISDAERIFSDLLAGLASAQPGFPLARLKMVVEQEFAQIK
+                     HVLHGISLLGQCPDSINAALICRGEKMSIAIMAGLLEARGHRVTVIDPVEKLLAVGHY
+                     LESTVDIAESTRRIAASQIPADHMILMAGFTAGNEKGELVVLGRNGSDYSAAVLAACL
+                     RADCCEIWTDVDGVYTCDPRQVPDARLLKSMSYQEAMELSYFGAKVLHPRTITPIAQF
+                     QIPCLIKNTGNPQAPGTLIGASSDDDNLPVKGISNLNNMAMFSVSGPGMKGMIGMAAR
+                     VFAAMSRAGISVVLITQSSSEYSISFCVPQSDCARARRAMQDEFYLELKEGLLEPLAV
+                     TERLAIISVVGDGMRTLRGISAKFFAALARANINIVAIAQGSSERSISVVVNNDDATT
+                     GVRVTHQMLFNTDQVIEVFVIGVGGVGGALLEQLKRQQTWLKNKHIDLRVCGVANSKA
+                     LLTNVHGLNLDNWQAELAQANAPFNLGRLIRLVKEYHLLNPVIVDCTSSQAVADQYAD
+                     FLREGFHVVTPNKKANTSSMDYYHQLRFAAAQSRRKFLYDTNVGAGLPVIENLQNLLN
+                     AGDELQKFSGILSGSLSFIFGKLEEGMSLSQATALAREMGYTEPDPRDDLSGMDVARK
+                     LLILARETGRELELSDIVIEPVLPNEFDASGDVTAFMAHLPQLDDAFAARVAKARDEG
+                     KVLRYVGNIEEDGVCRVKIAEVDGNDPLFKVKNGENALAFYSHYYQPLPLVLRGYGAG
+                     NDVTAAGVFADLLRTLSWKLGV"

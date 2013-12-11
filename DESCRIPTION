@@ -7,7 +7,6 @@ Description: Parse GenBank/GenPept records into native R objects to
     easily access and manipulate the sequence and annotation information.
 License: MIT + file LICENSE
 Encoding: UTF-8
-VignetteBuilder: knitr
 Depends:
     R (>= 2.15),
     Rcpp (>= 0.10.1)
@@ -31,7 +30,8 @@ Imports:
 Suggests:
     doParallel,
     testthat,
-    knitr
+    BiocStyle
+BugReports: https://github.com/gschofl/biofiles/issues
 Collate:
     'RcppExports.R'
     'utils.R'

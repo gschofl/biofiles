@@ -1,18 +1,18 @@
 \docType{methods}
-\name{listQualif}
-\alias{listQualif}
-\alias{listQualif,gbFeature-method}
-\alias{listQualif,gbFeatureList-method}
-\alias{listQualif,gbRecord-method}
+\name{qualifList}
+\alias{qualifList}
+\alias{qualifList,gbFeature-method}
+\alias{qualifList,gbFeatureList-method}
+\alias{qualifList,gbRecord-method}
 \title{List the names of Genbank qualifiers.}
 \usage{
-listQualif(x, ...)
+qualifList(x, ...)
 
-\S4method{listQualif}{gbFeature}(x)
+\S4method{qualifList}{gbFeature}(x)
 
-\S4method{listQualif}{gbFeatureList}(x)
+\S4method{qualifList}{gbFeatureList}(x)
 
-\S4method{listQualif}{gbRecord}(x)
+\S4method{qualifList}{gbRecord}(x)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbFeature}},
@@ -33,9 +33,9 @@ List the names of Genbank qualifiers.
 \examples{
 gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
 x <- gbRecord(gbk_file)
-listQualif(x["source"])
+qualifList(x["source"])
 }
 \seealso{
-\code{\link{listUniqueQualifs}}, \code{\link{hasQualif}}
+\code{\link{uniqueQualifs}}, \code{\link{hasQualif}}
 }
 

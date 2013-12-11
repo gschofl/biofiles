@@ -1,8 +1,7 @@
 ^\.Rproj\.user$
 ^.*\.Rproj$
-cache/
-data/
-doc/
+^cache/
+^data/
 playground/
 scratch\.[rR]
 ^README\.*

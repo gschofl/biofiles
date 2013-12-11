@@ -147,7 +147,7 @@ Partial <- function(fn, ..., .env = parent.frame()) {
 
 
 Compose <- function(...) {
-  fns <- lapply(compact(list(...)), match.fun)
+  fns <- lapply(list(...), match.fun)
   len <- length(fns)
   function(...) {
     res <- Call(fns[[len]], ...)

@@ -1,8 +1,8 @@
-\name{listUniqueQualifs}
-\alias{listUniqueQualifs}
+\name{uniqueQualifs}
+\alias{uniqueQualifs}
 \title{Quickly list all qualifier names}
 \usage{
-listUniqueQualifs(x)
+uniqueQualifs(x)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbRecord}},

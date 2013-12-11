@@ -14,4 +14,6 @@ playground/
 *.log
 *.pdf
 *.gz
+*.toc
+*.rds
 

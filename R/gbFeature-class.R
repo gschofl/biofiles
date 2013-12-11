@@ -61,7 +61,7 @@ show_gbFeature <- function(object, showInfo=TRUE, write_to_file=FALSE) {
   }
   
   loc_fmt <- paste0("%s%-16s%s")
-  qua_fmt <- paste0("%s%+17s%s=%s")
+  qua_fmt <- paste0("%-16s%s%s=%s")
   loc <- linebreak(as(location(object), "character"), width = width,
                    offset = 17 + ws, indent = 0, split = ",", FORCE = FALSE)
   loc_line <- sprintf(loc_fmt, dup(' ', ws), key(object), loc)
@@ -73,9 +73,9 @@ show_gbFeature <- function(object, showInfo=TRUE, write_to_file=FALSE) {
     val <- unlist(.mapply(linebreak,
                           list(s = dQuote(object@qualifiers), indent = indent),
                           list(width = width, offset = 16 + ws, FORCE = TRUE)))
-    qua_line <- sprintf(qua_fmt, dup(' ', ws), "/", qua, val)
+    qua_line <- sprintf(qua_fmt, "", paste0(dup(' ', ws), "/"), qua, val)
   }
-  ft <- paste0(loc_line, "\n", collapse(qua_line, "\n"))
+  ft <- paste0(loc_line, "\n", paste0(qua_line, collapse="\n"))
   
   if (!write_to_file) {
     cat(ft, sep="\n")
@@ -340,16 +340,11 @@ setReplaceMethod("qualif", "gbFeature", function(x, which, check=TRUE, value) {
 
 
 #' @export
-#' @rdname listQualif-methods
-setMethod("listQualif", "gbFeature", function(x) {
+#' @rdname qualifList-methods
+setMethod("qualifList", "gbFeature", function(x) {
   names(x@qualifiers)
 })
 
-#' @export
-#' @rdname tableQualif-methods
-setMethod("tableQualif", "gbFeature", function(x) {
-  table(names(x@qualifiers))
-})
 
 # testers ----------------------------------------------------------------
 

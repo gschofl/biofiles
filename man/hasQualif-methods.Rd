@@ -38,7 +38,7 @@ x <- gbRecord(gbk_file)
 hasQualif(x, 'CDS')
 }
 \seealso{
-\code{\link{listQualif}}, to extract a list of available
+\code{\link{qualifList}}, to extract a list of available
 qualifiers for each feature;
 \code{\link{listUniqueQualif}}, for a vector of all unique
 qualifiers present in an object.

@@ -367,18 +367,23 @@ setMethod("qualif", "gbRecord", function(x, which = "", fixed = FALSE, use.names
 
 
 #' @export
-#' @rdname listQualif-methods
-setMethod("listQualif", "gbRecord", function(x) {
-  lapply(.features(x), listQualif)
+#' @rdname qualifList-methods
+setMethod("qualifList", "gbRecord", function(x) {
+  lapply(.features(x), qualifList)
 })
 
 #' @export
-#' @rdname tableQualif-methods
-setMethod("tableQualif", "gbRecord", function(x) {
+#' @rdname qualifTable-methods
+setMethod("qualifTable", "gbRecord", function(x) {
   tbls <- tbl_qual(.features(x))
   Reduce(tbl_merge, tbls)
 })
 
+#' @export
+#' @rdname featureTable-methods
+setMethod("featureTable", "gbRecord", function(x) {
+  table(key(.features(x)))
+})
 
 # testers ----------------------------------------------------------------
 
