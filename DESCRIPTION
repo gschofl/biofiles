@@ -1,5 +1,5 @@
 Package: biofiles
-Version: 0.2.3
+Version: 0.3.0
 Title: An interface for GenBank/GenPept flat files
 Authors@R: person("Gerhard", "Schöfl", role=c("aut","cre"),
     email="gschofl@yahoo.de")
@@ -37,18 +37,18 @@ Collate:
     'utils.R'
     'all-generics.R'
     'biofiles-package.R'
+    'filter.R'
     'flanking.R'
     'gbHeader-class.R'
     'gbLocation-class.R'
     'gbFeature-class.R'
-    'gbFeatureList-class.R'
+    'gbFeatureTable-class.R'
     'gbRecord-class.R'
     'gbRecordList-class.R'
     'genome-record-from-ncbi.R'
     'make-granges.R'
     'misc-functions.R'
     'parser.R'
-    'retrieve.R'
     'select.R'
     'shift.R'
     'write-feature-table.R'

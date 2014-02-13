@@ -14,15 +14,15 @@ find_neighbors <- function (query, subject, n = 5,
   
   direction <- match.arg(direction, c("flanking","downstream","upstream"))
   
-  if (!(is(query, "gbFeatureList") || is(query, "gbFeature"))) {
+  if (!(is(query, "gbFeatureTable") || is(query, "gbFeature"))) {
     stop("class ", sQuote(class(query)), " no supported query")
   }
   
-  if (!(is(subject, "gbRecord") || is(subject, "gbFeatureList"))) {
+  if (!(is(subject, "gbRecord") || is(subject, "gbFeatureTable"))) {
     stop("class ", sQuote(class(subject)), " no supported subject")
   }
   
-  if (is(query, "gbFeatureList") || is(query, "gbFeature")) {
+  if (is(query, "gbFeatureTable") || is(query, "gbFeature")) {
     query <- ranges(ranges(query))
   }
   
@@ -31,7 +31,7 @@ find_neighbors <- function (query, subject, n = 5,
   }
   
   if (include_key != "any") {
-    subject <- select(subject, key=include_key)
+    subject <- filter(subject, key=include_key)
     if (length(subject) == 0L) {
       message("Include key ", sQuote(paste0(include_key, collapse=",")), " returns no features")
       return(NULL)
@@ -39,7 +39,7 @@ find_neighbors <- function (query, subject, n = 5,
   }
   
   if ("none" %in% exclude_key) {
-    # exclude at least "source" from gbFeatureList
+    # exclude at least "source" from gbFeatureTable
     exclude_key <- "source"
   } else {
     exclude_key <- c(exclude_key, "source")
@@ -55,7 +55,7 @@ find_neighbors <- function (query, subject, n = 5,
   }
   
   subject_range <- ranges(ranges(subject))
-  subject_idx <- vapply(subject, function (x) x@.id, numeric(1))
+  subject_idx <- index(subject)
   
   FUN <- switch(direction,
                 upstream=list(IRanges::follow),
@@ -83,7 +83,7 @@ find_neighbors <- function (query, subject, n = 5,
   }
   
   feature_list <- lapply(UID, function (id) {
-    select(subject, idx=unique(sort(id)))
+    filter(subject, idx = unique(sort(id)))
   })
   
   if (length(feature_list) == 1L) {
@@ -99,10 +99,10 @@ find_neighbors <- function (query, subject, n = 5,
 #' @usage upstream(query, subject, n=5, include_key="all", exclude_key="none")
 #' 
 #' @param query The query \code{\linkS4class{gbRange}},
-#' \code{\linkS4class{gbFeatureList}}, or
+#' \code{\linkS4class{gbFeatureTable}}, or
 #' \code{\linkS4class{gbFeature}}  instance.
 #' @param subject The subject \code{\linkS4class{gbRecord}} or
-#' \code{\linkS4class{gbFeatureList}} instance within which the
+#' \code{\linkS4class{gbFeatureTable}} instance within which the
 #' n nearest upstream features are searched.
 #' @param n  The number of upstream features to be included
 #' @param include_key Which features should be returned. Defaults to

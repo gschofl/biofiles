@@ -132,7 +132,7 @@
     },
     show = function() {
       if (is_empty()) {
-        showme <- sprintf("An empty %s instance.\n", sQuote(class(.self)))
+        showme <- sprintf("An empty %s instance.", sQuote(class(.self)))
       } else {
         showme <- paste0(
           sprintf("A %s instance:\n", sQuote(class(.self))),
@@ -286,7 +286,7 @@ gbLocus <- function(locus_line) {
     show = function() {
       'Method for automatically printing a Genbank file reference.'
       if (is_empty()) {
-        showme <- sprintf("An empty %s instance.\n", sQuote(class(.self)))
+        showme <- sprintf("An empty %s instance.", sQuote(class(.self)))
       } else {
         showme <- paste0(
           sprintf("A %s instance:\n", sQuote(class(.self))),
@@ -408,7 +408,7 @@ gbReference <- function(ref) {
     show = function() {
       'Method for automatically printing Genbank file references.'
       if (is_empty()) {
-        showme <- sprintf("An empty %s instance.\n", sQuote(class(.self)))
+        showme <- sprintf("An empty %s instance.", sQuote(class(.self)))
       } else {
         showme <- paste0(
           sprintf("A %s instance:\n", sQuote(class(.self))),
@@ -508,13 +508,13 @@ gbReferenceList <- function(ref_lines) {
                 paste0(organism, '\n', dup(' ', 12), linebreak(taxonomy, width=w, indent=i, offset=o, FORCE=f))),
         references$to_string(write_to_file = write_to_file),
         if (!is.na(comment)) {
-          sprintf("%-12s%s\n", "COMMENTS", linebreak(comment, width=w, indent=i, offset=o, FORCE=f))
+          sprintf("%-12s%s\n", "COMMENT", linebreak(comment, width=w, indent=i, offset=o, FORCE=f))
         } else '')
     },
     show = function() {
       'Method for automatically printing a Genbank file header.'
       if (is_empty()) {
-        showme <- sprintf("An empty %s instance.\n", sQuote(class(.self)))
+        showme <- sprintf("An empty %s instance.", sQuote(class(.self)))
       } else {
         showme <- paste0(
           sprintf("A %s instance:\n", sQuote(class(.self))),
@@ -687,6 +687,9 @@ seqinfo <- setRefClass(
     is_empty = function() {
       header_is_empty() && sequence_is_empty()
     },
+    clone = function() {
+      .self$copy(shallow = TRUE)
+    },
     show = function() {
       if (header_is_empty()) {
         acc <- len <- def <- ''
@@ -726,7 +729,7 @@ NULL
 
 setMethod('.header', 'seqinfo', function(x) {
   if (x$header_is_empty()) {
-    warning("No header associated with this object", call.=FALSE)
+    warning("No header associated with this object", call. = FALSE, immediate. = TRUE)
     return(.gbHeader())
   }
   x$header
@@ -734,7 +737,7 @@ setMethod('.header', 'seqinfo', function(x) {
 
 setMethod('.sequence', 'seqinfo', function(x) {
   if (x$sequence_is_empty()) {
-    warning("No sequence associated with this object", call.=FALSE)
+    warning("No sequence associated with this object", call. = FALSE, immediate. = TRUE)
     return(new("BStringSet"))
   }
   x$sequence

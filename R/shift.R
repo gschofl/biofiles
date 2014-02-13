@@ -1,7 +1,7 @@
-#' @importFrom Biostrings reverseComplement
+#' @importFrom Biostrings reverseComplement xscat subseq
 NULL
 
-setAs(from="gbFeatureList", to="gbRecord", function(from) {
+setAs(from="gbFeatureTable", to="gbRecord", function(from) {
   new_gbRecord(seqinfo = from@.seqinfo, features = from, contig = NULL)
 })
 
@@ -27,13 +27,13 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
     lRange <- f@location@range 
     if (lRange[-nrow(lRange), 2] - lRange[-1,1] < 1 &&
           length(strand <- unique(f@location@strand)) < 2) {
-      f@location@range <- matrix(range(lRange), ncol=2)
-      f@location@fuzzy <- matrix(c(FALSE, FALSE), ncol=2)
-      f@location@strand <- strand
-      f@location@compound <- NA_character_
+      f@location@range     <- matrix(range(lRange), ncol=2)
+      f@location@fuzzy     <- matrix(c(FALSE, FALSE), ncol=2)
+      f@location@strand    <- strand
+      f@location@compound  <- NA_character_
       f@location@accession <- f@location@accession[1]
-      f@location@remote <- f@location@remote[1]
-      f@location@type <- f@location@type[1]
+      f@location@remote    <- f@location@remote[1]
+      f@location@type      <- f@location@type[1]
       f
     } else {
       if (omit_unmergables)
@@ -44,9 +44,8 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
   })
 }
 
-
-.shift <- function(x, shift=0L, split=FALSE, order=FALSE) {
-  assert_that(is(x, "gbRecord") || is(x, "gbFeatureList"))
+.shift <- function(x, shift = 0L, split = FALSE, order = TRUE) {
+  assert_that(is(x, "gbRecord") || is(x, "gbFeatureTable"))
   was.gbRecord <- FALSE
   if (is(x, "gbRecord")) {
     x <- .features(x)
@@ -54,7 +53,7 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
   }
   len <- getLength(x)
   if (all_empty(x["source"])) {
-    stop("No source key in this gbFeatureList")
+    stop("No source key in this gbFeatureTable")
   }  
   src <- x["source"]
   if (all_empty(src)) {
@@ -87,8 +86,8 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
         ## Split Matrix
         sm <- Map(function(ss, se) matrix(c(len + ss, 1, len, se), ncol=2), ss, se)
         f[end_only] <- Map(update_split, x=f[end_only], split_matrix=sm)
-        new_start[end_only] <- Map(function(x) x[,1], sm)
-        new_end[end_only] <- Map(function(x) x[,2], sm)
+        new_start[end_only] <- Map(function(x) x[, 1], sm)
+        new_end[end_only] <- Map(function(x) x[, 2], sm)
       } else {
         stop("This shiftwidth would split features ", paste(end_only, collapse=", "))
       }
@@ -100,15 +99,27 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
   if (length(cmpnd) > 0) {
     f[cmpnd] <- merge_split(f[cmpnd], omit_unmergables=FALSE)
   }
-  f <- if (order) f[order(mapply("[", new_start, 1))] else f
-  x <- new('gbFeatureList', .Data=c(src, f), .seqinfo=f@.seqinfo)
+  f <- if (order) f[order(mapply("[", new_start, 1L))] else f
+  ## update sequence
+  seqinfo <- f@.seqinfo$clone()
+  seq <- .sequence(seqinfo)
+  seq_len <- seq@ranges@width
+  if (shift > 0) {
+    seqinfo$sequence <- xscat(subseq(seq, seq_len - shift + 1),
+                              subseq(seq, 1, seq_len - shift))
+  } else {
+    seqinfo$sequence <- xscat(subseq(seq, abs(shift) + 1),
+                              subseq(seq, 1, abs(shift)))
+  }
+  names(seqinfo$sequence) <- getAccession(f)
+  x <- new('gbFeatureTable', .Data = c(src, f), .id = c(src@.id, f@.id), .seqinfo = seqinfo)
   x <- if (was.gbRecord) as(x, "gbRecord") else x
   x
 }
 
 
 .revcomp <- function(x, order = TRUE) {
-  assert_that(is(x, "gbRecord") || is(x, "gbFeatureList"))
+  assert_that(is(x, "gbRecord") || is(x, "gbFeatureTable"))
   was.gbRecord <- FALSE
   if (is(x, "gbRecord")) {
     x <- .features(x)
@@ -116,18 +127,23 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
   }
   cmpnd <- which(is_compound(x))
   if (length(cmpnd) > 0) {
-    x[cmpnd] <- merge_split(x[cmpnd], omit_unmergables=TRUE)
-    x <- compact(x)
+    x[cmpnd] <- merge_split(fList = x[cmpnd], omit_unmergables=TRUE)
+    x <- x[vapply(x, length, 0L) > 0L]
   }
   len <- getLength(x)
-  new_end <- len - start(x) + 1
-  new_start <- len - end(x) + 1
-  new_strand <- -strand(x) 
+  new_end <- Map(function(s) len - s + 1, start(x))
+  new_start <- Map(function(e) len - e + 1, end(x))
+  new_strand <- Map(`-`, strand(x))
   start(x, check=FALSE) <- new_start
   end(x) <- new_end
   strand(x) <- new_strand
-  x <- if (order) x[order(new_start)] else x
-  #x@.seqinfo$sequence <- reverseComplement(x@.seqinfo$sequence)
+  x <- if (order) x[order(unlist(Map(min, new_start)))] else x
+  ## update sequence
+  seqinfo <- x@.seqinfo$clone()
+  seq <- .sequence(seqinfo)
+  seqinfo$sequence <- reverseComplement(seq)
+  names(seqinfo$sequence) <- getAccession(x)
+  x <- new('gbFeatureTable', .Data = x, .id = x@.id, .seqinfo = seqinfo)
   x <- if (was.gbRecord) as(x, "gbRecord") else x
   x
 }

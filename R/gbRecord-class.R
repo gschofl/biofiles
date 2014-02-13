@@ -1,4 +1,4 @@
-#' @include gbFeatureList-class.R
+#' @include gbFeatureTable-class.R
 #' @importFrom reutils rettype retmode content
 NULL
 
@@ -14,7 +14,7 @@ setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
 #' reference class holding the sequence as an \code{"\linkS4class{XStringSet}"}
 #' instance and header of the file containing metadata as a
 #' \code{"\linkS4class{gbHeader}"} object.
-#' @slot features A \code{"\linkS4class{gbFeatureList}"} instance.
+#' @slot features A \code{"\linkS4class{gbFeatureTable}"} instance.
 #' @slot contig If present, a CONTIG record.
 #' 
 #' @seealso
@@ -28,7 +28,7 @@ new_gbRecord <- setClass(
   "gbRecord",
   slots=c(
     seqinfo  = "seqinfo",
-    features = "gbFeatureList",
+    features = "gbFeatureTable",
     contig   = "gbLocationOrNull"
   )
 )
@@ -287,8 +287,8 @@ setMethod("getSequence", "gbRecord",  function(x) .sequence(x))
 #' @export
 setMethod("ranges", "gbRecord",
           function(x, join = FALSE, key = TRUE, include = "none", exclude = "") {
-            .make_GRanges(.features(x), join = join, include = include,
-                          exclude = exclude, key = key)
+            .GRanges(.features(x), join = join, include = include,
+                     exclude = exclude, key = key)
           })
 
 #' @export
@@ -323,8 +323,8 @@ setMethod("joint_width", "gbRecord", function(x) {
 
 #' @export
 #' @rdname dbxref-methods
-setMethod("dbxref", "gbRecord", function(x, db = NULL, na.rm = TRUE, ...) {
-  dbxref(.features(x), db = db, na.rm = na.rm, ...)
+setMethod("dbxref", "gbRecord", function(x, db = NULL, ...) {
+  dbxref(.features(x), db = db, ...)
 })
 
 #' @export
@@ -342,13 +342,13 @@ setMethod("fuzzy", "gbRecord", function(x) {
 #' @export
 #' @rdname index-methods
 setMethod("index", "gbRecord", function(x) {
-  vapply(.features(x), function(x) x@.id, 0)
+  index(.features(x))
 })
 
 #' @export
 #' @rdname key-methods
 setMethod("key", "gbRecord", function(x) {
-  vapply(.features(x), function(f) f@key, "")
+  vapply(.features(x), slot, name = 'key', FUN.VALUE = "")
 })
 
 #' @export
@@ -418,7 +418,7 @@ setMethod("hasQualif", "gbRecord", function(x, qualifier) {
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
 #' x <- gbRecord(gbk_file)
 #' 
-#' ## Extract a gbFeatureList from a gbRecord:
+#' ## Extract a gbFeatureTable from a gbRecord:
 #' x[1:4]
 #' 
 #' ## Extract a gbFeature
@@ -450,21 +450,27 @@ setMethod("[[", "gbRecord", function(x, i, j, ...) {
 
 
 #' @export
-#' @rdname select-methods
-setMethod("select", "gbRecord", function(x, ..., keys = NULL, cols = NULL) {
-  .retrieve(.select(.features(x), ..., keys = keys), cols = cols)
+#' @rdname manip-methods
+setMethod("filter", "gbRecord", function(x, ..., .cols = NULL) {
+  .filter(.features(x), ..., .cols = .cols)
+})
+
+#' @export
+#' @rdname manip-methods
+setMethod("select", "gbRecord", function(x, ..., .cols = NULL) {
+  .select(.features(x), ..., .cols = .cols)
 })
 
 #' @export
 #' @rdname shift-methods
-setMethod("shift", "gbRecord", function(x, shift, split=FALSE, order=FALSE) {
-  .shift(x=x, shift=shift, split=split, order=order)
+setMethod("shift", "gbRecord", function(x, shift, split = FALSE, order = TRUE) {
+  .shift(x = x, shift = shift, split = split, order = order)
 })
             
 #' @export
 #' @rdname revcomp-methods
-setMethod("revcomp", "gbRecord", function(x, order=TRUE) {
-  .revcomp(x=x, order=order)
+setMethod("revcomp", "gbRecord", function(x, order = TRUE) {
+  .revcomp(x = x, order = order)
 })
 
 

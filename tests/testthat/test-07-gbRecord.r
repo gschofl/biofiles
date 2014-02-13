@@ -1,4 +1,4 @@
-context("gbFeatureList getter checks")
+context("gbFeatureTable getter checks")
 
 x <- getFeatures(gbRecord("sequences/nucleotide.gbk"))
 
@@ -10,12 +10,12 @@ test_that("Sequence, and Seqinfo can be extracted", {
   expect_is(getSequence(x), 'DNAStringSet')
 })
 
-test_that(".dbSource and .defline work for gbFeatureLists", {
+test_that(".dbSource and .defline work for gbFeatureTables", {
   expect_equal(.dbSource(x), '|gb|')
   expect_match(.defline(x)[1], "lcl|.+|gb|AF229646")
 })
 
-test_that("Global accessors work for gbFeatureLists", {
+test_that("Global accessors work for gbFeatureTables", {
   expect_equal(getLocus(x), 'AF229646')
   expect_equal(getLength(x), 8959)
   expect_equal(getMoltype(x), 'DNA')
@@ -36,7 +36,7 @@ test_that("Global accessors work for gbFeatureLists", {
   expect_equal(getComment(x), NA_character_)
 })
 
-test_that("Accessors work for gbFeatureLists", {
+test_that("Accessors work for gbFeatureTables", {
   expect_equal(index(x), 1:17)
   expect_true( all(key(x) %in% c("source","gene","CDS")) )
   

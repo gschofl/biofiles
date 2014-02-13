@@ -2,9 +2,26 @@
 #' @export
 #' @rdname write.FeatureTable-methods
 setMethod("write.FeatureTable", "gbRecord", 
-          function (x, file, tablename="", dbname="",
-                    sequence = TRUE, append = FALSE) {
-  
+          function(x, file, tablename = "", dbname = "",
+                   sequence = FALSE, append = FALSE) {
+            .writeFeatureTable(x = x, file = file, tablename = tablename,
+                               dbname = dbname, sequence = sequence,
+                               append = append)
+          })
+
+#' @export
+#' @rdname write.FeatureTable-methods
+setMethod("write.FeatureTable", "gbFeatureTable", 
+          function(x, file, tablename = "", dbname = "",
+                   sequence = FALSE, append = FALSE) {
+            x <- as(x, "gbRecord")
+            .writeFeatureTable(x = x, file = file, tablename = tablename,
+                               dbname = dbname, sequence = sequence,
+                               append = append)
+          })
+
+.writeFeatureTable <- function(x, file, tablename = "", dbname = "",
+                               sequence = FALSE, append = FALSE) {
   # write header
   header <- trim(sprintf(">Feature %s %s", getAccession(x), tablename))
   cat(paste0(header, sep="\n"), file=file)
@@ -13,7 +30,7 @@ setMethod("write.FeatureTable", "gbRecord",
   FeatureList <- getFeatures(x)
   FeatureList <- FeatureList[key(FeatureList) != "source"]
   # get index of genes
-  gene_idx <- index(FeatureList[key(FeatureList) == "gene"])
+  gene_idx <- index(FeatureList["gene"])
   # write features
   FeatureTable <- unlist(lapply(FeatureList, .getTableFeature, gene_idx, dbname))
   cat(paste0(FeatureTable, collapse="\n"), file=file, append=TRUE)
@@ -26,12 +43,12 @@ setMethod("write.FeatureTable", "gbRecord",
   }
   
   invisible(NULL)
-})
+}
 
  
-.getTableFeature <- function (f, gene_idx, dbname) {
+.getTableFeature <- function(f, gene_idx, dbname) {
   
-  getLoc <- function (l, p, strand) {
+  getLoc <- function(l, p, strand) {
     if (strand == 1) {
       start <- as.character(l[,1])
       start_prefix <- ifelse(p[,1], "<", "")
@@ -71,7 +88,7 @@ setMethod("write.FeatureTable", "gbRecord",
     } else {
       previous_gene_idx <- max(gene_idx[gene_idx < f@.id])
       previous_gene <- FeatureList[previous_gene_idx]
-      locus_tag <- unname(select(previous_gene, cols="locus_tag"))
+      locus_tag <- unname(select(previous_gene, "locus_tag"))
     }
     prot_id_line <- paste0("\t\t\tprotein_id\tgnl|", dbname, "|", locus_tag)
   } else {

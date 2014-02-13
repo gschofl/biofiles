@@ -2,7 +2,7 @@
 #' @importFrom GenomicRanges GRanges GRangesList Seqinfo
 NULL
 
-.make_GRanges <- function (x, join = FALSE, include = "none", exclude = "", key = TRUE) {
+.GRanges <- function(x, join = FALSE, include = "none", exclude = "", key = TRUE) {
   if (length(x) == 0) {
     return(GRanges())
   }
@@ -13,7 +13,7 @@ NULL
   }
   if (any(include != "none")) {
     if (all(include == "all")) {
-      which <- setdiff(listUniqueQualifs(x), exclude)
+      which <- setdiff(uniqueQualifs(x), exclude)
     } else {
       which <- setdiff(include, exclude)
     }
@@ -24,8 +24,8 @@ NULL
   start <- start(x, join = join)
   end <- end(x, join = join)
   strand <- strand(x, join = join)
-  lt <- .qual_access(x, 'locus_tag', fixed=TRUE)
-  gene <- .qual_access(x, 'gene', fixed=TRUE)
+  lt <- .qual_access(x, 'locus_tag', fixed = TRUE)
+  gene <- .qual_access(x, 'gene', fixed = TRUE)
   names <- ifelse(is.na(lt), gene, lt)
     
   if (is.list(start)) {
@@ -46,6 +46,16 @@ NULL
   GRanges(seqnames=Rle(getAccession(x)), ranges=IRanges(start, end, names=names),
           strand=strand, qual, seqinfo = seqinfo)
 }
+
+
+.IRanges <- function(x) {
+  if (length(x) == 0) {
+    return(IRanges())
+  }
+  jr <- joint_range(x)
+  IRanges(start = jr[, 1], end = jr[, 2], names = index(x))
+}
+
 
 update_indeces <- function(x) {
   j_len <- vapply(x, length, numeric(1))

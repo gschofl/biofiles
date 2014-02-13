@@ -3,14 +3,12 @@
 #' @importFrom stats setNames
 NULL
 
-
 is.empty <- function(x) {
   is.null(x) || length(x) == 0L || (length(x) == 1L && !nzchar(x))
 }
 on_failure(is.empty) <- function(call, env) {
   paste0(deparse(call$x), " is not empty.")
 }
-
 
 are_empty <- function(x) {
   if (is.recursive(x) || length(x) > 1) {
@@ -20,12 +18,10 @@ are_empty <- function(x) {
   }
 }
 
-
 all_empty <- function(x) all(are_empty(x))
 on_failure(all_empty) <- function(call, env) {
   paste0("Not all elements in ", deparse(call$x), " are empty.")
 }
-
 
 is_in <- function(x, table) {
   assert_that(is.scalar(x))
@@ -36,39 +32,35 @@ on_failure(is_in) <- function(call, env) {
          paste0(sQuote(eval(call$table, env)), collapse=", "))
 }
 
-
 "%is_in%" <- is_in
-
 
 "%||%" <- function(a, b) {
   if (is.empty(a)) force(b) else a
 }
 
-
 "%|NA|%" <- function(a, b) {
   if (is.na(a)) force(b) else a
 }
-
 
 "%|AA|%" <- function(a, b) {
   if (a == 'AA') force(b) else a
 }
 
+dots <- function(...) {
+  eval(substitute(alist(...)))
+}
 
 compact <- function(x) {
   x[!vapply(x, is.empty, FALSE, USE.NAMES=FALSE)]
 }
 
-
 compactChar <- function(x) {
   x[vapply(x, nzchar, FALSE, USE.NAMES=FALSE)]
 }
 
-
 compactNA <- function(x) {
   x[!is.na(x)]
 }
-
 
 merge_dups <- function(x) {
   if (all_empty(x)) {
@@ -79,7 +71,6 @@ merge_dups <- function(x) {
   b <- x[duplicated(x_names)]
   modify_list(a, b, "merge")
 }
-
 
 modify_list <- function(a, b, mode=c("replace", "merge")) {
   assert_that(is.list(a), is.list(b))
@@ -97,10 +88,18 @@ modify_list <- function(a, b, mode=c("replace", "merge")) {
   a
 }
 
-
 #' @importFrom reutils make_flattener
-flatten1 <- make_flattener(flatten.at=1)
+flatten1 <- make_flattener(flatten.at = 1)
+flatten2 <- make_flattener(flatten.at = 2)
 
+re <- function(x) {
+  assert_that(is.string(x))
+  structure(x, class = "regexp")
+}
+
+"%~%" <- function(x, pattern) {
+  grepl(pattern, x, fixed=FALSE)
+}
 
 ## divide the data in vector x into groups, where the start of
 ## each group is defined by an element of index i
@@ -128,12 +127,10 @@ ixsplit <- function(x, i, include_i = TRUE, collapse_x = FALSE, ...) {
   lapply(.mapply(seq.int, list(i, j), NULL), FUN)
 }
 
-
 Call <- function(fn, ...) {
   fn <- match.fun(fn)
   fn(...)
 }
-
 
 Partial <- function(fn, ..., .env = parent.frame()) {
   fn <- match.fun(fn)
@@ -144,7 +141,6 @@ Partial <- function(fn, ..., .env = parent.frame()) {
   args <- list("..." = quote(expr = ))
   eval(call("function", as.pairlist(args), fcall), .env)
 }
-
 
 Compose <- function(...) {
   fns <- lapply(list(...), match.fun)
@@ -157,12 +153,9 @@ Compose <- function(...) {
   }
 }
 
-
 usplit <- Compose("unlist", "strsplit")
 
-
 uusplit <- Compose("unique", "unlist", "strsplit")
-
 
 dup <- function(x, n) {
   if (any(n < 0)) n[n < 0] <- 0
@@ -170,19 +163,15 @@ dup <- function(x, n) {
          paste0, collapse="", FUN.VALUE="")
 }
 
-
 blanks <- Partial(dup, x = " ")
-
 
 trim <- function(x, trim = '\\s+') {
   gsub(paste0("^", trim, "|", trim, "$"), '', x)
 }
 
-
 wrap <- function(x, wrap = '"') {
   sprintf('%s%s%s', wrap, x, wrap)
 }
-
 
 ## UnitTests: inst/tests/test-utils.r
 collapse <- function(x, sep = ' ') {
@@ -193,14 +182,12 @@ collapse <- function(x, sep = ' ') {
   }
 }
 
-
 ellipsize <- function(obj, width=getOption("width"), ellipsis=" ...") {
   str <- encodeString(obj)
   ifelse(nchar(str) > width - 1,
          paste0(substring(str, 1, width - nchar(ellipsis) - 1), ellipsis),
          str)
 }
-
 
 #' Pad a string
 #' 
@@ -221,11 +208,9 @@ pad <- function (x, n = 10, where = 'left', pad = ' ') {
   paste0(padding[match(left, lengths)], x, padding[match(right, lengths)])
 }
 
-
 count_re <- function(x, re) {
   vapply(gregexpr(re, x), function(x) sum(x > 0L), 0, USE.NAMES=FALSE)
 }
-
 
 #' Test if an external executable is available
 #' 
@@ -243,7 +228,6 @@ on_failure(has_command) <- function(call, env) {
   paste0("Dependency ", sQuote(eval(call$cmd, env)), " is not installed\n",
          eval(call$msg, env))
 }
-
 
 ## UnitTests: inst/tests/test-utils.r
 ##
@@ -325,7 +309,6 @@ linebreak <- function(s, width = getOption("width") - 2,
   })(s)
 }
 
-
 strsplitN <- function(x, split, n, from = "start", collapse = split, ...) {
   from <- match.arg(from, c("start", "end"))
   xs <- strsplit(x, split, ...)
@@ -342,7 +325,6 @@ strsplitN <- function(x, split, n, from = "start", collapse = split, ...) {
   unlist(.mapply(function(x, n) paste0(x[n], collapse = collapse), list(x = xs, n = n), NULL))
 }
 
-
 recycle <- function(val, len) {
   lv <- length(val)
   if (len > lv) {
@@ -351,9 +333,8 @@ recycle <- function(val, len) {
   val
 }
 
-
 is_compound <- function(x) {
-  if (is(x, "gbFeatureList")) {
+  if (is(x, "gbFeatureTable")) {
     return(vapply(x, function(f) !is.na(f@location@compound), FALSE))
   } else if (is(x, "gbFeature")) {
     return(!is.na(x@location@compound))
@@ -362,14 +343,12 @@ is_compound <- function(x) {
   }
 }
 
-
 get_compounds <- function(x) {
   x <- x[which(is_compound(x))]
   if (length(x) == 0) return(NA_real_) 
   cL <- vapply(x, function(f) nrow(f@location@range), 0L)
   cL
 }
-
 
 .access <- function(x, which, dbxrefs, use.names = TRUE) {
   q <- x@qualifiers
@@ -388,35 +367,43 @@ get_compounds <- function(x) {
     if (any(idx)) {
       ans <- q[idx]
     } else {
+      els <- els %||% which
       ans <- setNames(rep(NA_character_, length(els)), trim(which, "\\\\b"))
     }
-  }  else {
-    idx <- lapply(which, grepl, names(q))
-    ans <- lapply(idx, function(i) q[i])
-    na <- which(vapply(ans, length, 0) == 0)
+  } else {
+    ans <- lapply(lapply(which, grepl, names(q)), function(i) q[i])
+    na  <- which(vapply(ans, length, 0) == 0)
     if (length(na) > 0) {
       for (i in na) {
-        ans[[i]] <- setNames(NA_character_, nm=trim(which, "\\\\b")[i])
+        ans[[i]] <- setNames(NA_character_, nm=trim(which[i], "\\\\b"))
       }
     }
   }
   ans <- unlist(ans)
-  if (length(dbxrefs) > 0) {
-    dbx_ <- names(ans) == 'db_xref'
-    dbx <- strsplit(ans[dbx_], ':')
-    dbx_nm <- vapply(dbx, `[`, 1, FUN.VALUE="", USE.NAMES=FALSE)
-    dbx_val <- vapply(dbx, `[`, 2, FUN.VALUE="", USE.NAMES=FALSE)
-    ans <- c(ans[!dbx_], setNames(dbx_val[match(dbxrefs, dbx_nm)], dbxrefs))
+  ## with db_xref remove the db identifier from the id number and
+  ## attach it to the names
+  if (any(dbx_idx <- names(ans) == 'db_xref')) {
+    dbx <- strsplit(ans[dbx_idx], ':')
+    dbx_dbnm <- vapply(dbx, `[`, 1L, FUN.VALUE = "", USE.NAMES = FALSE)
+    dbx_dbid <- vapply(dbx, `[`, 2L, FUN.VALUE = "", USE.NAMES = FALSE)
+    if (length(dbxrefs) > 0) {
+      ans <- c(ans[!dbx_idx], setNames(dbx_dbid[match(dbxrefs, dbx_dbnm)],
+                                       paste0('db_xref.', dbxrefs)))
+    } else {
+      nm <- if (all(is.na(dbx_dbnm))) "" else paste0('db_xref.', dbx_dbnm)
+      ans <- c(ans[!dbx_idx], setNames(dbx_dbid, nm))
+    }
   }
   return(if (use.names) ans else unname(ans))
 }
 
-
+#' @return A named character vector or a list of named character vectors
+#' of the qualifiers specified in \code{which}
 .qual_access <- function(x, which = "", fixed = FALSE, use.names=TRUE) {
   dbxrefs <- NULL
-  dbx <- grepl('db_xref:.+', which)
+  dbx <- grepl('db_xref[:.].+', which)
   if (any(dbx)) {
-    dbxrefs <- strsplitN(which[dbx], ':', 2)
+    dbxrefs <- strsplitN(which[dbx], '[:.]', 2L)
     which <- c(which[!dbx], 'db_xref')
   }
   if (fixed) {
@@ -424,31 +411,55 @@ get_compounds <- function(x) {
   }
   if (is(x, "gbFeature")) {
     .access(x, which, dbxrefs, use.names)
-  } else if (is(x, "gbFeatureList")) {
+  } else if (is(x, "gbFeatureTable")) {
     lapply(x, .access, which, dbxrefs, use.names)
   }
 }
 
-
 .simplify <- function(x, unlist = TRUE) {
-  if (length(len <- unique(unlist(lapply(x, length)))) > 1L) {
-    return(x)
-  }
-  if (len == 1L && unlist) {
-    unlist(x, recursive=FALSE)
-  } else if (len >= 1L) {
-    n <- length(x)
-    r <- as.vector(unlist(x, recursive=FALSE))
-    if (prod(d <- c(len, n)) == length(r)) {
-      return(data.frame(stringsAsFactors=FALSE,
-                        matrix(r, nrow=n, byrow=TRUE,
-                               dimnames=if (!(is.null(nm <- names(x[[1L]]))))
-                                 list(NULL, nm))))
+  # case 1) x is atomic OR a list of single, equally named, elements 
+  #         if unlist == TRUE        => return as is
+  #         if unlist == FALSE       => return data.frame
+  # case 2) x is a list of equally long (equally named) elements
+  #                                  => return data.frame
+  # case 3) x is a list of unequally long, unnamed elements
+  #                                  => return as is
+  # case 4) x is a list of unequally named elements
+  #                                  => return expanded data.frame
+  len <- unique(unlist(lapply(x, length)))
+  nm  <- compactChar(unique(unlist(lapply(x, names))))
+  ## case 1
+  if (is.atomic(x) || len == 1L && length(nm) <= 1L) {
+    if (unlist) {
+      unlist(x, recursive = FALSE, use.names = FALSE)
     } else {
-      x
+      nm <- nm %||% 'X1'
+      x <- unlist(x, recursive = FALSE, use.names = FALSE)
+      data.frame(stringsAsFactors = FALSE,
+                 matrix(x, ncol = 1, dimnames = list(NULL, nm)))
     }
-  } else {
+  }
+  ## case 2
+  else if (length(len) == 1L &&
+             (is.null(nm) || length(nm) == len)) {
+    r <- as.vector(unlist(x, recursive = FALSE, use.names = FALSE))
+    data.frame(stringsAsFactors=FALSE,
+               matrix(r, ncol = len, byrow = TRUE,
+                      dimnames = list(NULL, nm)))
+  }
+  # case 3
+  else if (is.null(nm)) {
     x
+  }
+  # case 4
+  else if ((lnm <- length(nm)) != min(len)) {
+    m <- matrix(rep(NA, length(x) * lnm), ncol = lnm, dimnames = list(NULL, nm))
+    for (i in seq_along(x)) {
+      for (n in nm) {
+        m[i, n] <- unname(x[[i]][n])
+      }
+    }
+    data.frame(stringsAsFactors = FALSE, m)
   }
 }
 
@@ -461,7 +472,7 @@ get_compounds <- function(x) {
   SEQFUN <- match.fun(class(seq))
   if (is(x, "gbFeature")) {
     seq <- merge_seq(seq, x, SEQFUN)
-  } else if (is(x, "gbFeatureList")) {
+  } else if (is(x, "gbFeatureTable")) {
     seq <- Reduce(append, lapply(x, merge_seq, seq=seq, SEQFUN=SEQFUN))
   }
   seq
@@ -479,7 +490,6 @@ merge_seq <- function(seq, x, SEQFUN) {
   outseq@ranges@NAMES <- .defline(x)
   outseq
 }
-
 
 parse_dbsource <- function(dbsource) {
   if (is.na(dbsource)) {

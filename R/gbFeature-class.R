@@ -23,17 +23,17 @@ NULL
 #' \code{\link{qualif}}
 #' 
 #' @seealso
-#'    \code{\linkS4class{gbFeatureList}}, \code{\linkS4class{gbRecord}}
+#'    \code{\linkS4class{gbFeatureTable}}, \code{\linkS4class{gbRecord}}
 #'    
 #' @export
 setClass(
   "gbFeature",
   slots = list(
-    .seqinfo="seqinfo",
-    .id="integer",
-    key="character",
-    location="gbLocation",
-    qualifiers="character"
+    .seqinfo  = "seqinfo",
+    .id       = "integer",
+    key       = "character",
+    location  = "gbLocation",
+    qualifiers = "character"
   )
 )
 
@@ -203,7 +203,7 @@ setMethod("getSequence", "gbFeature", function(x) .seq_access(x))
 
 #' @export
 setMethod("ranges", "gbFeature", function(x, include = "none", exclude = "", join = FALSE) {
-  .make_GRanges(x, include = include, exclude = exclude, join = join)
+  .GRanges(x, include = include, exclude = exclude, join = join)
 })
 
 
@@ -267,26 +267,19 @@ setMethod("joint_width", "gbFeature", function(x) {
 })
 
 #' @export
+#' @rdname width-methods
+setMethod("joint_range", "gbFeature", function(x) {
+  joint_range(x@location)
+})
+
+#' @export
 #' @rdname dbxref-methods
-setMethod("dbxref", "gbFeature", function(x, db = NULL, ...) {     
-  ans <- .qual_access(x, "db_xref")
-  if (all(is.na(ans))) {
-    return( NA_character_ )
-  } else {
-    dbs <- strsplitN(unname(ans), ":", 1, fixed=TRUE)
-    ids <- strsplitN(unname(ans), ":", 2, fixed=TRUE)
-    if (is.null(db)) {
-      setNames(ids, dbs)
-    } else {
-      db_pattern <- paste0(wrap(db, "\\b"), collapse="|")
-      db_pos <- grep(db_pattern, dbs, ignore.case=TRUE)
-      if (all_empty(db_pos)) {
-        return( NA_character_ )
-      } else {
-        setNames(ids[db_pos], dbs[db_pos])
-      }
-    }
+setMethod("dbxref", "gbFeature", function(x, db = NULL, ...) {
+  dbx <- "db_xref"
+  if (!is.null(db)) {
+    dbx <- paste0(dbx, ".", db)
   }
+  .qual_access(x, which = dbx, ...)
 })
 
 #' @export

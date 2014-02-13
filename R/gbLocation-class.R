@@ -96,6 +96,13 @@ setMethod("end", "gbLocation", function(x, join = FALSE, drop = TRUE) {
   }
 })
 
+
+#' @export
+setMethod("joint_range", "gbLocation", function(x) {
+  range(x@range)
+})
+
+
 #' @export
 setMethod("width", "gbLocation", function(x) {
   x@range[, 2] - x@range[, 1] + 1L

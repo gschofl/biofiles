@@ -1,6 +1,6 @@
 context("gbFeature getter checks")
 
-x <- select(gbRecord(gb="sequences/nucleotide.gbk"), key='CDS')[[3]]
+x <- filter(gbRecord(gb="sequences/nucleotide.gbk"), key='CDS')[[3]]
 
 test_that("Sequence, and Seqinfo can be extracted", {
   expect_is(.seqinfo(x), 'seqinfo')
@@ -29,17 +29,16 @@ test_that("Accessors work for gbFeatures", {
   
   expect_equal(qualif(x, 'gene', use.names=FALSE), 'cpaB')
   expect_equal(qualif(x, 'bla', use.names=FALSE), NA_character_)
-  expect_equal(length(qualif(x, c("gene","protein_id"))), 2)
+  expect_equal(length(qualif(x, c("gene", "protein_id"))), 2)
   
   expect_equal(unname(dbxref(x)), "7208424")
-  expect_equal(dbxref(x, 'bla'), NA_character_)
+  expect_equal(unname(dbxref(x, 'bla')), NA_character_)
   
   expect_equal(locusTag(x), NA_character_)
   expect_equal(product(x), "CpaB")
   expect_equal(proteinID(x), "AAF40191.1")
   expect_equal(note(x), "required for pilus assembly in Caulobacter")
-  expect_is(translation(x), "AAStringSet")
-  
+  expect_is(translation(x), "AAStringSet")  
 })
 
 

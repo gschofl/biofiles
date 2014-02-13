@@ -25,14 +25,14 @@ BiocStyle::latex(width = 90)
 
 \section{The \Rpackage{biofiles} package}
 
-The \Rpackage{biofiles} package is an \R{} package for interfacing with \href{http://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html}{GenBank or GenPept} flat file records. The GenBank sequence format is a rich data format for storing sequences and associated annotations. \Rpackage{biofiles} includes utilities for parsing and writing GenBank files, and methods for interacting with the annotation and sequence data contained in these files.
+The \Rpackage{biofiles} package is an \R{} package for interfacing with \href{http://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html}{GenBank or GenPept} flat file records. The GenBank sequence format is a rich data format for storing sequences and associated annotations. \Rpackage{biofiles} includes utilities for parsing and writing GenBank files, and useful methods for interacting with the annotation and sequence data contained in these files.
 
 
 \subsection{Classes in the \Rpackage{biofiles} package}
 
-The classes in \Rpackage{biofiles} attempt to encapsulate the information contained in GenBank files as faithfully as possible. The design is based heavily on the GenBank/Embl feature tables. The central class for storing feature annotation information is the S4 class \Rclass{gbFeature}. Essentially, a \Robject{gbFeature} object contains a feature \emph{key}, a short description of the type of feature (e.g. ``CDS'' or ``gene''); the \emph{location} of the feature on the sequence string, and \emph{qualifiers}, additional information about the feature as key-value-pairs (e.g.: \emph{locus\_tag}, \emph{gene}, \emph{product}, or \emph{db\_xref} are frequently used qualifiers). A collection of \Rclass{gbFeature}s is organised into a \Rclass{gbFeatureList}.
+The classes in \Rpackage{biofiles} attempt to encapsulate the information contained in GenBank files as faithfully as possible. The design is based heavily on the GenBank/Embl feature tables. The central class for storing feature annotation information is the S4 class \Rclass{gbFeature}. Essentially, a \Robject{gbFeature} object contains a feature \emph{key}, a short description of the type of feature (e.g. ``CDS'' or ``gene''); the \emph{location} of the feature on the sequence string, and \emph{qualifiers}, additional information about the feature as key-value-pairs (e.g.: \emph{locus\_tag}, \emph{gene}, \emph{product}, or \emph{db\_xref} are frequently used qualifiers). A collection of \Rclass{gbFeature}s is organised in a \Rclass{gbFeatureTable}.
 
-A \Rclass{gbFeatureList} together with metadata and sequence information stored as \Rclass{XStringSet} objects (\Biocpkg{Biostrings}) make up a \Rclass{gbRecord}. A collection of \Rclass{gbRecord}s can be placed into a \Rclass{gbRecordList}.
+A \Rclass{gbFeatureTable} together with metadata and sequence information stored as \Rclass{XStringSet} objects (\Biocpkg{Biostrings}) make up a \Rclass{gbRecord}. A collection of \Rclass{gbRecord}s can be placed into a \Rclass{gbRecordList}.
 
 
 \subsection{Importing sequence and annotation data}
@@ -79,12 +79,9 @@ qualifTable(mito)
 featureTable(mito)
 @
 
-
-
-
 \section{Exctracting subsets of the data}
 
-There are a number of methods for extracting data.
+There are a number of accessor methods for retrieving data from GenBank records.
 
 We can access each component of the header, e.g.:
 <<extract-header>>=
@@ -92,9 +89,11 @@ getAccession(mito)
 getDefinition(mito)
 getGeneID(mito)
 getOrganism(mito)
+getLength(mito)
+getComment(mito)
 @
 
-We can extract the DNA sequence as a whole:
+We can extract the DNA sequence as a whole as a \Rclass{DNAStringSet}:
 <<extract-sequence>>=
 getSequence(mito)
 @
@@ -106,12 +105,75 @@ ft(mito)
 
 \subsection{Filtering the feature table}
 
+The bulk of the data we are likely interested in is contained in the feature table. Features of interest can be filtered from a \Rclass{gbRecord} or a \Rclass{gbFeatureTable} using the function \Rfunction{filter}. For instence, to extract all ``CDS'' write:
+<<extract-key>>=
+cds <- filter(mito, key = "CDS")
+summary(cds[1:2])
+@
+
+A handy shortcut for filtering by feature key is provided by using the \Rfunction{[} operator:
+<<extact-key2>>=
+cds <- mito["CDS"]
+summary(cds[3:4])
+@
+
+We can also filter features based on range:
+<<extract-range>>=
+f10000 <- filter(mito, range = "..10000")
+summary(f10000)
+@
+
+Or, perhaps more usefully, based on arbitary qualifiers matching a regular expression. To find all CDSs for containing \emph{cytochrome b} as a product, we use:
+<<extract-product>>=
+cytb <- filter(mito, key = "CDS", product = "^cytochrome b$")
+cytb
+@
+
+\subsection{Accessing annotation data}
+
+After having filtered the features of interest we might want to access the various annotation data in a form more emenable to further analysis. Accessor functions include \Rfunction{start}, \Rfunction{end}, \Rfunction{width}, \Rfunction{strand}, \Rfunction{key}, \Rfunction{locusTag}, \Rfunction{geneID}, \Rfunction{product}, \Rfunction{dbxref}, \Rfunction{proteinID}, or \Rfunction{translation}:
+<<access-feature>>=
+start(cds[1:3])
+strand(cds[1:3])
+locusTag(cds[1:3])
+dbxref(cds[1:3])
+product(cds[1:3])
+translation(cds[1:3])
+@
+
+
+We can easily extract the DNA sequences for a bunch of CDSs by simply passing a feature table to the function \Rfunction{getSequence}:
+<<access-sequence>>=
+getSequence(cds[1:6])
+@
+
+
+A general function for accessing GenBank qualifiers is \Rfunction{qualif}. If no further argument is provided \Rfunction{qualif} returns a \Rclass{data.frame} containing all qualifiers in the feature table. The argument \Rcode{which} can be used to targed specific qualifiers
+<<access-qualif>>=
+qualif(cds[1:3])
+qualif(cds[1:3], which = c("gene", "locus_tag", "EC_number", "product", "db_xref.GeneID"))
+@
+
+To transform all annotation (``key'', ``location'', and ``qualifiers'') into a \Rclass{data.frame} we can use the function \Rfunction{select}:
+<<access-select>>=
+cols <- c("key", "gene", "locus_tag", "product")
+select(cds[1:4], .cols = cols)
+@
+
+Another useful format for annotation data are \Rclass{GRanges} provided by the \texttt{bioconductor} package \Biocpkg{GenomicRangs}. The function \Rfunction{ranges} allows to easily convert a \Rclass{gbFeatureTable} into a \Rclass{GRanges} object.
+<<granges>>=
+ranges(cds)
+@
+
+A a default \Rfunction{ranges} will only include the feature key as metadata and will expand compound locations (such as typcal eukaryotic CDS). Compound locations can be merged using the argument \Rcode{join = TRUE}, and more qualifiers can be included using the argument \Rcode{include}:
+<<granges-more>>=
+ranges(cds, join = TRUE, include = c("gene", "product", "db_xref"))
+@
 
 
 \section{Session Information}
 All of the output in this vignette was produced under the following
 conditions:
-
 <<sessinfo>>=
 sessionInfo()
 @

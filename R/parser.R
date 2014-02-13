@@ -106,10 +106,12 @@ gbFeatures <- function(gb_features, seqinfo) {
   feature_start <- which(substr(gb_features, 6, 6) != " ")
   fl <- ixsplit(gb_features, feature_start)
   mc_cores <- floor(detectCores()*0.75)
-  ftbl <- mcmapply(gbFeature, feature=fl, id=seq_along(feature_start),
-                   MoreArgs=list(accession=getAccession(seqinfo)),
-                   SIMPLIFY=FALSE, USE.NAMES=FALSE, mc.cores=mc_cores)                   
-  IRanges::new2('gbFeatureList', .Data=ftbl, .seqinfo=seqinfo, check=FALSE) 
+  id <- seq_along(feature_start)
+  ftbl <- mcmapply(gbFeature, feature = fl, id = id,
+                   MoreArgs = list(accession=getAccession(seqinfo)),
+                   SIMPLIFY = FALSE, USE.NAMES = FALSE, mc.cores = mc_cores)                   
+  IRanges::new2('gbFeatureTable', .Data = ftbl, .id = id, .seqinfo = seqinfo,
+                check = FALSE) 
 }
 
 

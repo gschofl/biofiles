@@ -1,7 +1,7 @@
 
 
 
-# biofiles - Interface with GenBank/GenPept files in R
+# biofiles - an interface to GenBank/GenPept files in R
 
 This is an R package for interfacing with GenBank and GenPept flat
 file records. It includes utilities for reading and writing GenBank
@@ -46,8 +46,8 @@ Next, we parse the `efetch` object into a `gbRecord` instance.
 rec <- gbRecord(gb_file)
 rec
 
- ##  'gbRecord' instance with 2040 features
- ##  LOCUS       CP002806             1172182 bp    DNA     circular BCT 16 ...
+ ##  An object of class 'gbRecord', with 2040 features
+ ##  LOCUS       CP002806             1172182 bp    DNA     circular BCT 31 ...
  ##  DEFINITION  Chlamydophila psittaci 02DC15, complete genome.
  ##  ACCESSION   CP002806
  ##  VERSION     CP002806.1  GI:334693792
@@ -56,7 +56,7 @@ rec
  ##  SOURCE      Chlamydia psittaci 02DC15
  ##    ORGANISM  Chlamydia psittaci 02DC15
  ##              Bacteria; Chlamydiae; Chlamydiales; Chlamydiaceae;
- ##              Chlamydiaceae; Chlamydia/Chlamydophila group; Chlamydia.
+ ##              Chlamydia/Chlamydophila group; Chlamydia.
  ##  REFERENCE   1  (bases 1 to 1172182)
  ##    AUTHORS   Schofl,G., Voigt,A., Litsche,K., Sachse,K. and Saluz,H.P.
  ##    TITLE     Complete Genome Sequences of Four Mammalian Isolates of
@@ -66,10 +66,11 @@ rec
  ##  REFERENCE   2  (bases 1 to 1172182)
  ##    AUTHORS   Schofl,G.
  ##    TITLE     Direct Submission
- ##    JOURNAL   Submitted (20-MAY-2011) Cell and Molecular Biology, Leibniz
- ##              Institute for Natural Product Research and Infection
- ##              Biology, Beutenbergstrasse 11a, Jena D-07745, Germany
- ##  COMMENTS    Source DNA available from Dr. Konrad Sachse
+ ##    JOURNAL   Submitted (20-MAY-2011) Cell and Molecular Biology,
+ ##              Leibniz Institute for Natural Product Research and
+ ##              Infection Biology, Beutenbergstrasse 11a, Jena D-07745,
+ ##              Germany
+ ##  COMMENT     Source DNA available from Dr. Konrad Sachse
  ##              (Konrad.Sachse@fli.bund.de) at the Institute for Molecular
  ##              Pathogenesis, Jena, Germany.
  ##  ORIGIN      CAAAGTTTTAAACATGTTAACCACGTTGTTTTCCCTCTATAAACCGAGTTTTAAACAGT
@@ -90,22 +91,22 @@ summary(rec)
 
  ##  [[CP002806]]
  ##    1172182 bp: Chlamydophila psittaci 02DC15, complete genome.
- ##    N    Key    Location                     Product
- ##    1    source 1..1172182                   NA
- ##    2    gene   149..1144                    NA
- ##    3    CDS    149..1144                    delta-aminolevulinic acid  ...
- ##    4    gene   complement(1160..2578)       NA
- ##    5    CDS    complement(1160..2578)       Na(+)-translocating NADH:u ...
- ##    6    gene   complement(2601..3035)       NA
- ##    7    CDS    complement(2601..3035)       conserved hypothetical protein
- ##    ...  ...    ...                          ...
- ##    2034 CDS    1169125..1170006             geranylgeranyl pyrophospha ...
- ##    2035 gene   complement(1170021..1170094) NA
- ##    2036 tRNA   complement(1170021..1170094) tRNA-Pro
- ##    2037 gene   complement(1170106..1170360) NA
- ##    2038 CDS    complement(1170106..1170360) conserved hypothetical protein
- ##    2039 gene   complement(1170443..1172035) NA
- ##    2040 CDS    complement(1170443..1172035) conserved hypothetical protein
+ ##     Id Feature Location                     GeneId Product           ...
+ ##      1 source  1..1172182                   NA     NA                ...
+ ##      2 gene    149..1144                    hemB   NA                ...
+ ##      3 CDS     149..1144                    hemB   delta-aminolevuli ...
+ ##      4 gene    complement(1160..2578)       NA     NA                ...
+ ##      5 CDS     complement(1160..2578)       NA     Na(+)-translocati ...
+ ##      6 gene    complement(2601..3035)       NA     NA                ...
+ ##      7 CDS     complement(2601..3035)       NA     conserved hypothe ...
+ ##    ... ...     ...                          ...    ...               ...
+ ##   2034 CDS     1169125..1170006             NA     geranylgeranyl py ...
+ ##   2035 gene    complement(1170021..1170094) NA     NA                ...
+ ##   2036 tRNA    complement(1170021..1170094) NA     tRNA-Pro          ...
+ ##   2037 gene    complement(1170106..1170360) NA     NA                ...
+ ##   2038 CDS     complement(1170106..1170360) NA     conserved hypothe ...
+ ##   2039 gene    complement(1170443..1172035) NA     NA                ...
+ ##   2040 CDS     complement(1170443..1172035) NA     conserved hypothe ...
 ```
 
 
@@ -181,22 +182,23 @@ getReference(rec)
  ##  REFERENCE   2  (bases 1 to 1172182)
  ##    AUTHORS   Schofl,G.
  ##    TITLE     Direct Submission
- ##    JOURNAL   Submitted (20-MAY-2011) Cell and Molecular Biology, Leibniz
- ##              Institute for Natural Product Research and Infection
- ##              Biology, Beutenbergstrasse 11a, Jena D-07745, Germany
+ ##    JOURNAL   Submitted (20-MAY-2011) Cell and Molecular Biology,
+ ##              Leibniz Institute for Natural Product Research and
+ ##              Infection Biology, Beutenbergstrasse 11a, Jena D-07745,
+ ##              Germany
  ##  
 ```
 
 
 
 
-`listUniqueQualifs()` provides an overview over the feature qualifiers used
+`uniqueQualifs()` provides an overview over the feature qualifiers used
 in a record:
 
 
 
 ```r
-listUniqueQualifs(rec)
+uniqueQualifs(rec)
 
  ##   [1] "organism"            "mol_type"            "strain"             
  ##   [4] "db_xref"             "gene"                "locus_tag"          
@@ -213,23 +215,44 @@ listUniqueQualifs(rec)
 The important part of GenBank record will generally be the list of annotions
 or features.
 
-We can access the `gbFeatureList` of a `gbRecord` using `getFeatures()` of `ft()`:
+We can access the `gbFeatureList` of a `gbRecord` using `getFeatures()` or `ft()`:
 
 
 
 ```r
-feat <- ft(rec)
-feat
+f <- ft(rec)
+f
 
- ##  'gbFeatureList' with 2040 features:
- ##  Feature:         Location/Qualifiers:
- ##   source          1..1172182
- ##                   /organism="Chlamydia psittaci 02DC15"
- ##                   /mol_type="genomic DNA"
- ##                   /strain="02DC15"
- ##                   /db_xref="taxon:1112254"
+ ##  'gbFeatureTable' with 2040 features:
+ ##  Feature:        Location/Qualifiers:
+ ##  source          1..1172182
+ ##                  /organism="Chlamydia psittaci 02DC15"
+ ##                  /mol_type="genomic DNA"
+ ##                  /strain="02DC15"
+ ##                  /db_xref="taxon:1112254"
  ##  ...
-
+ ##  Feature:        Location/Qualifiers:
+ ##  CDS             complement(1170443..1172035)
+ ##                  /locus_tag="CPS0B_1080"
+ ##                  /note="[F] COG1351 Predicted alternative thymidylate
+ ##                  synthase"
+ ##                  /codon_start="1"
+ ##                  /transl_table="11"
+ ##                  /product="conserved hypothetical protein"
+ ##                  /protein_id="AEG87987.1"
+ ##                  /db_xref="GI:334694770"
+ ##                  /translation="MLSRDDEFSSEQRKSLSHFVTNLETNIFALKNLPEVVKGA
+ ##                  LFSKYSRSTLGLRSLLLKEFLEGEGGDFLDSSGVDFEVGIHKAADFYRRVLDGFG
+ ##                  DDSIGELGGAHLAIESVSMLAAKILEDARIGGSPLEKSSRYVYFDQKVKGEYLYY
+ ##                  RDPILMTSAFKDVFLGTCDFLFDTYADLIPKVRTYFEKIYPKESEVSQSAYTISL
+ ##                  RAKVLDCLRGLLPAATLTNLGFFGNGRFWQTLLHKIQGHNLTEIRQIGESSLTEL
+ ##                  MKIIPSFVSRAESHHHHHQAMLSYRQTLREQLTSLAEKFSGGSHPSKQTGVRLVY
+ ##                  GDPEGIYKVAAGFLFPYSEHTYEELINICKSMPREDLIRVLEAGSSSRENRRHKS
+ ##                  PRGLECLEFGFDITADFGAYRDLQRHRILTQERQLLTTNLGYHIPEQLLDTPMEK
+ ##                  DFREAMEKAEEAYNQISLEFPEEAQYVVPLAYNIRWFFHINGRALQWLCELRSQV
+ ##                  QGHENYRKIAIDMVKEVIRFDPVYESFFKFVDYSECDLGRIKQESRKRSF"
+ ##  Seqinfo:
+ ##  CP002806  1172182 DNA  Chlamydophila psittaci 02DC15, complete genome.
 ```
 
 
@@ -238,17 +261,15 @@ feat
 We can extract features either by numeric subsetting:
 
 
-
 ```r
-## extract the very first feature
-feat[[1]]
+f[[1]]
 
- ##  Feature:         Location/Qualifiers:
- ##   source          1..1172182
- ##                   /organism="Chlamydia psittaci 02DC15"
- ##                   /mol_type="genomic DNA"
- ##                   /strain="02DC15"
- ##                   /db_xref="taxon:1112254"
+ ##  Feature:        Location/Qualifiers:
+ ##  source          1..1172182
+ ##                  /organism="Chlamydia psittaci 02DC15"
+ ##                  /mol_type="genomic DNA"
+ ##                  /strain="02DC15"
+ ##                  /db_xref="taxon:1112254"
  ##  Seqinfo:
  ##  CP002806  1172182 DNA  Chlamydophila psittaci 02DC15, complete genome.
 ```
@@ -259,29 +280,30 @@ feat[[1]]
 or we can subset by feature key:
 
 
-
 ```r
-## extract the second CDS
-feat["CDS"][[2]]
+f["CDS"][[2]]
 
- ##  Feature:         Location/Qualifiers:
- ##   CDS             complement(1160..2578)
- ##                   /locus_tag="CPS0B_0002"
- ##                   /EC_number="1.6.5.-"
- ##                   /note="[C] COG1726 Na+-transporting NADH:ubiquinone oxidoreductase, subunit NqrA"
- ##                   /codon_start="1"
- ##                   /transl_table="11"
- ##                   /product="Na(+)-translocating NADH:ubiquinone oxidoreductase subunit A"
- ##                   /protein_id="AEG87011.1"
- ##                   /db_xref="GI:334693794"
- ##                   /translation="MKIAITRGLDLSLQGSPKESGFLKRIDPALVSVDLRPYSA
- ##                   GVFITSPVSGTVQEIRRGDKRSLLDVVIKKNPGQNLTEYSY
- ##                   PFDIPALPTHHPRDVFINLADNRPFTPSTEKHLSVFSSREE
- ##                   RLAIPEKDLKSIAHLHKITGPYPSGSPSTHIHYIAPITSEK
- ##                   QVVALAGSGLKPSLRRYVITTRGADFQSLLPLDEIASDQVS
- ##                   ISVIPNPQKRQAFNFLRLGINKPTLTRTYLSGFLKRKHTYM
- ##                   IPVVPLIKSVITKNFELACMLGFLEVCPEDFALPTFIDPSK
- ##                   ADTE"
+ ##  Feature:        Location/Qualifiers:
+ ##  CDS             complement(1160..2578)
+ ##                  /locus_tag="CPS0B_0002"
+ ##                  /EC_number="1.6.5.-"
+ ##                  /note="[C] COG1726 Na+-transporting NADH:ubiquinone
+ ##                  oxidoreductase, subunit NqrA"
+ ##                  /codon_start="1"
+ ##                  /transl_table="11"
+ ##                  /product="Na(+)-translocating NADH:ubiquinone
+ ##                  oxidoreductase subunit A"
+ ##                  /protein_id="AEG87011.1"
+ ##                  /db_xref="GI:334693794"
+ ##                  /translation="MKIAITRGLDLSLQGSPKESGFLKRIDPALVSVDLRPYSA
+ ##                  LTLKLKVEQGQAISSGSPVAEYKNFPGVFITSPVSGTVQEIRRGDKRSLLDVVIK
+ ##                  KNPGQNLTEYSYDLSKLSRQELLEIFKKEGLFALFKQRPFDIPALPTHHPRDVFI
+ ##                  NLADNRPFTPSTEKHLSVFSSREEGFYVFNVGVRAIAKLFGLCPHIISTDRLAIP
+ ##                  EKDLKSIAHLHKITGPYPSGSPSTHIHYIAPITSEKDVVFTISFQEVLAIGHLFL
+ ##                  KGRILNEQVVALAGSGLKPSLRRYVITTRGADFQSLLPLDEIASDQVSLISGDPL
+ ##                  TGRLCDKEHLPCLGMRDATISVIPNPQKRQAFNFLRLGINKPTLTRTYLSGFLKR
+ ##                  KHTYMDPDTNLHGETRPIIDTEIYDKVMAMKIPVVPLIKSVITKNFELACMLGFL
+ ##                  EVCPEDFALPTFIDPSKTEMLTIIKEALKHYAKETGILNPENTADTE"
  ##  Seqinfo:
  ##  CP002806  1172182 DNA  Chlamydophila psittaci 02DC15, complete genome.
 ```
@@ -289,37 +311,37 @@ feat["CDS"][[2]]
 
 
 
-A more versatile method to narrow down the list of features of interest id
-using `select()`.
-For instance, we can select for all coding sequences (CDS) with the
+A more versatile method to narrow down the list of features of interest is the 
+function `filter()`.
+For instance, we can filter for all coding sequences (CDS) with the
 annotation "hypothetical" in the product qualifiers:
 
 
 
 ```r
-hyp <- select(feat, key = "CDS", product = "hypothetical")
-summary(hyp)
+hypo <- filter(rec, key = "CDS", product = "hypothetical")
+summary(hypo)
 
- ##  N    Key Location                     Product
- ##  7    CDS complement(2601..3035)       conserved hypothetical protein
- ##  31   CDS 20427..21713                 conserved hypothetical protein
- ##  33   CDS 21822..23741                 conserved hypothetical protein
- ##  35   CDS complement(23931..26531)     conserved hypothetical protein
- ##  37   CDS 26689..29340                 conserved hypothetical protein
- ##  39   CDS 29390..29620                 conserved hypothetical protein
- ##  43   CDS complement(30347..30832)     conserved hypothetical protein
- ##  53   CDS complement(33614..33922)     conserved hypothetical protein
- ##  ...  ... ...                          ...
- ##  2000 CDS 1152073..1152657             hypothetical protein
- ##  2002 CDS 1152648..1153925             conserved hypothetical protein
- ##  2008 CDS complement(1155986..1156711) conserved hypothetical protein
- ##  2010 CDS complement(1156746..1157474) conserved hypothetical protein
- ##  2024 CDS 1163308..1164144             conserved hypothetical protein
- ##  2028 CDS complement(1165683..1167527) conserved hypothetical protein
- ##  2038 CDS complement(1170106..1170360) conserved hypothetical protein
- ##  2040 CDS complement(1170443..1172035) conserved hypothetical protein
-
-length(hyp)
+ ##     Id Feature Location                     GeneId Product           ...
+ ##      7 CDS     complement(2601..3035)       NA     conserved hypothe ...
+ ##     31 CDS     20427..21713                 NA     conserved hypothe ...
+ ##     33 CDS     21822..23741                 NA     conserved hypothe ...
+ ##     35 CDS     complement(23931..26531)     NA     conserved hypothe ...
+ ##     37 CDS     26689..29340                 NA     conserved hypothe ...
+ ##     39 CDS     29390..29620                 NA     conserved hypothe ...
+ ##     43 CDS     complement(30347..30832)     NA     conserved hypothe ...
+ ##     53 CDS     complement(33614..33922)     NA     conserved hypothe ...
+ ##    ... ...     ...                          ...    ...               ...
+ ##   2000 CDS     1152073..1152657             NA     hypothetical prot ...
+ ##   2002 CDS     1152648..1153925             NA     conserved hypothe ...
+ ##   2008 CDS     complement(1155986..1156711) NA     conserved hypothe ...
+ ##   2010 CDS     complement(1156746..1157474) NA     conserved hypothe ...
+ ##   2024 CDS     1163308..1164144             NA     conserved hypothe ...
+ ##   2028 CDS     complement(1165683..1167527) NA     conserved hypothe ...
+ ##   2038 CDS     complement(1170106..1170360) NA     conserved hypothe ...
+ ##   2040 CDS     complement(1170443..1172035) NA     conserved hypothe ...
+r
+length(hypo)
 
  ##  [1] 249
 ```
@@ -327,22 +349,22 @@ length(hyp)
 
 
 
-or we can select for all elongation factors,
+or we can filter for all elongation factors,
 
 
 
 ```r
-elong <- select(feat, key = "CDS", product = "elongation factor")
+elong <- filter(rec, key = "CDS", product = "elongation factor")
 summary(elong)
 
- ##  N    Key Location                   Product
- ##  9    CDS 3148..5301                 transcription elongation factor G ...
- ##  103  CDS complement(56119..56967)   translation elongation factor Ts
- ##  408  CDS 206213..208297             translation elongation factor G
- ##  950  CDS complement(526454..527758) transcription elongation factor
- ##  1126 CDS 623470..624027             elongation factor P
- ##  1406 CDS complement(805145..806329) translation elongation factor Tu
- ##  1750 CDS complement(997270..997842) translation elongation factor P
+ ##     Id Feature Location                   GeneId Product             ...
+ ##      9 CDS     3148..5301                 greA   transcription elong ...
+ ##    103 CDS     complement(56119..56967)   tsf    translation elongat ...
+ ##    408 CDS     206213..208297             fusA   translation elongat ...
+ ##    950 CDS     complement(526454..527758) nusA   transcription elong ...
+ ##   1126 CDS     623470..624027             NA     elongation factor P ...
+ ##   1406 CDS     complement(805145..806329) tuf    translation elongat ...
+ ##   1750 CDS     complement(997270..997842) efp    translation elongat ...
 ```
 
 

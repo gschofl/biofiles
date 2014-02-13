@@ -101,4 +101,54 @@ test_that("indent and offset work together", {
   expect_true(all(nchar(ss2) == c(30, 40, 30)))
 })
 
+context("Test \".simplify\"")
 
+test_that(".simplify deals with atomic vectors and lists of length-1 elements ", {
+  x <- 1:10
+  expect_equal(.simplify(x, unlist = TRUE), x)
+  expect_equal(.simplify(x, unlist = FALSE), data.frame(X1 = x))
+  
+  x <- list(1, 2, 3, 4)
+  expect_equal(.simplify(x, unlist = TRUE), unlist(x))
+  expect_equal(.simplify(x, unlist = FALSE), data.frame(X1 = unlist(x)))
+  
+  x <- list(c(a = 1), c(a = 2), c(a = 3))
+  expect_equal(.simplify(x, unlist = TRUE), unlist(x, use.names = FALSE))
+  expect_equal(.simplify(x, unlist = FALSE), data.frame(a = unlist(x)))
+})
+
+test_that(".simplify deals with lists of equal-length elements greater than 1", {
+  x <- list(c(1, 2), c(3, 4), c(5, 6))
+  xout <- data.frame(matrix(1:6, nrow = 3, byrow = TRUE, dimnames = list(NULL, NULL)))
+  expect_equal(.simplify(x), xout)
+  
+  x <- list(c(a = 1, b = 2), c(a = 3, b = 4), c(a = 5, b = 6))
+  xout <- data.frame(matrix(1:6, nrow = 3, byrow = TRUE, dimnames = list(NULL, c("a", "b"))))
+  expect_equal(.simplify(x), xout)
+})
+
+test_that(".simplify deals with lists of unequal-length elements ", {
+  ##  is.null(nm)
+  x <- list(c(1, 2), c(3, 4, 5), c(6, 7))
+  expect_equal(.simplify(x), x)
+  
+  ##  length(nm) != len
+  x <- list(c(a = 1), c(a = 2), c(b = 3))
+  xout <- data.frame(matrix(c(1,NA,2,NA,NA,3), ncol = 2, byrow = TRUE,
+                            dimnames = list(NULL, c("a", "b"))))
+  expect_equal(.simplify(x), xout)
+  
+  x <- list(c(a = 1, b = 2), c(a = 3, c = 4), c(a = 5, b = 6))
+  xout <- data.frame(matrix(c(1,2,NA,
+                              3,NA,4,
+                              5,6,NA), ncol = 3, byrow = TRUE,
+                            dimnames = list(NULL, c("a", "b", "c"))))
+  expect_equal(.simplify(x), xout)
+  
+  x <- list(c(a = 1, b = 2), c(a = 3, b = 4, c = 5), c(a = 6, b = 7))
+  xout <- data.frame(matrix(c(1,2,NA,
+                              3,4,5,
+                              6,7,NA), ncol = 3, byrow = TRUE,
+                            dimnames = list(NULL, c("a", "b", "c"))))
+  expect_equal(.simplify(x), xout)
+})

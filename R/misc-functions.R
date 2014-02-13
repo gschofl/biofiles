@@ -1,7 +1,7 @@
 #' Quickly list all qualifier names
 #' 
 #' @usage uniqueQualifs(x)
-#' @param x A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeatureList}},
+#' @param x A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeatureTable}},
 #' or, \code{\linkS4class{gbFeature}} instance
 #' @return A character vector of qualifier names
 #' @export

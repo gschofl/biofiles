@@ -1,7 +1,7 @@
 context("gbRecord parser checks (gbk files)")
 
 #nuc.efetch <- efetch('457866357', 'nuccore', 'gb')
-#save(nuc.efetch, file="inst/tests/sequences/nuc.efetch.RData")
+#save(nuc.efetch, file="tests/testthat/sequences/nuc.efetch.RData")
 load("sequences/nuc.efetch.RData")
 nuc.efetch <- gbRecord(nuc.efetch)
 nuc <- gbRecord("sequences/nucleotide.gbk")
@@ -22,7 +22,7 @@ test_that("Feature list, Sequence, and Seqinfo can be extracted", {
   expect_is(.sequence(nuc@seqinfo), 'DNAStringSet')
   expect_is(.sequence(nuc), 'DNAStringSet')
   
-  expect_is(.features(nuc), 'gbFeatureList')
+  expect_is(.features(nuc), 'gbFeatureTable')
   expect_identical(.contig(nuc), NULL)
 })
 
@@ -48,7 +48,7 @@ test_that("Accessors work for GenBank records", {
 context("gbRecord parser checks (GenPept files)")
 
 #prot.efetch <- efetch(c('459479542','379049216'), 'protein', 'gp')
-#save(prot.efetch, file="inst/tests/sequences/prot.efetch.RData")
+#save(prot.efetch, file="tests/testthat/sequences/prot.efetch.RData")
 load("sequences/prot.efetch.RData")
 prot.efetch <- gbRecord(prot.efetch)
 prot <- gbRecord("sequences/protein.gp")
@@ -56,9 +56,7 @@ prot <- gbRecord("sequences/protein.gp")
 test_that("GenPept records parse correctely from file and efetch", {
   expect_is(prot, 'gbRecord')
   expect_is(prot.efetch, 'gbRecordList')
-  expect_error(gbRecordList(prot, prot.efetch),
-               "All elements in '...' must be gbRecord objects")
-  
+  expect_is(gbRecordList(prot, prot.efetch), "gbRecordList")
 })
 
 test_that("Feature list, Sequence, and Seqinfo can be extracted", {
@@ -71,7 +69,7 @@ test_that("Feature list, Sequence, and Seqinfo can be extracted", {
   expect_is(.sequence(prot@seqinfo), 'AAStringSet')
   expect_is(.sequence(prot), 'AAStringSet')
   
-  expect_is(.features(prot), 'gbFeatureList')
+  expect_is(.features(prot), 'gbFeatureTable')
   expect_identical(.contig(prot), NULL)
 })
 
