@@ -40,7 +40,7 @@ be used as input for tbl2asn or Sequin to generate
 annotation.
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 \dontrun{
 write.FeatureTable(x, file = "data/marine_metagenome.tbl")

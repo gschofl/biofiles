@@ -34,7 +34,7 @@ A logical vector or a list of logical vectors.
 Has a feature a specific key?
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 hasKey(x, 'CDS')
 }

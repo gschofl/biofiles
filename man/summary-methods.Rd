@@ -35,7 +35,7 @@ summary(object, n = 8, ...)
 Summarise a GenBank record.
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 summary(x)
 }

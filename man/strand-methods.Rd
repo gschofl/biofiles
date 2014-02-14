@@ -43,7 +43,7 @@ An integer vector (or a list thereof) of 1 (plus strand),
 Get or set the strand of genomic features
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 strand(x)
 }

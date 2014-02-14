@@ -33,7 +33,7 @@ vectors) of db_xrefs.
 Access the \code{db_xref}s of GenBank features
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 
 ## all db_xrefs associated with CDSs

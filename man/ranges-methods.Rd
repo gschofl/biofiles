@@ -35,17 +35,17 @@ A \code{\linkS4class{GRanges}} or
 Extract features as \code{"\linkS4class{GRanges}"} objects.
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 
 ## default "GRanges" object
 ranges(x)
 
 ## subset CDSs and include "product", "note", "protein_id"
-ranges(x["CDS"], include=c("product", "note", "protein_id"))
+ranges(x["CDS"], include = c("product", "note", "protein_id"))
 
 ## subset CDSs and exclude "translation"
-ranges(x["CDS"], include="all", exclude="translation")
+ranges(x["CDS"], include = "all", exclude = "translation")
 }
 \seealso{
 \code{\link{start}}, \code{\link{end}},

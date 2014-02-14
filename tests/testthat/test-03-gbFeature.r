@@ -8,7 +8,7 @@ test_that("GenBank feature tables parse correctly", {
   expect_is(gbFeature(cds), 'gbFeature')
 })
 
-context("gbFeature getter checks")
+context("gbFeature getter/setter checks")
 
 test_that("gbFeature accessors work", {
   x <- biofiles:::gbFeature(cds, id = 10)
@@ -56,5 +56,34 @@ test_that("gbFeature accessors work", {
   expect_equal(qualif(x, c("locus_tag", "gene")), c(locus_tag = "STMUK_0002", gene = "thrA"))
   expect_equal(qualif(x, "foo"), c(foo = NA_character_))
 })
+
+test_that("gbFeature replacement methods work", {
+  x <- biofiles:::gbFeature(cds, id = 10)
   
+  ## replace start
+  start(x) <- 100
+  expect_equal(start(x), 100)
+  
+  ## replace end
+  end(x) <- 200
+  expect_equal(end(x), 200)
+  
+  ## try to make start > end
+  expect_error(start(x) <- 300)
+  ## try again, switching off validity checks
+  start(x, check = FALSE) <- 300
+  expect_output(location(x), "300..200")
+  
+  ## replace key
+  ## Should we check for valid keys?
+  key(x) <- "FOO"
+  expect_equal(key(x), "FOO")
+  
+  ## replace qulifier
+  qualif(x, "gene") <- "bar"
+  expect_equal(qualif(x, "gene"), c(gene = "bar"))
+  
+  ## try replacing qualifier without specifying which
+  expect_error(qualif(x) <- "baz")
+})
   

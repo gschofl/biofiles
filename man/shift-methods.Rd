@@ -40,7 +40,7 @@ Shift the location of features in a GenBank record
 In a shifted feature table compound locations get merged.
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 
 ## shift the S. cerevisiae mitochondrion such that cytochrome b is the first CDS

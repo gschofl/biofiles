@@ -32,7 +32,7 @@ Extract a frequency table (or list of tables in the case of
 \code{gbRecordList}s) of feature keys.
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 featureTable(x)
 }

@@ -62,19 +62,18 @@ Filters are provided as named values using keywords and/or
 
 Permissible keywords are:
 
-\describe{ \item{index/idx}{ For example:
-\code{idx=c(3,4,5,6)}, \code{idx=100:150},
-\code{index=c(1,12:20)} } \item{range}{ For example:
-\code{range="10000..25000"},
-\code{range="..10000,20000..25000"}, \code{range="30000.."}
-} \item{key}{ For example: \code{key="CDS"},
-\code{key=c("CDS", "gene")} } \item{arbitrary qualifiers}{
-For example: \code{product="ribosomal"},
-\code{locus_tag=c("CPSIT_0123", "CPSIT_0124",
-"CPSIT_0125")}, \code{pseudo=TRUE} } }
+\describe{ \item{index/idx}{ For example: \code{idx =
+c(3,4,5,6)}, \code{idx = 100:150}, \code{index =
+c(1,12:20)} } \item{range}{ For example: \code{range =
+"10000..25000"}, \code{range = "..10000,20000..25000"},
+\code{range = "30000.."} } \item{key}{ For example:
+\code{key = "CDS"}, \code{key = c("CDS", "gene")} }
+\item{arbitrary qualifiers}{ For example: \code{product =
+"ribosomal"}, \code{locus_tag = c("CPSIT_0123",
+"CPSIT_0124", "CPSIT_0125")}, \code{pseudo = TRUE} } }
 }
 \examples{
-gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 
 ## filter all hydrophobic tRNAs from the yeast mitochondrion

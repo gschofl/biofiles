@@ -322,6 +322,7 @@ setMethod("qualif", "gbFeature", function(x, which, fixed = FALSE, use.names = T
 #' @export
 #' @rdname qualif-methods
 setReplaceMethod("qualif", "gbFeature", function(x, which, check = TRUE, value) {
+  assert_that(!missing(which))
   x@qualifiers[which] <- value
   if (check)
     validObject(x)

@@ -29,7 +29,7 @@ A list of \code{\linkS4class{gbLocation}} objects
 Access genomic locations of GenBank features
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 location(x)
 }

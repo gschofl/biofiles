@@ -39,7 +39,7 @@ An integer vector or a list of integer vectors.
 Get or set the start of genomic features
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 start(x)
 

@@ -11,7 +11,7 @@
 \usage{
 key(x, ...)
 
-key(x, ...) <- value
+key(x, check = TRUE) <- value
 
 \S4method{key}{gbFeature}(x)
 
@@ -33,7 +33,7 @@ key(x, ...) <- value
 Get/set keys of GenBank features
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 key(x)
 }

@@ -17,7 +17,7 @@
 \usage{
 qualif(x, which = "", ...)
 
-qualif(x, which, ...) <- value
+qualif(x, which, check = TRUE) <- value
 
 \S4method{qualif}{gbFeature}(x, which, fixed = FALSE, use.names = TRUE)
 
@@ -62,7 +62,7 @@ translation(x)
 Get/set qualifiers of GenBank features
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 qualif(x[[1]], 'db_xref')
 

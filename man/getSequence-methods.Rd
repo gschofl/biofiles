@@ -35,7 +35,7 @@ selected feature(s)
 Get the sequence from a GenBank record.
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 
 ## extract the full-length sequence of the record.

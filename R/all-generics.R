@@ -62,7 +62,7 @@ NULL
 #' @docType methods
 #' @importFrom stats start
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' start(x)
 #' 
@@ -92,7 +92,7 @@ setGeneric("start<-")
 #' @docType methods
 #' @importFrom stats end
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' end(x)
 #' 
@@ -124,7 +124,7 @@ setGeneric("end<-")
 #' @docType methods
 #' @importFrom BiocGenerics strand
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' strand(x)
 #' 
@@ -137,7 +137,7 @@ setGeneric("strand")
 setGeneric("strand<-")
 
 ### The "width" generic is defined in the IRanges package. We need
-### to define joint_width internally instead of width(x, join=TRUE)
+### to define joint_width internally instead of width(x, join = TRUE)
 #' Get the width of genomic features
 #'
 #' @usage width(x)
@@ -151,7 +151,7 @@ setGeneric("strand<-")
 #' @docType methods
 #' @importFrom IRanges width
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' width(x)
 #'
@@ -160,13 +160,13 @@ setGeneric("width")
 #' @rdname width-methods
 #' @export
 #' @docType methods
-setGeneric("joint_width", signature="x", function(x) standardGeneric("joint_width"))
+setGeneric("joint_width", signature = "x", function(x) standardGeneric("joint_width"))
 
 
 #' @rdname width-methods
 #' @export
 #' @docType methods
-setGeneric("joint_range", signature="x", function(x) standardGeneric("joint_range"))
+setGeneric("joint_range", signature = "x", function(x) standardGeneric("joint_range"))
 
 
 ### The "ranges" generic is defined in the IRanges package.
@@ -189,17 +189,17 @@ setGeneric("joint_range", signature="x", function(x) standardGeneric("joint_rang
 #' @export
 #' @importFrom IRanges ranges
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' 
 #' ## default "GRanges" object
 #' ranges(x)
 #' 
 #' ## subset CDSs and include "product", "note", "protein_id"
-#' ranges(x["CDS"], include=c("product", "note", "protein_id"))
+#' ranges(x["CDS"], include = c("product", "note", "protein_id"))
 #'
 #' ## subset CDSs and exclude "translation"
-#' ranges(x["CDS"], include="all", exclude="translation")
+#' ranges(x["CDS"], include = "all", exclude = "translation")
 #'
 setGeneric("ranges")
 
@@ -215,7 +215,7 @@ setGeneric("ranges<-")
 #' @rdname fuzzy-methods
 #' @export
 #' @docType methods
-setGeneric("fuzzy", signature="x", function (x, ...) {
+setGeneric("fuzzy", signature = "x", function (x, ...) {
   standardGeneric("fuzzy")
 })
 
@@ -228,7 +228,7 @@ setGeneric("fuzzy", signature="x", function (x, ...) {
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' 
 #' getLocus(x)
@@ -353,7 +353,7 @@ setGeneric('getComment', function (x) standardGeneric('getComment'))
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' getFeatures(x)
 #' 
@@ -380,7 +380,7 @@ setGeneric("ft", function(x, ...) standardGeneric("ft"))
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' 
 #' ## extract the full-length sequence of the record.
@@ -402,7 +402,7 @@ setGeneric("getSequence", function(x, ...) standardGeneric("getSequence"))
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' getHeader(x)
 #' 
@@ -430,7 +430,7 @@ setGeneric("header", function(x, ...) standardGeneric("header"))
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' summary(x)
 #' 
@@ -447,11 +447,11 @@ setGeneric("summary")
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' index(x)
 #' 
-setGeneric("index", signature="x", function (x, ...) {
+setGeneric("index", signature = "x", function (x, ...) {
   standardGeneric("index")
 })
 
@@ -466,11 +466,11 @@ setGeneric("index", signature="x", function (x, ...) {
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' location(x)
 #'
-setGeneric("location", signature="x", function (x, ...) {
+setGeneric("location", signature = "x", function (x, ...) {
   standardGeneric("location")
 })
 
@@ -484,11 +484,11 @@ setGeneric("location", signature="x", function (x, ...) {
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' key(x)
 #'
-setGeneric("key", signature="x", function(x, ...) {
+setGeneric("key", signature = "x", function(x, ...) {
   standardGeneric("key")
 })
 
@@ -496,7 +496,7 @@ setGeneric("key", signature="x", function(x, ...) {
 #' @rdname key-methods
 #' @export
 #' @docType methods
-setGeneric("key<-", signature="x", function(x, value, ...) {
+setGeneric("key<-", signature = "x", function(x, check = TRUE, value) {
   standardGeneric("key<-")
 })
 
@@ -517,14 +517,14 @@ setGeneric("key<-", signature="x", function(x, value, ...) {
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' qualif(x[[1]], 'db_xref')
 #' 
 #' ## use shortcuts to common qualifiers
 #' proteinID(x["CDS"])
 #'
-setGeneric("qualif", signature=c("x", "which"), function(x, which = "", ...) {
+setGeneric("qualif", signature = "x", function(x, which = "", ...) {
   standardGeneric("qualif")
 })
 
@@ -532,8 +532,8 @@ setGeneric("qualif", signature=c("x", "which"), function(x, which = "", ...) {
 #' @rdname qualif-methods
 #' @export
 #' @docType methods
-setGeneric("qualif<-", signature=c("x", "which"), function(x, which, value, ...) {
-  standardGeneric("qualif<-")
+setGeneric("qualif<-", signature = "x", function(x, which, check = TRUE, value) {
+  standardGenseric("qualif<-")
 })
 
 
@@ -550,7 +550,7 @@ setGeneric("qualif<-", signature=c("x", "which"), function(x, which, value, ...)
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' 
 #' ## all db_xrefs associated with CDSs
@@ -559,7 +559,7 @@ setGeneric("qualif<-", signature=c("x", "which"), function(x, which, value, ...)
 #' ## retrieve the TaxId from the "source" field.
 #' dbxref(x[[1]], "taxon")
 #'
-setGeneric("dbxref", signature="x", function(x, db = NULL, ...) {
+setGeneric("dbxref", signature = "x", function(x, db = NULL, ...) {
   standardGeneric("dbxref")
 })
 
@@ -582,7 +582,7 @@ setGeneric("dbxref", signature="x", function(x, db = NULL, ...) {
 #' @docType methods
 #' @examples
 #' \dontrun{
-#' aca <- genomeRecordFromNCBI("Bacteria/Acaryochloris_marina", verbose=TRUE)
+#' aca <- genomeRecordFromNCBI("Bacteria/Acaryochloris_marina", verbose = TRUE)
 #' aca
 #' saveRecord("aca")
 #' rm(aca)
@@ -607,7 +607,7 @@ setGeneric("saveRecord", function(x, file = NULL, dir = ".", ...) standardGeneri
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' \dontrun{
 #' write.GenBank(x, file = "data/marine_metagenome.gbk")
@@ -615,7 +615,7 @@ setGeneric("saveRecord", function(x, file = NULL, dir = ".", ...) standardGeneri
 #' ## write selected features to file.
 #' write.GenBank(x["CDS"], file = "data/marine_metagenome_cds.gbk", header = FALSE, sequence = FALSE)
 #' }
-setGeneric("write.GenBank", function(x, file, append=FALSE, ...) {
+setGeneric("write.GenBank", function(x, file, append = FALSE, ...) {
   standardGeneric("write.GenBank")
 })
 
@@ -637,12 +637,12 @@ setGeneric("write.GenBank", function(x, file, append=FALSE, ...) {
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' \dontrun{
 #' write.FeatureTable(x, file = "data/marine_metagenome.tbl")
 #' }
-setGeneric("write.FeatureTable", signature="x",
+setGeneric("write.FeatureTable", signature = "x",
            function(x, file, tablename = "", dbname = "",
                     sequence = FALSE, append = FALSE, ...) {
              standardGeneric("write.FeatureTable")
@@ -665,7 +665,7 @@ setGeneric("write.FeatureTable", signature="x",
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' qualifList(x["source"])
 #'
@@ -688,7 +688,7 @@ setGeneric("qualifList", function(x, ...) standardGeneric("qualifList"))
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' qualifTable(x)
 #'
@@ -709,7 +709,7 @@ setGeneric("qualifTable", function(x, ...) standardGeneric("qualifTable"))
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' featureTable(x)
 #'
@@ -731,11 +731,11 @@ setGeneric("featureTable", function(x, ...) standardGeneric("featureTable"))
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' hasKey(x, 'CDS')
 #'
-setGeneric("hasKey", signature=c("x","key"), function(x, key, ...) {
+setGeneric("hasKey", signature = c("x","key"), function(x, key, ...) {
   standardGeneric("hasKey")
 })
 
@@ -753,11 +753,11 @@ setGeneric("hasKey", signature=c("x","key"), function(x, key, ...) {
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' hasQualif(x, 'CDS')
 #'
-setGeneric("hasQualif", signature=c("x","qualifier"), function(x, qualifier, ...) {
+setGeneric("hasQualif", signature = c("x","qualifier"), function(x, qualifier, ...) {
   standardGeneric("hasQualif")
 })
 
@@ -783,14 +783,14 @@ setGeneric("hasQualif", signature=c("x","qualifier"), function(x, qualifier, ...
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' 
 #' ## shift the S. cerevisiae mitochondrion such that cytochrome b is the first CDS
 #' cytb <- start(filter(x, product = "^cytochrome b$")[[1]])[1]
 #' x2 <- shift(x, shift = -cytb + 1, split = TRUE)
 #' 
-setGeneric("shift", signature="x", function(x, shift=0L, use.names=TRUE, ...) {
+setGeneric("shift", signature = "x", function(x, shift = 0L, use.names = TRUE, ...) {
   standardGeneric("shift")
 })
 
@@ -805,11 +805,11 @@ setGeneric("shift", signature="x", function(x, shift=0L, use.names=TRUE, ...) {
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' xr <- revcomp(x)
 #' 
-setGeneric("revcomp", signature="x", function(x, ...) standardGeneric("revcomp"))
+setGeneric("revcomp", signature = "x", function(x, ...) standardGeneric("revcomp"))
 
 
 # view -------------------------------------------------------------------
@@ -824,7 +824,7 @@ setGeneric("revcomp", signature="x", function(x, ...) standardGeneric("revcomp")
 #' @keywords internal
 #' @export
 #' @docType methods
-setGeneric("view", signature="x", function(x, n, ...) {
+setGeneric("view", signature = "x", function(x, n, ...) {
   standardGeneric("view")
 })
 
@@ -847,20 +847,20 @@ setGeneric("view", signature="x", function(x, n, ...) {
 #' 
 #' \describe{
 #'   \item{index/idx}{
-#'     For example: \code{idx=c(3,4,5,6)}, \code{idx=100:150},
-#'     \code{index=c(1,12:20)}
+#'     For example: \code{idx = c(3,4,5,6)}, \code{idx = 100:150},
+#'     \code{index = c(1,12:20)}
 #'   }
 #'   \item{range}{
-#'     For example: \code{range="10000..25000"},
-#'     \code{range="..10000,20000..25000"},
-#'     \code{range="30000.."}
+#'     For example: \code{range = "10000..25000"},
+#'     \code{range = "..10000,20000..25000"},
+#'     \code{range = "30000.."}
 #'   }
 #'   \item{key}{
-#'     For example: \code{key="CDS"}, \code{key=c("CDS", "gene")}
+#'     For example: \code{key = "CDS"}, \code{key = c("CDS", "gene")}
 #'   }
 #'   \item{arbitrary qualifiers}{
-#'     For example: \code{product="ribosomal"}, \code{locus_tag=c("CPSIT_0123",
-#'     "CPSIT_0124", "CPSIT_0125")}, \code{pseudo=TRUE}
+#'     For example: \code{product = "ribosomal"}, \code{locus_tag = c("CPSIT_0123",
+#'     "CPSIT_0124", "CPSIT_0125")}, \code{pseudo = TRUE}
 #'   }
 #' }
 #' 
@@ -885,7 +885,7 @@ setGeneric("view", signature="x", function(x, n, ...) {
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' 
 #' ## filter all hydrophobic tRNAs from the yeast mitochondrion
@@ -902,7 +902,7 @@ setGeneric("view", signature="x", function(x, n, ...) {
 #' 
 #' ## filter all CDS from position 60,000 bp onward
 #' filter(x, key = "CDS", range = "60000..")
-setGeneric("filter", signature="x", function(x, ...) standardGeneric("filter"))
+setGeneric("filter", signature = "x", function(x, ...) standardGeneric("filter"))
 
 
 # select -----------------------------------------------------------------
@@ -914,7 +914,7 @@ setGeneric("filter", signature="x", function(x, ...) standardGeneric("filter"))
 #' @rdname manip-methods
 #' @export
 #' @docType methods
-setGeneric("select", signature="x", function(x, ...) standardGeneric("select"))
+setGeneric("select", signature = "x", function(x, ...) standardGeneric("select"))
 
 
 # internal ---------------------------------------------------------------

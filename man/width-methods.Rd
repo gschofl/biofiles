@@ -55,7 +55,7 @@ An integer vector or a list of integer vectors.
 Get the width of genomic features
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 width(x)
 }

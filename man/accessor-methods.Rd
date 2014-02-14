@@ -67,7 +67,7 @@ getComment(x)
 Access the various fields of a GenBank record.
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 
 getLocus(x)

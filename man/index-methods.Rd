@@ -33,7 +33,7 @@ A numeric vector of feature indeces.
 Access the indices of GenBank features
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 index(x)
 }

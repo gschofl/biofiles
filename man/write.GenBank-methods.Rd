@@ -36,7 +36,7 @@ For a description of the GenBank format see
 \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 \dontrun{
 write.GenBank(x, file = "data/marine_metagenome.gbk")

@@ -34,7 +34,7 @@ using \code{\link{saveRDS}} and \code{\link{readRDS}}
 }
 \examples{
 \dontrun{
-aca <- genomeRecordFromNCBI("Bacteria/Acaryochloris_marina", verbose=TRUE)
+aca <- genomeRecordFromNCBI("Bacteria/Acaryochloris_marina", verbose = TRUE)
 aca
 saveRecord("aca")
 rm(aca)
