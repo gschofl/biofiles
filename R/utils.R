@@ -41,7 +41,7 @@ on_failure(is_in) <- function(call, env) {
   if (is.empty(a)) force(b) else a
 }
 
-"%|NA|%" <- function(a, b) {
+"%|na|%" <- function(a, b) {
   if (is.na(a)) force(b) else a
 }
 

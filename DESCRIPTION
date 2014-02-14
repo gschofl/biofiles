@@ -50,7 +50,7 @@ Collate:
     'gbRecord-class.R'
     'gbRecordList-class.R'
     'genome-record-from-ncbi.R'
-    'make-granges.R'
+    'make-ranges.R'
     'misc-functions.R'
     'parser.R'
     'select.R'

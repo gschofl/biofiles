@@ -127,7 +127,7 @@
       type <- if (mtp == "AA") "aa" else "bp"
       smtp <- ifelse(substring(mtp, 3, 3) == '-', mtp, paste0(blanks(3), mtp %|AA|% blanks(2)))
       sprintf("%-12s%-17s %+10s %s %-10s %-8s %s %s",
-              "LOCUS", lnm, len, type, smtp, top %|NA|% '', div,
+              "LOCUS", lnm, len, type, smtp, top %|na|% '', div,
               toupper(format(mdt, "%d-%b-%Y")))
     },
     show = function() {
@@ -623,7 +623,7 @@ gbHeader <- function(gb_header) {
       gb_header[
         seq.int(
           gbk_idx[ref_idx[1]],
-          (gbk_idx[ref_idx[length(ref_idx)] + 1] - 1) %|NA|% length(gb_header)
+          (gbk_idx[ref_idx[length(ref_idx)] + 1] - 1) %|na|% length(gb_header)
         )]
     references <- gbReferenceList(ref_lines)
   } else {

@@ -7,121 +7,118 @@
 NULL
 
 #' @keywords internal
-find_neighbors <- function (query, subject, n = 5, 
-                            direction = 'flanking',
-                            include_key = 'any',
-                            exclude_key = 'none') {
+find_neighbors <- function(query, subject, n = 5,  direction = 'flanking',
+                           include_key = 'any', exclude_key = 'none') {
   
   direction <- match.arg(direction, c("flanking","downstream","upstream"))
-  
   if (!(is(query, "gbFeatureTable") || is(query, "gbFeature"))) {
     stop("class ", sQuote(class(query)), " no supported query")
   }
-  
   if (!(is(subject, "gbRecord") || is(subject, "gbFeatureTable"))) {
     stop("class ", sQuote(class(subject)), " no supported subject")
   }
-  
   if (is(query, "gbFeatureTable") || is(query, "gbFeature")) {
-    query <- ranges(ranges(query))
+    query <- .IRanges(query)
   }
-  
   if (is(subject, "gbRecord")) {
-    subject <- getFeatures(subject)
+    subject <- .features(subject)
   }
-  
   if (include_key != "any") {
-    subject <- filter(subject, key=include_key)
+    subject <- filter(subject, key = include_key)
     if (length(subject) == 0L) {
-      message("Include key ", sQuote(paste0(include_key, collapse=",")), " returns no features")
+      message("Include key ", sQuote(paste0(include_key, collapse = ",")), " returns no features")
       return(NULL)
     }
   }
-  
   if ("none" %in% exclude_key) {
     # exclude at least "source" from gbFeatureTable
     exclude_key <- "source"
   } else {
     exclude_key <- c(exclude_key, "source")
   }
-  
-  subject <- subject[vapply(subject, function (f) {
-    f@key %ni% exclude_key 
-  }, logical(1))]
-  
+  subject <- subject[key(subject) %ni% exclude_key]
   if (length(subject) == 0L) {
-    message("Exclude key ", sQuote(paste0(exclude_key, collapse=",")), " returns no features")
+    message("Exclude key ", sQuote(paste0(exclude_key, collapse = ",")), " returns no features")
     return(NULL)
   }
-  
-  subject_range <- ranges(ranges(subject))
+  subject_range <- .IRanges(subject)
   subject_idx <- index(subject)
-  
   FUN <- switch(direction,
-                upstream=list(IRanges::follow),
-                downstream=list(IRanges::precede),
-                flanking=list(IRanges::follow, IRanges::precede))
-  
+                upstream   = list(IRanges::follow),
+                downstream = list(IRanges::precede),
+                flanking   = list(IRanges::follow, IRanges::precede)) 
   # if "flanking" is called we need to reset the query ranges to
   # the original values
   ori_query <- query
   UID <- vector("list", length(query))
-  for (i in seq_along(FUN)) {
-    for (j in seq_len(n)) {
-      hits <- FUN[[i]](query, subject_range, select="all")
+  for (f in FUN) {
+    for (i in seq_len(n)) {
+      ## find the nearest range neighbor following|preceding the query range(s)
+      hits <- f(x = query, subject = subject_range, select = "all")
+      ## with multiple queries we have to split the hits and loop over them
+      ## with a single query this takes no effect anyways.
       split_hits <- IRanges::split(hits, queryHits(hits))
       new_query <- IRanges()
-      for (k in seq_along(split_hits)) {
-        hit_idx <- subjectHits(split_hits[[k]])
-        new_range <- subject_range[hit_idx,]
-        UID[[K]] <- c(UID[[k]], subject_idx[hit_idx])
+      ## loop over potentially multiple queries
+      for (j in seq_along(split_hits)) {
+        hit_idx <- subjectHits(split_hits[[j]])
+        new_range <- subject_range[hit_idx, ]
+        UID[[j]] <- c(UID[[j]], subject_idx[hit_idx])
         new_query <- c(new_query, new_range)
       }
+      ## set queries to be the hits from the previous iteration
       query <- new_query
     }
-    query <- ori_query # reset query ranges if a second FUN is called
+    ## reset query ranges if a second FUN is called
+    query <- ori_query 
   }
-  
-  feature_list <- lapply(UID, function (id) {
+  ## now we should have a list of integer vectors (feature indices), the lengh
+  ## of which depends on the number of query features.
+  f_list <- lapply(UID, function(id) {
     filter(subject, idx = unique(sort(id)))
   })
-  
-  if (length(feature_list) == 1L) {
-    return(feature_list[[1L]])
+  if (length(f_list) == 1L) {
+    f_list[[1L]]
   } else {
-    return(feature_list)
+    f_list
   }
 }
 
 
 #' Find flanking features
 #' 
-#' @usage upstream(query, subject, n=5, include_key="all", exclude_key="none")
+#' @usage upstream(query, subject, n = 5, include_key = "all", exclude_key = "none")
 #' 
-#' @param query The query \code{\linkS4class{gbRange}},
-#' \code{\linkS4class{gbFeatureTable}}, or
-#' \code{\linkS4class{gbFeature}}  instance.
-#' @param subject The subject \code{\linkS4class{gbRecord}} or
-#' \code{\linkS4class{gbFeatureTable}} instance within which the
-#' n nearest upstream features are searched.
-#' @param n  The number of upstream features to be included
+#' @param query A \code{\linkS4class{gbFeature}} or \code{\linkS4class{gbFeatureTable}}
+#' object.
+#' @param subject A \code{\linkS4class{gbRecord}} or \code{\linkS4class{gbFeatureTable}}
+#' object within which the n nearest upstream features are found.
+#' @param n  The number of upstream features to be returned.
 #' @param include_key Which features should be returned. Defaults to
-#' \dQuote{all}.
+#' \dQuote{all}. 
 #' @param exclude_key Which feature(s) should be excluded from the search.
 #' Defaults to \dQuote{none}.
 #' 
 #' @rdname upstream
 #' @export
+#' @examples
+#' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
+#' x <- gbRecord(gbk_file)
+#' cytb <- filter(x, product = "^cytochrome b$")
+#' 
+#' ## find the three nearest upstream neighbor CDS to CYTB 
+#' upstream(cytb, x["CDS"], n = 3)
+#' 
 upstream <- Partial(find_neighbors, direction = "upstream")
 
 
-#' @usage downstream(query, subject, n=5, include_key="all", exclude_key="none)
+#' @usage downstream(query, subject, n = 5, include_key = "all", exclude_key = "none)
 #' @export
 #' @rdname upstream
 downstream <- Partial(find_neighbors, direction = "downstream")
 
 
-#' @usage flanking(query, subject, n=5, include_key="all", exclude_key="none)
+#' @usage flanking(query, subject, n = 5, include_key = "all", exclude_key = "none)
 #' @export
 #' @rdname upstream
 flanking <- Partial(find_neighbors, direction = "flanking")

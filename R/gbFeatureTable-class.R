@@ -14,6 +14,8 @@ setOldClass("list")
 #' @slot .seqinfo A \code{\linkS4class{seqinfo}} object containing the
 #' genome sequence as an \code{\linkS4class{XStringSet}} object and
 #' sequence metadata as a \code{\linkS4class{gbHeader}} object.
+#' @slot .id An integer vector the indices of the \code{\linkS4class{gbFeature}}s
+#' contained within a \code{gbFeatureTable} object.
 #' @slot .Data A list of \code{\linkS4class{gbFeature}} objects.
 #' 
 #' @export

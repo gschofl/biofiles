@@ -52,7 +52,7 @@ NULL
   if (length(x) == 0) {
     return(IRanges())
   }
-  jr <- joint_range(x)
+  jr <- matrix(joint_range(x), ncol = 2)
   IRanges(start = jr[, 1], end = jr[, 2], names = index(x))
 }
 

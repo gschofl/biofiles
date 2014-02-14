@@ -5,22 +5,21 @@
 \alias{upstream}
 \title{Find flanking features}
 \usage{
-upstream(query, subject, n=5, include_key="all", exclude_key="none")
+upstream(query, subject, n = 5, include_key = "all", exclude_key = "none")
 
-downstream(query, subject, n=5, include_key="all", exclude_key="none)
+downstream(query, subject, n = 5, include_key = "all", exclude_key = "none)
 
-flanking(query, subject, n=5, include_key="all", exclude_key="none)
+flanking(query, subject, n = 5, include_key = "all", exclude_key = "none)
 }
 \arguments{
-  \item{query}{The query \code{\linkS4class{gbRange}},
-  \code{\linkS4class{gbFeatureTable}}, or
-  \code{\linkS4class{gbFeature}} instance.}
+  \item{query}{A \code{\linkS4class{gbFeature}} or
+  \code{\linkS4class{gbFeatureTable}} object.}
 
-  \item{subject}{The subject \code{\linkS4class{gbRecord}}
-  or \code{\linkS4class{gbFeatureTable}} instance within
-  which the n nearest upstream features are searched.}
+  \item{subject}{A \code{\linkS4class{gbRecord}} or
+  \code{\linkS4class{gbFeatureTable}} object within which
+  the n nearest upstream features are found.}
 
-  \item{n}{The number of upstream features to be included}
+  \item{n}{The number of upstream features to be returned.}
 
   \item{include_key}{Which features should be returned.
   Defaults to \dQuote{all}.}
@@ -30,5 +29,13 @@ flanking(query, subject, n=5, include_key="all", exclude_key="none)
 }
 \description{
 Find flanking features
+}
+\examples{
+gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
+x <- gbRecord(gbk_file)
+cytb <- filter(x, product = "^cytochrome b$")
+
+## find the three nearest upstream neighbor CDS to CYTB
+upstream(cytb, x["CDS"], n = 3)
 }
 
