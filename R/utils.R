@@ -35,6 +35,8 @@ on_failure(is_in) <- function(call, env) {
 
 "%is_in%" <- is_in
 
+"%ni%" <- Negate(`%in%`)
+
 "%||%" <- function(a, b) {
   if (is.empty(a)) force(b) else a
 }
@@ -324,6 +326,12 @@ strsplitN <- function(x, split, n, from = "start", collapse = split, ...) {
   }  
   n <- lapply(n, Compose("sort", "unique"))
   unlist(.mapply(function(x, n) paste0(x[n], collapse = collapse), list(x = xs, n = n), NULL))
+}
+
+replace_ext <- function(file, replacement) {
+  split_file <- usplit(file, '\\.')
+  split_file[length(split_file)] <- replacement
+  paste0(split_file, collapse = ".")
 }
 
 recycle <- function(val, len) {

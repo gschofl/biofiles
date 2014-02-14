@@ -30,7 +30,7 @@ Imports:
     XVector
 Suggests:
     doParallel,
-    testthat (>= 0.8),
+    testthat,
     BiocStyle
 License: MIT + file LICENSE
 Encoding: UTF-8
