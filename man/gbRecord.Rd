@@ -28,18 +28,18 @@ format see \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
 }
 \examples{
 ### import from file
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 x <- gbRecord(gbk_file)
 getHeader(x)
 getFeatures(x)
 
 ### quickly extract features as GRanges
-ranges(x["CDS"], include=c("product", "note", "protein_id"))
+ranges(x["CDS"], include = c("product", "note", "protein_id"))
 
 ### import directly from NCBI
 \dontrun{
 require(reutils)
-x <- gbRecord(efetch("139189709", "protein", rettype="gp", retmode="text"))
+x <- gbRecord(efetch("139189709", "protein", rettype = "gp", retmode = "text"))
 x
 }
 
@@ -49,11 +49,11 @@ x[[1]]
 ## import a file containing multiple GenBank records as a
 ## gbRecordList. With many short records it pays of to
 ## run the parsing in paralle
-gss_file <- system.file("extdata", "gss.gbk", package="biofiles")
+gss_file <- system.file("extdata", "gss.gbk", package = "biofiles")
 
 \dontrun{
    require(doParallel)
-   registerDoParallel(cores=4)
+   registerDoParallel(cores = 4)
 }
 
 gss <- gbRecord(gss_file)

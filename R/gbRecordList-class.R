@@ -10,7 +10,7 @@ NULL
 #' \code{gbRecordList}.
 #'
 #' @export
-setClass("gbRecordList", contains="list")
+setClass("gbRecordList", contains = "list")
 
 #' @rdname gbRecordList-class
 #' @param ... \dQuote{\linkS4class{gbRecord}} elements.
@@ -28,20 +28,20 @@ gbRecordList <- function(...) {
     if (length(listData) == 1L && is.list(listData[[1L]])) {
       listData <- listData[[1L]]
     }
-    if (any(vapply(listData, is, "gbRecordList", FUN.VALUE=FALSE))) {
+    if (any(vapply(listData, is, "gbRecordList", FUN.VALUE = FALSE))) {
       listData <- flatten1(listData)
     }
-    if (!all(vapply(listData, is, "gbRecord", FUN.VALUE=FALSE))) {
+    if (!all(vapply(listData, is, "gbRecord", FUN.VALUE = FALSE))) {
       stop("All elements in '...' must be gbRecord objects")
     }
-    names(listData) <- vapply(listData, getAccession, "", USE.NAMES=FALSE)
+    names(listData) <- vapply(listData, getAccession, "", USE.NAMES = FALSE)
     return( new('gbRecordList', .Data = listData) )
   }
 }
 
 
 setValidity2("gbRecordList", function (object) {
-  if (!all(vapply(object@.Data, is, "gbRecord", FUN.VALUE=logical(1))))
+  if (!all(vapply(object@.Data, is, "gbRecord", FUN.VALUE = logical(1))))
     return("All elements in a gbRecordList must be gbRecord objects")
   
   TRUE
@@ -58,17 +58,17 @@ setMethod("show", "gbRecordList", function (object) {
     acc <- getAccession(object)
     len <- getLength(object)
     type <- ifelse(getMoltype(object) == 'AA', 'aa', 'bp')
-    def <- ellipsize(obj=getDefinition(object),
-                     width=getOption("width") - nchar(len) - nchar(type) - 8)
-    cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep="")
+    def <- ellipsize(obj = getDefinition(object),
+                     width = getOption("width") - nchar(len) - nchar(type) - 8)
+    cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep = "")
   }
 })
 
 
 #' @export
 #' @rdname summary-methods
-setMethod("summary", "gbRecordList", function (object, n=2, ...) {
-  x <- lapply(object, summary, n=n, ...=...)
+setMethod("summary", "gbRecordList", function (object, n = 2, ...) {
+  x <- lapply(object, summary, n = n, ... = ...)
   invisible(NULL)
 })
 
@@ -77,23 +77,23 @@ setMethod("summary", "gbRecordList", function (object, n=2, ...) {
 
 
 setMethod("getLocus", "gbRecordList", function (x) {
-  vapply(x, getLocus, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getLocus, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 setMethod("getLength", "gbRecordList", function (x) {
-  vapply(x, getLength, FUN.VALUE=0L, USE.NAMES=FALSE)
+  vapply(x, getLength, FUN.VALUE = 0L, USE.NAMES = FALSE)
 })
 
 setMethod("getMoltype", "gbRecordList", function (x) {
-  vapply(x, getMoltype, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getMoltype, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 setMethod("getTopology", "gbRecordList", function (x) {
-  vapply(x, getTopology, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getTopology, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 setMethod("getDivision", "gbRecordList", function (x) {
-  vapply(x, getDivision, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getDivision, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 setMethod("getDate", "gbRecordList", function (x) {
@@ -101,39 +101,39 @@ setMethod("getDate", "gbRecordList", function (x) {
 })
 
 setMethod("getDefinition", "gbRecordList", function (x) {
-  vapply(x, getDefinition, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getDefinition, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 setMethod("getAccession", "gbRecordList", function (x) {
-  vapply(x, getAccession, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getAccession, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 setMethod("getVersion", "gbRecordList", function (x) {
-  vapply(x, getVersion, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getVersion, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
-setMethod("getGeneID", "gbRecordList", function (x, db='gi') {
-  vapply(x, getGeneID, db=db, FUN.VALUE="", USE.NAMES=FALSE)
+setMethod("getGeneID", "gbRecordList", function (x, db = 'gi') {
+  vapply(x, getGeneID, db = db, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 setMethod("getDBLink", "gbRecordList", function (x) {
-  vapply(x, getDBLink, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getDBLink, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 setMethod("getDBSource", "gbRecordList", function (x) {
-  vapply(x, getDBSource, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getDBSource, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 setMethod("getSource", "gbRecordList", function (x) {
-  vapply(x, getSource, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getSource, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 setMethod("getOrganism", "gbRecordList", function (x) {
-  vapply(x, getOrganism, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getOrganism, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 setMethod("getTaxonomy", "gbRecordList", function (x) {
-  vapply(x, getTaxonomy, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getTaxonomy, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 setMethod("getReference", "gbRecordList", function (x) {
@@ -141,11 +141,11 @@ setMethod("getReference", "gbRecordList", function (x) {
 })
 
 setMethod("getKeywords", "gbRecordList", function (x) {
-  vapply(x, getKeywords, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getKeywords, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 setMethod("getComment", "gbRecordList", function (x) {
-  vapply(x, getComment, FUN.VALUE="", USE.NAMES=FALSE)
+  vapply(x, getComment, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 
 #' @export
@@ -264,7 +264,7 @@ setMethod("hasQualif", "gbRecordList", function(x, qualifier) {
 
 
 setMethod('.dbSource', 'gbRecordList', function (x) {
-  vapply(x, .dbSource, character(1), USE.NAMES=FALSE)
+  vapply(x, .dbSource, character(1), USE.NAMES = FALSE)
 })
 
 setMethod(".defline", "gbRecordList", function (x) {

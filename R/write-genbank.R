@@ -35,14 +35,14 @@ setMethod("write.GenBank", "gbFeatureTable",
 
 .writeSequence <- function (x, file = "out.gbk") {
   if (length(seq <- getSequence(x)) > 0L) {
-    lineno <- seq(from=1, to=seq@ranges@width, by=60)
+    lineno <- seq(from = 1, to = seq@ranges@width, by = 60)
     lines <- seq_along(lineno)
     n_lines <- length(lines)
     s <- character(n_lines)
     for (i in lines) {
       seqw <- ifelse(i <  n_lines, i*60, seq@ranges@width)
       seqs <- XVector::toString(XVector::subseq(seq, 1 + (i - 1)*60, seqw))
-      s[i] <- paste0(strsplit(seqs, "(?<=.{10})(?=.)", perl=TRUE)[[1]], collapse=" ")     
+      s[i] <- paste0(strsplit(seqs, "(?< = .{10})(? = .)", perl = TRUE)[[1]], collapse = " ")     
     }
     s <- sprintf("%+9s %s", lineno, s)
     cat("\nORIGIN", file = file, sep = "\n", append = TRUE)
@@ -59,11 +59,11 @@ setMethod("write.GenBank", "gbFeatureTable",
 setMethod("saveRecord", "gbRecord", function(x, file = NULL, dir = ".", ...) {
   if (!is.character(file)) {
     fname <- paste0(getAccession(x), '.rds')
-    file <- normalizePath(file.path(dir, fname), mustWork=FALSE)
+    file <- normalizePath(file.path(dir, fname), mustWork = FALSE)
   } else {
-    file <- normalizePath(file.path(dir, file), mustWork=FALSE)
+    file <- normalizePath(file.path(dir, file), mustWork = FALSE)
   }
-  saveRDS(object=x, file=file, ...)
+  saveRDS(object = x, file = file, ...)
   return(invisible())
 })
 
@@ -71,12 +71,12 @@ setMethod("saveRecord", "gbRecord", function(x, file = NULL, dir = ".", ...) {
 #' @rdname saveRecord-methods
 setMethod("saveRecord", "gbRecordList", function(x, file = NULL, dir = ".", ...) {
   if(!is.character(file)) {
-    fname <- paste0(ellipsize(collapse(getAccession(x), '_'), width=60, ellipsis='__'), '.rds')
-    file <- normalizePath(file.path(dir, fname), mustWork=FALSE)
+    fname <- paste0(ellipsize(collapse(getAccession(x), '_'), width = 60, ellipsis = '__'), '.rds')
+    file <- normalizePath(file.path(dir, fname), mustWork = FALSE)
   } else {
-    file <- normalizePath(file.path(dir, file), mustWork=FALSE)
+    file <- normalizePath(file.path(dir, file), mustWork = FALSE)
   }
-  saveRDS(object=x, file=file, ...)
+  saveRDS(object = x, file = file, ...)
   return(invisible())
 })
 
@@ -87,7 +87,7 @@ loadRecord <- function(file, ...) {
   if (missing(file)) {
     stop("No filename provided")
   }
-  readRDS(file=file, ...)
+  readRDS(file = file, ...)
 }
 
 

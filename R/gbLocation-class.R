@@ -132,7 +132,7 @@ setMethod("getAccession", "gbLocation", function(x) x@accession)
 
 
 setReplaceMethod("start", "gbLocation",
-                 function(x, check=TRUE, value) {
+                 function(x, check = TRUE, value) {
                    nrow <- dim(x@range)[1]
                    if (!is.numeric(value))
                      stop("replacement 'value' must be numeric")
@@ -152,7 +152,7 @@ setReplaceMethod("start", "gbLocation",
 
 
 setReplaceMethod("end", "gbLocation",
-                 function(x, check=TRUE, value) {
+                 function(x, check = TRUE, value) {
                    nrow <- dim(x@range)[1]
                    if (!is.numeric(value))
                      stop("replacement 'value' must be numeric")
@@ -179,8 +179,8 @@ setReplaceMethod("strand", "gbLocation",
                    if (length(value) < nrow)
                      value <- recycle(value, nrow)
                    if (is.character(value))
-                     value <- vapply(value, switch, '+'=1L, '-'=-1L, NA_integer_,
-                                     FUN.VALUE=integer(1))
+                     value <- vapply(value, switch, '+' = 1L, '-' = -1L, NA_integer_,
+                                     FUN.VALUE = integer(1))
                    x@strand <- as.integer(value)
                    x
                  })
@@ -202,8 +202,8 @@ setAs("gbLocation", "character",
           acc <- from@accession
           rem <- from@remote
           typ <- from@type
-          span <- vapply(typ, switch, "R"="..", "B"="^", "G"="",
-                         FUN.VALUE="", USE.NAMES=FALSE)
+          span <- vapply(typ, switch, "R" = "..", "B" = "^", "G" = "",
+                         FUN.VALUE = "", USE.NAMES = FALSE)
           pos <- ifelse(rng[,1] == rng[,2],
                         paste0(
                           ifelse(fuz[,1],
@@ -232,7 +232,7 @@ setAs("gbLocation", "character",
               paste0(
                 ifelse( unique(str) == -1, "complement(", ""),
                 ifelse( !is.na(cmp), paste0(cmp, "("), ""),
-                paste0(pos, collapse=","),
+                paste0(pos, collapse = ","),
                 ifelse( !is.na(cmp), ")", ""),
                 ifelse( unique(str) == -1, ")", "")
               )
@@ -289,6 +289,6 @@ setMethod("shift", "gbLocation", function(x, shift = 0L, ...) {
 #' @export
 setMethod("show", "gbLocation", function(object) {
   res <- as(object, "character")
-  cat(linebreak(res, FORCE=TRUE), "\n" )
+  cat(linebreak(res, FORCE = TRUE), "\n" )
 })
 

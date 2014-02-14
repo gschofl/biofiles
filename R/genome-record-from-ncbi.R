@@ -2,43 +2,43 @@
 #' @importFrom RCurl curlSetOpt chunkToLineReader curlPerform
 #' @importFrom iterators iter
 #' @importFrom foreach foreach "%do%"
-fetchGbRecords <- function(urls, ..., curl=getCurlHandle()) {
+fetchGbRecords <- function(urls, ..., curl = getCurlHandle()) {
   content <- list()
   foreach(url = iter(urls)) %do% {
     content[[url]] <- gbReader(...)
-    opts <- curlOptions(url=url, writefunc=chunkToLineReader(content[[url]]$update)$read)
-    curl <- curlSetOpt(.opts=opts, curl=curl, ...)
-    tryCatch(curlPerform(curl=curl), error = function(e) {
-      warning(e$message, immediate.=TRUE)
+    opts <- curlOptions(url = url, writefunc = chunkToLineReader(content[[url]]$update)$read)
+    curl <- curlSetOpt(.opts = opts, curl = curl, ...)
+    tryCatch(curlPerform(curl = curl), error = function(e) {
+      warning(e$message, immediate. = TRUE)
     })
   }
   content
 }
 
 
-fetchHeader <- function(urls, ..., curl=getCurlHandle()) {
+fetchHeader <- function(urls, ..., curl = getCurlHandle()) {
   content <- list()
   foreach(url = iter(urls)) %do% {
     content[[url]] <- basicTextGatherer()
-    opts <- curlOptions(url=url, headerfunc=content[[url]]$update, 
-                        writefunc=content[[url]]$update, nobody=TRUE,
-                        header=TRUE)
-    curl <- curlSetOpt(.opts=opts, curl=curl, ...)
-    tryCatch(curlPerform(curl=curl), error = function(e) {
-      warning(e$message, immediate.=TRUE)
+    opts <- curlOptions(url = url, headerfunc = content[[url]]$update, 
+                        writefunc = content[[url]]$update, nobody = TRUE,
+                        header = TRUE)
+    curl <- curlSetOpt(.opts = opts, curl = curl, ...)
+    tryCatch(curlPerform(curl = curl), error = function(e) {
+      warning(e$message, immediate. = TRUE)
     })
   }
   content
 }
 
 
-contentLength <- function(urls, unit="Mb") {
+contentLength <- function(urls, unit = "Mb") {
   unit <- match.arg(unit, c("b", "kb", "Mb", "Gb"))
   headers <- fetchHeader(urls)
-  res <- foreach(url = iter(urls), .combine="c") %do% {
+  res <- foreach(url = iter(urls), .combine = "c") %do% {
     h <- usplit(headers[[url]]$value(), '\n|\r\n')
-    len <- as.numeric(strsplitN(unique(grep("Content-Length", h, value=TRUE)), ':\\s+', 2))
-    len <- switch(unit, b=len, kb=(len/1024), Mb=(len/1024^2), Gb=(len/1024^3))
+    len <- as.numeric(strsplitN(unique(grep("Content-Length", h, value = TRUE)), ':\\s+', 2))
+    len <- switch(unit, b = len, kb = (len/1024), Mb = (len/1024^2), Gb = (len/1024^3))
     setNames(len, basename(url))
   }
   attr(res, "unit") <- unit
@@ -94,28 +94,28 @@ chooseFromList <- function(list, prompt = "", default = NULL) {
 #' 
 #' }
 #' 
-genomeRecordFromNCBI <- function(which, ignore.case=TRUE, .parse=TRUE, ...) {
+genomeRecordFromNCBI <- function(which, ignore.case = TRUE, .parse = TRUE, ...) {
   if (missing(which)) {
-    stop("\"which\" is missing with no default", call.=TRUE)
+    stop("\"which\" is missing with no default", call. = TRUE)
   }
   MAX <- function(x, n) if (length(x) > n) c(x[1:n], "...") else x
   base_url <- "ftp://ftp.ncbi.nih.gov/genomes/" 
-  which <- usplit(which, "/", fixed=TRUE)
+  which <- usplit(which, "/", fixed = TRUE)
   
   g <- basicTextGatherer()
-  curl <- getCurlHandle(header=FALSE, ftplistonly=TRUE, ftp.use.epsv=FALSE)
+  curl <- getCurlHandle(header = FALSE, ftplistonly = TRUE, ftp.use.epsv = FALSE)
   
   while(length(which) > 0) {
     base_url <- paste0(base_url, which[1], '/')
-    tryCatch(curlPerform(url=base_url, writefunction=g$update, curl=curl), error=function(e) {
-      stop(e$message, call.=TRUE)
+    tryCatch(curlPerform(url = base_url, writefunction = g$update, curl = curl), error = function(e) {
+      stop(e$message, call. = TRUE)
     })
     which <- which[-1]
     x <- usplit(g$value(), '\n')
-    target <- x[grep(which[1] %|na|% '\\.gbk$', x, ignore.case=ignore.case)]
+    target <- x[grep(which[1] %|na|% '\\.gbk$', x, ignore.case = ignore.case)]
     
     if (length(target) > 1 && !all(grepl('\\.gbk$', target))) {
-      cat(sprintf("[%s] %s", seq_along(target), target), sep="\n")
+      cat(sprintf("[%s] %s", seq_along(target), target), sep = "\n")
       msg <- paste0("Choose target directory (", collapse(MAX(seq_along(target), 4)), "|q(uit)]: ")
       target <- chooseFromList(target, msg, 1)
       if (length(target) > 1) {
@@ -129,7 +129,7 @@ genomeRecordFromNCBI <- function(which, ignore.case=TRUE, .parse=TRUE, ...) {
       urls <- paste0(base_url, target)
       size <- contentLength(urls)
       cat(sprintf("[%s] %s (%s %s)", seq_along(target), target, round(size, 2),
-                  attr(size, "unit")), sep="\n")
+                  attr(size, "unit")), sep = "\n")
       msg <- paste0("Choose gbk file(s) to download: [a(ll)|",
                     collapse(MAX(seq_along(target), 4)), "|q(uit)]: ")
       target <- chooseFromList(target, msg)
@@ -140,11 +140,11 @@ genomeRecordFromNCBI <- function(which, ignore.case=TRUE, .parse=TRUE, ...) {
     }
     g$reset()
   }
-  curl <- curlSetOpt(ftplistonly=FALSE, curl=curl)
-  res <- fetchGbRecords(urls, ..., curl=curl)
+  curl <- curlSetOpt(ftplistonly = FALSE, curl = curl)
+  res <- fetchGbRecords(urls, ..., curl = curl)
   gbkList <- list()
   for (gb in names(res)) {
-    nm <- paste0(strsplitN(dirname(gb), "/", 1, 'end', fixed=TRUE), '/', basename(gb))
+    nm <- paste0(strsplitN(dirname(gb), "/", 1, 'end', fixed = TRUE), '/', basename(gb))
     gbkList[[nm]] <- if (.parse) {
       res[[gb]]$record() 
     } else {

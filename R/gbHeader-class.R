@@ -116,8 +116,8 @@
       mtp <<- mtp
       top <<- top
       div <<- div
-      cdt <<- as.POSIXlt(cdt, format="%d-%b-%Y") 
-      mdt <<- as.POSIXlt(mdt, format="%d-%b-%Y")
+      cdt <<- as.POSIXlt(cdt, format = "%d-%b-%Y") 
+      mdt <<- as.POSIXlt(mdt, format = "%d-%b-%Y")
     },
     is_empty = function() {
       sum(length(lnm), length(len), length(mtp), length(top),
@@ -125,7 +125,7 @@
     },
     to_string = function() {
       type <- if (mtp == "AA") "aa" else "bp"
-      smtp <- ifelse(substring(mtp, 3, 3)=='-', mtp, paste0(blanks(3), mtp %|AA|% blanks(2)))
+      smtp <- ifelse(substring(mtp, 3, 3) == '-', mtp, paste0(blanks(3), mtp %|AA|% blanks(2)))
       sprintf("%-12s%-17s %+10s %s %-10s %-8s %s %s",
               "LOCUS", lnm, len, type, smtp, top %|NA|% '', div,
               toupper(format(mdt, "%d-%b-%Y")))
@@ -172,7 +172,7 @@ NULL
 
 #' @keywords internal
 gbLocus <- function(locus_line) {
-  tokens <- usplit(locus_line, split="\\s+")[-1]
+  tokens <- usplit(locus_line, split = "\\s+")[-1]
   # GenBank format: 'bp', GenPept: 'aa'
   gb <- if (tokens[3] == 'bp') TRUE else FALSE 
   date_idx <- length(tokens)
@@ -261,25 +261,25 @@ gbLocus <- function(locus_line) {
         if (has_authors()) {
           if (length(authors) > 1) {
             auth <- paste0(
-              paste0(authors[-length(authors)], collapse=", "), ' and ', authors[length(authors)]
+              paste0(authors[-length(authors)], collapse = ", "), ' and ', authors[length(authors)]
             )
           } else {
             auth <- authors
           }
-          sprintf('  %-10s%s\n', 'AUTHORS', linebreak(auth, width=w, indent=i, offset=o, FORCE=f))
+          sprintf('  %-10s%s\n', 'AUTHORS', linebreak(auth, width = w, indent = i, offset = o, FORCE = f))
         } else '',
         if (has_consrtm()) {
-          sprintf('  %-10s%s\n', 'CONSRTM', linebreak(consrtm, width=w, indent=i, offset=o, FORCE=f))
+          sprintf('  %-10s%s\n', 'CONSRTM', linebreak(consrtm, width = w, indent = i, offset = o, FORCE = f))
         } else '',
         if (!is.na(title)) {
-          sprintf('  %-10s%s\n', 'TITLE', linebreak(title, width=w, indent=i, offset=o, FORCE=f))
+          sprintf('  %-10s%s\n', 'TITLE', linebreak(title, width = w, indent = i, offset = o, FORCE = f))
         } else '',
-        sprintf('  %-10s%s\n', 'JOURNAL', linebreak(journal, width=w, indent=i, offset=o, FORCE=f)),
+        sprintf('  %-10s%s\n', 'JOURNAL', linebreak(journal, width = w, indent = i, offset = o, FORCE = f)),
         if (!is.na(pubmed)) {
           sprintf('  %-10s%s\n', 'PUBMED', pubmed)
         } else '',
         if (!is.na(remark)) {
-          sprintf('  %-10s%s\n', 'REMARK', linebreak(remark, width=w, indent=i, offset=o, FORCE=f))
+          sprintf('  %-10s%s\n', 'REMARK', linebreak(remark, width = w, indent = i, offset = o, FORCE = f))
         } else ''
       )
     },
@@ -324,34 +324,34 @@ NULL
 set_reference <- function() {
   ref <- .gbReference()
   list(
-    refline=function(refline) {
+    refline = function(refline) {
       if (is.empty(refline)) {
         stop("field 'REFERENCE' missing")
       }
       ref$refline <- refline
     },
-    authors=function(authors) {
+    authors = function(authors) {
       ref$authors <- usplit(authors, ', | and ') %||% NA_character_
     },
-    consrtm=function(consrtm) {
+    consrtm = function(consrtm) {
       ref$consrtm <- consrtm %||% NA_character_
     },
-    title=function(title) {
+    title = function(title) {
       ref$title <- title %||% NA_character_
     },
-    journal=function(journal) {
+    journal = function(journal) {
       if (is.empty(journal)) {
         stop("manadatory field 'JOURNAL' missing")
       }
       ref$journal <- journal
     },
-    pubmed=function(pubmed) {
+    pubmed = function(pubmed) {
       ref$pubmed <- pubmed %||% NA_character_
     },
-    remark=function(remark) {
+    remark = function(remark) {
       ref$remark <- remark %||% NA_character_
     },
-    yield=function() {
+    yield = function() {
       return(ref)
     }
   )
@@ -362,10 +362,10 @@ set_reference <- function() {
 gbReference <- function(ref) {
   ## split by subkeywords
   ref_idx <- grep("^ {0,3}[A-Z]+", ref)
-  ref_list <- ixsplit(ref, ref_idx, include_i=TRUE, collapse_x=TRUE)
+  ref_list <- ixsplit(ref, ref_idx, include_i = TRUE, collapse_x = TRUE)
   ## 
-  kwd   <- vapply(ref_list, strsplitN, '\\s+', 1L, FUN.VALUE="")
-  field <- vapply(ref_list, strsplitN, '^[A-Z]+\\s+(?!\\S)\\s', 2L, perl=TRUE, FUN.VALUE="")
+  kwd   <- vapply(ref_list, strsplitN, '\\s+', 1L, FUN.VALUE = "")
+  field <- vapply(ref_list, strsplitN, '^[A-Z]+\\s+(?!\\S)\\s', 2L, perl = TRUE, FUN.VALUE = "")
   ##
   ref <- set_reference()
   ref$refline(field[kwd == "REFERENCE"])
@@ -402,7 +402,7 @@ gbReference <- function(ref) {
       'Generate a character string representation of a GenBank reference list'
       paste0(
         vapply(ref, function(r) r$to_string(write_to_file = write_to_file), ""),
-        collapse=""
+        collapse = ""
       ) 
     },
     show = function() {
@@ -439,7 +439,7 @@ NULL
 #' @keywords internal
 gbReferenceList <- function(ref_lines) {
   ## split references
-  ref_idx <- grep("REFERENCE", ref_lines, fixed=TRUE, ignore.case=FALSE)
+  ref_idx <- grep("REFERENCE", ref_lines, fixed = TRUE, ignore.case = FALSE)
   ref_list <- ixsplit(ref_lines, ref_idx)
   .gbReferenceList(ref = lapply(ref_list, gbReference))
 }
@@ -496,19 +496,19 @@ gbReferenceList <- function(ref_lines) {
       i <- -o
       paste0(
         loc,
-        sprintf("\n%-12s%s\n", "DEFINITION", linebreak(definition, width=w, indent=i, offset=o, FORCE=f)),
+        sprintf("\n%-12s%s\n", "DEFINITION", linebreak(definition, width = w, indent = i, offset = o, FORCE = f)),
         sprintf("%-12s%s\n", "ACCESSION", accession),
         sprintf("%-12s%-12s%s%s\n", "VERSION", version, "GI:", strsplitN(seqid, "|", 2, fixed = TRUE)),
         if (!all(is.na(dblink))) {
           sprintf("%-12s%s%s\n", "DBLINK", "Project: ", dblink)
         } else '',
-        sprintf("%-12s%s\n", "KEYWORDS", linebreak(keywords, width=w, indent=i, offset=o, FORCE=f)),
-        sprintf("%-12s%s\n", "SOURCE", linebreak(source, width=w, indent=i, offset=o, FORCE=f)),
+        sprintf("%-12s%s\n", "KEYWORDS", linebreak(keywords, width = w, indent = i, offset = o, FORCE = f)),
+        sprintf("%-12s%s\n", "SOURCE", linebreak(source, width = w, indent = i, offset = o, FORCE = f)),
         sprintf("%-12s%s\n", "  ORGANISM",
-                paste0(organism, '\n', dup(' ', 12), linebreak(taxonomy, width=w, indent=i, offset=o, FORCE=f))),
+                paste0(organism, '\n', dup(' ', 12), linebreak(taxonomy, width = w, indent = i, offset = o, FORCE = f))),
         references$to_string(write_to_file = write_to_file),
         if (!is.na(comment)) {
-          sprintf("%-12s%s\n", "COMMENT", linebreak(comment, width=w, indent=i, offset=o, FORCE=f))
+          sprintf("%-12s%s\n", "COMMENT", linebreak(comment, width = w, indent = i, offset = o, FORCE = f))
         } else '')
     },
     show = function() {
@@ -572,7 +572,7 @@ gbHeader <- function(gb_header) {
   # generate a vector with the positions of the main GenBank keywords.
   # keywords are all capitals, beginning in column 1 of a record.
   gbk_idx <- grep("^[A-Z//]+", gb_header)
-  gbk_kwd <- strsplitN(gb_header[gbk_idx], split=" +", 1)
+  gbk_kwd <- strsplitN(gb_header[gbk_idx], split = " +", 1)
   ##
   ## LOCUS (Mandatory)
   locus <- gbLocus(gb_header[gbk_idx[gbk_kwd == "LOCUS"]])
@@ -584,16 +584,16 @@ gbHeader <- function(gb_header) {
   ##
   ## ACCESSION (Mandatory)
   acc_line <- gb_header[gbk_idx[gbk_kwd == "ACCESSION"]]
-  accession <- strsplitN(acc_line, split="\\s+", 2L)
+  accession <- strsplitN(acc_line, split = "\\s+", 2L)
   ##
   ## VERSION and GI (Mandatory)
   ver_line <- gb_header[gbk_idx[gbk_kwd == "VERSION"]]
-  version  <- usplit(ver_line, split="\\s+")[2L]
-  seqid    <- paste0('gi|', usplit(ver_line, split="GI:", fixed=TRUE)[2L])
+  version  <- usplit(ver_line, split = "\\s+")[2L]
+  seqid    <- paste0('gi|', usplit(ver_line, split = "GI:", fixed = TRUE)[2L])
   ##
   ## DBLINK (Optional)
   if (length(db_line <- gb_header[gbk_idx[gbk_kwd == "DBLINK"]]) > 0L) {
-    dblink <- usplit(db_line, split="Project: ", fixed=TRUE)[2L]
+    dblink <- usplit(db_line, split = "Project: ", fixed = TRUE)[2L]
   } else {
     dblink <- NA_character_
   }
@@ -638,19 +638,19 @@ gbHeader <- function(gb_header) {
     comment <- NA_character_
   }
   .gbHeader(
-    locus=locus,
-    definition=definition,
-    accession=accession,
-    version=version,
-    seqid=seqid,
-    dblink=dblink,
-    dbsource=dbsource,
-    keywords=keywords,
-    source=source,
-    organism=organism,
-    taxonomy=taxonomy,
-    references=references,
-    comment=comment
+    locus = locus,
+    definition = definition,
+    accession = accession,
+    version = version,
+    seqid = seqid,
+    dblink = dblink,
+    dbsource = dbsource,
+    keywords = keywords,
+    source = source,
+    organism = organism,
+    taxonomy = taxonomy,
+    references = references,
+    comment = comment
   )
 } 
 
@@ -699,7 +699,7 @@ seqinfo <- setRefClass(
         def <- getDefinition(.self)
         acc <- pad(acc, nchar(acc) + 2, "right")
         len <- pad(len, nchar(len) + 2, "right")
-        def <- ellipsize(def, width=getOption("width") - 
+        def <- ellipsize(def, width = getOption("width") - 
                            nchar(acc) - nchar(len) - 3)
       }
       cat(sprintf("%s\n%s%s%s", "Seqinfo:", acc, len, def))

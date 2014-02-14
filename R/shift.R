@@ -1,7 +1,7 @@
 #' @importFrom Biostrings reverseComplement xscat subseq
 NULL
 
-setAs(from="gbFeatureTable", to="gbRecord", function(from) {
+setAs(from = "gbFeatureTable", to = "gbRecord", function(from) {
   new_gbRecord(seqinfo = from@.seqinfo, features = from, contig = NULL)
 })
 
@@ -10,7 +10,7 @@ update_split <- function(x, split_matrix) {
     stop("Cannot split a compound location")
   }
   x@location@range <- split_matrix
-  x@location@fuzzy <- matrix(c(FALSE, TRUE, TRUE, FALSE), ncol=2)
+  x@location@fuzzy <- matrix(c(FALSE, TRUE, TRUE, FALSE), ncol = 2)
   x@location@compound <- "join"
   x@location@accession <- rep(x@location@accession, 2)
   x@location@remote <- rep(x@location@remote, 2)
@@ -27,8 +27,8 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
     lRange <- f@location@range 
     if (lRange[-nrow(lRange), 2] - lRange[-1,1] < 1 &&
           length(strand <- unique(f@location@strand)) < 2) {
-      f@location@range     <- matrix(range(lRange), ncol=2)
-      f@location@fuzzy     <- matrix(c(FALSE, FALSE), ncol=2)
+      f@location@range     <- matrix(range(lRange), ncol = 2)
+      f@location@fuzzy     <- matrix(c(FALSE, FALSE), ncol = 2)
       f@location@strand    <- strand
       f@location@compound  <- NA_character_
       f@location@accession <- f@location@accession[1]
@@ -84,20 +84,20 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
         ss <- mapply("-", new_start[end_only], len)
         se <- mapply("-", new_end[end_only], len)
         ## Split Matrix
-        sm <- Map(function(ss, se) matrix(c(len + ss, 1, len, se), ncol=2), ss, se)
-        f[end_only] <- Map(update_split, x=f[end_only], split_matrix=sm)
+        sm <- Map(function(ss, se) matrix(c(len + ss, 1, len, se), ncol = 2), ss, se)
+        f[end_only] <- Map(update_split, x = f[end_only], split_matrix = sm)
         new_start[end_only] <- Map(function(x) x[, 1], sm)
         new_end[end_only] <- Map(function(x) x[, 2], sm)
       } else {
-        stop("This shiftwidth would split features ", paste(end_only, collapse=", "))
+        stop("This shiftwidth would split features ", paste(end_only, collapse = ", "))
       }
     }
   } 
-  start(f, check=FALSE) <- new_start
-  end(f, check=FALSE) <- new_end
+  start(f, check = FALSE) <- new_start
+  end(f, check = FALSE) <- new_end
   cmpnd <- which(is_compound(f))
   if (length(cmpnd) > 0) {
-    f[cmpnd] <- merge_split(f[cmpnd], omit_unmergables=FALSE)
+    f[cmpnd] <- merge_split(f[cmpnd], omit_unmergables = FALSE)
   }
   f <- if (order) f[order(mapply("[", new_start, 1L))] else f
   ## update sequence
@@ -127,14 +127,14 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
   }
   cmpnd <- which(is_compound(x))
   if (length(cmpnd) > 0) {
-    x[cmpnd] <- merge_split(fList = x[cmpnd], omit_unmergables=TRUE)
+    x[cmpnd] <- merge_split(fList = x[cmpnd], omit_unmergables = TRUE)
     x <- x[vapply(x, length, 0L) > 0L]
   }
   len <- getLength(x)
   new_end <- Map(function(s) len - s + 1, start(x))
   new_start <- Map(function(e) len - e + 1, end(x))
   new_strand <- Map(`-`, strand(x))
-  start(x, check=FALSE) <- new_start
+  start(x, check = FALSE) <- new_start
   end(x) <- new_end
   strand(x) <- new_strand
   x <- if (order) x[order(unlist(Map(min, new_start)))] else x

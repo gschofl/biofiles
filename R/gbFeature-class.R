@@ -46,9 +46,9 @@ setValidity2("gbFeature", function(object) {
 # show -------------------------------------------------------------------
 
 
-show_gbFeature <- function(object, showInfo=TRUE, write_to_file=FALSE) {
+show_gbFeature <- function(object, showInfo = TRUE, write_to_file = FALSE) {
   op <- options("useFancyQuotes")
-  options(useFancyQuotes=FALSE)
+  options(useFancyQuotes = FALSE)
   on.exit(options(op))
   
   if (write_to_file) {
@@ -61,7 +61,7 @@ show_gbFeature <- function(object, showInfo=TRUE, write_to_file=FALSE) {
   }
   
   loc_fmt <- paste0("%s%-16s%s")
-  qua_fmt <- paste0("%-16s%s%s=%s")
+  qua_fmt <- paste0("%-16s%s%s = %s")
   loc <- linebreak(as(location(object), "character"), width = width,
                    offset = 17 + ws, indent = 0, split = ",", FORCE = FALSE)
   loc_line <- sprintf(loc_fmt, dup(' ', ws), key(object), loc)
@@ -75,10 +75,10 @@ show_gbFeature <- function(object, showInfo=TRUE, write_to_file=FALSE) {
                           list(width = width, offset = 16 + ws, FORCE = TRUE)))
     qua_line <- sprintf(qua_fmt, "", paste0(dup(' ', ws), "/"), qua, val)
   }
-  ft <- paste0(loc_line, "\n", paste0(qua_line, collapse="\n"))
+  ft <- paste0(loc_line, "\n", paste0(qua_line, collapse = "\n"))
   
   if (!write_to_file) {
-    cat(ft, sep="\n")
+    cat(ft, sep = "\n")
     if (showInfo) {
       show(.seqinfo(object))
     }
@@ -89,7 +89,7 @@ show_gbFeature <- function(object, showInfo=TRUE, write_to_file=FALSE) {
 
 #' @export
 setMethod("show", "gbFeature", function(object) {
-  show_gbFeature(object, showInfo=TRUE, write_to_file=FALSE)
+  show_gbFeature(object, showInfo = TRUE, write_to_file = FALSE)
 })
 
 
@@ -114,8 +114,8 @@ setMethod("summary", "gbFeature", function(object, ...) {
                 max_loc_len + 1, 's%-', max_geneid_len + 1, 's%-',
                 max_prod_len + 1, 's%s')
   showme <- ellipsize(sprintf(fmt, idx, key, loc, gene, prod, note),
-                      width=getOption("width") - 3)
-  cat(showme, sep="\n")
+                      width = getOption("width") - 3)
+  cat(showme, sep = "\n")
   return(invisible(NULL))
 })
 
@@ -170,7 +170,7 @@ setMethod("getAccession", "gbFeature", function(x) getAccession(.seqinfo(x)) )
 #' @export
 setMethod("getVersion", "gbFeature", function(x) getVersion(.seqinfo(x)) )
 #' @export
-setMethod("getGeneID", "gbFeature", function(x, db='gi') getGeneID(.seqinfo(x), db=db) )
+setMethod("getGeneID", "gbFeature", function(x, db = 'gi') getGeneID(.seqinfo(x), db = db) )
 #' @export
 setMethod("getDBLink", "gbFeature", function(x) getDBLink(.seqinfo(x)) )
 #' @export
@@ -216,8 +216,8 @@ setMethod("start", "gbFeature", function(x, join = FALSE, drop = TRUE) {
 #' @name start<-
 #' @export
 #' @rdname start-methods
-setReplaceMethod("start", "gbFeature", function(x, check=TRUE, value) {
-  start(x@location, check=check) <- value
+setReplaceMethod("start", "gbFeature", function(x, check = TRUE, value) {
+  start(x@location, check = check) <- value
   if (check) {
     validObject(x)
   }
@@ -233,8 +233,8 @@ setMethod("end", "gbFeature", function(x, join = FALSE, drop = TRUE) {
 #' @name end<-
 #' @export
 #' @rdname end-methods
-setReplaceMethod("end", "gbFeature", function(x, check=TRUE, value) {
-  end(x@location, check=check) <- value
+setReplaceMethod("end", "gbFeature", function(x, check = TRUE, value) {
+  end(x@location, check = check) <- value
   if (check)
     validObject(x)
   x
@@ -296,13 +296,13 @@ setMethod("index", "gbFeature", function(x) x@.id)
 
 #' @export
 #' @rdname key-methods
-setMethod("key", "gbFeature", function(x) structure(x@key, names=NULL) )
+setMethod("key", "gbFeature", function(x) structure(x@key, names = NULL) )
 
 #' @name key<-
 #' @export
 #' @rdname qualif-methods
-setReplaceMethod("key", "gbFeature", function(x, check=TRUE, value) {
-  x <- initialize(x, key=value)
+setReplaceMethod("key", "gbFeature", function(x, check = TRUE, value) {
+  x <- initialize(x, key = value)
   if (check)
     validObject(x)
   x
@@ -310,7 +310,7 @@ setReplaceMethod("key", "gbFeature", function(x, check=TRUE, value) {
 
 #' @export
 #' @rdname qualif-methods
-setMethod("qualif", "gbFeature", function(x, which, fixed=FALSE, use.names=TRUE) {
+setMethod("qualif", "gbFeature", function(x, which, fixed = FALSE, use.names = TRUE) {
   if (missing(which)) {
     x@qualifiers
   } else {
@@ -321,7 +321,7 @@ setMethod("qualif", "gbFeature", function(x, which, fixed=FALSE, use.names=TRUE)
 #' @name qualif<-
 #' @export
 #' @rdname qualif-methods
-setReplaceMethod("qualif", "gbFeature", function(x, which, check=TRUE, value) {
+setReplaceMethod("qualif", "gbFeature", function(x, which, check = TRUE, value) {
   x@qualifiers[which] <- value
   if (check)
     validObject(x)
@@ -361,7 +361,7 @@ setMethod("hasQualif", "gbFeature", function(x, qualifier) {
 
 #' @export
 #' @rdname shift-methods
-setMethod("shift", "gbFeature", function(x, shift=0L, ...) {
+setMethod("shift", "gbFeature", function(x, shift = 0L, ...) {
   x@location <- shift(x@location, shift)
   x
 })

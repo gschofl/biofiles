@@ -24,7 +24,7 @@ setMethod("write.FeatureTable", "gbFeatureTable",
                                sequence = FALSE, append = FALSE) {
   # write header
   header <- trim(sprintf(">Feature %s %s", getAccession(x), tablename))
-  cat(paste0(header, sep="\n"), file=file)
+  cat(paste0(header, sep = "\n"), file = file)
   
   # kick out source if present
   FeatureList <- getFeatures(x)
@@ -33,13 +33,13 @@ setMethod("write.FeatureTable", "gbFeatureTable",
   gene_idx <- index(FeatureList["gene"])
   # write features
   FeatureTable <- unlist(lapply(FeatureList, .getTableFeature, gene_idx, dbname))
-  cat(paste0(FeatureTable, collapse="\n"), file=file, append=TRUE)
+  cat(paste0(FeatureTable, collapse = "\n"), file = file, append = TRUE)
   
   if (sequence) {
     seq <- getSequence(x)
     names(seq) <- getAccession(x)
-    writeXStringSet(seq, filepath=replace_ext(file, "fna", level=1),
-                    format="fasta")
+    writeXStringSet(seq, filepath = replace_ext(file, "fna", level = 1),
+                    format = "fasta")
   }
   
   invisible(NULL)
@@ -61,22 +61,22 @@ setMethod("write.FeatureTable", "gbFeatureTable",
       end_prefix <- ifelse(p[,1], "<", "")
     }
     
-    list(start_prefix=start_prefix, start=start,
-         end_prefix=end_prefix, end=end)
+    list(start_prefix = start_prefix, start = start,
+         end_prefix = end_prefix, end = end)
   }  
 
   l <- f@location  
-  loc <- getLoc(l@range[1,,drop=FALSE], l@fuzzy[1,,drop=FALSE], l@strand)
+  loc <- getLoc(l@range[1,,drop = FALSE], l@fuzzy[1,,drop = FALSE], l@strand)
   loc_line <- sprintf("%s%s\t%s%s\t%s\n", loc[[1]], loc[[2]], loc[[3]],
                       loc[[4]], f@key)
   loc_line2 <- if (nrow(l@range) > 1) {
-    loc <- getLoc(l@range[-1,,drop=FALSE], p=l@fuzzy[-1,,drop=FALSE],
-                  strand=l@strand)
+    loc <- getLoc(l@range[-1,,drop = FALSE], p = l@fuzzy[-1,,drop = FALSE],
+                  strand = l@strand)
     sprintf("%s%s\t%s%s\n", loc[[1]], loc[[2]], loc[[3]], loc[[4]])
   } else { 
     "" 
   }
-  loc_line <- sprintf("%s%s", loc_line, paste0(loc_line2, collapse=""))
+  loc_line <- sprintf("%s%s", loc_line, paste0(loc_line2, collapse = ""))
   qua <- names(f@qualifiers)
   val <- unname(f@qualifiers)
 
@@ -136,6 +136,6 @@ setMethod("write.FeatureTable", "gbFeatureTable",
   val <- val[qual_to_retain]
   
   qua_line <- c(sprintf("\t\t\t%s\t%s", qua, val), prot_id_line)
-  feature <- paste0(loc_line, paste0(qua_line, collapse="\n"), sep=" ")
+  feature <- paste0(loc_line, paste0(qua_line, collapse = "\n"), sep = " ")
   feature 
 }

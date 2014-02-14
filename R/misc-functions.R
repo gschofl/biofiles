@@ -11,34 +11,34 @@ uniqueQualifs <- Compose("unique", "unlist", "qualifList")
 #' @usage locusTag(x)
 #' @rdname qualif-methods
 #' @export
-locusTag <- Partial("qualif", which="locus_tag", use.names=FALSE)
+locusTag <- Partial("qualif", which = "locus_tag", use.names = FALSE)
 
 
 #' @usage product(x)
 #' @rdname qualif-methods
 #' @export
-product <- Partial("qualif", which="product", use.names=FALSE)
+product <- Partial("qualif", which = "product", use.names = FALSE)
 
 
 #' @usage note(x)
 #' @rdname qualif-methods
 #' @export
-note <- Partial("qualif", which="note", use.names=FALSE)
+note <- Partial("qualif", which = "note", use.names = FALSE)
 
 
 #' @usage proteinID(x)
 #' @rdname qualif-methods
 #' @export
-proteinID <- Partial("qualif", which="protein_id", use.names=FALSE)
+proteinID <- Partial("qualif", which = "protein_id", use.names = FALSE)
 
 
 #' @usage geneID(x)
 #' @rdname qualif-methods
 #' @export
-geneID <- Partial("qualif", which="gene", use.names=FALSE)
+geneID <- Partial("qualif", which = "gene", use.names = FALSE)
 
 
-.translation <- Partial("qualif", which="translation", use.names=FALSE)
+.translation <- Partial("qualif", which = "translation", use.names = FALSE)
 #' @usage translation(x)
 #' @rdname qualif-methods
 #' @importFrom Biostrings AAStringSet
@@ -57,7 +57,7 @@ translation <- function(x) AAStringSet(.translation(x))
 #' @importFrom reutils efetch
 #' @export
 getContigSeq <- function(x, merge = TRUE) { 
-  db <- switch(getMoltype(x), AA="protein", "nuccore")
+  db <- switch(getMoltype(x), AA = "protein", "nuccore")
   contig <- .contig(x)
   s <- start(contig)
   e <- end(contig)
@@ -70,8 +70,8 @@ getContigSeq <- function(x, merge = TRUE) {
       dna <- c(dna, DNAStringSet(dup('N', w[i])))
       dna@ranges@NAMES[i] <- paste0('Gap:', w[i])
     } else {
-      f <- efetch(acc[i], db, "fasta", "xml", seqstart=s[i], seqstop=e[i])
-      if (str[i] == -1) {
+      f <- efetch(acc[i], db, "fasta", "xml", seqstart = s[i], seqstop = e[i])
+      if (str[i]  == -1) {
         dna <- c(dna, reverseComplement(DNAStringSet(f$xmlValue("//TSeq_sequence"))))
       } else {
         dna <- c(dna, DNAStringSet(f$xmlValue("//TSeq_sequence")))
@@ -88,7 +88,7 @@ getContigSeq <- function(x, merge = TRUE) {
     is <- c(1, cumsum(width(dna)) + 1)
     is <- is[-length(is)]
     ie <- cumsum(width(dna))
-    r <- IRanges(start=is, end=ie, names=names(dna))
+    r <- IRanges(start = is, end = ie, names = names(dna))
     res <- DNAStringSet(unlist(dna))
     metadata(res) <- list(ranges = r)
     return(res)
@@ -110,7 +110,7 @@ gbReader <- function(verbose = FALSE) {
   }
   record <- function() {
     if (verbose) {
-      cat("Parsing:", strsplitN(txt[2], 'DEFINITION  ', 2), sep="\n")
+      cat("Parsing:", strsplitN(txt[2], 'DEFINITION  ', 2), sep = "\n")
     }
     parse_gb_record(txt)
   }

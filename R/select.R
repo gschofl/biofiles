@@ -20,7 +20,7 @@
     column_names <- c(column_names, cols[idx])
     cols <- cols[!idx]
     if (all_empty(cols)) {
-      return(.return(i, .Names=column_names))
+      return(.return(i, .Names = column_names))
     }
   }
   idx <- is_key(cols)
@@ -29,7 +29,7 @@
     column_names <- c(column_names, cols[idx])
     cols <- cols[!idx]
     if (all_empty(cols)) {
-      return(.return(i, k, .Names=column_names))
+      return(.return(i, k, .Names = column_names))
     }
   }
   idx <- grepl("start|end|width|strand", cols)
@@ -45,11 +45,11 @@
     })
     cols <- cols[!idx]
     if (all_empty(cols)) {
-      return(.return(i, k, l, .Names=column_names))
+      return(.return(i, k, l, .Names = column_names))
     }
   }
   q <- .simplify(.qual_access(x, which = cols, fixed = TRUE), unlist = FALSE)
-  .return(i, k, l, q, .Names=column_names)
+  .return(i, k, l, q, .Names = column_names)
 }
 
 .return <- function(..., .Names) {
@@ -68,10 +68,10 @@ parseDbXref <- function(dbx) {
   n <- if (is.null(n)) length(dbx) else n
   if (is.atomic(dbx)) {
     structure(list(strsplitN(dbx, ":", 2)),
-              names=unique(strsplitN(dbx, ":", 1)))
+              names = unique(strsplitN(dbx, ":", 1)))
   } else if (is.data.frame(dbx)) {
     dbs <-`dim<-`(
-        vapply(dbx, Compose(unique, strsplitN), ":", 1, FUN.VALUE=character(1)),
+        vapply(dbx, Compose(unique, strsplitN), ":", 1, FUN.VALUE = character(1)),
         NULL
       )
     structure(lapply(dbx, strsplitN, ":", 2), names = dbs)
@@ -81,7 +81,7 @@ parseDbXref <- function(dbx) {
         lapply(dbx, function (x) {
           a <- sapply(x, strsplit, ":")
           a <- setNames(sapply(a, "[", 2), sapply(a, "[", 1))
-          data.frame(stringsAsFactors=FALSE, as.list(a))
+          data.frame(stringsAsFactors = FALSE, as.list(a))
         })
       )
     )

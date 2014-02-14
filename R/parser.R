@@ -22,7 +22,7 @@ parse_gb_record <- function(gb_record) {
     registerDoSEQ()
     irec <- iter(list(gb_record))
   }
-  gbk_list <- foreach(rec = irec, .inorder=FALSE) %dopar% {
+  gbk_list <- foreach(rec = irec, .inorder = FALSE) %dopar% {
     # get a vector with the positions of the main GenBank fields
     rec_idx <- grep("^[A-Z//]+", rec)
     rec_kwd <- strsplitN(rec[rec_idx], " +", 1L)
@@ -39,7 +39,7 @@ parse_gb_record <- function(gb_record) {
     ftb_end_idx <- rec_idx[which(rec_kwd == "FEATURES") + 1] - 1
     
     ## HEADER
-    seqenv <- seqinfo(gbHeader(gb_header=rec[seq.int(ftb_idx - 1)]), NULL)
+    seqenv <- seqinfo(gbHeader(gb_header = rec[seq.int(ftb_idx - 1)]), NULL)
     ## SEQUENCE
     if (length(ori_idx) > 0L) {
       # if "//" is right after "ORIGIN" there is no sequence
@@ -50,14 +50,14 @@ parse_gb_record <- function(gb_record) {
       ## CONTIG
     } else if (length(ctg_idx) > 0L) {
       contig_line <- strsplitN(collapse(rec[seq.int(ctg_idx, end_idx-1)], ''),
-                               'CONTIG', 2L, fixed=TRUE)
+                               'CONTIG', 2L, fixed = TRUE)
       gb_contig <- gbLocation(contig_line)
     }
     seqenv$sequence <- gbSequence(gb_sequence, getAccession(seqenv), getMoltype(seqenv))
     ## FEATURES
     gb_features <- rec[seq.int(ftb_idx + 1, ftb_end_idx)]
-    gb_features <- gbFeatures(gb_features, seqinfo=seqenv)
-    new_gbRecord(seqinfo=seqenv, features=gb_features, contig=gb_contig) 
+    gb_features <- gbFeatures(gb_features, seqinfo = seqenv)
+    new_gbRecord(seqinfo = seqenv, features = gb_features, contig = gb_contig) 
   }
    
   if (length(gbk_list) == 1L) {
@@ -73,7 +73,7 @@ parse_gb_record <- function(gb_record) {
 ##
 ## Qualifiers:
 ## A qualifier takes the form of a slash (/) followed by its name,
-## if applicable, an equals sign (=) and its value.
+## if applicable, an equals sign ( = ) and its value.
 ## 
 ## Qualifier value formats:
 ## Free text; Controlled vocabulary or enumerated values; Citation or 
@@ -85,22 +85,22 @@ parse_gb_record <- function(gb_record) {
 ##   ""escaped"" by placing a second quotation mark immediately before.
 ##
 ## Controlled vocabulary/Enumerators:
-##   /anticodon=(pos:<base_range>,aa:<amino_acid>)
-##   /codon_start=1, 2, or 3
-##   /direction=left, right, or both
-##   /estimated_length=unknown or <integer>
-##   /calculated_mol_wt=<integer>
-##   /mod_base=name of modified base
-##   /number=unquoted text
-##   /rpt_type=<repeat_type>
-##   /rpt_unit_range=<base_range>
-##   /tag_peptide=<base_range>
-##   /transl_except=(pos:location,aa:<amino_acid>)
-##   /transl_table=<integer>
+##   /anticodon = (pos:<base_range>,aa:<amino_acid>)
+##   /codon_start = 1, 2, or 3
+##   /direction = left, right, or both
+##   /estimated_length = unknown or <integer>
+##   /calculated_mol_wt = <integer>
+##   /mod_base = name of modified base
+##   /number = unquoted text
+##   /rpt_type = <repeat_type>
+##   /rpt_unit_range = <base_range>
+##   /tag_peptide = <base_range>
+##   /transl_except = (pos:location,aa:<amino_acid>)
+##   /transl_table = <integer>
 ##  
 ## Citations:
-##   /citation=[number] e.g. /citation=[3]
-##   /compare=[accession-number.sequence-version] e.g. /compare=AJ634337.1
+##   /citation = [number] e.g. /citation = [3]
+##   /compare = [accession-number.sequence-version] e.g. /compare = AJ634337.1
 ##
 gbFeatures <- function(gb_features, seqinfo) {
   feature_start <- which(substr(gb_features, 6, 6) != " ")
@@ -108,7 +108,7 @@ gbFeatures <- function(gb_features, seqinfo) {
   mc_cores <- floor(detectCores()*0.75)
   id <- seq_along(feature_start)
   ftbl <- mcmapply(gbFeature, feature = fl, id = id,
-                   MoreArgs = list(accession=getAccession(seqinfo)),
+                   MoreArgs = list(accession = getAccession(seqinfo)),
                    SIMPLIFY = FALSE, USE.NAMES = FALSE, mc.cores = mc_cores)                   
   IRanges::new2('gbFeatureTable', .Data = ftbl, .id = id, .seqinfo = seqinfo,
                 check = FALSE) 
@@ -119,7 +119,7 @@ join_seq <- function(seq, accession_no) {
   mc_cores <- floor(detectCores()*0.75)
   s <- unlist(mclapply(seq, function(x) {
     collapse(strsplit(substr(x, 11, 75), " ")[[1L]], '')
-  }, mc.cores=mc_cores))
+  }, mc.cores = mc_cores))
   s <- c(paste0(">", accession_no), s)
   s
 }
@@ -138,10 +138,10 @@ gbSequence <- function(gb_sequence, accession_no, seq_type) {
   } else {
     tmp <- tempfile()
     on.exit(unlink(tmp))
-    writeLines(text=join_seq(gb_sequence, accession_no), tmp)
+    writeLines(text = join_seq(gb_sequence, accession_no), tmp)
     origin <- switch(seq_type,
-                     AA=readAAStringSet(tmp, format="fasta"),
-                     readDNAStringSet(tmp, format="fasta"))
+                     AA = readAAStringSet(tmp, format = "fasta"),
+                     readDNAStringSet(tmp, format = "fasta"))
     origin
   }
 }

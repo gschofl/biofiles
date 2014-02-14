@@ -17,8 +17,8 @@ NULL
     } else {
       which <- setdiff(include, exclude)
     }
-    qual <- c(qual, DataFrame(.simplify(.qual_access(x, which, fixed=TRUE),
-                                        unlist=FALSE)))
+    qual <- c(qual, DataFrame(.simplify(.qual_access(x, which, fixed = TRUE),
+                                        unlist = FALSE)))
   }
   
   start <- start(x, join = join)
@@ -35,16 +35,16 @@ NULL
     strand <- unlist(strand)
     names <- names[i]
     if (length(qual) > 0)
-      qual <- qual[i, , drop=FALSE] 
+      qual <- qual[i, , drop = FALSE] 
   }
 
-  seqinfo <- Seqinfo(seqnames=getAccession(x),
-                     seqlengths=getLength(x),
-                     isCircular=getTopology(x)=='circular',
-                     genome=getDefinition(x))
+  seqinfo <- Seqinfo(seqnames = getAccession(x),
+                     seqlengths = getLength(x),
+                     isCircular = getTopology(x) == 'circular',
+                     genome = getDefinition(x))
   
-  GRanges(seqnames=Rle(getAccession(x)), ranges=IRanges(start, end, names=names),
-          strand=strand, qual, seqinfo = seqinfo)
+  GRanges(seqnames = Rle(getAccession(x)), ranges = IRanges(start, end, names = names),
+          strand = strand, qual, seqinfo = seqinfo)
 }
 
 

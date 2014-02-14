@@ -18,15 +18,15 @@ setOldClass("list")
 #' 
 #' @export
 setClass("gbFeatureTable",
-         slots=list(
+         slots = list(
            .seqinfo = "seqinfo",
            .id = 'integer'
          ),
-         contains="list")
+         contains = "list")
 
 
 setValidity2("gbFeatureTable", function(object) {
-  if (!all(vapply(object@.Data, is, 'gbFeature', FUN.VALUE=logical(1))))
+  if (!all(vapply(object@.Data, is, 'gbFeature', FUN.VALUE = logical(1))))
     return("All elements in a 'gbFeatureTable' must be 'gbFeature' instances")
 
   TRUE
@@ -41,10 +41,10 @@ setMethod("show", "gbFeatureTable", function(object) {
   lo <- length(object)
   cat(sprintf("%s with %i features:\n",  sQuote(class(object)), lo))
   if (lo > 0L) {
-    show_gbFeature(object[[1L]], showInfo=FALSE, write_to_file=FALSE)
+    show_gbFeature(object[[1L]], showInfo = FALSE, write_to_file = FALSE)
     if (lo > 1L) {
       cat("...\n")
-      show_gbFeature(object[[lo]], showInfo=FALSE, write_to_file=FALSE)
+      show_gbFeature(object[[lo]], showInfo = FALSE, write_to_file = FALSE)
     }
   }
   show(.seqinfo(object))
@@ -57,22 +57,22 @@ setMethod("show", "gbFeatureTable", function(object) {
 
 #' @export
 #' @rdname summary-methods
-setMethod("summary", "gbFeatureTable", function(object, n=8, ...) {
+setMethod("summary", "gbFeatureTable", function(object, n = 8, ...) {
   olen <- length(object)
   if (olen > 2*n) {
-    hd  <- object[seq_len(n), check=FALSE]
-    tl  <- object[seq.int(to = olen, length.out = min(n, olen)), check=FALSE]
+    hd  <- object[seq_len(n), check = FALSE]
+    tl  <- object[seq.int(to = olen, length.out = min(n, olen)), check = FALSE]
     idx  <- c("Id", index(hd), "...", index(tl))
     key  <- c("Feature", key(hd), "...", key(tl))
     loc  <- c(location(hd), "...", location(tl))
-    loc  <- c("Location", vapply(loc, as, "character", FUN.VALUE=""))
+    loc  <- c("Location", vapply(loc, as, "character", FUN.VALUE = ""))
     gene <- c("GeneId", geneID(hd), "...", geneID(tl))
     prod <- c("Product", product(hd), "...", product(tl))
     note <- c("Note", collapse(as.list(note(hd)), '; '), "...", collapse(as.list(note(tl)), '; '))
   } else {
     idx <- c("Id", index(object))
     key <- c("Feature", key(object))
-    loc <- c("Location", vapply(location(object), as, "character", FUN.VALUE=""))
+    loc <- c("Location", vapply(location(object), as, "character", FUN.VALUE = ""))
     gene <- c("GeneId", geneID(object))
     prod <- c("Product", product(object))
     note <- c("Note", collapse(as.list(note(object)), '; '))
@@ -86,8 +86,8 @@ setMethod("summary", "gbFeatureTable", function(object, n=8, ...) {
                 max_loc_len + 1, 's%-', max_geneid_len + 1, 's%-',
                 max_prod_len + 1, 's%s')
   showme <- ellipsize(sprintf(fmt, idx, key, loc, gene, prod, note),
-                      width=getOption("width") - 3)
-  cat(showme, sep="\n")
+                      width = getOption("width") - 3)
+  cat(showme, sep = "\n")
   return(invisible(NULL))
 })
 
@@ -116,7 +116,7 @@ setMethod('.dbSource', 'gbFeatureTable', function(x) {
 })
 
 setMethod(".defline", "gbFeatureTable", function(x) {
-  vapply(x, .defline, "", USE.NAMES=FALSE)
+  vapply(x, .defline, "", USE.NAMES = FALSE)
 })
 
 
@@ -141,7 +141,7 @@ setMethod("getAccession", "gbFeatureTable", function(x) getAccession(.seqinfo(x)
 #' @export
 setMethod("getVersion", "gbFeatureTable", function(x) getVersion(.seqinfo(x)) )
 #' @export
-setMethod("getGeneID", "gbFeatureTable", function(x, db='gi') getGeneID(.seqinfo(x), db=db) )
+setMethod("getGeneID", "gbFeatureTable", function(x, db = 'gi') getGeneID(.seqinfo(x), db = db) )
 #' @export
 setMethod("getDBLink", "gbFeatureTable", function(x) getDBLink(.seqinfo(x)) )
 #' @export
@@ -197,12 +197,12 @@ setMethod("start", "gbFeatureTable", function(x, join = FALSE, drop = TRUE) {
 #' @name start<-
 #' @export
 #' @rdname start-methods
-setReplaceMethod("start", "gbFeatureTable", function(x, check=TRUE, value) {
+setReplaceMethod("start", "gbFeatureTable", function(x, check = TRUE, value) {
   value <- recycle(value, length(x))
   new_x <- Map(function(Feature, check, val) { 
-    start(Feature, check=check) <- val
+    start(Feature, check = check) <- val
     Feature
-  }, Feature=x, check=list(check), val=value)
+  }, Feature = x, check = list(check), val = value)
   
   new('gbFeatureTable', .Data = new_x, .id = x@.id, .seqinfo = x@.seqinfo)
 })
@@ -225,12 +225,12 @@ setMethod("end", "gbFeatureTable", function(x, join = FALSE, drop = TRUE) {
 #' @name end<-
 #' @export
 #' @rdname end-methods
-setReplaceMethod("end", "gbFeatureTable", function(x, check=TRUE, value) {
+setReplaceMethod("end", "gbFeatureTable", function(x, check = TRUE, value) {
   value <- recycle(value, length(x))
   new_x <- Map(function(Feature, check, val) { 
-    end(Feature, check=check) <- val
+    end(Feature, check = check) <- val
     Feature
-  }, Feature=x, check=list(check), val=value)
+  }, Feature = x, check = list(check), val = value)
   
   new('gbFeatureTable', .Data = new_x, .id = x@.id, .seqinfo = x@.seqinfo)
 })
@@ -254,7 +254,7 @@ setReplaceMethod("strand", "gbFeatureTable", function(x, value) {
   new_x <- Map(function(Feature, val) { 
     strand(Feature) <- val
     Feature
-  }, Feature=x, val=value)
+  }, Feature = x, val = value)
   
   new('gbFeatureTable', .Data = new_x, .id = x@.id, .seqinfo = x@.seqinfo)
 })
@@ -336,8 +336,8 @@ setMethod("qualifList", "gbFeatureTable", function(x) {
 })
 
 tbl_qual <- function(x) {
-  tblqnm <- Compose(Partial(table, deparse.level=0), "names", 
-                    Partial(slot, name="qualifiers"))
+  tblqnm <- Compose(Partial(table, deparse.level = 0), "names", 
+                    Partial(slot, name = "qualifiers"))
   lapply(x, tblqnm)
 }
 
@@ -367,13 +367,13 @@ setMethod("featureTable", "gbFeatureTable", function(x) {
 #' @export
 #' @rdname hasKey-methods
 setMethod("hasKey", "gbFeatureTable", function(x, key) {
-  vapply(x, hasKey, key, FUN.VALUE=FALSE)
+  vapply(x, hasKey, key, FUN.VALUE = FALSE)
 })
 
 #' @export
 #' @rdname hasQualif-methods
 setMethod("hasQualif", "gbFeatureTable", function(x, qualifier) {
-  vapply(x, hasQualif, qualifier, FUN.VALUE=FALSE)
+  vapply(x, hasQualif, qualifier, FUN.VALUE = FALSE)
 })
 
 
@@ -387,7 +387,7 @@ setMethod("[", c("gbFeatureTable", "character", "ANY", "ANY"),
             check <- list(...)$check %||% TRUE
             i <- which(vapply(x@.Data, slot, name = 'key', FUN.VALUE = '') == i)
             IRanges::new2('gbFeatureTable', .Data = x@.Data[i], .id = x@.id[i], 
-                          .seqinfo = x@.seqinfo, check=check)
+                          .seqinfo = x@.seqinfo, check = check)
           })
 
 #' @export
@@ -467,8 +467,8 @@ setMethod("select", "gbFeatureTable", function(x, ..., .cols = NULL) {
 
 #' @export
 #' @rdname shift-methods
-setMethod("shift", "gbFeatureTable", function(x, shift=0L, split=FALSE, order=FALSE) {
-  .shift(x=x, shift=shift, split=split, order=order)
+setMethod("shift", "gbFeatureTable", function(x, shift = 0L, split = FALSE, order = FALSE) {
+  .shift(x = x, shift = shift, split = split, order = order)
 })
 
 

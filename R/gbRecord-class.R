@@ -2,7 +2,7 @@
 #' @importFrom reutils rettype retmode content
 NULL
 
-setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
+setClassUnion("gbLocationOrNull", members = c("gbLocation", "NULL"))
 
 #' Class \code{"gbRecord"}
 #'
@@ -26,7 +26,7 @@ setClassUnion("gbLocationOrNull", members=c("gbLocation", "NULL"))
 #' @export
 new_gbRecord <- setClass(
   "gbRecord",
-  slots=c(
+  slots = c(
     seqinfo  = "seqinfo",
     features = "gbFeatureTable",
     contig   = "gbLocationOrNull"
@@ -67,18 +67,18 @@ setValidity2("gbRecord", function(object) {
 #' @examples
 #' 
 #' ### import from file
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' getHeader(x)
 #' getFeatures(x)
 #' 
 #' ### quickly extract features as GRanges
-#' ranges(x["CDS"], include=c("product", "note", "protein_id"))
+#' ranges(x["CDS"], include = c("product", "note", "protein_id"))
 #' 
 #' ### import directly from NCBI
 #' \dontrun{
 #' require(reutils)
-#' x <- gbRecord(efetch("139189709", "protein", rettype="gp", retmode="text"))
+#' x <- gbRecord(efetch("139189709", "protein", rettype = "gp", retmode = "text"))
 #' x
 #' }
 #' 
@@ -88,11 +88,11 @@ setValidity2("gbRecord", function(object) {
 #' ## import a file containing multiple GenBank records as a
 #' ## gbRecordList. With many short records it pays of to
 #' ## run the parsing in paralle
-#' gss_file <- system.file("extdata", "gss.gbk", package="biofiles")
+#' gss_file <- system.file("extdata", "gss.gbk", package = "biofiles")
 #' 
 #' \dontrun{
 #'    require(doParallel)
-#'    registerDoParallel(cores=4)
+#'    registerDoParallel(cores = 4)
 #' }
 #' 
 #' gss <- gbRecord(gss_file)
@@ -114,9 +114,9 @@ gbRecord <- function(gbk) {
     n <- length(gbk)
     gbk_list <- vector("list", n)
     for (i in seq_len(n)) {
-      con <- file(gbk[i], open="rt")
+      con <- file(gbk[i], open = "rt")
       on.exit(close(con))
-      gbk_list[[i]] <- parse_gb_record(gb_record=readLines(con))
+      gbk_list[[i]] <- parse_gb_record(gb_record = readLines(con))
     }
     if (length(gbk_list) == 1L) {
       return(gbk_list[[1L]])
@@ -148,15 +148,15 @@ show_gbRecord <- function(x) {
           sprintf("ORIGIN      %s\n", XVector::toString(S))
         } else {
           sprintf("ORIGIN      %s\n            ...\n            %s\n",
-                  toString(subseq(S, start=1, end=W-16)),
-                  toString(subseq(S, start=length(S[[1L]])-W+17, end=length(S[[1L]]))))
+                  toString(subseq(S, start = 1, end = W-16)),
+                  toString(subseq(S, start = length(S[[1L]])-W+17, end = length(S[[1L]]))))
         }
       },
       sprintf("CONTIG      %s\n", linebreak(as(.contig(x), "character"), 
-                                            offset=13, split=",", FORCE=TRUE))
+                                            offset = 13, split = ",", FORCE = TRUE))
     )
   }
-  cat(showme, sep="\n")
+  cat(showme, sep = "\n")
 }
 
 #' @export
@@ -171,14 +171,14 @@ setMethod("show", "gbRecord", function(object) {
 #' @rdname summary-methods
 #' @export
 setMethod("summary", "gbRecord",
-          function(object, n=7, ...) {
+          function(object, n = 7, ...) {
             acc  <- getAccession(object)
             len  <- getLength(object)
-            type <- if (getMoltype(object) =='AA')'aa' else'bp'
-            def  <- ellipsize(obj=getDefinition(object),
-                              width=getOption("width") - nchar(len) - nchar(type) - 8)
-            cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep="")
-            summary(.features(object), n=n, setoff=2)
+            type <- if (getMoltype(object) == 'AA')'aa' else'bp'
+            def  <- ellipsize(obj = getDefinition(object),
+                              width = getOption("width") - nchar(len) - nchar(type) - 8)
+            cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep = "")
+            summary(.features(object), n = n, setoff = 2)
             invisible(NULL)
           })
 
@@ -246,7 +246,7 @@ setMethod("getAccession", "gbRecord", function(x) getAccession(.seqinfo(x)))
 #' @export
 setMethod("getVersion", "gbRecord", function(x) getVersion(.seqinfo(x)))
 #' @export
-setMethod("getGeneID", "gbRecord", function(x, db='gi') getGeneID(.seqinfo(x), db=db) )
+setMethod("getGeneID", "gbRecord", function(x, db = 'gi') getGeneID(.seqinfo(x), db = db) )
 #' @export
 setMethod("getDBLink", "gbRecord", function(x) getDBLink(.seqinfo(x)))
 #' @export
@@ -356,9 +356,9 @@ setMethod("key", "gbRecord", function(x) {
 setMethod("qualif", "gbRecord", function(x, which = "", fixed = FALSE, use.names = TRUE) {
   ans <- .qual_access(.features(x), which, fixed, use.names)
   if (use.names) {
-    .simplify(ans, unlist=FALSE)
+    .simplify(ans, unlist = FALSE)
   } else {
-    .simplify(ans, unlist=TRUE)
+    .simplify(ans, unlist = TRUE)
   }
 })
 
@@ -391,13 +391,13 @@ setMethod("featureTable", "gbRecord", function(x) {
 #' @export
 #' @rdname hasKey-methods
 setMethod("hasKey", "gbRecord", function(x, key) {
-  vapply(.features(x), hasKey, key, FUN.VALUE=FALSE)
+  vapply(.features(x), hasKey, key, FUN.VALUE = FALSE)
 })
 
 #' @export
 #' @rdname hasQualif-methods
 setMethod("hasQualif", "gbRecord", function(x, qualifier) {
-  vapply(.features(x), hasQualif, qualifier, FUN.VALUE=FALSE)
+  vapply(.features(x), hasQualif, qualifier, FUN.VALUE = FALSE)
 })
 
 
@@ -415,7 +415,7 @@ setMethod("hasQualif", "gbRecord", function(x, qualifier) {
 #' @docType methods
 #' @rdname extract-methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package="biofiles")
+#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' 
 #' ## Extract a gbFeatureTable from a gbRecord:

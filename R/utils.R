@@ -12,7 +12,7 @@ on_failure(is.empty) <- function(call, env) {
 
 are_empty <- function(x) {
   if (is.recursive(x) || length(x) > 1) {
-    vapply(x, function(x) is.null(x) || length(x) == 0L, FALSE, USE.NAMES=FALSE) | !nzchar(x)
+    vapply(x, function(x) is.null(x) || length(x) == 0L, FALSE, USE.NAMES = FALSE) | !nzchar(x)
   } else {
     is.empty(x)
   }
@@ -29,7 +29,7 @@ is_in <- function(x, table) {
 }
 on_failure(is_in) <- function(call, env) {
   paste0(sQuote(deparse(call$x)), " is not an element of ",
-         paste0(sQuote(eval(call$table, env)), collapse=", "))
+         paste0(sQuote(eval(call$table, env)), collapse = ", "))
 }
 
 "%is_in%" <- is_in
@@ -51,11 +51,11 @@ dots <- function(...) {
 }
 
 compact <- function(x) {
-  x[!vapply(x, is.empty, FALSE, USE.NAMES=FALSE)]
+  x[!vapply(x, is.empty, FALSE, USE.NAMES = FALSE)]
 }
 
 compactChar <- function(x) {
-  x[vapply(x, nzchar, FALSE, USE.NAMES=FALSE)]
+  x[vapply(x, nzchar, FALSE, USE.NAMES = FALSE)]
 }
 
 compactNA <- function(x) {
@@ -72,7 +72,7 @@ merge_dups <- function(x) {
   modify_list(a, b, "merge")
 }
 
-modify_list <- function(a, b, mode=c("replace", "merge")) {
+modify_list <- function(a, b, mode = c("replace", "merge")) {
   assert_that(is.list(a), is.list(b))
   mode <- match.arg(mode)
   a_names <- names(a)
@@ -81,8 +81,8 @@ modify_list <- function(a, b, mode=c("replace", "merge")) {
       modify_list(a[[v]], b[[v]])
     } else {
       switch(mode,
-             replace=b[[v]],
-             merge=unique(c(a[[v]], b[[v]])))
+             replace = b[[v]],
+             merge = unique(c(a[[v]], b[[v]])))
     }
   }
   a
@@ -98,7 +98,7 @@ re <- function(x) {
 }
 
 "%~%" <- function(x, pattern) {
-  grepl(pattern, x, fixed=FALSE)
+  grepl(pattern, x, fixed = FALSE)
 }
 
 ## divide the data in vector x into groups, where the start of
@@ -160,7 +160,7 @@ uusplit <- Compose("unique", "unlist", "strsplit")
 dup <- function(x, n) {
   if (any(n < 0)) n[n < 0] <- 0
   vapply(.mapply(rep.int, list(rep.int(x, length(n)), n), NULL),
-         paste0, collapse="", FUN.VALUE="")
+         paste0, collapse = "", FUN.VALUE = "")
 }
 
 blanks <- Partial(dup, x = " ")
@@ -176,13 +176,13 @@ wrap <- function(x, wrap = '"') {
 ## UnitTests: inst/tests/test-utils.r
 collapse <- function(x, sep = ' ') {
   if (is.list(x)) {
-    vapply(x, collapse, sep = sep, FUN.VALUE='')
+    vapply(x, collapse, sep = sep, FUN.VALUE = '')
   } else {
-    paste0(trim(x), collapse=sep)
+    paste0(trim(x), collapse = sep)
   }
 }
 
-ellipsize <- function(obj, width=getOption("width"), ellipsis=" ...") {
+ellipsize <- function(obj, width = getOption("width"), ellipsis = " ...") {
   str <- encodeString(obj)
   ifelse(nchar(str) > width - 1,
          paste0(substring(str, 1, width - nchar(ellipsis) - 1), ellipsis),
@@ -209,7 +209,7 @@ pad <- function (x, n = 10, where = 'left', pad = ' ') {
 }
 
 count_re <- function(x, re) {
-  vapply(gregexpr(re, x), function(x) sum(x > 0L), 0, USE.NAMES=FALSE)
+  vapply(gregexpr(re, x), function(x) sum(x > 0L), 0, USE.NAMES = FALSE)
 }
 
 #' Test if an external executable is available
@@ -267,9 +267,9 @@ linebreak <- function(s, width = getOption("width") - 2,
     indent <- abs(indent)
     offset_string <- paste0("\n", dup(' ', offset))
     if (!FULL_FORCE) {
-      s <- gsub("\\s+", " ", trim(s), perl=TRUE)
+      s <- gsub("\\s+", " ", trim(s), perl = TRUE)
     }
-    fws <- regexpr(split, s, perl=TRUE)
+    fws <- regexpr(split, s, perl = TRUE)
     if (first_pass) {
       string_width <- indent + nchar(s)
       .offset <- 0
@@ -284,8 +284,8 @@ linebreak <- function(s, width = getOption("width") - 2,
         # middle of a word
         pat1 <- paste0("^.{", width - .offset - indent, "}(?=.+)")
         pat2 <- paste0("(?<=^.{", width - .offset - indent, "}).+")
-        leading_string <- regmatches(s, regexpr(pat1, s, perl=TRUE))
-        trailing_string <- regmatches(s, regexpr(pat2, s, perl=TRUE)) 
+        leading_string <- regmatches(s, regexpr(pat1, s, perl = TRUE))
+        trailing_string <- regmatches(s, regexpr(pat2, s, perl = TRUE)) 
       } else if (!FORCE && (fws == -1 || fws >= (width - .offset + indent))) {
         # if no whitespace or first word too long and NO force break stop right here
         stop("Can't break in the middle of a word. Use the force!")
@@ -316,10 +316,10 @@ strsplitN <- function(x, split, n, from = "start", collapse = split, ...) {
   if (from == "end") {
     end <- end + 1L
     n <- lapply(end, `-`, n)
-    n <- .mapply(`[<-`, list(x=n, i=lapply(n, `<`, 0), value=0L), NULL)
+    n <- .mapply(`[<-`, list(x = n, i = lapply(n, `<`, 0), value = 0L), NULL)
   } else {
     n <- lapply(rep(0, length(xs)), `+`, n)
-    n <- .mapply(`[<-`, list(x=n, i=Map(`>`, n, end), value=end), NULL)
+    n <- .mapply(`[<-`, list(x = n, i = Map(`>`, n, end), value = end), NULL)
   }  
   n <- lapply(n, Compose("sort", "unique"))
   unlist(.mapply(function(x, n) paste0(x[n], collapse = collapse), list(x = xs, n = n), NULL))
@@ -375,7 +375,7 @@ get_compounds <- function(x) {
     na  <- which(vapply(ans, length, 0) == 0)
     if (length(na) > 0) {
       for (i in na) {
-        ans[[i]] <- setNames(NA_character_, nm=trim(which[i], "\\\\b"))
+        ans[[i]] <- setNames(NA_character_, nm = trim(which[i], "\\\\b"))
       }
     }
   }
@@ -399,7 +399,7 @@ get_compounds <- function(x) {
 
 #' @return A named character vector or a list of named character vectors
 #' of the qualifiers specified in \code{which}
-.qual_access <- function(x, which = "", fixed = FALSE, use.names=TRUE) {
+.qual_access <- function(x, which = "", fixed = FALSE, use.names = TRUE) {
   dbxrefs <- NULL
   dbx <- grepl('db_xref[:.].+', which)
   if (any(dbx)) {
@@ -443,7 +443,7 @@ get_compounds <- function(x) {
   else if (length(len) == 1L &&
              (is.null(nm) || length(nm) == len)) {
     r <- as.vector(unlist(x, recursive = FALSE, use.names = FALSE))
-    data.frame(stringsAsFactors=FALSE,
+    data.frame(stringsAsFactors = FALSE,
                matrix(r, ncol = len, byrow = TRUE,
                       dimnames = list(NULL, nm)))
   }
@@ -473,7 +473,7 @@ get_compounds <- function(x) {
   if (is(x, "gbFeature")) {
     seq <- merge_seq(seq, x, SEQFUN)
   } else if (is(x, "gbFeatureTable")) {
-    seq <- Reduce(append, lapply(x, merge_seq, seq=seq, SEQFUN=SEQFUN))
+    seq <- Reduce(append, lapply(x, merge_seq, seq = seq, SEQFUN = SEQFUN))
   }
   seq
 }
@@ -482,9 +482,9 @@ get_compounds <- function(x) {
 #' @importFrom Biostrings xscat
 merge_seq <- function(seq, x, SEQFUN) {
   if (length(start(x)) == 1L) {
-    outseq <- XVector::subseq(x=seq, start=start(x), end=end(x))
+    outseq <- XVector::subseq(x = seq, start = start(x), end = end(x))
   } else {
-    outseq <- do.call(xscat, Map(subseq, x=seq, start=start(x), end=end(x)))
+    outseq <- do.call(xscat, Map(subseq, x = seq, start = start(x), end = end(x)))
   }
   outseq <- SEQFUN(outseq)
   outseq@ranges@NAMES <- .defline(x)
@@ -497,7 +497,7 @@ parse_dbsource <- function(dbsource) {
   }
   else {
     db <- strsplitN(dbsource, ": | ", 1L)
-    db <- switch(db, accession='gb', REFSEQ='ref', db)
+    db <- switch(db, accession = 'gb', REFSEQ = 'ref', db)
     paste0('|', db, '|')
   }
 }
