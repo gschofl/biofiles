@@ -15,6 +15,9 @@ from GenBank flat files.
 genome sequence as an \code{\linkS4class{XStringSet}} object and
 sequence metadata as a \code{\linkS4class{gbHeader}} object.}
 
+\item{\code{.id}}{An integer vector the indices of the \code{\linkS4class{gbFeature}}s
+contained within a \code{gbFeatureTable} object.}
+
 \item{\code{.Data}}{A list of \code{\linkS4class{gbFeature}} objects.}
 }}
 
