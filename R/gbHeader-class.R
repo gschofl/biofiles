@@ -729,7 +729,6 @@ NULL
 
 setMethod('.header', 'seqinfo', function(x) {
   if (x$header_is_empty()) {
-    warning("No header associated with this object", call. = FALSE, immediate. = TRUE)
     return(.gbHeader())
   }
   x$header
@@ -737,7 +736,6 @@ setMethod('.header', 'seqinfo', function(x) {
 
 setMethod('.sequence', 'seqinfo', function(x) {
   if (x$sequence_is_empty()) {
-    warning("No sequence associated with this object", call. = FALSE, immediate. = TRUE)
     return(new("BStringSet"))
   }
   x$sequence

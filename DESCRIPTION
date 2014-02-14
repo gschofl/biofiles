@@ -25,7 +25,6 @@ Imports:
     RCurl,
     reutils,
     stats,
-    stringr,
     XVector
 Suggests:
     doParallel,
