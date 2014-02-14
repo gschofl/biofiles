@@ -1,4 +1,5 @@
 #' @import methods
+#' @import Rcpp
 #' @importFrom assertthat assert_that "on_failure<-" is.string is.scalar
 #' @importFrom stats setNames
 NULL
