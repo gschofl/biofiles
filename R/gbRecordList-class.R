@@ -40,7 +40,7 @@ gbRecordList <- function(...) {
 }
 
 
-setValidity2("gbRecordList", function (object) {
+IRanges::setValidity2("gbRecordList", function (object) {
   if (!all(vapply(object@.Data, is, "gbRecord", FUN.VALUE = logical(1))))
     return("All elements in a gbRecordList must be gbRecord objects")
   
@@ -48,7 +48,6 @@ setValidity2("gbRecordList", function (object) {
 })
 
 
-#' @export
 setMethod("show", "gbRecordList", function (object) { 
   if (all(is.na(getAccession(object)))) {
     cat(sprintf("%s instance with zero records\n", sQuote(class(object))))
@@ -76,90 +75,106 @@ setMethod("summary", "gbRecordList", function (object, n = 2, ...) {
 # getters ----------------------------------------------------------------
 
 
+#' @export
+#' @rdname accessor-methods
 setMethod("getLocus", "gbRecordList", function (x) {
   vapply(x, getLocus, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getLength", "gbRecordList", function (x) {
   vapply(x, getLength, FUN.VALUE = 0L, USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getMoltype", "gbRecordList", function (x) {
   vapply(x, getMoltype, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getTopology", "gbRecordList", function (x) {
   vapply(x, getTopology, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getDivision", "gbRecordList", function (x) {
   vapply(x, getDivision, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getDate", "gbRecordList", function (x) {
   Map(getDate, x)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getDefinition", "gbRecordList", function (x) {
   vapply(x, getDefinition, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getAccession", "gbRecordList", function (x) {
   vapply(x, getAccession, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getVersion", "gbRecordList", function (x) {
   vapply(x, getVersion, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getGeneID", "gbRecordList", function (x, db = 'gi') {
   vapply(x, getGeneID, db = db, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getDBLink", "gbRecordList", function (x) {
   vapply(x, getDBLink, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getDBSource", "gbRecordList", function (x) {
   vapply(x, getDBSource, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getSource", "gbRecordList", function (x) {
   vapply(x, getSource, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getOrganism", "gbRecordList", function (x) {
   vapply(x, getOrganism, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getTaxonomy", "gbRecordList", function (x) {
   vapply(x, getTaxonomy, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getReference", "gbRecordList", function (x) {
   Map(getReference, x)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getKeywords", "gbRecordList", function (x) {
   vapply(x, getKeywords, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
+#' @export
+#' @rdname accessor-methods
 setMethod("getComment", "gbRecordList", function (x) {
   vapply(x, getComment, FUN.VALUE = "", USE.NAMES = FALSE)
 })
-
 #' @export
 #' @rdname getFeatures-methods
 setMethod("getFeatures", "gbRecordList", function(x) {
   .mapply(.features, list(x = x), NULL)
 })
-
 #' @export
 #' @rdname getFeatures-methods
 setMethod("ft", "gbRecordList", function(x) {
   .mapply(.features(), list(x = x), NULL)
-})
-          
+})       
 #' @export
 #' @rdname getSequence-methods
 setMethod("getSequence", "gbRecordList", function (x) {
@@ -167,6 +182,7 @@ setMethod("getSequence", "gbRecordList", function (x) {
 })
 
 #' @export
+#' @rdname ranges-methods
 setMethod("ranges", "gbRecordList",
           function (x, join = FALSE, key = TRUE, include = "none", exclude = "") {
             GRangesList(lapply(x, ranges, join = join, key = key,
@@ -175,14 +191,14 @@ setMethod("ranges", "gbRecordList",
 
 #' @export
 #' @rdname start-methods
-setMethod("start", "gbRecordList", function (x, join = FALSE, drop = TRUE) {
-  lapply(x, start, join = join, drop = drop)
+setMethod("start", "gbRecordList", function (x, join = FALSE) {
+  lapply(x, start, join = join)
 })
 
 #' @export
 #' @rdname end-methods
-setMethod("end", "gbRecordList", function (x, join = FALSE, drop = TRUE) {
-  lapply(x, end, join = join, drop = drop)
+setMethod("end", "gbRecordList", function (x, join = FALSE) {
+  lapply(x, end, join = join)
 })
 
 #' @export

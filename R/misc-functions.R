@@ -50,12 +50,18 @@ translation <- function(x) AAStringSet(.translation(x))
 #' 
 #' ## EXPERIMENTAL ##
 #' 
-#' @param x gbRecord
-#' @param merge
+#' For GenBank records that contain a CONTIG field, try to get the contig
+#' sequences and (optionally) merge them into a single sequence.
+#' 
+#' @param x A \code{\linkS4class{gbRecord}} object.
+#' @param merge Merge the retrieved contig sequences.
+#' @return A \code{\linkS4class{DNAStringSet}} instance.
 #' @importFrom Biostrings unlist DNAStringSet
 #' @importFrom IRanges metadata "metadata<-"
 #' @importFrom reutils efetch
 #' @export
+#' @examples
+#' ###
 getContigSeq <- function(x, merge = TRUE) { 
   db <- switch(getMoltype(x), AA = "protein", "nuccore")
   contig <- .contig(x)

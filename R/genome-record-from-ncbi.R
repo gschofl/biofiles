@@ -84,6 +84,8 @@ chooseFromList <- function(list, prompt = "", default = NULL) {
 #' one. If there are multiple matching \code{gbk} files the user will also be
 #' prompted to choose one or more.
 #' @param ignore.case Ignore case when matching.
+#' @param .parse if \code{FALSE}, return a character vector instead
+#' of a \code{\linkS4class{gbRecord}} object.
 #' @param ... Arguments passed on to \code{\link[RCurl]{curlOptions}}.
 #' @return A \code{\linkS4class{gbRecord}} or \code{\linkS4class{gbRecordList}}
 #' object.

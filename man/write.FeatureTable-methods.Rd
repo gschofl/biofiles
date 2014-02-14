@@ -32,6 +32,8 @@ write.FeatureTable(x, file, tablename = "", dbname = "", sequence = FALSE,
 
   \item{append}{if \code{TRUE} the data is appended to the
   connection.}
+
+  \item{...}{Additional arguments passed to methods.}
 }
 \description{
 Feature Tables are simple five-column tab-delimited tables

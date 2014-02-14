@@ -24,7 +24,7 @@ revcomp(x, order = TRUE)
 Reverse-complement features in a GenBank record
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
+gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
 x <- gbRecord(gbk_file)
 xr <- revcomp(x)
 }

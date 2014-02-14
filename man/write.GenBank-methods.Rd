@@ -27,6 +27,8 @@ write.GenBank(x, file, append = FALSE, ...)
 
   \item{append}{if \code{TRUE} the data is appended to the
   connection.}
+
+  \item{...}{Additional arguments passed to methods.}
 }
 \description{
 Write GenBank records or features to file in GenBank format

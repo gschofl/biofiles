@@ -745,35 +745,46 @@ setMethod('.locus', 'seqinfo', function(x) .header(x)$locus)
 
 ## Getters
 
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getLocus", "seqinfo", function(x) .locus(x)$lnm)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getLength", "seqinfo", function(x) .locus(x)$len)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getMoltype", "seqinfo", function(x) .locus(x)$mtp)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getTopology", "seqinfo", function(x) .locus(x)$top)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getDivision", "seqinfo", function(x) .locus(x)$div)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getDate", "seqinfo", function(x) {
   c(create_date = .locus(x)$cdt, update_date = .locus(x)$mdt)
 })
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getDefinition", "seqinfo", function(x) .header(x)$definition)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getAccession", "seqinfo", function(x) .header(x)$accession)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getVersion", "seqinfo", function(x) .header(x)$version)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getGeneID", "seqinfo", function(x, db = 'gi') {
   seqid <- .header(x)$seqid
   if (is.na(seqid)) {
@@ -784,27 +795,35 @@ setMethod("getGeneID", "seqinfo", function(x, db = 'gi') {
   }
 })
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getDBLink", "seqinfo", function(x) .header(x)$dblink)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getDBSource", "seqinfo", function(x) .header(x)$dbsource)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getSource", "seqinfo", function(x) .header(x)$source)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getOrganism", "seqinfo", function(x) .header(x)$organism)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getTaxonomy", "seqinfo", function(x) .header(x)$taxonomy)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getReference", "seqinfo", function(x) .header(x)$references)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getKeywords", "seqinfo", function(x) .header(x)$keywords)
 
-
+#' @keywords internal
+#' @rdname accessor-methods
 setMethod("getComment", "seqinfo", function(x) .header(x)$comment)
 

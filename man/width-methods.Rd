@@ -4,14 +4,17 @@
 \alias{joint_range}
 \alias{joint_range,gbFeature-method}
 \alias{joint_range,gbFeatureTable-method}
+\alias{joint_range,gbLocation-method}
 \alias{joint_width}
 \alias{joint_width,gbFeature-method}
 \alias{joint_width,gbFeatureTable-method}
+\alias{joint_width,gbLocation-method}
 \alias{joint_width,gbRecord-method}
 \alias{joint_width,gbRecordList-method}
 \alias{width}
 \alias{width,gbFeature-method}
 \alias{width,gbFeatureTable-method}
+\alias{width,gbLocation-method}
 \alias{width,gbRecord-method}
 \alias{width,gbRecordList-method}
 \title{Get the width of genomic features}
@@ -33,6 +36,12 @@ joint_range(x)
 \S4method{joint_width}{gbFeatureTable}(x)
 
 \S4method{joint_range}{gbFeatureTable}(x)
+
+\S4method{joint_range}{gbLocation}(x)
+
+\S4method{width}{gbLocation}(x)
+
+\S4method{joint_width}{gbLocation}(x)
 
 \S4method{width}{gbRecord}(x)
 

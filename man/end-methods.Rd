@@ -4,22 +4,28 @@
 \alias{end}
 \alias{end,gbFeature-method}
 \alias{end,gbFeatureTable-method}
+\alias{end,gbLocation-method}
 \alias{end,gbRecord-method}
 \alias{end,gbRecordList-method}
 \alias{end<-}
+\alias{end<-,gbFeature-method}
+\alias{end<-,gbFeatureTable-method}
+\alias{end<-,gbLocation-method}
 \title{Get or set the end of genomic features}
 \usage{
 end(x, join = FALSE, ...)
 
 end(x, check = TRUE) <- value
 
-\S4method{end}{gbFeature}(x, join = FALSE, drop = TRUE)
+\S4method{end}{gbFeature}(x, join = FALSE)
 
-\S4method{end}{gbFeatureTable}(x, join = FALSE, drop = TRUE)
+\S4method{end}{gbFeatureTable}(x, join = FALSE)
 
-\S4method{end}{gbRecord}(x, join = FALSE, drop = TRUE)
+\S4method{end}{gbLocation}(x, join = FALSE)
 
-\S4method{end}{gbRecordList}(x, join = FALSE, drop = TRUE)
+\S4method{end}{gbRecord}(x, join = FALSE)
+
+\S4method{end}{gbRecordList}(x, join = FALSE)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbFeature}},
@@ -31,6 +37,11 @@ end(x, check = TRUE) <- value
   range.}
 
   \item{...}{Further arguments passed to methods.}
+
+  \item{check}{if \code{FALSE}, don't perform validity
+  checks.}
+
+  \item{value}{The end information to set on \code{x}.}
 }
 \value{
 An integer vector or a list of integer vectors.

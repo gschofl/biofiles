@@ -4,9 +4,10 @@
 \alias{fuzzy}
 \alias{fuzzy,gbFeature-method}
 \alias{fuzzy,gbFeatureTable-method}
+\alias{fuzzy,gbLocation-method}
 \alias{fuzzy,gbRecord-method}
 \alias{fuzzy,gbRecordList-method}
-\title{Has a feature unclear start/end positions?}
+\title{Has a feature fuzzy locations?}
 \usage{
 fuzzy(x)
 
@@ -14,11 +15,31 @@ fuzzy(x)
 
 \S4method{fuzzy}{gbFeatureTable}(x)
 
+\S4method{fuzzy}{gbLocation}(x)
+
 \S4method{fuzzy}{gbRecord}(x)
 
 \S4method{fuzzy}{gbRecordList}(x)
 }
+\arguments{
+  \item{x}{A \code{\linkS4class{gbFeature}},
+  \code{\linkS4class{gbFeatureTable}},
+  \code{\linkS4class{gbRecord}}, or
+  \code{\linkS4class{gbRecordList}} object.}
+}
+\value{
+A logical matrix.
+}
 \description{
-Has a feature unclear start/end positions?
+With a GenBank location like \emph{complement(<123..150)}
+we don't know the exact start position of the feature. Use
+\code{fuzzy} to test for fuzzy locations.
+}
+\examples{
+l <- as.gbLocation("complement(<123..150)")
+fuzzy(l)
+
+## note that start() or end() return exact positions even if they are fuzzy.
+start(l)
 }
 

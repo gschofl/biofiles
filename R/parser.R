@@ -22,7 +22,8 @@ parse_gb_record <- function(gb_record) {
     registerDoSEQ()
     irec <- iter(list(gb_record))
   }
-  gbk_list <- foreach(rec = irec, .inorder = FALSE) %dopar% {
+  gbk_list <- foreach(rec = irec, .inorder = FALSE) %dopar% 
+  {
     # get a vector with the positions of the main GenBank fields
     rec_idx <- grep("^[A-Z//]+", rec)
     rec_kwd <- strsplitN(rec[rec_idx], " +", 1L)

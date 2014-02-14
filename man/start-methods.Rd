@@ -4,22 +4,28 @@
 \alias{start}
 \alias{start,gbFeature-method}
 \alias{start,gbFeatureTable-method}
+\alias{start,gbLocation-method}
 \alias{start,gbRecord-method}
 \alias{start,gbRecordList-method}
 \alias{start<-}
+\alias{start<-,gbFeature-method}
+\alias{start<-,gbFeatureTable-method}
+\alias{start<-,gbLocation-method}
 \title{Get or set the start of genomic features}
 \usage{
 start(x, join = FALSE, ...)
 
 start(x, check = TRUE) <- value
 
-\S4method{start}{gbFeature}(x, join = FALSE, drop = TRUE)
+\S4method{start}{gbFeature}(x, join = FALSE)
 
-\S4method{start}{gbFeatureTable}(x, join = FALSE, drop = TRUE)
+\S4method{start}{gbFeatureTable}(x, join = FALSE)
 
-\S4method{start}{gbRecord}(x, join = FALSE, drop = TRUE)
+\S4method{start}{gbLocation}(x, join = FALSE)
 
-\S4method{start}{gbRecordList}(x, join = FALSE, drop = TRUE)
+\S4method{start}{gbRecord}(x, join = FALSE)
+
+\S4method{start}{gbRecordList}(x, join = FALSE)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbFeature}},
@@ -31,6 +37,11 @@ start(x, check = TRUE) <- value
   range.}
 
   \item{...}{Further arguments passed to methods.}
+
+  \item{check}{if \code{FALSE}, don't perform validity
+  checks.}
+
+  \item{value}{The start information to set on \code{x}.}
 }
 \value{
 An integer vector or a list of integer vectors.

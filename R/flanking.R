@@ -98,7 +98,7 @@ find_neighbors <- function(query, subject, n = 5,  direction = 'flanking',
 #' \dQuote{all}. 
 #' @param exclude_key Which feature(s) should be excluded from the search.
 #' Defaults to \dQuote{none}.
-#' 
+#' @return A (list of) \code{\linkS4class{gbFeatureTable}}s.
 #' @rdname upstream
 #' @export
 #' @examples
@@ -112,13 +112,13 @@ find_neighbors <- function(query, subject, n = 5,  direction = 'flanking',
 upstream <- Partial(find_neighbors, direction = "upstream")
 
 
-#' @usage downstream(query, subject, n = 5, include_key = "all", exclude_key = "none)
+#' @usage downstream(query, subject, n = 5, include_key = "all", exclude_key = "none")
 #' @export
 #' @rdname upstream
 downstream <- Partial(find_neighbors, direction = "downstream")
 
 
-#' @usage flanking(query, subject, n = 5, include_key = "all", exclude_key = "none)
+#' @usage flanking(query, subject, n = 5, include_key = "all", exclude_key = "none")
 #' @export
 #' @rdname upstream
 flanking <- Partial(find_neighbors, direction = "flanking")

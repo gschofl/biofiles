@@ -38,7 +38,7 @@ setClass(
 )
 
 
-setValidity2("gbFeature", function(object) {
+IRanges::setValidity2("gbFeature", function(object) {
   TRUE
 })
 
@@ -87,7 +87,6 @@ show_gbFeature <- function(object, showInfo = TRUE, write_to_file = FALSE) {
 }
 
 
-#' @export
 setMethod("show", "gbFeature", function(object) {
   show_gbFeature(object, showInfo = TRUE, write_to_file = FALSE)
 })
@@ -152,40 +151,58 @@ setMethod(".defline", "gbFeature", function(x) {
 # getters ----------------------------------------------------------------
 
 #' @export
+#' @rdname accessor-methods
 setMethod("getLocus", "gbFeature", function(x) getLocus(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getLength", "gbFeature", function(x) getLength(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getMoltype", "gbFeature", function(x) getMoltype(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getTopology", "gbFeature", function(x) getTopology(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getDivision", "gbFeature", function(x) getDivision(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getDate", "gbFeature", function(x) getDate(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getDefinition", "gbFeature", function(x) getDefinition(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getAccession", "gbFeature", function(x) getAccession(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getVersion", "gbFeature", function(x) getVersion(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getGeneID", "gbFeature", function(x, db = 'gi') getGeneID(.seqinfo(x), db = db) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getDBLink", "gbFeature", function(x) getDBLink(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getDBSource", "gbFeature", function(x) getDBSource(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getSource", "gbFeature", function(x) getSource(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getOrganism", "gbFeature", function(x) getOrganism(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getTaxonomy", "gbFeature", function(x) getTaxonomy(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getReference", "gbFeature", function(x) getReference(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getKeywords", "gbFeature", function(x) getKeywords(.seqinfo(x)) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getComment", "gbFeature", function(x) getComment(.seqinfo(x)) )
 
 #' @export
@@ -200,22 +217,22 @@ setMethod("getHeader", "gbFeature", function(x) .header(.seqinfo(x)))
 #' @rdname getSequence-methods
 setMethod("getSequence", "gbFeature", function(x) .seq_access(x))
 
-
 #' @export
+#' @rdname ranges-methods
 setMethod("ranges", "gbFeature", function(x, include = "none", exclude = "", join = FALSE) {
   .GRanges(x, include = include, exclude = exclude, join = join)
 })
 
-
 #' @export
 #' @rdname start-methods
-setMethod("start", "gbFeature", function(x, join = FALSE, drop = TRUE) {
-  start(x@location, join = join, drop = drop)
+setMethod("start", "gbFeature", function(x, join = FALSE) {
+  start(x@location, join = join)
 })
 
 #' @name start<-
 #' @export
 #' @rdname start-methods
+#' @aliases start<-,gbFeature-method
 setReplaceMethod("start", "gbFeature", function(x, check = TRUE, value) {
   start(x@location, check = check) <- value
   if (check) {
@@ -226,13 +243,14 @@ setReplaceMethod("start", "gbFeature", function(x, check = TRUE, value) {
 
 #' @export
 #' @rdname end-methods
-setMethod("end", "gbFeature", function(x, join = FALSE, drop = TRUE) { 
-  end(x@location, join = join, drop = drop)
+setMethod("end", "gbFeature", function(x, join = FALSE) { 
+  end(x@location, join = join)
 })
 
 #' @name end<-
 #' @export
 #' @rdname end-methods
+#' @aliases end<-,gbFeature-method
 setReplaceMethod("end", "gbFeature", function(x, check = TRUE, value) {
   end(x@location, check = check) <- value
   if (check)
@@ -249,6 +267,7 @@ setMethod("strand", "gbFeature", function(x, join = FALSE) {
 #' @name strand<-
 #' @export
 #' @rdname strand-methods
+#' @aliases strand<-,gbFeature-method
 setReplaceMethod("strand", "gbFeature", function(x, value) { 
   strand(x@location) <- value
   x
@@ -300,7 +319,8 @@ setMethod("key", "gbFeature", function(x) structure(x@key, names = NULL) )
 
 #' @name key<-
 #' @export
-#' @rdname qualif-methods
+#' @rdname key-methods
+#' @aliases key<-,gbFeature-method
 setReplaceMethod("key", "gbFeature", function(x, check = TRUE, value) {
   x <- initialize(x, key = value)
   if (check)
@@ -321,6 +341,7 @@ setMethod("qualif", "gbFeature", function(x, which, fixed = FALSE, use.names = T
 #' @name qualif<-
 #' @export
 #' @rdname qualif-methods
+#' @aliases qualif<-,gbFeature-method
 setReplaceMethod("qualif", "gbFeature", function(x, which, check = TRUE, value) {
   assert_that(!missing(which))
   x@qualifiers[which] <- value
@@ -372,18 +393,19 @@ setMethod("shift", "gbFeature", function(x, shift = 0L, ...) {
 
 
 #' @export
+#' @rdname extract-methods
 setMethod("[[", c("gbFeature", "character", "missing"), function(x, i, j) {
-  if (i %in% c("key","location",".id")) {
+  if (i %in% c("key", "location", ".id")) {
     slot(x, i)
   } else {
     x@qualifiers[i]
   }
 })
 
-
 #' @export
+#' @rdname extract-methods
 setMethod("$", "gbFeature", function(x, name) {
-  if (name %in% c("key","location",".id")) {
+  if (name %in% c("key", "location", ".id")) {
     slot(x, name)
   } else {
     x@qualifiers[name]

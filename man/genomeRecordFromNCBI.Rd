@@ -16,6 +16,9 @@ genomeRecordFromNCBI(which, ignore.case = TRUE, .parse = TRUE, ...)
 
   \item{ignore.case}{Ignore case when matching.}
 
+  \item{.parse}{if \code{FALSE}, return a character vector
+  instead of a \code{\linkS4class{gbRecord}} object.}
+
   \item{...}{Arguments passed on to
   \code{\link[RCurl]{curlOptions}}.}
 }

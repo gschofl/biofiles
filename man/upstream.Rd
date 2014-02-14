@@ -7,9 +7,9 @@
 \usage{
 upstream(query, subject, n = 5, include_key = "all", exclude_key = "none")
 
-downstream(query, subject, n = 5, include_key = "all", exclude_key = "none)
+downstream(query, subject, n = 5, include_key = "all", exclude_key = "none")
 
-flanking(query, subject, n = 5, include_key = "all", exclude_key = "none)
+flanking(query, subject, n = 5, include_key = "all", exclude_key = "none")
 }
 \arguments{
   \item{query}{A \code{\linkS4class{gbFeature}} or
@@ -26,6 +26,9 @@ flanking(query, subject, n = 5, include_key = "all", exclude_key = "none)
 
   \item{exclude_key}{Which feature(s) should be excluded
   from the search. Defaults to \dQuote{none}.}
+}
+\value{
+A (list of) \code{\linkS4class{gbFeatureTable}}s.
 }
 \description{
 Find flanking features

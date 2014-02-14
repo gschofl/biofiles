@@ -2,9 +2,12 @@
 \docType{methods}
 \name{view}
 \alias{view}
+\alias{view,gbFeatureTable-method}
 \title{View all features in a \code{gbFeatureTable}}
 \usage{
 view(x, n, ...)
+
+\S4method{view}{gbFeatureTable}(x, n)
 }
 \arguments{
   \item{x}{A \code{\linkS4class{gbFeatureTable}} instance.}

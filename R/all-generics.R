@@ -71,6 +71,8 @@ NULL
 #' 
 setGeneric("start")
 
+#' @param check if \code{FALSE}, don't perform validity checks.
+#' @param value The start information to set on \code{x}.
 #' @rdname start-methods
 #' @export
 #' @docType methods
@@ -101,6 +103,8 @@ setGeneric("start<-")
 #' 
 setGeneric("end")
 
+#' @param check if \code{FALSE}, don't perform validity checks.
+#' @param value The end information to set on \code{x}.
 #' @rdname end-methods
 #' @export
 #' @docType methods
@@ -204,17 +208,25 @@ setGeneric("joint_range", signature = "x", function(x) standardGeneric("joint_ra
 setGeneric("ranges")
 
 
-#' @rdname ranges-methods
-#' @export
-#' @importFrom IRanges "ranges<-"
-setGeneric("ranges<-")
-
-#' Has a feature unclear start/end positions?
+#' Has a feature fuzzy locations?
+#' 
+#' With a GenBank location like \emph{complement(<123..150)} we don't know the exact
+#' start position of the feature. Use \code{fuzzy} to test for fuzzy locations.
 #' 
 #' @usage fuzzy(x)
+#' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
+#' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
+#' @return A logical matrix.
 #' @rdname fuzzy-methods
 #' @export
 #' @docType methods
+#' @examples
+#' l <- as.gbLocation("complement(<123..150)")
+#' fuzzy(l)
+#' 
+#' ## note that start() or end() return exact positions even if they are fuzzy.
+#' start(l)
+#' 
 setGeneric("fuzzy", signature = "x", function (x, ...) {
   standardGeneric("fuzzy")
 })
@@ -460,6 +472,7 @@ setGeneric("index", signature = "x", function (x, ...) {
 #'
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}}, or
 #' \code{\linkS4class{gbRecord}} object.
+#' @param join Join compound genomic locations to a single range.
 #' @param ... Additional arguments passed to methods.
 #' @return A list of \code{\linkS4class{gbLocation}} objects
 #' @rdname location-methods
@@ -493,6 +506,8 @@ setGeneric("key", signature = "x", function(x, ...) {
 })
 
 
+#' @param check if \code{FALSE}, don't perform validity checks.
+#' @param value The key information to set on \code{x}.
 #' @rdname key-methods
 #' @export
 #' @docType methods
@@ -505,14 +520,15 @@ setGeneric("key<-", signature = "x", function(x, check = TRUE, value) {
 #' 
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}}, or
 #' \code{\linkS4class{gbRecord}} object.
-#' @param which (Optional) A character vector giving the name(s) of the
-#' qualifiers to retrieve.
+#' @param which A character vector giving the name(s) of the
+#' qualifiers to retrieve or set.
 #' @param fixed If \code{TRUE}, \code{which} is matched against qualifiers as is,
 #' if \code{FALSE} it is treated as a regular expression.
 #' @param use.names If \code{TRUE}, return a \code{data.frame} using \code{which}
 #' as column names, if \code{FALSE} return, if possible, a character vector or
 #' a list.
 #' @param ... Additional arguments passed to methods.
+#' @return A \code{data.frame}.
 #' @rdname qualif-methods
 #' @export
 #' @docType methods
@@ -529,6 +545,8 @@ setGeneric("qualif", signature = "x", function(x, which = "", ...) {
 })
 
 
+#' @param check if \code{FALSE}, don't perform validity checks.
+#' @param value The qualifier information to set on \code{x}.
 #' @rdname qualif-methods
 #' @export
 #' @docType methods
@@ -603,6 +621,7 @@ setGeneric("saveRecord", function(x, file = NULL, dir = ".", ...) standardGeneri
 #' @param header if \code{FALSE} exclude the Genbank header.
 #' @param sequence if \code{FALSE} exclude the sequence.
 #' @param append if \code{TRUE} the data is appended to the connection.
+#' @param ... Additional arguments passed to methods.
 #' @rdname write.GenBank-methods
 #' @export
 #' @docType methods
@@ -633,6 +652,7 @@ setGeneric("write.GenBank", function(x, file, append = FALSE, ...) {
 #' @param dbname Data base name associated with the CDS qualifier protein_id.
 #' @param sequence if \code{TRUE}, additionally output a fasta file.
 #' @param append if \code{TRUE} the data is appended to the connection.
+#' @param ... Additional arguments passed to methods.
 #' @rdname write.FeatureTable-methods
 #' @export
 #' @docType methods
@@ -723,6 +743,7 @@ setGeneric("featureTable", function(x, ...) standardGeneric("featureTable"))
 #'  
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
+#' @param key A feature key. 
 #' @param ... Additional arguments to be passed to or from methods.
 #' @return A logical vector or a list of logical vectors.
 #' @seealso
@@ -743,6 +764,7 @@ setGeneric("hasKey", signature = c("x","key"), function(x, key, ...) {
 #'
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
+#' @param qualifier A character string. Name of a qualifier.
 #' @param ... Additional arguments to be passed to or from methods.
 #' @return A logical vector or a list of logical vectors.
 #' @seealso
@@ -757,7 +779,7 @@ setGeneric("hasKey", signature = c("x","key"), function(x, key, ...) {
 #' x <- gbRecord(gbk_file)
 #' hasQualif(x, 'CDS')
 #'
-setGeneric("hasQualif", signature = c("x","qualifier"), function(x, qualifier, ...) {
+setGeneric("hasQualif", signature = c("x", "qualifier"), function(x, qualifier, ...) {
   standardGeneric("hasQualif")
 })
 
@@ -777,13 +799,14 @@ setGeneric("hasQualif", signature = c("x","qualifier"), function(x, qualifier, .
 #' @param split Split features that after the shift extends across the end of
 #' the sequence.
 #' @param order Reorder features after the shift.
+#' @param ... Additional arguments passed to methods.
 #'
 #' @return A \code{\linkS4class{gbFeatureTable}} object.
 #' @rdname shift-methods
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
+#' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
 #' x <- gbRecord(gbk_file)
 #' 
 #' ## shift the S. cerevisiae mitochondrion such that cytochrome b is the first CDS
@@ -805,7 +828,7 @@ setGeneric("shift", signature = "x", function(x, shift = 0L, use.names = TRUE, .
 #' @export
 #' @docType methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
+#' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
 #' x <- gbRecord(gbk_file)
 #' xr <- revcomp(x)
 #' 

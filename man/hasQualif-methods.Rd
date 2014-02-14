@@ -24,6 +24,9 @@ hasQualif(x, qualifier, ...)
   \code{\linkS4class{gbRecord}}, or
   \code{\linkS4class{gbRecordList}} object.}
 
+  \item{qualifier}{A character string. Name of a
+  qualifier.}
+
   \item{...}{Additional arguments to be passed to or from
   methods.}
 }

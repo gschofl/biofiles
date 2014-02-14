@@ -4,6 +4,7 @@
 \alias{shift}
 \alias{shift,gbFeature-method}
 \alias{shift,gbFeatureTable-method}
+\alias{shift,gbLocation-method}
 \alias{shift,gbRecord-method}
 \title{Shift the location of features in a GenBank record}
 \usage{
@@ -13,6 +14,8 @@ shift(x, shift = 0L, split = FALSE, order = TRUE)
 
 \S4method{shift}{gbFeatureTable}(x, shift = 0L, split = FALSE,
   order = FALSE)
+
+\S4method{shift}{gbLocation}(x, shift = 0L, ...)
 
 \S4method{shift}{gbRecord}(x, shift, split = FALSE, order = TRUE)
 }
@@ -28,6 +31,8 @@ shift(x, shift = 0L, split = FALSE, order = TRUE)
   across the end of the sequence.}
 
   \item{order}{Reorder features after the shift.}
+
+  \item{...}{Additional arguments passed to methods.}
 }
 \value{
 A \code{\linkS4class{gbFeatureTable}} object.
@@ -40,7 +45,7 @@ Shift the location of features in a GenBank record
 In a shifted feature table compound locations get merged.
 }
 \examples{
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
+gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
 x <- gbRecord(gbk_file)
 
 ## shift the S. cerevisiae mitochondrion such that cytochrome b is the first CDS

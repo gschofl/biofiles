@@ -34,7 +34,7 @@ new_gbRecord <- setClass(
 )
 
 
-setValidity2("gbRecord", function(object) {
+IRanges::setValidity2("gbRecord", function(object) {
   # at the moment do nothing but the default checks
   TRUE
 })
@@ -159,14 +159,13 @@ show_gbRecord <- function(x) {
   cat(showme, sep = "\n")
 }
 
-#' @export
 setMethod("show", "gbRecord", function(object) { 
   show_gbRecord(object)
 })
 
 
-
 # summary, length -----------------------------------------------------------
+
 
 #' @rdname summary-methods
 #' @export
@@ -183,7 +182,13 @@ setMethod("summary", "gbRecord",
           })
 
 
+#' Get the number of gbFeatures.
+#'
+#' @param x A \code{gbRecord}
+#' @return An integer
 #' @export
+#' @docType methods
+#' @rdname length-methods
 setMethod("length", "gbRecord", function(x) {
   length(.features(x))
 })
@@ -228,40 +233,58 @@ setMethod(".defline", "gbRecord", function(x) {
 # getters ----------------------------------------------------------------
 
 #' @export
+#' @rdname accessor-methods
 setMethod("getLocus", "gbRecord", function(x) getLocus(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getLength", "gbRecord", function(x) getLength(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getMoltype", "gbRecord", function(x) getMoltype(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getTopology", "gbRecord", function(x) getTopology(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getDivision", "gbRecord", function(x) getDivision(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getDate", "gbRecord", function(x) getDate(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getDefinition", "gbRecord", function(x) getDefinition(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getAccession", "gbRecord", function(x) getAccession(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getVersion", "gbRecord", function(x) getVersion(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getGeneID", "gbRecord", function(x, db = 'gi') getGeneID(.seqinfo(x), db = db) )
 #' @export
+#' @rdname accessor-methods
 setMethod("getDBLink", "gbRecord", function(x) getDBLink(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getDBSource", "gbRecord", function(x) getDBSource(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getSource", "gbRecord", function(x) getSource(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getOrganism", "gbRecord", function(x) getOrganism(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getTaxonomy", "gbRecord", function(x) getTaxonomy(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getReference", "gbRecord", function(x) getReference(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getKeywords", "gbRecord", function(x) getKeywords(.seqinfo(x)))
 #' @export
+#' @rdname accessor-methods
 setMethod("getComment", "gbRecord", function(x) getComment(.seqinfo(x)))
 
 #' @export
@@ -285,6 +308,7 @@ setMethod("ft", "gbRecord", function(x) .features(x))
 setMethod("getSequence", "gbRecord",  function(x) .sequence(x))
 
 #' @export
+#' @rdname ranges-methods
 setMethod("ranges", "gbRecord",
           function(x, join = FALSE, key = TRUE, include = "none", exclude = "") {
             .GRanges(.features(x), join = join, include = include,
@@ -293,14 +317,14 @@ setMethod("ranges", "gbRecord",
 
 #' @export
 #' @rdname start-methods
-setMethod("start", "gbRecord", function(x, join = FALSE, drop = TRUE) {
-  start(.features(x), join = join, drop = drop)
+setMethod("start", "gbRecord", function(x, join = FALSE) {
+  start(.features(x), join = join)
 })
 
 #' @export
 #' @rdname end-methods
-setMethod("end", "gbRecord", function(x, join = FALSE, drop = TRUE) {
-  end(.features(x), join = join, drop = drop)
+setMethod("end", "gbRecord", function(x, join = FALSE) {
+  end(.features(x), join = join)
 })
 
 #' @export
@@ -407,10 +431,19 @@ setMethod("hasQualif", "gbRecord", function(x, qualifier) {
 #' Method extensions to extraction operator for gbRecord objects.
 #'
 #' See the documentation for the \code{\link[base]{Extract}} generic,
-#' defined in the R \code{\link[base]{base-package}} for the expected behavior. 
-#'
+#' defined in the R \code{\link[base]{base-package}} for the expected behavior.
+#'  
+#' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
+#' or \code{\linkS4class{gbRecord}} object.
+#' @param i indices specifying elements to extract. With \code{gbFeatureTable}s
+#' and \code{gbRecord}s, a \code{character} index is matched against feature keys;
+#' \code{gbFeature}s a \code{character} index is matched against qualifiers.
+#' @param j Not used.
+#' @param ... Not used.
+#' @param drop Not used.
+#' @return A \code{\linkS4class{gbFeatureTable}} object or elements of a
+#' \code{\linkS4class{gbFeature}} object.
 #' @seealso  \code{\link[base]{Extract}}
-#' 
 #' @export
 #' @docType methods
 #' @rdname extract-methods
@@ -427,14 +460,14 @@ setMethod("hasQualif", "gbRecord", function(x, qualifier) {
 #' ## Extract ggFeatures by Feature Key
 #' x["CDS"]
 #' 
-setMethod("[", c("gbRecord", "ANY", "ANY", "ANY"), function(x, i, j, ..., drop = TRUE) {
+setMethod("[", c("gbRecord", "ANY", "missing", "ANY"), function(x, i, j, ..., drop = TRUE) {
   .features(x)[i, ...]
 })
 
 
 #' @export
 #' @rdname extract-methods
-setMethod("[", c("gbRecord", "missing", "ANY", "ANY"), function(x, i, j, ..., drop = TRUE) {
+setMethod("[", c("gbRecord", "missing", "missing", "ANY"), function(x, i, j, ..., drop = TRUE) {
   .features(x)
 })
 

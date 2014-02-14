@@ -3,7 +3,6 @@
 #' @include gbHeader-class.R
 NULL
 
-
 #' Class \code{"gbLocation"}
 #' 
 #' \dQuote{gbLocation} is an S4 class that provides a container for
@@ -50,7 +49,7 @@ setClass("gbLocation",
 
 #' @keywords internal
 #' @importFrom IRanges setValidity2
-setValidity2("gbLocation", function(object) {
+IRanges::setValidity2("gbLocation", function(object) {
   # check range matrix
   if (!is.integer(object@range) || dim(object@range)[2] != 2 )
     return( "The 'range' slot should be a two-column, integer matrix." )
@@ -79,40 +78,45 @@ setValidity2("gbLocation", function(object) {
 
 
 #' @export
-setMethod("start", "gbLocation", function(x, join = FALSE, drop = TRUE) {
+#' @rdname start-methods
+setMethod("start", "gbLocation", function(x, join = FALSE) {
   if (join) {
-    min(x@range[, 1, drop = drop])
+    min(x@range[, 1, drop = TRUE])
   } else {
-    x@range[, 1, drop = drop]
+    x@range[, 1, drop = TRUE]
   }
 })
 
 #' @export
-setMethod("end", "gbLocation", function(x, join = FALSE, drop = TRUE) {
+#' @rdname end-methods
+setMethod("end", "gbLocation", function(x, join = FALSE) {
   if (join) {
-    max(x@range[, 2, drop = drop])
+    max(x@range[, 2, drop = TRUE])
   } else {
-    x@range[, 2, drop = drop]
+    x@range[, 2, drop = TRUE]
   }
 })
 
-
 #' @export
+#' @rdname width-methods
 setMethod("joint_range", "gbLocation", function(x) {
   range(x@range)
 })
 
-
 #' @export
+#' @rdname width-methods
 setMethod("width", "gbLocation", function(x) {
   x@range[, 2] - x@range[, 1] + 1L
 })
 
+#' @export
+#' @rdname width-methods
 setMethod("joint_width", "gbLocation", function(x) {
   max(x@range[, 2]) - min(x@range[, 1]) + 1L
 })
 
 #' @export
+#' @rdname strand-methods
 setMethod("strand", "gbLocation", function(x, join = FALSE) {
   if (join || dim(x@range)[1] == 1L) {
     unique(x@strand)
@@ -122,15 +126,21 @@ setMethod("strand", "gbLocation", function(x, join = FALSE) {
 })
 
 #' @export
+#' @rdname fuzzy-methods
 setMethod("fuzzy", "gbLocation", function(x) x@fuzzy)
 
 #' @export
+#' @rdname accessor-methods
 setMethod("getAccession", "gbLocation", function(x) x@accession)
 
 
 # Replace methods -----------------------------------------------------
 
 
+#' @name start<-
+#' @export
+#' @rdname start-methods
+#' @aliases start<-,gbLocation-method
 setReplaceMethod("start", "gbLocation",
                  function(x, check = TRUE, value) {
                    nrow <- dim(x@range)[1]
@@ -150,7 +160,10 @@ setReplaceMethod("start", "gbLocation",
                    x
                  })
 
-
+#' @name end<-
+#' @export
+#' @rdname end-methods
+#' @aliases end<-,gbLocation-method
 setReplaceMethod("end", "gbLocation",
                  function(x, check = TRUE, value) {
                    nrow <- dim(x@range)[1]
@@ -170,7 +183,10 @@ setReplaceMethod("end", "gbLocation",
                    x
                  })
 
-
+#' @name strand<-
+#' @export
+#' @rdname strand-methods
+#' @aliases strand<-,gbLocation-method
 setReplaceMethod("strand", "gbLocation",
                  function(x, value) {
                    nrow <- dim(x@range)[1]
@@ -257,7 +273,15 @@ setAs("character", "gbLocation",
       function(from) gbLocation(from))
 
 
+#' Create a \code{gbLocation}.
+#' 
+#' Create a \code{gbLocation} object out of a character string.
+#' 
+#' @param base_span A character string representation of GenBank feature location
+#' @return A \code{\linkS4class{gbLocation}} object.
 #' @export
+#' @examples
+#' as.gbLocation("join(1..10,12..20)")
 as.gbLocation <- function(base_span) {
   as(as.character(base_span), "gbLocation")
 }
@@ -266,6 +290,7 @@ as.gbLocation <- function(base_span) {
 # shift ---------------------------------------------------------------
 
 
+#' @rdname shift-methods
 #' @export
 setMethod("shift", "gbLocation", function(x, shift = 0L, ...) {
   if (!is.numeric(shift))
@@ -286,7 +311,6 @@ setMethod("shift", "gbLocation", function(x, shift = 0L, ...) {
 # Show-method ---------------------------------------------------------
 
 
-#' @export
 setMethod("show", "gbLocation", function(object) {
   res <- as(object, "character")
   cat(linebreak(res, FORCE = TRUE), "\n" )

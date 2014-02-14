@@ -2,7 +2,6 @@
 \docType{methods}
 \name{qualif}
 \alias{geneID}
-\alias{key<-}
 \alias{locusTag}
 \alias{note}
 \alias{product}
@@ -12,6 +11,7 @@
 \alias{qualif,gbFeatureTable-method}
 \alias{qualif,gbRecord-method}
 \alias{qualif<-}
+\alias{qualif<-,gbFeature-method}
 \alias{translation}
 \title{Get/set qualifiers of GenBank features}
 \usage{
@@ -44,8 +44,8 @@ translation(x)
   \code{\linkS4class{gbFeatureTable}}, or
   \code{\linkS4class{gbRecord}} object.}
 
-  \item{which}{(Optional) A character vector giving the
-  name(s) of the qualifiers to retrieve.}
+  \item{which}{A character vector giving the name(s) of the
+  qualifiers to retrieve or set.}
 
   \item{fixed}{If \code{TRUE}, \code{which} is matched
   against qualifiers as is, if \code{FALSE} it is treated
@@ -57,6 +57,15 @@ translation(x)
   list.}
 
   \item{...}{Additional arguments passed to methods.}
+
+  \item{check}{if \code{FALSE}, don't perform validity
+  checks.}
+
+  \item{value}{The qualifier information to set on
+  \code{x}.}
+}
+\value{
+A \code{data.frame}.
 }
 \description{
 Get/set qualifiers of GenBank features

@@ -20,6 +20,9 @@ location(x, ...)
   \code{\linkS4class{gbFeatureTable}}, or
   \code{\linkS4class{gbRecord}} object.}
 
+  \item{join}{Join compound genomic locations to a single
+  range.}
+
   \item{...}{Additional arguments passed to methods.}
 }
 \value{

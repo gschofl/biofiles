@@ -6,11 +6,22 @@
 getContigSeq(x, merge = TRUE)
 }
 \arguments{
-  \item{x}{gbRecord}
+  \item{x}{A \code{\linkS4class{gbRecord}} object.}
 
-  \item{merge}{}
+  \item{merge}{Merge the retrieved contig sequences.}
+}
+\value{
+A \code{\linkS4class{DNAStringSet}} instance.
 }
 \description{
 ## EXPERIMENTAL ##
+}
+\details{
+For GenBank records that contain a CONTIG field, try to get
+the contig sequences and (optionally) merge them into a
+single sequence.
+}
+\examples{
+###
 }
 

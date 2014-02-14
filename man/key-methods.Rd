@@ -7,6 +7,7 @@
 \alias{key,gbRecord-method}
 \alias{key,gbRecordList-method}
 \alias{key<-}
+\alias{key<-,gbFeature-method}
 \title{Get/set keys of GenBank features}
 \usage{
 key(x, ...)
@@ -28,6 +29,11 @@ key(x, check = TRUE) <- value
   \code{\linkS4class{gbRecordList}} object.}
 
   \item{...}{Additional arguments passed to methods.}
+
+  \item{check}{if \code{FALSE}, don't perform validity
+  checks.}
+
+  \item{value}{The key information to set on \code{x}.}
 }
 \description{
 Get/set keys of GenBank features
