@@ -1,4 +1,4 @@
-#include "biofiles.hpp"
+#include "biofiles.h"
 #include <boost/algorithm/string_regex.hpp>
 
 using namespace Rcpp;
