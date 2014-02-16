@@ -2,6 +2,7 @@
 #define __BIOFILES__
 
 #include <Rcpp.h>
+
 #include <string>
 #include <vector>
 #include <boost/regex.hpp>
