@@ -29,10 +29,10 @@ NULL
 setClass(
   "gbFeature",
   slots = list(
-    .seqinfo  = "seqinfo",
-    .id       = "integer",
-    key       = "character",
-    location  = "gbLocation",
+    .seqinfo   = "seqinfo",
+    .id        = "integer",
+    key        = "character",
+    location   = "gbLocation",
     qualifiers = "character"
   )
 )

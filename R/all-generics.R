@@ -1,7 +1,7 @@
 #' @include utils.R
 #' @useDynLib biofiles
 #' @importFrom GenomicRanges seqlengths seqinfo
-NULL
+NA
 
 
 # The biofiles API -------------------------------------------------------
@@ -71,13 +71,15 @@ NULL
 #' 
 setGeneric("start")
 
+
 #' @param check if \code{FALSE}, don't perform validity checks.
 #' @param value The start information to set on \code{x}.
 #' @rdname start-methods
 #' @export
 #' @docType methods
-#' @importFrom IRanges "start<-"
+#' @importFrom IRanges start<-
 setGeneric("start<-")
+
 
 #' Get or set the end of genomic features
 #' 

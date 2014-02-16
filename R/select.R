@@ -61,30 +61,3 @@
   }
   data.frame(stringsAsFactors = FALSE, cols)
 }
-
-#' @importFrom plyr rbind.fill
-parseDbXref <- function(dbx) {
-  n <- nrow(dbx)
-  n <- if (is.null(n)) length(dbx) else n
-  if (is.atomic(dbx)) {
-    structure(list(strsplitN(dbx, ":", 2)),
-              names = unique(strsplitN(dbx, ":", 1)))
-  } else if (is.data.frame(dbx)) {
-    dbs <-`dim<-`(
-        vapply(dbx, Compose(unique, strsplitN), ":", 1, FUN.VALUE = character(1)),
-        NULL
-      )
-    structure(lapply(dbx, strsplitN, ":", 2), names = dbs)
-  } else if (is.list(dbx)) {
-    as.list(
-      rbind.fill(
-        lapply(dbx, function (x) {
-          a <- sapply(x, strsplit, ":")
-          a <- setNames(sapply(a, "[", 2), sapply(a, "[", 1))
-          data.frame(stringsAsFactors = FALSE, as.list(a))
-        })
-      )
-    )
-  }
-}
-

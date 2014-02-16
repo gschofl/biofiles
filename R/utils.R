@@ -1,14 +1,12 @@
-#' @import methods
-#' @import Rcpp
-#' @import BH
-#' @importFrom assertthat assert_that "on_failure<-" is.string is.scalar
+#' @import methods Rcpp BH
+#' @importFrom assertthat assert_that on_failure<- is.string is.scalar
 #' @importFrom stats setNames
 NULL
 
 is.empty <- function(x) {
   is.null(x) || length(x) == 0L || (length(x) == 1L && !nzchar(x))
 }
-on_failure(is.empty) <- function(call, env) {
+assertthat::on_failure(is.empty) <- function(call, env) {
   paste0(deparse(call$x), " is not empty.")
 }
 
@@ -21,7 +19,7 @@ are_empty <- function(x) {
 }
 
 all_empty <- function(x) all(are_empty(x))
-on_failure(all_empty) <- function(call, env) {
+assertthat::on_failure(all_empty) <- function(call, env) {
   paste0("Not all elements in ", deparse(call$x), " are empty.")
 }
 
@@ -29,7 +27,7 @@ is_in <- function(x, table) {
   assert_that(is.scalar(x))
   x %in% table
 }
-on_failure(is_in) <- function(call, env) {
+assertthat::on_failure(is_in) <- function(call, env) {
   paste0(sQuote(deparse(call$x)), " is not an element of ",
          paste0(sQuote(eval(call$table, env)), collapse = ", "))
 }
@@ -93,8 +91,8 @@ modify_list <- function(a, b, mode = c("replace", "merge")) {
 }
 
 #' @importFrom reutils make_flattener
-flatten1 <- make_flattener(flatten.at = 1)
-flatten2 <- make_flattener(flatten.at = 2)
+flatten1 <- reutils::make_flattener(flatten.at = 1)
+flatten2 <- reutils::make_flattener(flatten.at = 2)
 
 re <- function(x) {
   assert_that(is.string(x))
@@ -228,7 +226,7 @@ has_command <- function(cmd, msg = "") {
   assert_that(is.string(cmd))
   unname(Sys.which(cmd) != "")
 }
-on_failure(has_command) <- function(call, env) {
+assertthat::on_failure(has_command) <- function(call, env) {
   paste0("Dependency ", sQuote(eval(call$cmd, env)), " is not installed\n",
          eval(call$msg, env))
 }
