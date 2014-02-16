@@ -1,6 +1,7 @@
 #ifndef __BIOFILES__ // make sure the header is included only once
 #define __BIOFILES__
 
+// [[Rcpp::depends(BH)]]
 #include <Rcpp.h>
 
 #include <string>
