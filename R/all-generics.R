@@ -1,8 +1,6 @@
 #' @include utils.R
 #' @useDynLib biofiles
-#' @importFrom GenomicRanges seqlengths seqinfo
-NA
-
+NULL
 
 # The biofiles API -------------------------------------------------------
 
@@ -49,7 +47,6 @@ NA
 ## "start" is defined as an S3 generics in the stats package.
 #' Get or set the start of genomic features
 #' 
-#' @usage start(x, join = FALSE, ...)
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
 #' @param join Join compound genomic locations into a single range.
@@ -59,7 +56,6 @@ NA
 #'   \code{\link{end}}, \code{\link{strand}}, \code{\link{width}}, \code{\link{ranges}}
 #' @rdname start-methods
 #' @export
-#' @docType methods
 #' @importFrom stats start
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
@@ -68,22 +64,17 @@ NA
 #' 
 #' cds <- x["CDS"]
 #' start(cds)
-#' 
 setGeneric("start")
-
 
 #' @param check if \code{FALSE}, don't perform validity checks.
 #' @param value The start information to set on \code{x}.
 #' @rdname start-methods
 #' @export
-#' @docType methods
 #' @importFrom IRanges start<-
 setGeneric("start<-")
 
-
 #' Get or set the end of genomic features
 #' 
-#' @usage end(x, join = FALSE, ...)
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
 #' @param join Join compound genomic locations into a single range.
@@ -93,7 +84,6 @@ setGeneric("start<-")
 #'   \code{\link{start}}, \code{\link{strand}}, \code{\link{width}}, \code{\link{ranges}}
 #' @rdname end-methods
 #' @export
-#' @docType methods
 #' @importFrom stats end
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
@@ -109,14 +99,12 @@ setGeneric("end")
 #' @param value The end information to set on \code{x}.
 #' @rdname end-methods
 #' @export
-#' @docType methods
-#' @importFrom IRanges "end<-"
+#' @importFrom IRanges end<-
 setGeneric("end<-")
 
 ### The "strand" generic is defined in the BiocGenerics package.
 #' Get or set the strand of genomic features
 #'
-#' @usage strand(x, join = FALSE, ...)
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
 #' @param join Join compound genomic locations into a single range.
@@ -127,7 +115,6 @@ setGeneric("end<-")
 #'   \code{\link{start}}, \code{\link{end}}, \code{\link{width}}, \code{\link{ranges}}
 #' @rdname strand-methods
 #' @export
-#' @docType methods
 #' @importFrom BiocGenerics strand
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
@@ -138,15 +125,13 @@ setGeneric("strand")
 
 #' @rdname strand-methods
 #' @export
-#' @docType methods
-#' @importFrom BiocGenerics "strand<-"
+#' @importFrom BiocGenerics strand<-
 setGeneric("strand<-")
 
 ### The "width" generic is defined in the IRanges package. We need
 ### to define joint_width internally instead of width(x, join = TRUE)
 #' Get the width of genomic features
 #'
-#' @usage width(x)
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
 #' @return An integer vector or a list of integer vectors.
@@ -154,7 +139,6 @@ setGeneric("strand<-")
 #'   \code{\link{start}}, \code{\link{end}}, \code{\link{strand}}, \code{\link{ranges}}
 #' @rdname width-methods
 #' @export
-#' @docType methods
 #' @importFrom IRanges width
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
@@ -165,20 +149,15 @@ setGeneric("width")
 
 #' @rdname width-methods
 #' @export
-#' @docType methods
 setGeneric("joint_width", signature = "x", function(x) standardGeneric("joint_width"))
-
 
 #' @rdname width-methods
 #' @export
-#' @docType methods
 setGeneric("joint_range", signature = "x", function(x) standardGeneric("joint_range"))
-
 
 ### The "ranges" generic is defined in the IRanges package.
 #' Extract features as \code{"\linkS4class{GRanges}"} objects.
 #' 
-#' @usage ranges(x, join = FALSE, key = TRUE, include = "none", exclude = "")
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
 #' @param join Join compound genomic locations into a single range.
@@ -209,19 +188,16 @@ setGeneric("joint_range", signature = "x", function(x) standardGeneric("joint_ra
 #'
 setGeneric("ranges")
 
-
 #' Has a feature fuzzy locations?
 #' 
 #' With a GenBank location like \emph{complement(<123..150)} we don't know the exact
 #' start position of the feature. Use \code{fuzzy} to test for fuzzy locations.
 #' 
-#' @usage fuzzy(x)
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
 #' @return A logical matrix.
 #' @rdname fuzzy-methods
 #' @export
-#' @docType methods
 #' @examples
 #' l <- as.gbLocation("complement(<123..150)")
 #' fuzzy(l)
@@ -235,12 +211,10 @@ setGeneric("fuzzy", signature = "x", function (x, ...) {
 
 #' Access the various fields of a GenBank record.
 #' 
-#' @usage getLocus(x)
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -249,109 +223,74 @@ setGeneric("fuzzy", signature = "x", function (x, ...) {
 #' getLength(x)
 #' getGeneID(x)
 #' getReference(x)
-#' 
 setGeneric('getLocus', function (x, ...) standardGeneric('getLocus'))
 
-#' @usage getLength(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric("getLength", function (x, ...) standardGeneric('getLength'))
 
-#' @usage getMoltype(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric('getMoltype', function (x, ...) standardGeneric('getMoltype'))
 
-#' @usage getTopology(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric('getTopology', function (x, ...) standardGeneric('getTopology'))
 
-#' @usage getDivision(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric('getDivision', function (x, ...) standardGeneric('getDivision'))
 
-#' @usage getDate(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric('getDate', function (x) standardGeneric('getDate'))
 
-#' @usage getDefinition(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric("getDefinition", function (x, ...) standardGeneric("getDefinition"))
 
-#' @usage getAccession(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric("getAccession", function (x, ...) standardGeneric("getAccession"))
 
-#' @usage getVersion(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric("getVersion", function (x, ...) standardGeneric("getVersion"))
 
-#' @usage getGeneID(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric("getGeneID", function (x, ...) standardGeneric("getGeneID"))
 
-#' @usage getDBLink(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric('getDBLink', function (x) standardGeneric('getDBLink'))
 
-#' @usage getDBSource(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric('getDBSource', function (x) standardGeneric('getDBSource'))
 
-#' @usage getSource(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric('getSource', function (x) standardGeneric('getSource'))
 
-#' @usage getOrganism(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric('getOrganism', function (x) standardGeneric('getOrganism'))
 
-#' @usage getTaxonomy(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric('getTaxonomy', function (x) standardGeneric('getTaxonomy'))
 
-#' @usage getKeywords(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric('getKeywords', function (x) standardGeneric('getKeywords'))
 
-#' @usage getReference(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric('getReference', function (x) standardGeneric('getReference'))
 
-#' @usage getComment(x)
 #' @rdname accessor-methods
 #' @export
-#' @docType methods
 setGeneric('getComment', function (x) standardGeneric('getComment'))
 
 
@@ -365,7 +304,6 @@ setGeneric('getComment', function (x) standardGeneric('getComment'))
 #' @return The \code{\linkS4class{gbFeatureTable}} of a Genbank record.
 #' @rdname getFeatures-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -373,15 +311,12 @@ setGeneric('getComment', function (x) standardGeneric('getComment'))
 #' 
 setGeneric("getFeatures", function(x, ...) standardGeneric("getFeatures"))
 
-
 #' @rdname getFeatures-methods
 #' @export
-#' @docType methods
 #' @examples
 #' ft(x)
 #' 
 setGeneric("ft", function(x, ...) standardGeneric("ft"))
-
 
 #' Get the sequence from a GenBank record.
 #' 
@@ -392,7 +327,6 @@ setGeneric("ft", function(x, ...) standardGeneric("ft"))
 #' complete sequence(s) of the record(s), or of the selected feature(s)
 #' @rdname getSequence-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -405,7 +339,6 @@ setGeneric("ft", function(x, ...) standardGeneric("ft"))
 #' 
 setGeneric("getSequence", function(x, ...) standardGeneric("getSequence"))
 
-
 #' Extract the header from a \code{"\linkS4class{gbRecord}"} object.
 #' 
 #' @param x A \code{"\linkS4class{gbRecord}"}, \code{"\linkS4class{gbFeature}"},
@@ -414,7 +347,6 @@ setGeneric("getSequence", function(x, ...) standardGeneric("getSequence"))
 #' @return A \code{"\linkS4class{gbHeader}"} instance
 #' @rdname getHeader-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -424,12 +356,10 @@ setGeneric("getHeader", function(x, ...) standardGeneric("getHeader"))
 
 #' @rdname getHeader-methods
 #' @export
-#' @docType methods
 #' @examples
 #' header(x)
 #' 
 setGeneric("header", function(x, ...) standardGeneric("header"))
-
 
 #' Summarise a GenBank record. 
 #'
@@ -442,14 +372,12 @@ setGeneric("header", function(x, ...) standardGeneric("header"))
 #' @param ... Arguments to be passed to or from other methods.
 #' @rdname summary-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' summary(x)
 #' 
 setGeneric("summary")
-
 
 #' Access the indices of GenBank features
 #'
@@ -459,7 +387,6 @@ setGeneric("summary")
 #' @return A numeric vector of feature indeces.
 #' @rdname index-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -468,7 +395,6 @@ setGeneric("summary")
 setGeneric("index", signature = "x", function (x, ...) {
   standardGeneric("index")
 })
-
 
 #' Access genomic locations of GenBank features
 #'
@@ -479,7 +405,6 @@ setGeneric("index", signature = "x", function (x, ...) {
 #' @return A list of \code{\linkS4class{gbLocation}} objects
 #' @rdname location-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -489,7 +414,6 @@ setGeneric("location", signature = "x", function (x, ...) {
   standardGeneric("location")
 })
 
-
 #' Get/set keys of GenBank features
 #'
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
@@ -497,7 +421,6 @@ setGeneric("location", signature = "x", function (x, ...) {
 #' @param ... Additional arguments passed to methods.
 #' @rdname key-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -507,16 +430,13 @@ setGeneric("key", signature = "x", function(x, ...) {
   standardGeneric("key")
 })
 
-
 #' @param check if \code{FALSE}, don't perform validity checks.
 #' @param value The key information to set on \code{x}.
 #' @rdname key-methods
 #' @export
-#' @docType methods
 setGeneric("key<-", signature = "x", function(x, check = TRUE, value) {
   standardGeneric("key<-")
 })
-
 
 #' Get/set qualifiers of GenBank features
 #' 
@@ -533,7 +453,6 @@ setGeneric("key<-", signature = "x", function(x, check = TRUE, value) {
 #' @return A \code{data.frame}.
 #' @rdname qualif-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -546,14 +465,12 @@ setGeneric("qualif", signature = "x", function(x, which = "", ...) {
   standardGeneric("qualif")
 })
 
-
 #' @param check if \code{FALSE}, don't perform validity checks.
 #' @param value The qualifier information to set on \code{x}.
 #' @rdname qualif-methods
 #' @export
-#' @docType methods
 setGeneric("qualif<-", signature = "x", function(x, which, check = TRUE, value) {
-  standardGenseric("qualif<-")
+  standardGeneric("qualif<-")
 })
 
 
@@ -568,7 +485,6 @@ setGeneric("qualif<-", signature = "x", function(x, which, check = TRUE, value) 
 #' of db_xrefs.
 #' @rdname dbxref-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -599,7 +515,6 @@ setGeneric("dbxref", signature = "x", function(x, db = NULL, ...) {
 #' @param ... Arguments passed to \code{\link{saveRDS}}.
 #' @rdname saveRecord-methods
 #' @export
-#' @docType methods
 #' @examples
 #' \dontrun{
 #' aca <- genomeRecordFromNCBI("Bacteria/Acaryochloris_marina", verbose = TRUE)
@@ -626,7 +541,6 @@ setGeneric("saveRecord", function(x, file = NULL, dir = ".", ...) standardGeneri
 #' @param ... Additional arguments passed to methods.
 #' @rdname write.GenBank-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -657,7 +571,6 @@ setGeneric("write.GenBank", function(x, file, append = FALSE, ...) {
 #' @param ... Additional arguments passed to methods.
 #' @rdname write.FeatureTable-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -685,7 +598,6 @@ setGeneric("write.FeatureTable", signature = "x",
 #'    \code{\link{uniqueQualifs}}, \code{\link{hasQualif}}
 #' @rdname qualifList-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -708,7 +620,6 @@ setGeneric("qualifList", function(x, ...) standardGeneric("qualifList"))
 #'    \code{\link{uniqueQualifs}}, \code{\link{hasQualif}}
 #' @rdname qualifTable-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -729,7 +640,6 @@ setGeneric("qualifTable", function(x, ...) standardGeneric("qualifTable"))
 #'    \code{\link{qualifTable}}
 #' @rdname featureTable-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -752,7 +662,6 @@ setGeneric("featureTable", function(x, ...) standardGeneric("featureTable"))
 #'    \code{\link{key}}
 #' @rdname hasKey-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -775,7 +684,6 @@ setGeneric("hasKey", signature = c("x","key"), function(x, key, ...) {
 #'  unique qualifiers present in an object. 
 #' @rdname hasQualif-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -806,7 +714,6 @@ setGeneric("hasQualif", signature = c("x", "qualifier"), function(x, qualifier, 
 #' @return A \code{\linkS4class{gbFeatureTable}} object.
 #' @rdname shift-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
 #' x <- gbRecord(gbk_file)
@@ -828,7 +735,6 @@ setGeneric("shift", signature = "x", function(x, shift = 0L, use.names = TRUE, .
 #' @param order Reorder features after reverse-complementing them.
 #' @rdname revcomp-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
 #' x <- gbRecord(gbk_file)
@@ -848,7 +754,6 @@ setGeneric("revcomp", signature = "x", function(x, ...) standardGeneric("revcomp
 #' @rdname view-methods
 #' @keywords internal
 #' @export
-#' @docType methods
 setGeneric("view", signature = "x", function(x, n, ...) {
   standardGeneric("view")
 })
@@ -863,7 +768,6 @@ setGeneric("view", signature = "x", function(x, n, ...) {
 #' \code{\linkS4class{gbFeatureTable}} objects, based on filters provided as \emph{key},
 #' \emph{range}, or \emph{qualifier} values.
 #'
-#' @usage filter(x, ..., .cols = NULL) 
 #' @details
 #' Filters are provided as named values using keywords and/or
 #' \dQuote{\emph{qualifier = value}} pairs:
@@ -908,7 +812,6 @@ setGeneric("view", signature = "x", function(x, n, ...) {
 #' or a \code{data.frame}.
 #' @rdname manip-methods
 #' @export
-#' @docType methods
 #' @examples
 #' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
@@ -935,10 +838,8 @@ setGeneric("filter", signature = "x", function(x, ...) standardGeneric("filter")
 
 #' \code{select} returns a specified subset of annotations from GenBank Features
 #' as a \code{data.frame}.
-#' @usage select(x, ..., .cols = NULL)
 #' @rdname manip-methods
 #' @export
-#' @docType methods
 setGeneric("select", signature = "x", function(x, ...) standardGeneric("select"))
 
 

@@ -8,12 +8,9 @@
 \alias{end,gbRecord-method}
 \alias{end,gbRecordList-method}
 \alias{end<-}
-\alias{end<-,gbFeature-method}
-\alias{end<-,gbFeatureTable-method}
-\alias{end<-,gbLocation-method}
 \title{Get or set the end of genomic features}
 \usage{
-end(x, join = FALSE, ...)
+end(x, ...)
 
 end(x, check = TRUE) <- value
 

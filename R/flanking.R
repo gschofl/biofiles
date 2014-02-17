@@ -1,9 +1,4 @@
-#' @importFrom IRanges IRanges
-#' @importFrom IRanges follow
-#' @importFrom IRanges precede
-#' @importFrom IRanges split
-#' @importFrom IRanges queryHits
-#' @importFrom IRanges subjectHits
+#' @importFrom IRanges IRanges follow precede split queryHits subjectHits
 NULL
 
 #' @keywords internal
@@ -88,7 +83,6 @@ find_neighbors <- function(query, subject, n = 5,  direction = 'flanking',
 #' Find flanking features
 #' 
 #' @usage upstream(query, subject, n = 5, include_key = "all", exclude_key = "none")
-#' 
 #' @param query A \code{\linkS4class{gbFeature}} or \code{\linkS4class{gbFeatureTable}}
 #' object.
 #' @param subject A \code{\linkS4class{gbRecord}} or \code{\linkS4class{gbFeatureTable}}
@@ -113,13 +107,13 @@ upstream <- Partial(find_neighbors, direction = "upstream")
 
 
 #' @usage downstream(query, subject, n = 5, include_key = "all", exclude_key = "none")
-#' @export
 #' @rdname upstream
+#' @export
 downstream <- Partial(find_neighbors, direction = "downstream")
 
 
 #' @usage flanking(query, subject, n = 5, include_key = "all", exclude_key = "none")
-#' @export
 #' @rdname upstream
+#' @export
 flanking <- Partial(find_neighbors, direction = "flanking")
 

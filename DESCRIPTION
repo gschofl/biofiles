@@ -34,6 +34,7 @@ Suggests:
     BiocStyle
 License: MIT + file LICENSE
 Encoding: UTF-8
+Roxygen: list(wrap = FALSE)
 URL: https://github.com/gschofl/biofiles
 BugReports: https://github.com/gschofl/biofiles/issues
 Collate:

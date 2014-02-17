@@ -77,8 +77,8 @@ IRanges::setValidity2("gbLocation", function(object) {
 # Getter-methods ---------------------------------------------------------
 
 
-#' @export
 #' @rdname start-methods
+#' @export
 setMethod("start", "gbLocation", function(x, join = FALSE) {
   if (join) {
     min(x@range[, 1, drop = TRUE])
@@ -87,8 +87,8 @@ setMethod("start", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @export
 #' @rdname end-methods
+#' @export
 setMethod("end", "gbLocation", function(x, join = FALSE) {
   if (join) {
     max(x@range[, 2, drop = TRUE])
@@ -97,26 +97,26 @@ setMethod("end", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @export
 #' @rdname width-methods
+#' @export
 setMethod("joint_range", "gbLocation", function(x) {
   range(x@range)
 })
 
-#' @export
 #' @rdname width-methods
+#' @export
 setMethod("width", "gbLocation", function(x) {
   x@range[, 2] - x@range[, 1] + 1L
 })
 
-#' @export
 #' @rdname width-methods
+#' @export
 setMethod("joint_width", "gbLocation", function(x) {
   max(x@range[, 2]) - min(x@range[, 1]) + 1L
 })
 
-#' @export
 #' @rdname strand-methods
+#' @export
 setMethod("strand", "gbLocation", function(x, join = FALSE) {
   if (join || dim(x@range)[1] == 1L) {
     unique(x@strand)
@@ -125,12 +125,12 @@ setMethod("strand", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @export
 #' @rdname fuzzy-methods
+#' @export
 setMethod("fuzzy", "gbLocation", function(x) x@fuzzy)
 
-#' @export
 #' @rdname accessor-methods
+#' @export
 setMethod("getAccession", "gbLocation", function(x) x@accession)
 
 
@@ -138,9 +138,8 @@ setMethod("getAccession", "gbLocation", function(x) x@accession)
 
 
 #' @name start<-
-#' @export
 #' @rdname start-methods
-#' @aliases start<-,gbLocation-method
+#' @export
 setReplaceMethod("start", "gbLocation",
                  function(x, check = TRUE, value) {
                    nrow <- dim(x@range)[1]
@@ -163,7 +162,6 @@ setReplaceMethod("start", "gbLocation",
 #' @name end<-
 #' @export
 #' @rdname end-methods
-#' @aliases end<-,gbLocation-method
 setReplaceMethod("end", "gbLocation",
                  function(x, check = TRUE, value) {
                    nrow <- dim(x@range)[1]
@@ -186,7 +184,6 @@ setReplaceMethod("end", "gbLocation",
 #' @name strand<-
 #' @export
 #' @rdname strand-methods
-#' @aliases strand<-,gbLocation-method
 setReplaceMethod("strand", "gbLocation",
                  function(x, value) {
                    nrow <- dim(x@range)[1]

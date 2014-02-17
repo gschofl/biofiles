@@ -11,7 +11,6 @@
 \alias{qualif,gbFeatureTable-method}
 \alias{qualif,gbRecord-method}
 \alias{qualif<-}
-\alias{qualif<-,gbFeature-method}
 \alias{translation}
 \title{Get/set qualifiers of GenBank features}
 \usage{

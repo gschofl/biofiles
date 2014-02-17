@@ -9,9 +9,9 @@
 \alias{select,gbRecord-method}
 \title{Return a subset of features or annotations from a GenBank Record}
 \usage{
-filter(x, ..., .cols = NULL)
+filter(x, ...)
 
-select(x, ..., .cols = NULL)
+select(x, ...)
 
 \S4method{filter}{gbFeatureTable}(x, ..., .cols = NULL)
 

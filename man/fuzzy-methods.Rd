@@ -9,7 +9,7 @@
 \alias{fuzzy,gbRecordList-method}
 \title{Has a feature fuzzy locations?}
 \usage{
-fuzzy(x)
+fuzzy(x, ...)
 
 \S4method{fuzzy}{gbFeature}(x)
 

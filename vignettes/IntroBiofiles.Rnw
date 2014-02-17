@@ -10,7 +10,7 @@ BiocStyle::latex(width = 90)
 @
 
 \SweaveOpts{concordance=TRUE}
-\title{Using the biofiles package (work-in-progress)}
+\title{Using the biofiles package}
 \author{Gerhard Schöfl \\
         Dept. for Cell and Molecular Biology \\
         Hans-Knöll Institute \\

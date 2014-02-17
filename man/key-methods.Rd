@@ -7,7 +7,6 @@
 \alias{key,gbRecord-method}
 \alias{key,gbRecordList-method}
 \alias{key<-}
-\alias{key<-,gbFeature-method}
 \title{Get/set keys of GenBank features}
 \usage{
 key(x, ...)

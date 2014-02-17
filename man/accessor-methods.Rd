@@ -112,25 +112,25 @@
 \alias{getVersion,seqinfo-method}
 \title{Access the various fields of a GenBank record.}
 \usage{
-getLocus(x)
+getLocus(x, ...)
 
-getLength(x)
+getLength(x, ...)
 
-getMoltype(x)
+getMoltype(x, ...)
 
-getTopology(x)
+getTopology(x, ...)
 
-getDivision(x)
+getDivision(x, ...)
 
 getDate(x)
 
-getDefinition(x)
+getDefinition(x, ...)
 
-getAccession(x)
+getAccession(x, ...)
 
-getVersion(x)
+getVersion(x, ...)
 
-getGeneID(x)
+getGeneID(x, ...)
 
 getDBLink(x)
 
@@ -348,5 +348,4 @@ getLength(x)
 getGeneID(x)
 getReference(x)
 }
-\keyword{internal}
 
