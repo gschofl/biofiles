@@ -11,9 +11,9 @@ BiocStyle::latex(width = 90)
 
 \SweaveOpts{concordance=TRUE}
 \title{Using the biofiles package}
-\author{Gerhard Schöfl \\
+\author{Gerhard Scho"fl \\
         Dept. for Cell and Molecular Biology \\
-        Hans-Knöll Institute \\
+        Hans-Kno"ll Institute \\
         Jena, Germany}
 
 \begin{document}
