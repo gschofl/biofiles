@@ -1,1 +1,2 @@
-PKG_LIBS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` -lboost_regex
+PKG_CXXFLAGS = -g -O2
+PKG_LIBS =  -lboost_regex

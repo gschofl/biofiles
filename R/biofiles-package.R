@@ -12,7 +12,7 @@
 #' For a detailed description of the GenBank feature table format see
 #' \url{http://www.ncbi.nlm.nih.gov/collab/FT}
 #'
-#' @import methods Rcpp BH
+#' @import methods Rcpp
 #' @keywords package
 #' @docType package
 #' @name biofiles

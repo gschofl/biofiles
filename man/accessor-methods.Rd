@@ -335,6 +335,10 @@ getComment(x)
   \code{\linkS4class{gbFeatureTable}},
   \code{\linkS4class{gbRecord}}, or
   \code{\linkS4class{gbRecordList}} object.}
+
+  \item{...}{Further arguments passed to methods.}
+
+  \item{db}{Which database identifier (default: 'gi')}
 }
 \description{
 Access the various fields of a GenBank record.

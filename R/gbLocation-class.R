@@ -140,6 +140,7 @@ setMethod("getAccession", "gbLocation", function(x) x@accession)
 #' @name start<-
 #' @rdname start-methods
 #' @export
+#' @aliases start<-,gbLocation-method
 setReplaceMethod("start", "gbLocation",
                  function(x, check = TRUE, value) {
                    nrow <- dim(x@range)[1]
@@ -162,6 +163,7 @@ setReplaceMethod("start", "gbLocation",
 #' @name end<-
 #' @export
 #' @rdname end-methods
+#' @aliases end<-,gbLocation-method
 setReplaceMethod("end", "gbLocation",
                  function(x, check = TRUE, value) {
                    nrow <- dim(x@range)[1]
@@ -184,6 +186,7 @@ setReplaceMethod("end", "gbLocation",
 #' @name strand<-
 #' @export
 #' @rdname strand-methods
+#' @aliases strand<-,gbLocation-method
 setReplaceMethod("strand", "gbLocation",
                  function(x, value) {
                    nrow <- dim(x@range)[1]

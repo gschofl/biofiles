@@ -449,7 +449,7 @@ get_compounds <- function(x) {
   ## case 2
   else if (length(len) == 1L &&
              (is.null(nm) || length(nm) == len)) {
-    r <- as.vector(unlist(x, recursive = FALSE, use.names = FALSE))
+    r <- unlist(x, recursive = FALSE, use.names = FALSE)
     data.frame(stringsAsFactors = FALSE,
                matrix(r, ncol = len, byrow = TRUE,
                       dimnames = list(NULL, nm)))

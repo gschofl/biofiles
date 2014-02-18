@@ -125,9 +125,7 @@ join_seq <- function(seq, accession_no) {
   s
 }
 
-#' @importFrom Biostrings readDNAStringSet
-#' @importFrom Biostrings readAAStringSet
-#' @importFrom Biostrings BStringSet
+#' @importFrom Biostrings readDNAStringSet readAAStringSet BStringSet
 gbSequence <- function(gb_sequence, accession_no, seq_type) {
   # read.BStringSet() does not support connections and
   # currently only accepts fasta format. So we write out gb_sequence as

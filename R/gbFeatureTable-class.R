@@ -211,6 +211,7 @@ setMethod("start", "gbFeatureTable", function(x, join = FALSE) {
 #' @name start<-
 #' @rdname start-methods
 #' @export
+#' @aliases start<-,gbFeatureTable-method
 setReplaceMethod("start", "gbFeatureTable", function(x, check = TRUE, value) {
   value <- recycle(value, length(x))
   new_x <- Map(function(Feature, check, val) { 
@@ -235,6 +236,7 @@ setMethod("end", "gbFeatureTable", function(x, join = FALSE) {
 #' @name end<-
 #' @rdname end-methods
 #' @export
+#' @aliases end<-,gbFeatureTable-method
 setReplaceMethod("end", "gbFeatureTable", function(x, check = TRUE, value) {
   value <- recycle(value, length(x))
   new_x <- Map(function(Feature, check, val) { 
@@ -259,6 +261,7 @@ setMethod("strand", "gbFeatureTable", function(x, join = FALSE) {
 #' @name strand<-
 #' @rdname strand-methods
 #' @export
+#' @aliases strand<-,gbFeatureTable-method
 setReplaceMethod("strand", "gbFeatureTable", function(x, value) {
   value <- recycle(value, length(x))
   new_x <- Map(function(Feature, val) { 

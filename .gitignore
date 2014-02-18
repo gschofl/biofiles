@@ -6,6 +6,7 @@ cache/
 data/
 doc/
 playground/
+*.cache
 *.html
 *.Rmd
 *.so
@@ -16,4 +17,6 @@ playground/
 *.gz
 *.toc
 *.rds
+*.status
+
 

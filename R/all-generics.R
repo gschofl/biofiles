@@ -195,6 +195,7 @@ setGeneric("ranges")
 #' 
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
+#' @param ... Further arguments passed to methods.
 #' @return A logical matrix.
 #' @rdname fuzzy-methods
 #' @export
@@ -213,6 +214,7 @@ setGeneric("fuzzy", signature = "x", function (x, ...) {
 #' 
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
+#' @param ... Further arguments passed to methods.
 #' @rdname accessor-methods
 #' @export
 #' @examples

@@ -26,6 +26,8 @@ fuzzy(x, ...)
   \code{\linkS4class{gbFeatureTable}},
   \code{\linkS4class{gbRecord}}, or
   \code{\linkS4class{gbRecordList}} object.}
+
+  \item{...}{Further arguments passed to methods.}
 }
 \value{
 A logical matrix.

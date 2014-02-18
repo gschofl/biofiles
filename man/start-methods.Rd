@@ -8,6 +8,9 @@
 \alias{start,gbRecord-method}
 \alias{start,gbRecordList-method}
 \alias{start<-}
+\alias{start<-,gbFeature-method}
+\alias{start<-,gbFeatureTable-method}
+\alias{start<-,gbLocation-method}
 \title{Get or set the start of genomic features}
 \usage{
 start(x, ...)

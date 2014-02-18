@@ -8,6 +8,9 @@
 \alias{strand,gbRecord-method}
 \alias{strand,gbRecordList-method}
 \alias{strand<-}
+\alias{strand<-,gbFeature-method}
+\alias{strand<-,gbFeatureTable-method}
+\alias{strand<-,gbLocation-method}
 \title{Get or set the strand of genomic features}
 \usage{
 strand(x, ...)
