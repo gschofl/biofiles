@@ -1,4 +1,4 @@
-#' @importFrom assertthat assert_that on_failure<- is.string is.scalar
+#' @importFrom assertthat assert_that on_failure<- is.string
 #' @importFrom stats setNames
 NULL
 
@@ -23,7 +23,7 @@ assertthat::on_failure(all_empty) <- function(call, env) {
 }
 
 is_in <- function(x, table) {
-  assert_that(is.scalar(x))
+  assert_that(length(x) == 1L)
   x %in% table
 }
 assertthat::on_failure(is_in) <- function(call, env) {
