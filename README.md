@@ -9,7 +9,9 @@ files, and methods for interacting with annotation and sequence data.
 
 ### Installation
 
-This package is under development and currently ony available via github.
+This package is ony available via github. It currently depends on the Boost
+regex library and will be made available on CRAN as soon as C++11 support is in
+place on CRAN and I can get rid of this external dependency.
 
 
 
@@ -226,22 +228,22 @@ f
  ##  'gbFeatureTable' with 2040 features:
  ##  Feature:        Location/Qualifiers:
  ##  source          1..1172182
- ##                  /organism="Chlamydia psittaci 02DC15"
- ##                  /mol_type="genomic DNA"
- ##                  /strain="02DC15"
- ##                  /db_xref="taxon:1112254"
+ ##                  /organism = "Chlamydia psittaci 02DC15"
+ ##                  /mol_type = "genomic DNA"
+ ##                  /strain = "02DC15"
+ ##                  /db_xref = "taxon:1112254"
  ##  ...
  ##  Feature:        Location/Qualifiers:
  ##  CDS             complement(1170443..1172035)
- ##                  /locus_tag="CPS0B_1080"
- ##                  /note="[F] COG1351 Predicted alternative thymidylate
+ ##                  /locus_tag = "CPS0B_1080"
+ ##                  /note = "[F] COG1351 Predicted alternative thymidylate
  ##                  synthase"
- ##                  /codon_start="1"
- ##                  /transl_table="11"
- ##                  /product="conserved hypothetical protein"
- ##                  /protein_id="AEG87987.1"
- ##                  /db_xref="GI:334694770"
- ##                  /translation="MLSRDDEFSSEQRKSLSHFVTNLETNIFALKNLPEVVKGA
+ ##                  /codon_start = "1"
+ ##                  /transl_table = "11"
+ ##                  /product = "conserved hypothetical protein"
+ ##                  /protein_id = "AEG87987.1"
+ ##                  /db_xref = "GI:334694770"
+ ##                  /translation = "MLSRDDEFSSEQRKSLSHFVTNLETNIFALKNLPEVVKGA
  ##                  LFSKYSRSTLGLRSLLLKEFLEGEGGDFLDSSGVDFEVGIHKAADFYRRVLDGFG
  ##                  DDSIGELGGAHLAIESVSMLAAKILEDARIGGSPLEKSSRYVYFDQKVKGEYLYY
  ##                  RDPILMTSAFKDVFLGTCDFLFDTYADLIPKVRTYFEKIYPKESEVSQSAYTISL
@@ -266,10 +268,10 @@ f[[1]]
 
  ##  Feature:        Location/Qualifiers:
  ##  source          1..1172182
- ##                  /organism="Chlamydia psittaci 02DC15"
- ##                  /mol_type="genomic DNA"
- ##                  /strain="02DC15"
- ##                  /db_xref="taxon:1112254"
+ ##                  /organism = "Chlamydia psittaci 02DC15"
+ ##                  /mol_type = "genomic DNA"
+ ##                  /strain = "02DC15"
+ ##                  /db_xref = "taxon:1112254"
  ##  Seqinfo:
  ##  CP002806  1172182 DNA  Chlamydophila psittaci 02DC15, complete genome.
 ```
@@ -285,17 +287,17 @@ f["CDS"][[2]]
 
  ##  Feature:        Location/Qualifiers:
  ##  CDS             complement(1160..2578)
- ##                  /locus_tag="CPS0B_0002"
- ##                  /EC_number="1.6.5.-"
- ##                  /note="[C] COG1726 Na+-transporting NADH:ubiquinone
+ ##                  /locus_tag = "CPS0B_0002"
+ ##                  /EC_number = "1.6.5.-"
+ ##                  /note = "[C] COG1726 Na+-transporting NADH:ubiquinone
  ##                  oxidoreductase, subunit NqrA"
- ##                  /codon_start="1"
- ##                  /transl_table="11"
- ##                  /product="Na(+)-translocating NADH:ubiquinone
+ ##                  /codon_start = "1"
+ ##                  /transl_table = "11"
+ ##                  /product = "Na(+)-translocating NADH:ubiquinone
  ##                  oxidoreductase subunit A"
- ##                  /protein_id="AEG87011.1"
- ##                  /db_xref="GI:334693794"
- ##                  /translation="MKIAITRGLDLSLQGSPKESGFLKRIDPALVSVDLRPYSA
+ ##                  /protein_id = "AEG87011.1"
+ ##                  /db_xref = "GI:334693794"
+ ##                  /translation = "MKIAITRGLDLSLQGSPKESGFLKRIDPALVSVDLRPYSA
  ##                  LTLKLKVEQGQAISSGSPVAEYKNFPGVFITSPVSGTVQEIRRGDKRSLLDVVIK
  ##                  KNPGQNLTEYSYDLSKLSRQELLEIFKKEGLFALFKQRPFDIPALPTHHPRDVFI
  ##                  NLADNRPFTPSTEKHLSVFSSREEGFYVFNVGVRAIAKLFGLCPHIISTDRLAIP
@@ -322,6 +324,8 @@ annotation "hypothetical" in the product qualifiers:
 hypo <- filter(rec, key = "CDS", product = "hypothetical")
 summary(hypo)
 
+ ##  [[CP002806]]
+ ##    1172182 bp: Chlamydophila psittaci 02DC15, complete genome.
  ##     Id Feature Location                     GeneId Product           ...
  ##      7 CDS     complement(2601..3035)       NA     conserved hypothe ...
  ##     31 CDS     20427..21713                 NA     conserved hypothe ...
@@ -330,9 +334,7 @@ summary(hypo)
  ##     37 CDS     26689..29340                 NA     conserved hypothe ...
  ##     39 CDS     29390..29620                 NA     conserved hypothe ...
  ##     43 CDS     complement(30347..30832)     NA     conserved hypothe ...
- ##     53 CDS     complement(33614..33922)     NA     conserved hypothe ...
  ##    ... ...     ...                          ...    ...               ...
- ##   2000 CDS     1152073..1152657             NA     hypothetical prot ...
  ##   2002 CDS     1152648..1153925             NA     conserved hypothe ...
  ##   2008 CDS     complement(1155986..1156711) NA     conserved hypothe ...
  ##   2010 CDS     complement(1156746..1157474) NA     conserved hypothe ...
@@ -357,6 +359,8 @@ or we can filter for all elongation factors,
 elong <- filter(rec, key = "CDS", product = "elongation factor")
 summary(elong)
 
+ ##  [[CP002806]]
+ ##    1172182 bp: Chlamydophila psittaci 02DC15, complete genome.
  ##     Id Feature Location                   GeneId Product             ...
  ##      9 CDS     3148..5301                 greA   transcription elong ...
  ##    103 CDS     complement(56119..56967)   tsf    translation elongat ...
@@ -371,13 +375,15 @@ summary(elong)
 
 
 now let's extract the sequence for all elongation factors, and using the tools
-from the `Biostrings` packages, translate them into protein sequences
+from the `Biostrings` packages, translate them into protein sequences. Note, that
+in order to do so, we first get the `gbFeatureTable` from the `gbRecord`, as otherwise
+we'd just extract the complete sequence associated with the GenBank record.
 
 
 
 ```r
 require(Biostrings)
-dna <- getSequence(elong)
+dna <- getSequence(ft(elong))
 dna
 
  ##    A DNAStringSet instance of length 7

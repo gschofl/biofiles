@@ -2,7 +2,7 @@
 .Rhistory
 .RData
 scratch.[rR]
-cache/
+*cache/
 data/
 doc/
 playground/
