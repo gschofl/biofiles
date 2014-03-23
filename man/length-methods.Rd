@@ -7,7 +7,7 @@
 \S4method{length}{gbRecord}(x)
 }
 \arguments{
-  \item{x}{A \code{gbRecord}}
+\item{x}{A \code{gbRecord}}
 }
 \value{
 An integer

@@ -28,11 +28,10 @@ header(x, ...)
 \S4method{header}{gbRecord}(x)
 }
 \arguments{
-  \item{x}{A \code{"\linkS4class{gbRecord}"},
-  \code{"\linkS4class{gbFeature}"}, or
-  \code{"\linkS4class{gbFeatureTable}"} instance.}
+\item{x}{A \code{"\linkS4class{gbRecord}"}, \code{"\linkS4class{gbFeature}"},
+or \code{"\linkS4class{gbFeatureTable}"} instance.}
 
-  \item{...}{Additional arguments passed to methods.}
+\item{...}{Additional arguments passed to methods.}
 }
 \value{
 A \code{"\linkS4class{gbHeader}"} instance

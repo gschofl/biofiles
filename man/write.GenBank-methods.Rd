@@ -15,20 +15,17 @@ write.GenBank(x, file, append = FALSE, ...)
   sequence = TRUE, append = FALSE)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbRecord}} instance.}
+\item{x}{A \code{\linkS4class{gbRecord}} instance.}
 
-  \item{file}{A connection or a character string naming the
-  file to write to.}
+\item{file}{A connection or a character string naming the file to write to.}
 
-  \item{header}{if \code{FALSE} exclude the Genbank
-  header.}
+\item{header}{if \code{FALSE} exclude the Genbank header.}
 
-  \item{sequence}{if \code{FALSE} exclude the sequence.}
+\item{sequence}{if \code{FALSE} exclude the sequence.}
 
-  \item{append}{if \code{TRUE} the data is appended to the
-  connection.}
+\item{append}{if \code{TRUE} the data is appended to the connection.}
 
-  \item{...}{Additional arguments passed to methods.}
+\item{...}{Additional arguments passed to methods.}
 }
 \description{
 Write GenBank records or features to file in GenBank format

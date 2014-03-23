@@ -6,8 +6,7 @@
 as.gbLocation(base_span)
 }
 \arguments{
-  \item{base_span}{A character string representation of
-  GenBank feature location}
+\item{base_span}{A character string representation of GenBank feature location}
 }
 \value{
 A \code{\linkS4class{gbLocation}} object.

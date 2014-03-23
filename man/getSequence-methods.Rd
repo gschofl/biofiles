@@ -19,12 +19,10 @@ getSequence(x, ...)
 \S4method{getSequence}{gbRecordList}(x)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeature}},
-  \code{\linkS4class{gbFeatureTable}},
-  \code{\linkS4class{gbRecord}}, or
-  \code{\linkS4class{gbRecordList}} instance.}
+\item{x}{A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
+\code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} instance.}
 
-  \item{...}{Additional arguments passed to methods.}
+\item{...}{Additional arguments passed to methods.}
 }
 \value{
 An \code{\linkS4class{XStringSet}} object, containing either the

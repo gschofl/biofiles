@@ -23,17 +23,14 @@ key(x, check = TRUE) <- value
 \S4method{key}{gbRecordList}(x)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeature}},
-  \code{\linkS4class{gbFeatureTable}},
-  \code{\linkS4class{gbRecord}}, or
-  \code{\linkS4class{gbRecordList}} object.}
+\item{x}{A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
+\code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.}
 
-  \item{...}{Additional arguments passed to methods.}
+\item{...}{Additional arguments passed to methods.}
 
-  \item{check}{if \code{FALSE}, don't perform validity
-  checks.}
+\item{check}{if \code{FALSE}, don't perform validity checks.}
 
-  \item{value}{The key information to set on \code{x}.}
+\item{value}{The key information to set on \code{x}.}
 }
 \description{
 Get/set keys of GenBank features

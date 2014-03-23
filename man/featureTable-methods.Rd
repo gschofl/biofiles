@@ -16,12 +16,10 @@ featureTable(x, ...)
 \S4method{featureTable}{gbRecordList}(x)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeatureTable}},
-  \code{\linkS4class{gbRecord}}, or
-  \code{\linkS4class{gbRecordList}} object.}
+\item{x}{A \code{\linkS4class{gbFeatureTable}}, \code{\linkS4class{gbRecord}},
+or \code{\linkS4class{gbRecordList}} object.}
 
-  \item{...}{Additional arguments to be passed to or from
-  methods.}
+\item{...}{Additional arguments to be passed to or from methods.}
 }
 \value{
 A \code{\link{table}} (or list of \code{table}s) of

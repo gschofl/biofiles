@@ -22,12 +22,10 @@ fuzzy(x, ...)
 \S4method{fuzzy}{gbRecordList}(x)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeature}},
-  \code{\linkS4class{gbFeatureTable}},
-  \code{\linkS4class{gbRecord}}, or
-  \code{\linkS4class{gbRecordList}} object.}
+\item{x}{A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
+\code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.}
 
-  \item{...}{Further arguments passed to methods.}
+\item{...}{Further arguments passed to methods.}
 }
 \value{
 A logical matrix.

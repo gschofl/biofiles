@@ -19,15 +19,12 @@ hasKey(x, key, ...)
 \S4method{hasKey}{gbRecordList}(x, key)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeature}},
-  \code{\linkS4class{gbFeatureTable}},
-  \code{\linkS4class{gbRecord}}, or
-  \code{\linkS4class{gbRecordList}} object.}
+\item{x}{A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
+\code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.}
 
-  \item{key}{A feature key.}
+\item{key}{A feature key.}
 
-  \item{...}{Additional arguments to be passed to or from
-  methods.}
+\item{...}{Additional arguments to be passed to or from methods.}
 }
 \value{
 A logical vector or a list of logical vectors.

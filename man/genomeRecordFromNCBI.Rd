@@ -6,21 +6,19 @@
 genomeRecordFromNCBI(which, ignore.case = TRUE, .parse = TRUE, ...)
 }
 \arguments{
-  \item{which}{Path to an organism on NCBI's
-  \href{ftp://ftp.ncbi.nih.gov/genomes/}{Genomes FTP site}.
-  Examples would be \code{Bacteria/Acetinobacter*} or
-  \code{Viruses/Bat_coronavirus*}. If there are multiple
-  matching directories the user will be prompted to choose
-  one. If there are multiple matching \code{gbk} files the
-  user will also be prompted to choose one or more.}
+\item{which}{Path to an organism on NCBI's
+\href{ftp://ftp.ncbi.nih.gov/genomes/}{Genomes FTP site}. Examples would be
+\code{Bacteria/Acetinobacter*} or \code{Viruses/Bat_coronavirus*}.
+If there are multiple matching directories the user will be prompted to choose
+one. If there are multiple matching \code{gbk} files the user will also be
+prompted to choose one or more.}
 
-  \item{ignore.case}{Ignore case when matching.}
+\item{ignore.case}{Ignore case when matching.}
 
-  \item{.parse}{if \code{FALSE}, return a character vector
-  instead of a \code{\linkS4class{gbRecord}} object.}
+\item{.parse}{if \code{FALSE}, return a character vector instead
+of a \code{\linkS4class{gbRecord}} object.}
 
-  \item{...}{Arguments passed on to
-  \code{\link[RCurl]{curlOptions}}.}
+\item{...}{Arguments passed on to \code{\link[RCurl]{curlOptions}}.}
 }
 \value{
 A \code{\linkS4class{gbRecord}} or \code{\linkS4class{gbRecordList}}

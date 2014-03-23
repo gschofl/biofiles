@@ -16,13 +16,10 @@ qualifList(x, ...)
 \S4method{qualifList}{gbRecord}(x)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeature}},
-  \code{\linkS4class{gbFeatureTable}},
-  \code{\linkS4class{gbRecord}}, or
-  \code{\linkS4class{gbRecord}} object.}
+\item{x}{A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
+\code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecord}} object.}
 
-  \item{...}{Additional arguments to be passed to or from
-  methods.}
+\item{...}{Additional arguments to be passed to or from methods.}
 }
 \value{
 A character vector (or list of character vectors) of

@@ -6,7 +6,7 @@ Authors@R: person("Gerhard", "Schöfl",
     role=c("aut","cre"),
     email="gschofl@yahoo.de")
 Author: Gerhard Schöfl
-Maintainer: Gerhard Schöfl <gschofl@yahoo.de>
+Maintainer: Gerhard Schöfl <gerhard.schofl@gmail.com>
 Description: Parse GenBank/GenPept records into native R objects to
     easily access and manipulate the sequence and annotation information.
 Depends:

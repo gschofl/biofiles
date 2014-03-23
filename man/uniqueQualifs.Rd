@@ -6,9 +6,8 @@
 uniqueQualifs(x)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbRecord}},
-  \code{\linkS4class{gbFeatureTable}}, or,
-  \code{\linkS4class{gbFeature}} instance}
+\item{x}{A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeatureTable}},
+or, \code{\linkS4class{gbFeature}} instance}
 }
 \value{
 A character vector of qualifier names

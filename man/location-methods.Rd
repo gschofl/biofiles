@@ -16,14 +16,12 @@ location(x, ...)
 \S4method{location}{gbRecord}(x, join = FALSE)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeature}},
-  \code{\linkS4class{gbFeatureTable}}, or
-  \code{\linkS4class{gbRecord}} object.}
+\item{x}{A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}}, or
+\code{\linkS4class{gbRecord}} object.}
 
-  \item{join}{Join compound genomic locations to a single
-  range.}
+\item{join}{Join compound genomic locations to a single range.}
 
-  \item{...}{Additional arguments passed to methods.}
+\item{...}{Additional arguments passed to methods.}
 }
 \value{
 A list of \code{\linkS4class{gbLocation}} objects

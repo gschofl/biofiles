@@ -22,9 +22,9 @@ ft(x, ...)
 \S4method{ft}{gbRecordList}(x)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbRecord}} instance.}
+\item{x}{A \code{\linkS4class{gbRecord}} instance.}
 
-  \item{...}{Additional arguments passed to methods.}
+\item{...}{Additional arguments passed to methods.}
 }
 \value{
 The \code{\linkS4class{gbFeatureTable}} of a Genbank record.

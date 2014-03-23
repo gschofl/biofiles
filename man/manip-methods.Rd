@@ -4,9 +4,11 @@
 \alias{filter}
 \alias{filter,gbFeatureTable-method}
 \alias{filter,gbRecord-method}
+\alias{filter,gbRecordList-method}
 \alias{select}
 \alias{select,gbFeatureTable-method}
 \alias{select,gbRecord-method}
+\alias{select,gbRecordList-method}
 \title{Return a subset of features or annotations from a GenBank Record}
 \usage{
 filter(x, ...)
@@ -20,36 +22,36 @@ select(x, ...)
 \S4method{filter}{gbRecord}(x, ..., .cols = NULL)
 
 \S4method{select}{gbRecord}(x, ..., .cols = NULL)
+
+\S4method{filter}{gbRecordList}(x, ..., .cols = NULL)
+
+\S4method{select}{gbRecordList}(x, ..., .cols = NULL)
 }
 \arguments{
-  \item{x}{A \sQuote{\code{gbRecord}} or
-  \sQuote{\code{gbFeatureTable}} instance.}
+\item{x}{A \sQuote{\code{gbRecord}} or \sQuote{\code{gbFeatureTable}}
+instance.}
 
-  \item{...}{For \code{filter}: named values that specify
-  the features to select. These are merged with the values
-  of \code{keys} to create the actual query. See Details;
-  for \code{select}: see \code{.cols}.}
+\item{...}{For \code{filter}: named values that specify the features to select. These are
+merged with the values of \code{keys} to create the actual query. See
+Details; for \code{select}: see \code{.cols}.}
 
-  \item{.cols}{A character vector of \sQuote{\emph{keys}}
-  that specify annotaions to be returned as a
-  \code{data.frame} from the filtered features. If
-  \code{NULL}, a \sQuote{\code{gbFeatureTable}} is
-  returned. Supported \sQuote{\emph{keys}} are
-  \dQuote{index} or \dQuote{idx}, \dQuote{start},
-  \dQuote{end}, \dQuote{width}, \dQuote{strand},
-  \dQuote{key}, or any qualifier tag (e.g.,
-  \dQuote{locus_tag}, \dQuote{product}, \dQuote{db_xref}).
-  Specific \code{db_xref}s can by queried using, e.g.
-  \dQuote{db_xref.GI} or \dQuote{db_xref.GeneID}.}
+\item{.cols}{A character vector of \sQuote{\emph{keys}} that specify annotaions
+to be returned as a \code{data.frame} from the filtered features. If \code{NULL},
+a \sQuote{\code{gbFeatureTable}} is returned.
+Supported \sQuote{\emph{keys}} are \dQuote{index} or \dQuote{idx}, \dQuote{start},
+\dQuote{end}, \dQuote{width}, \dQuote{strand}, \dQuote{key}, or any qualifier
+tag (e.g., \dQuote{locus_tag}, \dQuote{product}, \dQuote{db_xref}). Specific
+\code{db_xref}s can by queried using, e.g. \dQuote{db_xref.GI} or
+\dQuote{db_xref.GeneID}.}
 }
 \value{
-Depending on the value of \code{.col} a \code{gbFeatureTable}
-or a \code{data.frame}.
+Depending on the value of \code{.col} a \code{gbRecordList},
+\code{gbRecord}, or\code{gbFeatureTable} or a \code{data.frame}.
 }
 \description{
-\code{filter} returns a subset of features from a \code{\linkS4class{gbRecord}} or
-\code{\linkS4class{gbFeatureTable}} objects, based on filters provided as \emph{key},
-\emph{range}, or \emph{qualifier} values.
+\code{filter} returns a subset of features from \code{\linkS4class{gbRecordList}},
+\code{\linkS4class{gbRecord}} or \code{\linkS4class{gbFeatureTable}} objects,
+based on filters provided as \emph{key}, \emph{range}, or \emph{qualifier} values.
 
 \code{select} returns a specified subset of annotations from GenBank Features
 as a \code{data.frame}.

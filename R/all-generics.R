@@ -766,9 +766,9 @@ setGeneric("view", signature = "x", function(x, n, ...) {
 
 #' Return a subset of features or annotations from a GenBank Record
 #' 
-#' \code{filter} returns a subset of features from a \code{\linkS4class{gbRecord}} or
-#' \code{\linkS4class{gbFeatureTable}} objects, based on filters provided as \emph{key},
-#' \emph{range}, or \emph{qualifier} values.
+#' \code{filter} returns a subset of features from \code{\linkS4class{gbRecordList}},
+#' \code{\linkS4class{gbRecord}} or \code{\linkS4class{gbFeatureTable}} objects,
+#' based on filters provided as \emph{key}, \emph{range}, or \emph{qualifier} values.
 #'
 #' @details
 #' Filters are provided as named values using keywords and/or
@@ -810,8 +810,8 @@ setGeneric("view", signature = "x", function(x, n, ...) {
 #' \code{db_xref}s can by queried using, e.g. \dQuote{db_xref.GI} or
 #' \dQuote{db_xref.GeneID}.
 #' 
-#' @return Depending on the value of \code{.col} a \code{gbFeatureTable}
-#' or a \code{data.frame}.
+#' @return Depending on the value of \code{.col} a \code{gbRecordList},
+#' \code{gbRecord}, or\code{gbFeatureTable} or a \code{data.frame}.
 #' @rdname manip-methods
 #' @export
 #' @examples

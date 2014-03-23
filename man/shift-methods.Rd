@@ -10,29 +10,28 @@
 \usage{
 shift(x, shift = 0L, split = FALSE, order = TRUE)
 
-\S4method{shift}{gbFeature}(x, shift = 0L, ...)
+\S4method{shift}{gbFeature}(x, shift = 0L, use.names = TRUE, ...)
 
 \S4method{shift}{gbFeatureTable}(x, shift = 0L, split = FALSE,
   order = FALSE)
 
-\S4method{shift}{gbLocation}(x, shift = 0L, ...)
+\S4method{shift}{gbLocation}(x, shift = 0L, use.names = TRUE, ...)
 
 \S4method{shift}{gbRecord}(x, shift, split = FALSE, order = TRUE)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeatureTable}} or
-  \code{\linkS4class{gbRecord}} instance (gbFeatureTables
-  must be complete and include a 'source' field).}
+\item{x}{A \code{\linkS4class{gbFeatureTable}} or
+\code{\linkS4class{gbRecord}} instance (gbFeatureTables must
+be complete and include a 'source' field).}
 
-  \item{shift}{Number of basepairs (or aa residues) to
-  shift.}
+\item{shift}{Number of basepairs (or aa residues) to shift.}
 
-  \item{split}{Split features that after the shift extends
-  across the end of the sequence.}
+\item{split}{Split features that after the shift extends across the end of
+the sequence.}
 
-  \item{order}{Reorder features after the shift.}
+\item{order}{Reorder features after the shift.}
 
-  \item{...}{Additional arguments passed to methods.}
+\item{...}{Additional arguments passed to methods.}
 }
 \value{
 A \code{\linkS4class{gbFeatureTable}} object.

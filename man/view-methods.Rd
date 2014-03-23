@@ -10,11 +10,11 @@ view(x, n, ...)
 \S4method{view}{gbFeatureTable}(x, n)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeatureTable}} instance.}
+\item{x}{A \code{\linkS4class{gbFeatureTable}} instance.}
 
-  \item{n}{How many features to show (Default: all).}
+\item{n}{How many features to show (Default: all).}
 
-  \item{...}{Additional arguments passed to methods.}
+\item{...}{Additional arguments passed to methods.}
 }
 \description{
 View all features in a \code{gbFeatureTable}

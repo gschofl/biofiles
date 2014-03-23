@@ -16,14 +16,13 @@ dbxref(x, db = NULL, ...)
 \S4method{dbxref}{gbRecord}(x, db = NULL, ...)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeature}},
-  \code{\linkS4class{gbFeatureTable}}, or
-  \code{\linkS4class{gbRecord}} object.}
+\item{x}{A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}}, or
+\code{\linkS4class{gbRecord}} object.}
 
-  \item{db}{(Optional) A character vector giving the
-  database names of the desired \code{db_xref}s.}
+\item{db}{(Optional) A character vector giving the database names of the
+desired \code{db_xref}s.}
 
-  \item{...}{Additional arguments passed to methods.}
+\item{...}{Additional arguments passed to methods.}
 }
 \value{
 A named character vector (or list of named character vectors)

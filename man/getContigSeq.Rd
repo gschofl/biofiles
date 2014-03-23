@@ -6,9 +6,9 @@
 getContigSeq(x, merge = TRUE)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbRecord}} object.}
+\item{x}{A \code{\linkS4class{gbRecord}} object.}
 
-  \item{merge}{Merge the retrieved contig sequences.}
+\item{merge}{Merge the retrieved contig sequences.}
 }
 \value{
 A \code{\linkS4class{DNAStringSet}} instance.

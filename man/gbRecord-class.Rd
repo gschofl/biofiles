@@ -2,6 +2,7 @@
 \docType{class}
 \name{gbRecord-class}
 \alias{gbRecord-class}
+\alias{new_gbRecord}
 \title{Class \code{"gbRecord"}}
 \description{
 \dQuote{gbRecord} is an S4 class that provides a container for data
@@ -21,8 +22,8 @@ instance and header of the file containing metadata as a
 \item{\code{contig}}{If present, a CONTIG record.}
 }}
 \section{Accessor functions}{
-  \code{\link{header}}, \code{\link{ft}},
-  \code{\link{ranges}}
+
+ \code{\link{header}}, \code{\link{ft}}, \code{\link{ranges}}
 }
 \seealso{
 The constructor, \code{\link{gbRecord}}

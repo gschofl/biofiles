@@ -485,7 +485,11 @@ setMethod("[[", "gbRecord", function(x, i, j, ...) {
 #' @export
 #' @rdname manip-methods
 setMethod("filter", "gbRecord", function(x, ..., .cols = NULL) {
-  .filter(.features(x), ..., .cols = .cols)
+  ans <- .filter(.features(x), ..., .cols = .cols)
+  if (is.null(.cols)) {
+    ans <- as(ans, 'gbRecord')
+  }
+  ans
 })
 
 #' @export

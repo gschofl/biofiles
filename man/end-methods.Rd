@@ -28,20 +28,16 @@ end(x, check = TRUE) <- value
 \S4method{end}{gbRecordList}(x, join = FALSE)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeature}},
-  \code{\linkS4class{gbFeatureTable}},
-  \code{\linkS4class{gbRecord}}, or
-  \code{\linkS4class{gbRecordList}} object.}
+\item{x}{A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
+\code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.}
 
-  \item{join}{Join compound genomic locations into a single
-  range.}
+\item{join}{Join compound genomic locations into a single range.}
 
-  \item{...}{Further arguments passed to methods.}
+\item{...}{Further arguments passed to methods.}
 
-  \item{check}{if \code{FALSE}, don't perform validity
-  checks.}
+\item{check}{if \code{FALSE}, don't perform validity checks.}
 
-  \item{value}{The end information to set on \code{x}.}
+\item{value}{The end information to set on \code{x}.}
 }
 \value{
 An integer vector or a list of integer vectors.

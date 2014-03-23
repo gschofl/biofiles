@@ -12,20 +12,19 @@ downstream(query, subject, n = 5, include_key = "all", exclude_key = "none")
 flanking(query, subject, n = 5, include_key = "all", exclude_key = "none")
 }
 \arguments{
-  \item{query}{A \code{\linkS4class{gbFeature}} or
-  \code{\linkS4class{gbFeatureTable}} object.}
+\item{query}{A \code{\linkS4class{gbFeature}} or \code{\linkS4class{gbFeatureTable}}
+object.}
 
-  \item{subject}{A \code{\linkS4class{gbRecord}} or
-  \code{\linkS4class{gbFeatureTable}} object within which
-  the n nearest upstream features are found.}
+\item{subject}{A \code{\linkS4class{gbRecord}} or \code{\linkS4class{gbFeatureTable}}
+object within which the n nearest upstream features are found.}
 
-  \item{n}{The number of upstream features to be returned.}
+\item{n}{The number of upstream features to be returned.}
 
-  \item{include_key}{Which features should be returned.
-  Defaults to \dQuote{all}.}
+\item{include_key}{Which features should be returned. Defaults to
+\dQuote{all}.}
 
-  \item{exclude_key}{Which feature(s) should be excluded
-  from the search. Defaults to \dQuote{none}.}
+\item{exclude_key}{Which feature(s) should be excluded from the search.
+Defaults to \dQuote{none}.}
 }
 \value{
 A (list of) \code{\linkS4class{gbFeatureTable}}s.

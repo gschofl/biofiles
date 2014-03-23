@@ -40,29 +40,24 @@ geneID(x)
 translation(x)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeature}},
-  \code{\linkS4class{gbFeatureTable}}, or
-  \code{\linkS4class{gbRecord}} object.}
+\item{x}{A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}}, or
+\code{\linkS4class{gbRecord}} object.}
 
-  \item{which}{A character vector giving the name(s) of the
-  qualifiers to retrieve or set.}
+\item{which}{A character vector giving the name(s) of the
+qualifiers to retrieve or set.}
 
-  \item{fixed}{If \code{TRUE}, \code{which} is matched
-  against qualifiers as is, if \code{FALSE} it is treated
-  as a regular expression.}
+\item{fixed}{If \code{TRUE}, \code{which} is matched against qualifiers as is,
+if \code{FALSE} it is treated as a regular expression.}
 
-  \item{use.names}{If \code{TRUE}, return a
-  \code{data.frame} using \code{which} as column names, if
-  \code{FALSE} return, if possible, a character vector or a
-  list.}
+\item{use.names}{If \code{TRUE}, return a \code{data.frame} using \code{which}
+as column names, if \code{FALSE} return, if possible, a character vector or
+a list.}
 
-  \item{...}{Additional arguments passed to methods.}
+\item{...}{Additional arguments passed to methods.}
 
-  \item{check}{if \code{FALSE}, don't perform validity
-  checks.}
+\item{check}{if \code{FALSE}, don't perform validity checks.}
 
-  \item{value}{The qualifier information to set on
-  \code{x}.}
+\item{value}{The qualifier information to set on \code{x}.}
 }
 \value{
 A \code{data.frame}.

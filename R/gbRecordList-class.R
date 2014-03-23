@@ -275,6 +275,35 @@ setMethod("hasQualif", "gbRecordList", function(x, qualifier) {
 })
 
 
+# select, shift, revcomp ----------------------------------------------------
+
+
+#' @export
+#' @rdname manip-methods
+setMethod("filter", "gbRecordList", function(x, ..., .cols = NULL) {
+  no_cols <- is.null(.cols)
+  ans <- lapply(x, function(x) {
+    ans <- .filter(.features(x), ..., .cols = .cols)
+    if (no_cols) {
+      ans <- as(ans, 'gbRecord')
+    }
+    ans
+  })
+  if (no_cols) {
+    ans <- gbRecordList(ans)
+  }
+  ans
+})
+
+#' @export
+#' @rdname manip-methods
+setMethod("select", "gbRecordList", function(x, ..., .cols = NULL) {
+  lapply(x, function(x) {
+    .select(.features(x), ..., .cols = .cols)
+  })
+})
+
+
 # internal ---------------------------------------------------------------
 
 

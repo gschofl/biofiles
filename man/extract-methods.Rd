@@ -34,26 +34,25 @@
 \S4method{[[}{gbRecord,ANY,ANY}(x, i, j, ...)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeature}},
-  \code{\linkS4class{gbFeatureTable}}, or
-  \code{\linkS4class{gbRecord}} object.}
+\item{x}{A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
+or \code{\linkS4class{gbRecord}} object.}
 
-  \item{i}{indices specifying elements to extract. With
-  \code{gbFeatureTable}s and \code{gbRecord}s, a
-  \code{character} index is matched against feature keys;
-  \code{gbFeature}s a \code{character} index is matched
-  against qualifiers.}
+\item{i}{indices specifying elements to extract. With \code{gbFeatureTable}s
+and \code{gbRecord}s, a \code{character} index is matched against feature keys;
+\code{gbFeature}s a \code{character} index is matched against qualifiers.}
 
-  \item{j}{Not used.}
+\item{j}{Not used.}
 
-  \item{...}{Not used.}
+\item{...}{Not used.}
 
-  \item{drop}{Not used.}
+\item{drop}{Not used.}
 
-  \item{name}{ A literal character string or a \link{name}
-  (possibly \link{backtick} quoted).  For extraction, this
-  is normally (see under \sQuote{Environments}) partially
-  matched to the \code{\link{names}} of the object.  }
+\item{name}{
+    A literal character string or a \link{name} (possibly \link{backtick}
+    quoted).  For extraction, this is normally (see under
+    \sQuote{Environments}) partially matched to the \code{\link{names}}
+    of the object.
+  }
 }
 \value{
 A \code{\linkS4class{gbFeatureTable}} object or elements of a

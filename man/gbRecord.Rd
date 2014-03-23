@@ -6,10 +6,10 @@
 gbRecord(gbk)
 }
 \arguments{
-  \item{gbk}{A vector of paths to GenBank format files, an
-  \code{\link[reutils]{efetch}} object containing GenBank
-  record(s), or a \code{textConnection} to a character
-  vector that can be parsed as a Genbank record.}
+\item{gbk}{A vector of paths to GenBank format files,
+an \code{\link[reutils]{efetch}} object containing GenBank record(s), or
+a \code{textConnection} to a character vector that can be parsed as
+a Genbank record.}
 }
 \value{
 An instance of the \code{\linkS4class{gbRecord}} or

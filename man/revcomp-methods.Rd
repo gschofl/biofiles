@@ -13,12 +13,11 @@ revcomp(x, order = TRUE)
 \S4method{revcomp}{gbRecord}(x, order = TRUE)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeatureTable}} or
-  \code{\linkS4class{gbRecord}} object (gbFeatureTables
-  must be complete and include a 'source' field).}
+\item{x}{A \code{\linkS4class{gbFeatureTable}} or
+\code{\linkS4class{gbRecord}} object (gbFeatureTables must
+be complete and include a 'source' field).}
 
-  \item{order}{Reorder features after reverse-complementing
-  them.}
+\item{order}{Reorder features after reverse-complementing them.}
 }
 \description{
 Reverse-complement features in a GenBank record

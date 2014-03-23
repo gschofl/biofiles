@@ -8,7 +8,7 @@
 gbRecordList(...)
 }
 \arguments{
-  \item{...}{\dQuote{\linkS4class{gbRecord}} elements.}
+\item{...}{\dQuote{\linkS4class{gbRecord}} elements.}
 }
 \value{
 A \dQuote{\linkS4class{gbRecordList}} instance.

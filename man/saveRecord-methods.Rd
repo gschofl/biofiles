@@ -16,17 +16,14 @@ saveRecord(x, file = NULL, dir = ".", ...)
 loadRecord(file, ...)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbRecord}} or
-  \code{\linkS4class{gbRecordList}} instance.}
+\item{x}{A \code{\linkS4class{gbRecord}} or \code{\linkS4class{gbRecordList}} instance.}
 
-  \item{file}{A character string naming the file to write
-  to or read from. If \code{NULL}, the accession number
-  will be used to construct a file name.}
+\item{file}{A character string naming the file to write to or read from.
+If \code{NULL}, the accession number will be used to construct a file name.}
 
-  \item{dir}{Target directory. (Default: current working
-  directory)}
+\item{dir}{Target directory. (Default: current working directory)}
 
-  \item{...}{Arguments passed to \code{\link{saveRDS}}.}
+\item{...}{Arguments passed to \code{\link{saveRDS}}.}
 }
 \description{
 Serialise and unserialise \code{\linkS4class{gbRecord}}s using

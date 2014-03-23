@@ -16,24 +16,20 @@ write.FeatureTable(x, file, tablename = "", dbname = "", sequence = FALSE,
   dbname = "", sequence = FALSE, append = FALSE)
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbRecord}} instance.}
+\item{x}{A \code{\linkS4class{gbRecord}} instance.}
 
-  \item{file}{A connection or a character string naming the
-  file to write to.}
+\item{file}{A connection or a character string naming the file to write to.}
 
-  \item{tablename}{Optional table name to appear in the
-  first line of the feature table.}
+\item{tablename}{Optional table name to appear in the first line
+of the feature table.}
 
-  \item{dbname}{Data base name associated with the CDS
-  qualifier protein_id.}
+\item{dbname}{Data base name associated with the CDS qualifier protein_id.}
 
-  \item{sequence}{if \code{TRUE}, additionally output a
-  fasta file.}
+\item{sequence}{if \code{TRUE}, additionally output a fasta file.}
 
-  \item{append}{if \code{TRUE} the data is appended to the
-  connection.}
+\item{append}{if \code{TRUE} the data is appended to the connection.}
 
-  \item{...}{Additional arguments passed to methods.}
+\item{...}{Additional arguments passed to methods.}
 }
 \description{
 Feature Tables are simple five-column tab-delimited tables specifying the

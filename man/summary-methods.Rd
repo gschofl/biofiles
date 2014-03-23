@@ -19,17 +19,14 @@ summary(object, n = 8, ...)
 \S4method{summary}{gbRecordList}(object, n = 2, ...)
 }
 \arguments{
-  \item{object}{An object of
-  class\code{\linkS4class{gbFeature}},
-  \code{\linkS4class{gbFeatureTable}},
-  \code{\linkS4class{gbRecord}}, or
-  \code{\linkS4class{gbRecordList}}.}
+\item{object}{An object of class\code{\linkS4class{gbFeature}},
+\code{\linkS4class{gbFeatureTable}}, \code{\linkS4class{gbRecord}}, or
+\code{\linkS4class{gbRecordList}}.}
 
-  \item{n}{For \code{list}-like objects, how many elements
-  should be summarized in head and tail.}
+\item{n}{For \code{list}-like objects, how many elements should
+be summarized in head and tail.}
 
-  \item{...}{Arguments to be passed to or from other
-  methods.}
+\item{...}{Arguments to be passed to or from other methods.}
 }
 \description{
 Summarise a GenBank record.

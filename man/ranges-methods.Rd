@@ -23,23 +23,19 @@ ranges(x, ...)
   include = "none", exclude = "")
 }
 \arguments{
-  \item{x}{A \code{\linkS4class{gbFeature}},
-  \code{\linkS4class{gbFeatureTable}},
-  \code{\linkS4class{gbRecord}}, or
-  \code{\linkS4class{gbRecordList}} object.}
+\item{x}{A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
+\code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.}
 
-  \item{join}{Join compound genomic locations into a single
-  range.}
+\item{join}{Join compound genomic locations into a single range.}
 
-  \item{key}{Include feature keys with ranges.}
+\item{key}{Include feature keys with ranges.}
 
-  \item{include}{Include qualifiers as metadata columns.
-  Can be "none", "all", or a character vector of qualifier
-  tags.}
+\item{include}{Include qualifiers as metadata columns. Can be "none",
+"all", or a character vector of qualifier tags.}
 
-  \item{exclude}{Exclude specific qualifiers.}
+\item{exclude}{Exclude specific qualifiers.}
 
-  \item{...}{Further arguments passed to methods.}
+\item{...}{Further arguments passed to methods.}
 }
 \value{
 A \code{\linkS4class{GRanges}} or \code{\linkS4class{GRangesList}} object.

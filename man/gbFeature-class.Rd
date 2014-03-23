@@ -26,9 +26,10 @@ the feature is part of.}
 correspond to GenBank qualifier tags.}
 }}
 \section{Accessor functions}{
-  \code{\link{getHeader}}, \code{\link{getSequence}},
-  \code{\link{ranges}}, \code{\link{key}},
-  \code{\link{index}}, \code{\link{qualif}}
+
+\code{\link{getHeader}}, \code{\link{getSequence}},
+\code{\link{ranges}}, \code{\link{key}}, \code{\link{index}},
+\code{\link{qualif}}
 }
 \seealso{
 \code{\linkS4class{gbFeatureTable}}, \code{\linkS4class{gbRecord}}
