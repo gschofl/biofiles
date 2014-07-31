@@ -5,4 +5,4 @@
 ^packrat/
 scratch\.[rR]
 ^README\.*
-^packrat/
+^\.travis\.yml$
