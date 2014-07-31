@@ -122,7 +122,6 @@ gbFeatures <- function(gb_features, seqinfo) {
                 check = FALSE) 
 }
 
-
 join_seq <- function(seq, accession_no) {
   mc_cores <- floor(detectCores()*0.75)
   s <- unlist(mclapply(seq, function(x) {

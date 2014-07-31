@@ -106,10 +106,6 @@ re <- function(x) {
   structure(x, class = "regexp")
 }
 
-"%~%" <- function(x, pattern) {
-  grepl(pattern, x, fixed = FALSE)
-}
-
 ## divide the data in vector x into groups, where the start of
 ## each group is defined by an element of index i
 ##

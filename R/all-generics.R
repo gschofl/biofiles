@@ -426,7 +426,6 @@ setGeneric("qualif<-", signature = "x", function(x, which, check = TRUE, value) 
   standardGeneric("qualif<-")
 })
 
-
 #' Access the \code{db_xref}s of GenBank features
 #' 
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}}, or
