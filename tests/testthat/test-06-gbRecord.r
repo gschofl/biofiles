@@ -1,6 +1,11 @@
 context("gbFeature getter checks")
 
-x <- filter(gbRecord(gb="sequences/nucleotide.gbk"), key='CDS')[[3]]
+if (getOption('biofiles.test.parser')) {
+  x <- filter(gbRecord(gb="sequences/nucleotide.gbk"), key = 'CDS')[[3]]
+} else {
+  load("sequences/nucleotide.rda")
+  x <- filter(nuc, key = 'CDS')[[3]]
+}
 
 test_that("Sequence, and Seqinfo can be extracted", {
   expect_is(.seqinfo(x), 'seqinfo')
@@ -19,7 +24,7 @@ test_that("Accessors work for gbFeatures", {
   expect_equal(getLength(x), 8959)
   expect_equal(getDefinition(x), "Caulobacter crescentus pilus assembly gene cluster.")
   
-  expect_true(end(x) - start(x) + 1 == width(x))
+  expect_true(end(x) - start(x) + 1 == span(x))
   expect_equal(strand(x), 1)
   expect_equal(fuzzy(x), matrix(c(FALSE,FALSE), nrow=1))
   
@@ -47,7 +52,6 @@ test_that("Ranges work for gbFeatures", {
   expect_is(range, 'GRanges')
   expect_equal(start(range), 1521)
   expect_equal(end(range), 2414)
-  expect_equal(width(ranges(range)), 894)
   expect_equal(names(range), "cpaB")
 })
 
@@ -56,7 +60,7 @@ test_that("getSequence works for gbFeatures", {
   seq <- getSequence(x)
   expect_is(seq, "DNAStringSet")
   expect_equal(names(seq), .defline(x))
-  expect_equal(length(seq[[1]]), width(x))  
+  expect_equal(length(seq[[1]]), span(x))  
 })
 
 

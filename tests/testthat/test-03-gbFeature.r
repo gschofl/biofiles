@@ -14,8 +14,8 @@ test_that("gbFeature accessors work", {
   x <- biofiles:::gbFeature(cds, id = 10)
   
   expect_output(biofiles:::.seqinfo(x), "Seqinfo:")
-  expect_output(biofiles:::.header(x), "An empty .gbHeader. instance.")
-  expect_output(biofiles:::.locus(x), "An empty .gbLocus. instance.")
+  expect_output(biofiles:::.header(x), "An empty .*gbHeader.* instance.")
+  expect_output(biofiles:::.locus(x), "An empty .*gbLocus.* instance.")
   expect_output(biofiles:::.sequence(x), "A BStringSet instance of length 0")
   
   ## index
@@ -28,9 +28,8 @@ test_that("gbFeature accessors work", {
   ## location
   expect_equal(start(x), 338)
   expect_equal(end(x), 2800)
-  expect_equal(width(x), 2463)
+  expect_equal(span(x), 2463)
   expect_equal(strand(x), 1)
-  expect_equal(joint_width(x), 2463)
   expect_equal(joint_range(x), c(338, 2800))
   expect_equal(fuzzy(x), matrix(c(FALSE, FALSE), nrow = 1))
   expect_output(show(location(x)), "338..2800")

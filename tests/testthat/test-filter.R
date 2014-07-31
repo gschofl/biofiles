@@ -1,6 +1,11 @@
 context("Test \"filter\"")
 
-x <- getFeatures(gbRecord("sequences/nucleotide.gbk"))
+if (getOption('biofiles.test.parser')) {
+  x <- getFeatures(gbRecord("sequences/nucleotide.gbk"))
+} else {
+  load("sequences/nucleotide.rda")
+  x <- getFeatures(nuc)
+}
 
 test_that("filter works on feature indices", {
   expect_equal(key(filter(x, idx = 1)), "source")

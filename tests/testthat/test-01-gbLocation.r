@@ -76,11 +76,11 @@ context("gbLocation getter/setter checks")
 test_that("gbLocation accessors work", {
   
   expect_equal(start(a), c(1, 100))
-  expect_equal(start(a, join=TRUE), 1)
+  expect_equal(start(a, join = TRUE), 1)
   expect_equal(end(a), c(100, 202))
-  expect_equal(end(a, join=TRUE), 202)
-  expect_equal(width(a), c(100, 103))
-  expect_equal(joint_width(a), 202)
+  expect_equal(end(a, join = TRUE), 202)
+  expect_equal(span(a), c(100, 103))
+  expect_equal(span(a, join = TRUE), 202)
   expect_equal(strand(a), c(1, 1))
   expect_equal(strand(b), c(-1, -1))
   expect_equal(fuzzy(c), matrix(c(TRUE,FALSE,FALSE,TRUE), nrow=2))
@@ -88,7 +88,7 @@ test_that("gbLocation accessors work", {
   
   expect_equal(start(gbLocation("102")), 102)
   expect_equal(end(gbLocation("102")), 102)
-  expect_equal(width(gbLocation("102")), 1)
+  expect_equal(span(gbLocation("102")), 1)
   
   expect_equal(fuzzy(gbLocation("<102")), matrix(c(TRUE,FALSE), nrow=1))
   expect_equal(fuzzy(gbLocation(">102")), matrix(c(FALSE,TRUE), nrow=1))

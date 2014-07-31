@@ -1,3 +1,4 @@
+%\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{An Introduction to Biofiles}
 %\VignetteKeyword{DNA, Sequence, annotation, NCBI}
 %\VignettePackage{biofiles}
@@ -5,15 +6,14 @@
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 
-<<style, eval=TRUE, echo=FALSE, results=tex>>=
+<<style-knitr, eval=TRUE, echo=FALSE, results="asis">>=
 BiocStyle::latex(width = 90)
 @
 
-\SweaveOpts{concordance=TRUE}
 \title{Using the biofiles package}
-\author{Gerhard Scho"fl \\
+\author{Gerhard Schöfl \\
         Dept. for Cell and Molecular Biology \\
-        Hans-Kno"ll Institute \\
+        Hans-Knöll Institute \\
         Jena, Germany}
 
 \begin{document}
@@ -42,27 +42,39 @@ A \Rclass{gbFeatureTable} together with metadata and sequence information stored
 As an example \Rpackage{biofiles} includes the annotation file for the mitochondrial genome of \emph{Saccharomyces cerevisiae}:
 
 <<preliminaries>>=
-require(biofiles)
+library(biofiles)
 @
 
-<<mito-path>>=
+<<mito-path,>>=
 mito.path <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
 @
 
+<<load-mita, echo=FALSE, eval=TRUE>>=
+mito.rds <- system.file("extdata", "NC_001224.rds", package="biofiles")
+mito <- loadRecord(mito.rds)
+@
+
 To read a GenBank file into \R{} use the command
-<<read-mito>>=
+<<read-mito, eval=FALSE, echo=TRUE>>=
 mito <- gbRecord(mito.path)
 mito
 @
 
+<<display-mito, eval=TRUE, echo=FALSE>>=
+mito
+@
 
 \subsection{Saving and loading \Rclass{gbRecord}s}
 
 \Rclass{gbRecord} objects can be stored efficiently by writing the content to a compressed ``.rds'' file using \Rfunction{saveRecord} and re-imported using \Rclass{loadRecord}. Alternatively, \Rclass{gbRecord} objects can be exported as a GenBank flat file using \Rfunction{write.GenBank} or in GenBank feature table format using \Rfunction{write.FeatureTable}.
-<<store-mito>>=
+<<store-mito, eval=FALSE, echo=TRUE>>=
 saveRecord(mito)
 rm(mito)
 mito <- loadRecord("NC_001224.rds")
+summary(mito, n=3)
+@
+
+<<display-store-mito, eval=TRUE, echo=FALSE>>=
 summary(mito, n=3)
 @
 
@@ -131,9 +143,11 @@ cytb
 
 \subsection{Accessing annotation data}
 
-After having filtered the features of interest we might want to access the various annotation data in a form more emenable to further analysis. Accessor functions include \Rfunction{start}, \Rfunction{end}, \Rfunction{width}, \Rfunction{strand}, \Rfunction{key}, \Rfunction{locusTag}, \Rfunction{geneID}, \Rfunction{product}, \Rfunction{dbxref}, \Rfunction{proteinID}, or \Rfunction{translation}:
+After having filtered the features of interest we might want to access the various annotation data in a form more emenable to further analysis. Accessor functions include \Rfunction{start}, \Rfunction{end}, \Rfunction{span}, \Rfunction{strand}, \Rfunction{key}, \Rfunction{locusTag}, \Rfunction{geneID}, \Rfunction{product}, \Rfunction{dbxref}, \Rfunction{proteinID}, or \Rfunction{translation}:
 <<access-feature>>=
 start(cds[1:3])
+end(cds[1:3])
+span(cds[1:3])
 strand(cds[1:3])
 locusTag(cds[1:3])
 dbxref(cds[1:3])

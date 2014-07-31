@@ -1,10 +1,16 @@
 context("gbRecord parser checks (gbk files)")
 
-#nuc.efetch <- efetch('457866357', 'nuccore', 'gb')
-#save(nuc.efetch, file="tests/testthat/sequences/nuc.efetch.RData")
-load("sequences/nuc.efetch.RData")
-nuc.efetch <- gbRecord(nuc.efetch)
-nuc <- gbRecord("sequences/nucleotide.gbk")
+if (getOption('biofiles.test.parser')) {
+  #nuc.efetch <- efetch('457866357', 'nuccore', 'gb')
+  #save(nuc.efetch, file="tests/testthat/sequences/nuc.efetch.RData")
+  load("sequences/nuc.efetch.RData")
+  nuc.efetch <- gbRecord(nuc.efetch)
+  nuc <- gbRecord("sequences/nucleotide.gbk")
+} else {
+  #save(nuc.efetch, file = "sequences/nuc.efetch.rda")
+  load("sequences/nuc.efetch.rda")
+  load("sequences/nucleotide.rda")
+}
 
 test_that("GenBank records parse correctly from file and efetch", {
   expect_is(nuc, 'gbRecord')
@@ -38,7 +44,7 @@ test_that("Accessors work for GenBank records", {
   expect_equal(getLength(nuc), 8959)
   expect_equal(getDefinition(nuc), "Caulobacter crescentus pilus assembly gene cluster.")
   
-  expect_true( all(end(nuc) - start(nuc) + 1 == width(nuc)) )
+  expect_true( all(end(nuc) - start(nuc) + 1 == span(nuc)) )
   expect_equal(unique(strand(nuc)), 1)
   
   expect_is(qualifList(nuc), 'list')
@@ -47,11 +53,19 @@ test_that("Accessors work for GenBank records", {
 
 context("gbRecord parser checks (GenPept files)")
 
-#prot.efetch <- efetch(c('459479542','379049216'), 'protein', 'gp')
-#save(prot.efetch, file="tests/testthat/sequences/prot.efetch.RData")
-load("sequences/prot.efetch.RData")
-prot.efetch <- gbRecord(prot.efetch)
-prot <- gbRecord("sequences/protein.gp")
+
+if (getOption('biofiles.test.parser')) {
+  #prot.efetch <- efetch(c('459479542','379049216'), 'protein', 'gp')
+  #save(prot.efetch, file="tests/testthat/sequences/prot.efetch.RData")
+  load("sequences/prot.efetch.RData")
+  prot.efetch <- gbRecord(prot.efetch)
+  prot <- gbRecord("sequences/protein.gp")
+} else {
+  #save(prot.efetch, file = "sequences/prot.efetch.rda")
+  #save(prot, file = "sequences/protein.rda")
+  load("sequences/prot.efetch.rda")
+  load("sequences/protein.rda")
+}
 
 test_that("GenPept records parse correctely from file and efetch", {
   expect_is(prot, 'gbRecord')

@@ -5,7 +5,7 @@ scratch.[rR]
 *cache/
 data/
 doc/
-playground/
+packrat/
 *.cache
 *.html
 *.Rmd

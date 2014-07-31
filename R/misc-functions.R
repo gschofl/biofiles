@@ -1,46 +1,65 @@
-#' Quickly list all qualifier names
+#' Quickly list all qualifier names.
 #' 
-#' @usage uniqueQualifs(x)
-#' @param x A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeatureTable}},
-#' or, \code{\linkS4class{gbFeature}} instance
-#' @return A character vector of qualifier names
+#' @usage uniqueQualifs(...)
+#' @param ... A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeatureTable}},
+#' or, \code{\linkS4class{gbFeature}} instance.
+#' @return A character vector of qualifier names.
 #' @export
 uniqueQualifs <- Compose("unique", "unlist", "qualifList")
 
-
-#' @usage locusTag(x)
-#' @rdname qualif-methods
+#' Return the \emph{locus_tag} qualifiers from GenBank features.
+#' 
+#' @usage locusTag(...)
+#' @param ... A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeatureTable}},
+#' or, \code{\linkS4class{gbFeature}} instance.
+#' @return A character vector of \emph{locus_tag}s.
 #' @export
 locusTag <- Partial("qualif", which = "locus_tag", use.names = FALSE)
 
-
-#' @usage product(x)
-#' @rdname qualif-methods
+#' Return the \emph{product} qualifiers from GenBank features.
+#' 
+#' @usage product(...)
+#' @param ... A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeatureTable}},
+#' or, \code{\linkS4class{gbFeature}} instance.
+#' @return A character vector of \emph{product}s.
 #' @export
 product <- Partial("qualif", which = "product", use.names = FALSE)
 
-
-#' @usage note(x)
-#' @rdname qualif-methods
+#' Return the \emph{note} qualifiers from GenBank features.
+#' 
+#' @usage note(...)
+#' @param ... A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeatureTable}},
+#' or, \code{\linkS4class{gbFeature}} instance.
+#' @return A character vector of \emph{note}s.
 #' @export
 note <- Partial("qualif", which = "note", use.names = FALSE)
 
-
-#' @usage proteinID(x)
-#' @rdname qualif-methods
+#' Return the \emph{protein_id} qualifiers from GenBank features.
+#' 
+#' @usage proteinID(...)
+#' @param ... A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeatureTable}},
+#' or, \code{\linkS4class{gbFeature}} instance.
+#' @return A character vector of \emph{protein_id}s.
 #' @export
 proteinID <- Partial("qualif", which = "protein_id", use.names = FALSE)
 
-
-#' @usage geneID(x)
-#' @rdname qualif-methods
+#' Return the \emph{gene} qualifiers from GenBank features.
+#' 
+#' @usage geneID(...)
+#' @param ... A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeatureTable}},
+#' or, \code{\linkS4class{gbFeature}} instance.
+#' @return A character vector of \emph{gene}s.
 #' @export
 geneID <- Partial("qualif", which = "gene", use.names = FALSE)
 
 
 .translation <- Partial("qualif", which = "translation", use.names = FALSE)
+#' Return the \emph{translation}s from GenBank features.
+#' 
 #' @usage translation(x)
-#' @rdname qualif-methods
+#' @param x A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeatureTable}},
+#' or, \code{\linkS4class{gbFeature}} instance.
+#' @return An \code{\linkS4class{AAStringSet}}.
 #' @importFrom Biostrings AAStringSet
 #' @export
 translation <- function(x) AAStringSet(.translation(x))
@@ -57,17 +76,15 @@ translation <- function(x) AAStringSet(.translation(x))
 #' @param merge Merge the retrieved contig sequences.
 #' @return A \code{\linkS4class{DNAStringSet}} instance.
 #' @importFrom Biostrings unlist DNAStringSet
-#' @importFrom IRanges metadata "metadata<-"
+#' @importFrom IRanges metadata "metadata<-" width
 #' @importFrom reutils efetch
 #' @export
-#' @examples
-#' ###
 getContigSeq <- function(x, merge = TRUE) { 
   db <- switch(getMoltype(x), AA = "protein", "nuccore")
   contig <- .contig(x)
   s <- start(contig)
   e <- end(contig)
-  w <- width(contig)
+  w <- span(contig)
   str <- strand(contig)
   acc <- getAccession(contig)
   dna <- DNAStringSet()

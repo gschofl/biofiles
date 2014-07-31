@@ -1,6 +1,11 @@
 context("gbFeatureTable accessor checks")
 
-nuc <- gbRecord("sequences/nucleotide.gbk")
+if (getOption('biofiles.test.parser')) {
+  nuc <- gbRecord("sequences/nucleotide.gbk")
+} else {
+  #save(nuc, file = "sequences/nucleotide.rda")
+  load("sequences/nucleotide.rda")
+}
 fl <- .features(nuc)
 
 test_that("Can extract features", {
@@ -29,7 +34,7 @@ test_that("gbFeatureTable accessors work", {
   ## location
   expect_is(start(x), 'integer')
   expect_is(end(x), 'integer')
-  expect_is(width(x), 'integer')
+  expect_is(span(x), 'integer')
   expect_is(strand(x), 'integer')
   expect_is(location(x), "list")
   expect_equal(fuzzy(x), matrix(rep(FALSE, 2*17), ncol = 2))

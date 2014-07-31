@@ -32,7 +32,7 @@
       return(.return(i, k, .Names = column_names))
     }
   }
-  idx <- grepl("start|end|width|strand", cols)
+  idx <- grepl("start|end|span|strand", cols)
   if (any(idx)) {
     loc <- cols[idx]
     column_names <- c(column_names, loc)
@@ -40,7 +40,7 @@
       switch(loc,
              start  = start(x),
              end    = end(x),
-             width  = width(x),
+             span   = span(x),
              strand = strand(x))
     })
     cols <- cols[!idx]

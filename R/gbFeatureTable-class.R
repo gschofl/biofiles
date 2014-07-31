@@ -272,10 +272,10 @@ setReplaceMethod("strand", "gbFeatureTable", function(x, value) {
   new('gbFeatureTable', .Data = new_x, .id = x@.id, .seqinfo = x@.seqinfo)
 })
 
-#' @rdname width-methods
+#' @rdname span-methods
 #' @export
-setMethod("width", "gbFeatureTable", function(x) {
-  ans <- lapply(x, width)
+setMethod("span", "gbFeatureTable", function(x, join = FALSE) {
+  ans <- lapply(x, span, join = join)
   if (all(vapply(ans, length, 0) == 1L)) {
     unlist(ans)
   } else {
@@ -283,13 +283,7 @@ setMethod("width", "gbFeatureTable", function(x) {
   }
 })
 
-#' @rdname width-methods
-#' @export
-setMethod("joint_width", "gbFeatureTable", function(x) {
-  unlist(lapply(x, joint_width))
-})
-
-#' @rdname width-methods
+#' @rdname span-methods
 #' @export
 setMethod("joint_range", "gbFeatureTable", function(x) {
   do.call("rbind", lapply(x, joint_range))

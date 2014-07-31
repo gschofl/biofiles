@@ -24,12 +24,12 @@ NULL
   start <- start(x, join = join)
   end <- end(x, join = join)
   strand <- strand(x, join = join)
-  lt <- .qual_access(x, 'locus_tag', fixed = TRUE)
+  lt <- .qual_access(x, which = 'locus_tag', fixed = TRUE)
   gene <- .qual_access(x, 'gene', fixed = TRUE)
   names <- ifelse(is.na(lt), gene, lt)
-    
+ 
   if (is.list(start)) {
-    i <- update_indeces(start)
+    i <- update_indices(start)
     start <- unlist(start)
     end <- unlist(end)
     strand <- unlist(strand)
@@ -57,7 +57,7 @@ NULL
 }
 
 
-update_indeces <- function(x) {
+update_indices <- function(x) {
   j_len <- vapply(x, length, numeric(1))
   j_idx <- which(j_len > 1)
   j_len <- j_len[j_idx]

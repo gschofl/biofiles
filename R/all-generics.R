@@ -4,48 +4,38 @@ NULL
 
 # The biofiles API -------------------------------------------------------
 
-##    Basic getters/setters in
-##    gbLocation, gbFeature, gbFeatureTable, gbRecord
-##      start, end, strand, width, joint_width, joint_range
-##      start<-, end<-, strand<-
-##      ranges
+##    Basic getters/setters in gbLocation-class, gbFeature-class, gbFeatureTable-class,
+##    gbRecord-class:
+##      start, end, span, strand, joint_range, start<-, end<-, strand<-, ranges
 ##
-##    Getters/setters in gbLocation-class
+##    Getters/setters in gbLocation-class:
 ##      fuzzy, accession
 ##
-##    Getters/setters in gbFeature-class, gbFeatureTable-class
+##    Getters/setters in gbFeature-class, gbFeatureTable-class:
 ##      index, key, location, ranges, sequence, seqinfo
 ##      qualif, dbxref, locusTag, product, proteinID, note, translation
 ##      key<-, qualif<-
 ##
-##    Getters/setters in gbRecord-class
+##    Getters/setters in gbRecord-class:
 ##      locus, reference accession, definition
 ##
-##    Testing methods in gbFeature-class, gbFeatureTable-class
+##    Testing methods in gbFeature-class, gbFeatureTable-class:
 ##      hasKey, hasQualif
 ##
-##    Show methods all classes
+##    Show methods all classes:
 ##      show
 ##
-##    Subsetting Methods
+##    Subsetting Methods:
 ##      [, [[, $
 ##
-##    Genetic Write methods
+##    Genetic Write methods:
 ##      write.GenBank, write.FeatureTable
-##
-##    The "start" and "end" generics are defined in the stats package.
 ##    
-##    The "shift", "start<-", "end<-", and "ranges" generics are defined in the
-##    IRanges package.
-##
-##    We need to override the "width" and "shift" generics from IRanges because
-##    they don't provide a ... argument.
-##    We also redefine the "sequence" generic from Base.
+##    The "shift" and "ranges" generics are defined in the IRanges package.
 
 # getter/setter generics -------------------------------------------------
 
-## "start" is defined as an S3 generics in the stats package.
-#' Get or set the start of genomic features
+#' Get or set the start position of genomic features
 #' 
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
@@ -53,27 +43,24 @@ NULL
 #' @param ... Further arguments passed to methods.
 #' @return An integer vector or a list of integer vectors.
 #' @seealso
-#'   \code{\link{end}}, \code{\link{strand}}, \code{\link{width}}, \code{\link{ranges}}
+#'   \code{\link{end}}, \code{\link{strand}}, \code{\link{span}}, \code{\link{ranges}}
 #' @rdname start-methods
-#' @export
 #' @importFrom stats start
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
-#' start(x)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' 
+#' start(x)
 #' cds <- x["CDS"]
 #' start(cds)
 setGeneric("start")
 
 #' @param check if \code{FALSE}, don't perform validity checks.
 #' @param value The start information to set on \code{x}.
+#' @importFrom IRanges "start<-"
 #' @rdname start-methods
-#' @export
-#' @importFrom IRanges start<-
 setGeneric("start<-")
 
-#' Get or set the end of genomic features
+#' Get or set the end position of genomic features
 #' 
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
@@ -81,25 +68,21 @@ setGeneric("start<-")
 #' @param ... Further arguments passed to methods.
 #' @return An integer vector or a list of integer vectors.
 #' @seealso
-#'   \code{\link{start}}, \code{\link{strand}}, \code{\link{width}}, \code{\link{ranges}}
+#'   \code{\link{start}}, \code{\link{strand}}, \code{\link{span}}, \code{\link{ranges}}
 #' @rdname end-methods
-#' @export
 #' @importFrom stats end
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
-#' end(x)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' 
+#' end(x)
 #' cds <- x["CDS"]
 #' end(cds)
-#' 
 setGeneric("end")
 
 #' @param check if \code{FALSE}, don't perform validity checks.
 #' @param value The end information to set on \code{x}.
+#' @importFrom IRanges "end<-"
 #' @rdname end-methods
-#' @export
-#' @importFrom IRanges end<-
 setGeneric("end<-")
 
 ### The "strand" generic is defined in the BiocGenerics package.
@@ -112,46 +95,36 @@ setGeneric("end<-")
 #' @return An integer vector (or a list thereof) of 1 (plus strand), -1 (minus strand), or
 #' \code{NA}
 #' @seealso
-#'   \code{\link{start}}, \code{\link{end}}, \code{\link{width}}, \code{\link{ranges}}
+#'   \code{\link{start}}, \code{\link{end}}, \code{\link{span}}, \code{\link{ranges}}
 #' @rdname strand-methods
-#' @export
 #' @importFrom BiocGenerics strand
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' strand(x)
-#' 
 setGeneric("strand")
 
 #' @rdname strand-methods
-#' @export
 #' @importFrom BiocGenerics strand<-
 setGeneric("strand<-")
 
-### The "width" generic is defined in the IRanges package. We need
-### to define joint_width internally instead of width(x, join = TRUE)
-#' Get the width of genomic features
+#' Get the span of genomic features.
 #'
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
+#' @param join Join compound genomic locations into a single range.
+#' @param ... Further arguments passed to methods.
 #' @return An integer vector or a list of integer vectors.
 #' @seealso
 #'   \code{\link{start}}, \code{\link{end}}, \code{\link{strand}}, \code{\link{ranges}}
-#' @rdname width-methods
-#' @export
-#' @importFrom IRanges width
+#' @rdname span-methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
-#' width(x)
-#'
-setGeneric("width")
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
+#' span(x)
+setGeneric("span", signature = "x", function (x, ...) {
+  standardGeneric("span")
+})
 
-#' @rdname width-methods
-#' @export
-setGeneric("joint_width", signature = "x", function(x) standardGeneric("joint_width"))
-
-#' @rdname width-methods
+#' @rdname span-methods
 #' @export
 setGeneric("joint_range", signature = "x", function(x) standardGeneric("joint_range"))
 
@@ -168,24 +141,21 @@ setGeneric("joint_range", signature = "x", function(x) standardGeneric("joint_ra
 #' @param ... Further arguments passed to methods.
 #' @return A \code{\linkS4class{GRanges}} or \code{\linkS4class{GRangesList}} object.
 #' @seealso
-#'   \code{\link{start}}, \code{\link{end}}, \code{\link{width}}, \code{\link{strand}},
+#'   \code{\link{start}}, \code{\link{end}}, \code{\link{span}}, \code{\link{strand}},
 #'   \code{\link{location}}, \code{\link{key}}, \code{\link{qualif}}
 #' @rdname ranges-methods
-#' @export
 #' @importFrom IRanges ranges
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' 
-#' ## default "GRanges" object
+#' ## default "GRanges" object.
 #' ranges(x)
 #' 
-#' ## subset CDSs and include "product", "note", "protein_id"
+#' ## subset CDSs and include "product", "note", "protein_id" as metadata.
 #' ranges(x["CDS"], include = c("product", "note", "protein_id"))
 #'
 #' ## subset CDSs and exclude "translation"
 #' ranges(x["CDS"], include = "all", exclude = "translation")
-#'
 setGeneric("ranges")
 
 #' Has a feature fuzzy locations?
@@ -205,7 +175,6 @@ setGeneric("ranges")
 #' 
 #' ## note that start() or end() return exact positions even if they are fuzzy.
 #' start(l)
-#' 
 setGeneric("fuzzy", signature = "x", function (x, ...) {
   standardGeneric("fuzzy")
 })
@@ -218,13 +187,13 @@ setGeneric("fuzzy", signature = "x", function (x, ...) {
 #' @rdname accessor-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' 
 #' getLocus(x)
 #' getLength(x)
 #' getGeneID(x)
 #' getReference(x)
+#' getDate(x)
 setGeneric('getLocus', function (x, ...) standardGeneric('getLocus'))
 
 #' @rdname accessor-methods
@@ -307,17 +276,14 @@ setGeneric('getComment', function (x) standardGeneric('getComment'))
 #' @rdname getFeatures-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' getFeatures(x)
-#' 
 setGeneric("getFeatures", function(x, ...) standardGeneric("getFeatures"))
 
 #' @rdname getFeatures-methods
 #' @export
 #' @examples
 #' ft(x)
-#' 
 setGeneric("ft", function(x, ...) standardGeneric("ft"))
 
 #' Get the sequence from a GenBank record.
@@ -330,7 +296,8 @@ setGeneric("ft", function(x, ...) standardGeneric("ft"))
 #' @rdname getSequence-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
+#' \dontrun{
+#' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' 
 #' ## extract the full-length sequence of the record.
@@ -338,7 +305,7 @@ setGeneric("ft", function(x, ...) standardGeneric("ft"))
 #' 
 #' ## extract coding sequences only
 #' getSequence(x["CDS"])
-#' 
+#' }
 setGeneric("getSequence", function(x, ...) standardGeneric("getSequence"))
 
 #' Extract the header from a \code{"\linkS4class{gbRecord}"} object.
@@ -350,35 +317,26 @@ setGeneric("getSequence", function(x, ...) standardGeneric("getSequence"))
 #' @rdname getHeader-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' getHeader(x)
-#' 
 setGeneric("getHeader", function(x, ...) standardGeneric("getHeader"))
 
 #' @rdname getHeader-methods
 #' @export
 #' @examples
 #' header(x)
-#' 
 setGeneric("header", function(x, ...) standardGeneric("header"))
 
 #' Summarise a GenBank record. 
 #'
-#' @usage summary(object, n = 8, ...)
 #' @param object An object of class\code{\linkS4class{gbFeature}},
 #' \code{\linkS4class{gbFeatureTable}}, \code{\linkS4class{gbRecord}}, or
 #' \code{\linkS4class{gbRecordList}}.
-#' @param n For \code{list}-like objects, how many elements should
-#' be summarized in head and tail.
-#' @param ... Arguments to be passed to or from other methods.
+#' @param ... Arguments to be passed to methods.
 #' @rdname summary-methods
-#' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' summary(x)
-#' 
 setGeneric("summary")
 
 #' Access the indices of GenBank features
@@ -390,10 +348,8 @@ setGeneric("summary")
 #' @rdname index-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' index(x)
-#' 
 setGeneric("index", signature = "x", function (x, ...) {
   standardGeneric("index")
 })
@@ -408,10 +364,8 @@ setGeneric("index", signature = "x", function (x, ...) {
 #' @rdname location-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' location(x)
-#'
 setGeneric("location", signature = "x", function (x, ...) {
   standardGeneric("location")
 })
@@ -424,10 +378,8 @@ setGeneric("location", signature = "x", function (x, ...) {
 #' @rdname key-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' key(x)
-#'
 setGeneric("key", signature = "x", function(x, ...) {
   standardGeneric("key")
 })
@@ -456,13 +408,12 @@ setGeneric("key<-", signature = "x", function(x, check = TRUE, value) {
 #' @rdname qualif-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' qualif(x[[1]], 'db_xref')
 #' 
 #' ## use shortcuts to common qualifiers
 #' proteinID(x["CDS"])
-#'
+#' locusTag(x["CDS"])
 setGeneric("qualif", signature = "x", function(x, which = "", ...) {
   standardGeneric("qualif")
 })
@@ -488,15 +439,13 @@ setGeneric("qualif<-", signature = "x", function(x, which, check = TRUE, value) 
 #' @rdname dbxref-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' 
 #' ## all db_xrefs associated with CDSs
 #' dbxref(x["CDS"])
 #' 
 #' ## retrieve the TaxId from the "source" field.
 #' dbxref(x[[1]], "taxon")
-#'
 setGeneric("dbxref", signature = "x", function(x, db = NULL, ...) {
   standardGeneric("dbxref")
 })
@@ -521,7 +470,7 @@ setGeneric("dbxref", signature = "x", function(x, db = NULL, ...) {
 #' \dontrun{
 #' aca <- genomeRecordFromNCBI("Bacteria/Acaryochloris_marina", verbose = TRUE)
 #' aca
-#' saveRecord("aca")
+#' saveRecord(aca)
 #' rm(aca)
 #' aca <- loadRecord("./NC_009925_NC_009926_NC_009927_NC_009928_NC_009929_NC_0099__.rds")
 #' aca
@@ -544,9 +493,8 @@ setGeneric("saveRecord", function(x, file = NULL, dir = ".", ...) standardGeneri
 #' @rdname write.GenBank-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
 #' \dontrun{
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' write.GenBank(x, file = "data/marine_metagenome.gbk")
 #' 
 #' ## write selected features to file.
@@ -574,9 +522,8 @@ setGeneric("write.GenBank", function(x, file, append = FALSE, ...) {
 #' @rdname write.FeatureTable-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
 #' \dontrun{
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' write.FeatureTable(x, file = "data/marine_metagenome.tbl")
 #' }
 setGeneric("write.FeatureTable", signature = "x",
@@ -601,10 +548,8 @@ setGeneric("write.FeatureTable", signature = "x",
 #' @rdname qualifList-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' qualifList(x["source"])
-#'
 setGeneric("qualifList", function(x, ...) standardGeneric("qualifList"))
 
 
@@ -623,10 +568,8 @@ setGeneric("qualifList", function(x, ...) standardGeneric("qualifList"))
 #' @rdname qualifTable-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' qualifTable(x)
-#'
 setGeneric("qualifTable", function(x, ...) standardGeneric("qualifTable"))
 
 
@@ -643,10 +586,8 @@ setGeneric("qualifTable", function(x, ...) standardGeneric("qualifTable"))
 #' @rdname featureTable-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' featureTable(x)
-#'
 setGeneric("featureTable", function(x, ...) standardGeneric("featureTable"))
 
 
@@ -665,10 +606,8 @@ setGeneric("featureTable", function(x, ...) standardGeneric("featureTable"))
 #' @rdname hasKey-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' hasKey(x, 'CDS')
-#'
 setGeneric("hasKey", signature = c("x","key"), function(x, key, ...) {
   standardGeneric("hasKey")
 })
@@ -687,10 +626,8 @@ setGeneric("hasKey", signature = c("x","key"), function(x, key, ...) {
 #' @rdname hasQualif-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' hasQualif(x, 'CDS')
-#'
 setGeneric("hasQualif", signature = c("x", "qualifier"), function(x, qualifier, ...) {
   standardGeneric("hasQualif")
 })
@@ -703,7 +640,7 @@ setGeneric("hasQualif", signature = c("x", "qualifier"), function(x, qualifier, 
 #'
 #' @note \code{shift} does not currently handle compound locations In a shifted
 #' feature table compound locations get merged.
-#' @usage shift(x, shift = 0L, split = FALSE, order = TRUE)
+#' @usage shift(x, shift = 0L, split = FALSE, order = TRUE, ...)
 #' @param x A \code{\linkS4class{gbFeatureTable}} or
 #' \code{\linkS4class{gbRecord}} instance (gbFeatureTables must 
 #' be complete and include a 'source' field).
@@ -717,32 +654,29 @@ setGeneric("hasQualif", signature = c("x", "qualifier"), function(x, qualifier, 
 #' @rdname shift-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "S_cerevisiae_mito.rda", package = "biofiles"))
 #' 
 #' ## shift the S. cerevisiae mitochondrion such that cytochrome b is the first CDS
 #' cytb <- start(filter(x, product = "^cytochrome b$")[[1]])[1]
 #' x2 <- shift(x, shift = -cytb + 1, split = TRUE)
-#' 
-setGeneric("shift", signature = "x", function(x, shift = 0L, use.names = TRUE, ...) {
+setGeneric("shift", signature = "x", function(x, shift = 0L, split = FALSE, order = TRUE, ...) {
   standardGeneric("shift")
 })
 
 #' Reverse-complement features in a GenBank record
 #' 
-#' @usage revcomp(x, order = TRUE)
+#' @usage revcomp(x, order = TRUE, ...)
 #' @param x A \code{\linkS4class{gbFeatureTable}} or
 #' \code{\linkS4class{gbRecord}} object (gbFeatureTables must 
 #' be complete and include a 'source' field).
 #' @param order Reorder features after reverse-complementing them.
+#' @param ... Additional arguments passed to methods.
 #' @rdname revcomp-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "S_cerevisiae_mito.rda", package = "biofiles"))
 #' xr <- revcomp(x)
-#' 
-setGeneric("revcomp", signature = "x", function(x, ...) standardGeneric("revcomp"))
+setGeneric("revcomp", signature = "x", function(x, order = TRUE, ...) standardGeneric("revcomp"))
 
 
 # view -------------------------------------------------------------------
@@ -805,7 +739,6 @@ setGeneric("view", signature = "x", function(x, n, ...) {
 #' to be returned as a \code{data.frame} from the filtered features. If \code{NULL},
 #' a \sQuote{\code{gbFeatureTable}} is returned.
 #' Supported \sQuote{\emph{keys}} are \dQuote{index} or \dQuote{idx}, \dQuote{start},
-#' \dQuote{end}, \dQuote{width}, \dQuote{strand}, \dQuote{key}, or any qualifier
 #' tag (e.g., \dQuote{locus_tag}, \dQuote{product}, \dQuote{db_xref}). Specific
 #' \code{db_xref}s can by queried using, e.g. \dQuote{db_xref.GI} or
 #' \dQuote{db_xref.GeneID}.
@@ -815,8 +748,7 @@ setGeneric("view", signature = "x", function(x, n, ...) {
 #' @rdname manip-methods
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "S_cerevisiae_mito.rda", package = "biofiles"))
 #' 
 #' ## filter all hydrophobic tRNAs from the yeast mitochondrion
 #' hydrophobic <- c("Val", "Ile", "Leu", "Met", "Phe", "Trp", "Cys")

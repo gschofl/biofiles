@@ -1,4 +1,4 @@
-#' @importFrom Biostrings reverseComplement xscat
+#' @importFrom Biostrings reverseComplement
 NULL
 
 setAs(from = "gbFeatureTable", to = "gbRecord", function(from) {

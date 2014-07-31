@@ -79,10 +79,8 @@ find_neighbors <- function(query, subject, n = 5,  direction = 'flanking',
   }
 }
 
-
-#' Find flanking features
+#' Find flanking features.
 #' 
-#' @usage upstream(query, subject, n = 5, include_key = "all", exclude_key = "none")
 #' @param query A \code{\linkS4class{gbFeature}} or \code{\linkS4class{gbFeatureTable}}
 #' object.
 #' @param subject A \code{\linkS4class{gbRecord}} or \code{\linkS4class{gbFeatureTable}}
@@ -96,24 +94,27 @@ find_neighbors <- function(query, subject, n = 5,  direction = 'flanking',
 #' @rdname upstream
 #' @export
 #' @examples
-#' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package="biofiles")
-#' x <- gbRecord(gbk_file)
-#' cytb <- filter(x, product = "^cytochrome b$")
+#' load(system.file("extdata", "S_cerevisiae_mito.rda", package = "biofiles"))
+#' cytb <- ft(filter(x, product = "^cytochrome b$"))
 #' 
 #' ## find the three nearest upstream neighbor CDS to CYTB 
 #' upstream(cytb, x["CDS"], n = 3)
-#' 
-upstream <- Partial(find_neighbors, direction = "upstream")
+upstream <- function(query, subject, n = 5, include_key = "all", exclude_key = "none") {
+ find_neighbors(query = query, subject = subject, n = n, include_key = include_key,
+                exclude_key = exclude_key, direction = "upstream")
+}
 
-
-#' @usage downstream(query, subject, n = 5, include_key = "all", exclude_key = "none")
 #' @rdname upstream
 #' @export
-downstream <- Partial(find_neighbors, direction = "downstream")
+downstream <- function(query, subject, n = 5, include_key = "all", exclude_key = "none") {
+  find_neighbors(query = query, subject = subject, n = n, include_key = include_key,
+                 exclude_key = exclude_key, direction = "downstream")
+}
 
-
-#' @usage flanking(query, subject, n = 5, include_key = "all", exclude_key = "none")
 #' @rdname upstream
 #' @export
-flanking <- Partial(find_neighbors, direction = "flanking")
+flanking <- function(query, subject, n = 5, include_key = "all", exclude_key = "none") {
+  find_neighbors(query = query, subject = subject, n = n, include_key = include_key,
+                 exclude_key = exclude_key, direction = "flanking")
+}
 

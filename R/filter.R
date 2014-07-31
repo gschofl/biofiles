@@ -5,7 +5,7 @@
 #' @param .cols gbFeature annotations returned as a data.frame
 #'
 #' @keywords internal
-#' @importFrom IRanges IRanges ranges findOverlaps subjectHits
+#' @importFrom IRanges IRanges findOverlaps subjectHits
 .filter <- function(x, ..., .cols = NULL) {
   keys <- parse_keys(...)
   if (is.null(keys)) {

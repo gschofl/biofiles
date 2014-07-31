@@ -7,6 +7,10 @@ NULL
 
 .mandatory <- c("LOCUS", "DEFINITION", "ACCESSION", "VERSION", "FEATURES", "//")
 
+## declare "rec" global so that "codetools" don't complain
+## see "http://r.789695.n4.nabble.com/R-CMD-check-and-foreach-code-td4687660.html"
+globalVariables("rec")
+
 parse_gb_record <- function(gb_record) {
   ## check that the gb_record is not empty
   if (length(gb_record) == 0L) {
@@ -22,45 +26,9 @@ parse_gb_record <- function(gb_record) {
     registerDoSEQ()
     irec <- iter(list(gb_record))
   }
-  gbk_list <- foreach(rec = irec, .inorder = FALSE) %dopar% 
-  {
-    # get a vector with the positions of the main GenBank fields
-    rec_idx <- grep("^[A-Z//]+", rec)
-    rec_kwd <- strsplitN(rec[rec_idx], " +", 1L)
-    gb_contig <- gb_sequence <-  NULL
-    # Check the presence of mandatory fields
-    if (any(is.na(charmatch(.mandatory, rec_kwd)))) {
-      stop("mandatory fields are missing from the GenBank file")
-    }
-    ## get positions of features, origin, contig and end_of_record
-    ftb_idx <- rec_idx[rec_kwd == "FEATURES"]
-    ori_idx <- rec_idx[rec_kwd == "ORIGIN"]
-    ctg_idx <- rec_idx[rec_kwd == "CONTIG"]
-    end_idx <- rec_idx[rec_kwd == "//"]
-    ftb_end_idx <- rec_idx[which(rec_kwd == "FEATURES") + 1] - 1
-    
-    ## HEADER
-    seqenv <- seqinfo(gbHeader(gb_header = rec[seq.int(ftb_idx - 1)]), NULL)
-    ## SEQUENCE
-    if (length(ori_idx) > 0L) {
-      # if "//" is right after "ORIGIN" there is no sequence
-      # and gb_sequence stays set to NULL
-      if (end_idx - ori_idx > 1L) {
-        gb_sequence <- rec[seq.int(ori_idx + 1, end_idx - 1)]
-      }
-      ## CONTIG
-    } else if (length(ctg_idx) > 0L) {
-      contig_line <- strsplitN(collapse(rec[seq.int(ctg_idx, end_idx-1)], ''),
-                               'CONTIG', 2L, fixed = TRUE)
-      gb_contig <- gbLocation(contig_line)
-    }
-    seqenv$sequence <- gbSequence(gb_sequence, getAccession(seqenv), getMoltype(seqenv))
-    ## FEATURES
-    gb_features <- rec[seq.int(ftb_idx + 1, ftb_end_idx)]
-    gb_features <- gbFeatures(gb_features, seqinfo = seqenv)
-    new_gbRecord(seqinfo = seqenv, features = gb_features, contig = gb_contig) 
+  gbk_list <- foreach(rec = irec, .inorder = FALSE) %dopar% {
+    .parse_gb_record(rec)
   }
-   
   if (length(gbk_list) == 1L) {
     gbk_list[[1L]]
   } else {
@@ -68,6 +36,45 @@ parse_gb_record <- function(gb_record) {
   }
 }
 
+.parse_gb_record <- function(rec) {
+  # get a vector with the positions of the main GenBank fields
+  rec_idx <- grep("^[A-Z//]+", rec)
+  rec_kwd <- strsplitN(rec[rec_idx], " +", 1L)
+  gb_contig <- gb_sequence <-  NULL
+  # Check the presence of mandatory fields
+  if (any(is.na(charmatch(.mandatory, rec_kwd)))) {
+    stop("mandatory fields are missing from the GenBank file")
+  }
+  ## get positions of features, origin, contig and end_of_record
+  ftb_idx <- rec_idx[rec_kwd == "FEATURES"]
+  ori_idx <- rec_idx[rec_kwd == "ORIGIN"]
+  ctg_idx <- rec_idx[rec_kwd == "CONTIG"]
+  end_idx <- rec_idx[rec_kwd == "//"]
+  ftb_end_idx <- rec_idx[which(rec_kwd == "FEATURES") + 1] - 1
+  
+  ## HEADER
+  seqenv <- seqinfo(gbHeader(gb_header = rec[seq.int(ftb_idx - 1)]), NULL)
+  ## SEQUENCE
+  if (length(ori_idx) > 0L) {
+    # if "//" is right after "ORIGIN" there is no sequence
+    # and gb_sequence stays set to NULL
+    if (end_idx - ori_idx > 1L) {
+      gb_sequence <- rec[seq.int(ori_idx + 1, end_idx - 1)]
+    }
+    ## CONTIG
+  } else if (length(ctg_idx) > 0L) {
+    contig_line <- strsplitN(collapse(rec[seq.int(ctg_idx, end_idx-1)], ''),
+                             'CONTIG', 2L, fixed = TRUE)
+    gb_contig <- gbLocation(contig_line)
+  }
+  seqenv$sequence <- gbSequence(gb_sequence = gb_sequence,
+                                accession_no = getAccession(seqenv),
+                                seq_type = getMoltype(seqenv))
+  ## FEATURES
+  gb_features <- rec[seq.int(ftb_idx + 1, ftb_end_idx)]
+  gb_features <- gbFeatures(gb_features, seqinfo = seqenv)
+  new_gbRecord(seqinfo = seqenv, features = gb_features, contig = gb_contig) 
+}
 
 ## characters permitted to occur in feature table component names:
 ## [A-Z], [a-z], [0-9], [_'*-] --> [[:alnum]_'*\\-]

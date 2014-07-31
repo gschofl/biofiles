@@ -2,6 +2,7 @@
 ^.*\.Rproj$
 ^cache/
 ^data/
-playground/
+^packrat/
 scratch\.[rR]
 ^README\.*
+^packrat/

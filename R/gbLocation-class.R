@@ -97,22 +97,20 @@ setMethod("end", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @rdname width-methods
+#' @rdname span-methods
+#' @export
+setMethod("span", "gbLocation", function(x, join = FALSE) {
+  if (join) {
+    max(x@range[, 2]) - min(x@range[, 1]) + 1L
+  } else {
+    x@range[, 2] - x@range[, 1] + 1L
+  }
+})
+
+#' @rdname span-methods
 #' @export
 setMethod("joint_range", "gbLocation", function(x) {
   range(x@range)
-})
-
-#' @rdname width-methods
-#' @export
-setMethod("width", "gbLocation", function(x) {
-  x@range[, 2] - x@range[, 1] + 1L
-})
-
-#' @rdname width-methods
-#' @export
-setMethod("joint_width", "gbLocation", function(x) {
-  max(x@range[, 2]) - min(x@range[, 1]) + 1L
 })
 
 #' @rdname strand-methods

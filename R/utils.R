@@ -51,6 +51,14 @@ dots <- function(...) {
   eval(substitute(alist(...)))
 }
 
+## ensure locale independent parsing of dates
+with_c_locale <- function(code) {
+  lct <- Sys.getlocale("LC_TIME")
+  Sys.setlocale("LC_TIME", "C")
+  on.exit(Sys.setlocale("LC_TIME", lct))
+  force(code)
+}
+
 compact <- function(x) {
   x[!vapply(x, is.empty, FALSE, USE.NAMES = FALSE)]
 }
@@ -470,7 +478,6 @@ get_compounds <- function(x) {
   }
 }
 
-
 .seq_access <- function(x) {
   seq <- .sequence(x)
   if (length(seq) == 0) {
@@ -501,10 +508,10 @@ merge_seq <- function(seq, x, SEQFUN) {
 parse_dbsource <- function(dbsource) {
   if (is.na(dbsource)) {
     '|gb|'
-  }
-  else {
+  } else {
     db <- strsplitN(dbsource, ": | ", 1L)
     db <- switch(db, accession = 'gb', REFSEQ = 'ref', db)
     paste0('|', db, '|')
   }
 }
+

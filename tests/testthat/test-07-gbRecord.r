@@ -1,6 +1,11 @@
 context("gbFeatureTable getter checks")
 
-x <- getFeatures(gbRecord("sequences/nucleotide.gbk"))
+if (getOption('biofiles.test.parser')) {
+  x <- getFeatures(gbRecord("sequences/nucleotide.gbk"))
+} else {
+  load("sequences/nucleotide.rda")
+  x <- getFeatures(nuc)
+}
 
 test_that("Sequence, and Seqinfo can be extracted", {
   expect_is(.seqinfo(x), 'seqinfo')
@@ -42,7 +47,7 @@ test_that("Accessors work for gbFeatureTables", {
   
   x <- x["CDS"]
   expect_true( all(key(x) %in% "CDS") )
-  expect_true( all(end(x) - start(x) + 1 == width(x)) )
+  expect_true( all(end(x) - start(x) + 1 == span(x)) )
   
   qualifier_table <- qualif(x, c('gene','protein_id',"db_xref"))
   expect_equal(dim(qualifier_table), c(8, 3))

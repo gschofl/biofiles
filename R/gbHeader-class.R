@@ -116,8 +116,8 @@
       mtp <<- mtp
       top <<- top
       div <<- div
-      cdt <<- as.POSIXlt(cdt, format = "%d-%b-%Y") 
-      mdt <<- as.POSIXlt(mdt, format = "%d-%b-%Y")
+      cdt <<- with_c_locale(as.POSIXlt(cdt, format = "%d-%b-%Y")) 
+      mdt <<- with_c_locale(as.POSIXlt(mdt, format = "%d-%b-%Y"))
     },
     is_empty = function() {
       sum(length(lnm), length(len), length(mtp), length(top),
@@ -128,7 +128,7 @@
       smtp <- ifelse(substring(mtp, 3, 3) == '-', mtp, paste0(blanks(3), mtp %|AA|% blanks(2)))
       sprintf("%-12s%-17s %+10s %s %-10s %-8s %s %s",
               "LOCUS", lnm, len, type, smtp, top %|na|% '', div,
-              toupper(format(mdt, "%d-%b-%Y")))
+              toupper(with_c_locale(format(mdt, "%d-%b-%Y"))))
     },
     show = function() {
       if (is_empty()) {
@@ -139,7 +139,7 @@
           ellipsize(to_string())
           )
       }
-      cat(showme, "\n")
+      cat(showme, "\n", sep = "")
     }
   )
 )
@@ -164,9 +164,7 @@
 #'    \code{"\linkS4class{envRefClass}"}.
 #' @keywords classes internal
 #' @examples
-#'
 #' showClass("gbLocus")
-#'
 NULL
 
 
@@ -293,7 +291,7 @@ gbLocus <- function(locus_line) {
           to_string(write_to_file = FALSE)
         )
       }
-      cat(showme, "\n")
+      cat(showme, "\n", sep = "")
     }
   )
 )
@@ -315,9 +313,7 @@ gbLocus <- function(locus_line) {
 #'    \code{"\linkS4class{envRefClass}"}.
 #' @keywords classes internal
 #' @examples
-#'
 #' showClass("gbReference")
-#'
 NULL
 
 
@@ -415,7 +411,7 @@ gbReference <- function(ref) {
           to_string(write_to_file = FALSE)
         )
       }
-      cat(showme, "\n")
+      cat(showme, "\n", sep = "")
     }
   )
 )
@@ -430,9 +426,7 @@ gbReference <- function(ref) {
 #'    \code{"\linkS4class{envRefClass}"}.
 #' @keywords classes internal
 #' @examples
-#'
 #' showClass("gbReferenceList")
-#'
 NULL
 
 
@@ -521,7 +515,7 @@ gbReferenceList <- function(ref_lines) {
           to_string(write_to_file = FALSE)
         )
       }
-      cat(showme, "\n")
+      cat(showme, "\n", sep = "")
     },
     write = function(file = "", append = FALSE, sep = "\n") {
       'Write a GenBank file header to file.'
@@ -561,9 +555,7 @@ gbReferenceList <- function(ref_lines) {
 #'    \code{"\linkS4class{envRefClass}"}.
 #' @keywords classes internal
 #' @examples
-#'
 #' showClass("gbHeader")
-#'
 NULL
 
 
@@ -719,9 +711,7 @@ seqinfo <- setRefClass(
 #' 
 #' @keywords classes internal
 #' @examples
-#'
 #' showClass("seqinfo")
-#'
 NULL
 
 

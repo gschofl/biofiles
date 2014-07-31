@@ -65,15 +65,21 @@ IRanges::setValidity2("gbRecord", function(object) {
 #'  \code{\link{genomeRecordFromNCBI}}
 #' @export
 #' @examples
-#' 
+#' \dontrun{
 #' ### import from file
 #' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
 #' x <- gbRecord(gbk_file)
+#' }
+#' 
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' getHeader(x)
 #' getFeatures(x)
 #' 
 #' ### quickly extract features as GRanges
 #' ranges(x["CDS"], include = c("product", "note", "protein_id"))
+#' 
+#' ## Directly subset features
+#' x[[1]]
 #' 
 #' ### import directly from NCBI
 #' \dontrun{
@@ -82,22 +88,16 @@ IRanges::setValidity2("gbRecord", function(object) {
 #' x
 #' }
 #' 
-#' ## Directly subset features
-#' x[[1]]
-#' 
 #' ## import a file containing multiple GenBank records as a
 #' ## gbRecordList. With many short records it pays of to
-#' ## run the parsing in paralle
-#' gss_file <- system.file("extdata", "gss.gbk", package = "biofiles")
-#' 
+#' ## run the parsing in parallel
 #' \dontrun{
-#'    require(doParallel)
-#'    registerDoParallel(cores = 4)
-#' }
-#' 
+#' gss_file <- system.file("extdata", "gss.gbk", package = "biofiles")
+#' library(doParallel)
+#' registerDoParallel(cores = 4)
 #' gss <- gbRecord(gss_file)
 #' gss
-#' 
+#' }
 gbRecord <- function(gbk) {
   if (missing(gbk)) {
     ## instantiate an empty gbRecord
@@ -167,6 +167,7 @@ setMethod("show", "gbRecord", function(object) {
 # summary, length -----------------------------------------------------------
 
 
+#' @param n How many elements should be summarized in head and tail.
 #' @rdname summary-methods
 #' @export
 setMethod("summary", "gbRecord",
@@ -311,7 +312,7 @@ setMethod("getSequence", "gbRecord",  function(x) .sequence(x))
 #' @rdname ranges-methods
 setMethod("ranges", "gbRecord",
           function(x, join = FALSE, key = TRUE, include = "none", exclude = "") {
-            .GRanges(.features(x), join = join, include = include,
+            .GRanges(x = .features(x), join = join, include = include,
                      exclude = exclude, key = key)
           })
 
@@ -333,16 +334,10 @@ setMethod("strand", "gbRecord", function(x, join = FALSE) {
   strand(.features(x), join = join)
 })
 
+#' @rdname span-methods
 #' @export
-#' @rdname width-methods
-setMethod("width", "gbRecord", function(x) {
-  width(.features(x))
-})
-
-#' @export
-#' @rdname width-methods
-setMethod("joint_width", "gbRecord", function(x) {
-  joint_width(.features(x))
+setMethod("span", "gbRecord", function(x, join = FALSE) {
+  span(.features(x), join = join)
 })
 
 #' @export
@@ -448,8 +443,7 @@ setMethod("hasQualif", "gbRecord", function(x, qualifier) {
 #' @docType methods
 #' @rdname extract-methods
 #' @examples
-#' gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
-#' x <- gbRecord(gbk_file)
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' 
 #' ## Extract a gbFeatureTable from a gbRecord:
 #' x[1:4]

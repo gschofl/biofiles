@@ -1,6 +1,11 @@
 context("Test \"select\"")
 
-x <- getFeatures(gbRecord("sequences/nucleotide.gbk"))
+if (getOption('biofiles.test.parser')) {
+  x <- getFeatures(gbRecord("sequences/nucleotide.gbk"))
+} else {
+  load("sequences/nucleotide.rda")
+  x <- getFeatures(nuc)
+}
 cds <- filter(x, key = "CDS")
 
 test_that("select works with feature indices", {

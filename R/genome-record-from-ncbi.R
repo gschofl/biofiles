@@ -95,7 +95,6 @@ chooseFromList <- function(list, prompt = "", default = NULL) {
 #' gbk <- genomeRecordFromNCBI("Bacteria/Chlamydia_muridarum", verbose = TRUE)
 #' 
 #' }
-#' 
 genomeRecordFromNCBI <- function(which, ignore.case = TRUE, .parse = TRUE, ...) {
   if (missing(which)) {
     stop("\"which\" is missing with no default", call. = TRUE)

@@ -276,8 +276,8 @@ setReplaceMethod("end", "gbFeature", function(x, check = TRUE, value) {
   x
 })
 
-#' @export
 #' @rdname strand-methods
+#' @export
 setMethod("strand", "gbFeature", function(x, join = FALSE) {
   strand(x@location, join = join)
 })
@@ -291,19 +291,13 @@ setReplaceMethod("strand", "gbFeature", function(x, value) {
   x
 })
 
-#' @rdname width-methods
+#' @rdname span-methods
 #' @export
-setMethod("width", "gbFeature", function(x) {
-  width(x@location)
+setMethod("span", "gbFeature", function(x, join = FALSE) {
+  span(x@location, join = join)
 })
 
-#' @rdname width-methods
-#' @export
-setMethod("joint_width", "gbFeature", function(x) {
-  joint_width(x@location)
-})
-
-#' @rdname width-methods
+#' @rdname span-methods
 #' @export
 setMethod("joint_range", "gbFeature", function(x) {
   joint_range(x@location)

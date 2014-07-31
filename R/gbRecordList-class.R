@@ -16,10 +16,6 @@ setClass("gbRecordList", contains = "list")
 #' @param ... \dQuote{\linkS4class{gbRecord}} elements.
 #' @return A \dQuote{\linkS4class{gbRecordList}} instance.
 #' @export
-#' @examples
-#' 
-#' ###
-#' 
 gbRecordList <- function(...) {
   listData <- list(...)
   if (length(listData) == 0L) {
@@ -63,9 +59,8 @@ setMethod("show", "gbRecordList", function (object) {
   }
 })
 
-
-#' @export
 #' @rdname summary-methods
+#' @export
 setMethod("summary", "gbRecordList", function (object, n = 2, ...) {
   x <- lapply(object, summary, n = n, ... = ...)
   invisible(NULL)
@@ -207,16 +202,10 @@ setMethod("strand", "gbRecordList", function (x, join = FALSE) {
   lapply(x, strand, join = join)
 })
 
-#' @rdname width-methods
+#' @rdname span-methods
 #' @export
-setMethod("width", "gbRecordList", function(x) {
-  lapply(x, width)
-})
-
-#' @rdname width-methods
-#' @export
-setMethod("joint_width", "gbRecordList", function(x) {
-  lapply(x, joint_width)
+setMethod("span", "gbRecordList", function(x, join = FALSE) {
+  lapply(x, span, join = join)
 })
 
 #' @rdname fuzzy-methods
