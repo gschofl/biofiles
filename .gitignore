@@ -16,7 +16,6 @@ packrat/
 *.pdf
 *.gz
 *.toc
-*.rds
 *.status
 
 
