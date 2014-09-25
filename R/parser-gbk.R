@@ -1,42 +1,9 @@
-#' @importFrom Biostrings DNAStringSet
-#' @importFrom IRanges new2
-#' @importFrom parallel mclapply mcmapply detectCores
-#' @importFrom foreach foreach registerDoSEQ "%dopar%"
-#' @importFrom iterators iter
+#' @include parser-general.R
 NULL
 
 .mandatory <- c("LOCUS", "DEFINITION", "ACCESSION", "VERSION", "FEATURES", "//")
 
-## declare "rec" global so that "codetools" don't complain
-## see "http://r.789695.n4.nabble.com/R-CMD-check-and-foreach-code-td4687660.html"
-globalVariables("rec")
-
-parse_gb_record <- function(gb_record) {
-  ## check that the gb_record is not empty
-  if (length(gb_record) == 0L) {
-    stop("This \"gbRecord\" is empty.")
-  }
-  ## check if gb_record contains multiple entries
-  end_of_record <- grep('^//$', gb_record)
-  n_records <- length(end_of_record)
-  if (n_records > 1L) {
-    start_of_record <- c(1, end_of_record[-n_records] + 1)
-    irec <- iter(ixsplit(gb_record, start_of_record))
-  } else {
-    registerDoSEQ()
-    irec <- iter(list(gb_record))
-  }
-  gbk_list <- foreach(rec = irec, .inorder = FALSE) %dopar% {
-    .parse_gb_record(rec)
-  }
-  if (length(gbk_list) == 1L) {
-    gbk_list[[1L]]
-  } else {
-    gbRecordList(gbk_list)
-  }
-}
-
-.parse_gb_record <- function(rec) {
+parse_gbk_record <- function(rec) {
   # get a vector with the positions of the main GenBank fields
   rec_idx <- grep("^[A-Z//]+", rec)
   rec_kwd <- strsplitN(rec[rec_idx], " +", 1L)

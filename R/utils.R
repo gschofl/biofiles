@@ -511,3 +511,11 @@ parse_dbsource <- function(dbsource) {
   }
 }
 
+is.embl <- function(x) {
+  regexpr(pattern = "^ID", x[1L]) == 1L
+}
+
+is.gbk <- function(x) {
+  regexpr(pattern = "^LOCUS", x[1L]) == 1L
+}
+

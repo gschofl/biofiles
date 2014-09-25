@@ -43,11 +43,11 @@ IRanges::setValidity2("gbRecord", function(object) {
 # constructor ------------------------------------------------------------
 
 
-#' Read a GenBank/GenPept-format file.
+#' Read a GenBank/GenPept or Embl format file.
 #' 
-#' Import data from GenBank/GenPept files into R, represented as an instance
-#' of the \code{\linkS4class{gbRecord}} or \code{\linkS4class{gbRecordList}}
-#' classes.
+#' Import data from GenBank/GenPept or Embl flat files into R, represented as
+#' an instance of the \code{\linkS4class{gbRecord}} or
+#' \code{\linkS4class{gbRecordList}} classes.
 #' 
 #' @details
 #' For a sample GenBank record see
@@ -55,10 +55,10 @@ IRanges::setValidity2("gbRecord", function(object) {
 #' for a detailed description of the GenBank feature table format see
 #' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
 #'
-#' @param gbk A vector of paths to GenBank format files,
+#' @param rcd A vector of paths to GenBank/Embl format records,
 #' an \code{\link[reutils]{efetch}} object containing GenBank record(s), or
 #' a \code{textConnection} to a character vector that can be parsed as
-#' a Genbank record.
+#' a Genbank or Embl record.
 #' @return An instance of the \code{\linkS4class{gbRecord}} or
 #' \code{\linkS4class{gbRecordList}} classes.
 #' @seealso
@@ -98,33 +98,33 @@ IRanges::setValidity2("gbRecord", function(object) {
 #' gss <- gbRecord(gss_file)
 #' gss
 #' }
-gbRecord <- function(gbk) {
-  if (missing(gbk)) {
+gbRecord <- function(rcd) {
+  if (missing(rcd)) {
     ## instantiate an empty gbRecord
     return(new_gbRecord())
   }
-  if (is(gbk, "efetch")) {
-    assert_that(retmode(gbk) == "text", rettype(gbk) %is_in% c('gb','gbwithparts','gp'))
-    gbk <- content(gbk, "textConnection")
+  if (is(rcd, "efetch")) {
+    assert_that(retmode(rcd) == "text", rettype(rcd) %is_in% c('gb','gbwithparts','gp'))
+    rcd <- content(rcd, "textConnection")
   }
-  if (is(gbk, "textConnection")) {
-    on.exit(close(gbk))
-    return(parse_gb_record(readLines(gbk)))
-  } else if (tryCatch(all(file.exists(gbk)), error = function(e) FALSE)) {
-    n <- length(gbk)
-    gbk_list <- vector("list", n)
+  if (is(rcd, "textConnection")) {
+    on.exit(close(rcd))
+    return(parse_record(rcd = readLines(rcd)))
+  } else if (tryCatch(all(file.exists(rcd)), error = function(e) FALSE)) {
+    n <- length(rcd)
+    rcd_list <- vector("list", n)
     for (i in seq_len(n)) {
-      con <- file(gbk[i], open = "rt")
+      con <- file(rcd[i], open = "rt")
       on.exit(close(con))
-      gbk_list[[i]] <- parse_gb_record(gb_record = readLines(con))
+      rcd_list[[i]] <- parse_record(rcd = readLines(con))
     }
-    if (length(gbk_list) == 1L) {
-      return(gbk_list[[1L]])
+    if (length(rcd_list) == 1L) {
+      return(rcd_list[[1L]])
     } else {
-      return(gbRecordList(gbk_list))
+      return(gbRecordList(rcd_list))
     }
   } else {
-    stop(paste0("'gbk' must be the path to GenBank flat file or an'efetch' ",
+    stop(paste0("'rcd' must be the path to GenBank or Embl flat file or an 'efetch' ",
                 "object containing GenBank records"))
   }
 }

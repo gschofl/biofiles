@@ -1,7 +1,7 @@
 Package: biofiles
 Type: Package
 Title: An interface for GenBank/GenPept flat files
-Version: 0.3.1
+Version: 0.3.1.99
 Date: 2012-07-31
 Author: Gerhard Schöfl [aut, cre]
 Maintainer: Gerhard Schöfl <gerhard.schofl@gmail.com>
@@ -52,7 +52,9 @@ Collate:
     'genome-record-from-ncbi.R'
     'make-ranges.R'
     'misc-functions.R'
-    'parser.R'
+    'parser-general.R'
+    'parser-embl.R'
+    'parser-gbk.R'
     'select.R'
     'shift.R'
     'write-feature-table.R'

@@ -135,7 +135,7 @@ gbReader <- function(verbose = FALSE) {
     if (verbose) {
       cat("Parsing:", strsplitN(txt[2], 'DEFINITION  ', 2), sep = "\n")
     }
-    parse_gb_record(txt)
+    parse_gbk_record(txt)
   }
   list(
     update = update,

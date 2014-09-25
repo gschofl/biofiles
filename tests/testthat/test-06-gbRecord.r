@@ -1,7 +1,7 @@
 context("gbFeature getter checks")
 
 if (getOption('biofiles.test.parser')) {
-  x <- filter(gbRecord(gb="sequences/nucleotide.gbk"), key = 'CDS')[[3]]
+  x <- filter(gbRecord(rcd = "sequences/nucleotide.gbk"), key = 'CDS')[[3]]
 } else {
   load("sequences/nucleotide.rda")
   x <- filter(nuc, key = 'CDS')[[3]]

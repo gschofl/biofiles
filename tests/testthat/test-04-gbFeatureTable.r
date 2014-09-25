@@ -1,7 +1,7 @@
 context("gbFeatureTable accessor checks")
 
 if (getOption('biofiles.test.parser')) {
-  nuc <- gbRecord("sequences/nucleotide.gbk")
+  nuc <- gbRecord(rcd = "sequences/nucleotide.gbk")
 } else {
   #save(nuc, file = "sequences/nucleotide.rda")
   load("sequences/nucleotide.rda")
@@ -25,7 +25,8 @@ test_that("Can subset a gbFeatureTable", {
 
 test_that("gbFeatureTable accessors work", {
   x <- fl
-    ## index
+  
+  ## index
   expect_equal(index(x), 1:17)
   
   ## key
