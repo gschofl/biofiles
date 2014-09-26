@@ -25,10 +25,16 @@ parse_record <- function(rcd) {
     registerDoSEQ()
     irec <- iter(list(rcd))
   }
+  #counter <- 1
   rcd_list <- if (is.gbk(rcd)) {
     foreach(rec = irec, .inorder = FALSE) %dopar% gbk_record(rec)
   } else if (is.embl(rcd)) {
-    foreach(rec = irec, .inorder = FALSE) %dopar% embl_record(rec) 
+    foreach(rec = irec, .inorder = FALSE) %dopar% {
+      rs <- embl_record(rec)
+      #cat("Count: ", counter, "\n", sep = "")
+      #counter <- counter + 1
+      rs
+    }
   } else {
     stop("Unknown format <", rcd[1], ">")
   }

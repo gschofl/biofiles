@@ -135,6 +135,7 @@ void parse_simple_span(
     b_it = simple_span.begin();
     e_it = simple_span.end();
     boost::smatch m;
+    //Rcpp::Rcout << "'" << simple_span << "' => ";
     //Rcpp::Rcout << *b_it << " ... " << *e_it << std::endl;
     
     // initialize and set defaults
@@ -180,6 +181,7 @@ void parse_simple_span(
             e_it = m[0].second;
         }
         //Rcpp::Rcout << accn << std::endl;
+        //Rcpp::Rcout << "'" << simple_span << "' => ";
         //Rcpp::Rcout << *b_it << " ... " << *e_it << std::endl;
 
         // get type
@@ -196,9 +198,11 @@ void parse_simple_span(
             end = start;
         }
         
-        // get fuzzy
+        //Rcpp::Rcout << "'" << simple_span << "' => ";
+        //Rcpp::Rcout << start << " ... " << end << std::endl;
+        // get fuzzy and make sure we also catch the usage in IMGT/HLA
         static const boost::regex FUZZY_START("^<\\d+$");
-        static const boost::regex FUZZY_END("^>\\d+$");
+        static const boost::regex FUZZY_END("^>\\d+$|^\\d+>$");
         fuzzy[0] = boost::regex_match(start, m, FUZZY_START );
         fuzzy[1] = boost::regex_match(end, m, FUZZY_END );
     }

@@ -1,7 +1,7 @@
 #' @include parser-general.R
 NULL
 
-.embl_mandatory <- c("ID", "AC", "DT", "DE", "KW", "OS", "RN", "FH")
+.embl_mandatory <- c("ID", "AC", "DT", "DE", "KW", "OS", "FH")
 
 #' Parser for Embl Records.
 #' 
@@ -22,10 +22,12 @@ embl_record <- function(rec) {
   
   ## get positions of features, sequence, contig and end_of_record
   ftb_idx <- rec_idx[rec_kwd == "FH"] + 2L
-  seq_idx <- rec_idx[rec_kwd == "SQ"] + 1L
+  seq_idx <- grep("^SQ", rec)
   ctg_idx <- rec_idx[rec_kwd == "CO"]
   end_idx <- grep("^//", rec)
-  ftb_end_idx <- rec_idx[which(rec_kwd == "FH") + 1] - 1
+  if (is.na(ftb_end_idx <- rec_idx[which(rec_kwd == "FH") + 1] - 1)) {
+    ftb_end_idx <- seq_idx
+  }
   
   ## HEADER
   x <- rec[seq.int(ftb_idx - 3)]
@@ -35,7 +37,7 @@ embl_record <- function(rec) {
   if (length(seq_idx) > 0L) {
     # if "//" is right after "ORIGIN" there is no sequence
     # and gb_sequence stays set to NULL
-    if (end_idx - ori_idx > 1L) {
+    if (end_idx - seq_idx > 1L) {
       embl_sequence <- rec[seq.int(seq_idx + 1, end_idx - 1)]
     }
     ## CONTIG
@@ -52,6 +54,7 @@ embl_record <- function(rec) {
   ft <- parse_features(x = ft, seqinfo = seqenv)
   new_gbRecord(seqinfo = seqenv, features = ft, contig = embl_contig) 
 }
+
 
 #' @keywords internal
 embl_header <- function(x) {

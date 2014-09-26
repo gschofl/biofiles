@@ -10,9 +10,17 @@ test_that("Location descriptors parse correctly", {
   
   expect_output(show(gbLocation("<345..500")), "<345..500")
   expect_output( show(gbLocation("1..>888")), "1..>888")
+  expect_error(gbLocation(">345..500"), "Cannot parse location descriptor")
+  expect_error(gbLocation("1..<888"), "Cannot parse location descriptor")
   
   expect_output(show(gbLocation("123^124")), "123\\^124")
   expect_error(gbLocation("123^125"), "Inadmissible range")
+
+  expect_output(show( gbLocation("<10")), "<10")
+  expect_output(show( gbLocation(">10")), ">10")
+  
+  ## This is a stupid idiosycratic usage in IMGT/HLA
+  expect_output(show(gbLocation("<1..546>")), "<1..>546")
   
   expect_output( 
     show(gbLocation("join(12..78,134..202)")),
