@@ -71,6 +71,10 @@ compactNA <- function(x) {
   x[!is.na(x)]
 }
 
+compactXX <- function(x) {
+  x[vapply(x, function(l) is.na(charmatch('XX', l)), logical(1), USE.NAMES = FALSE)]
+}
+
 merge_dups <- function(x) {
   if (all_empty(x)) {
     return(NULL)
@@ -519,3 +523,12 @@ is.gbk <- function(x) {
   regexpr(pattern = "^LOCUS", x[1L]) == 1L
 }
 
+embl_line <- function(x, kwd, id, sep) {
+  id <- toupper(id)
+  pid <- paste0('^', id, "\\s+")
+  rs <- sub(pid, '', x[kwd == id])
+  if (!missing(sep)) {
+    rs <- collapse(rs, sep)
+  }
+  rs
+}

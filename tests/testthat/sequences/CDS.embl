@@ -1,0 +1,20 @@
+FT   CDS             14..1495
+FT                   /product="beta-glucosidase"
+FT                   /EC_number="3.2.1.21"
+FT                   /note="non-cyanogenic"
+FT                   /db_xref="GOA:P26204"
+FT                   /db_xref="InterPro:IPR001360"
+FT                   /db_xref="InterPro:IPR013781"
+FT                   /db_xref="InterPro:IPR017853"
+FT                   /db_xref="InterPro:IPR018120"
+FT                   /db_xref="UniProtKB/Swiss-Prot:P26204"
+FT                   /protein_id="CAA40058.1"
+FT                   /translation="MDFIVAIFALFVISSFTITSTNAVEASTLLDIGNLSRSSFPRGFI
+FT                   FGAGSSAYQFEGAVNEGGRGPSIWDTFTHKYPEKIRDGSNADITVDQYHRYKEDVGIMK
+FT                   DQNMDSYRFSISWPRILPKGKLSGGINHEGIKYYNNLINELLANGIQPFVTLFHWDLPQ
+FT                   VLEDEYGGFLNSGVINDFRDYTDLCFKEFGDRVRYWSTLNEPWVFSNSGYALGTNAPGR
+FT                   CSASNVAKPGDSGTGPYIVTHNQILAHAEAVHVYKTKYQAYQKGKIGITLVSNWLMPLD
+FT                   DNSIPDIKAAERSLDFQFGLFMEQLTTGDYSKSMRRIVKNRLPKFSKFESSLVNGSFDF
+FT                   IGINYYSSSYISNAPSHGNAKPSYSTNPMTNISFEKHGIPLGPRAASIWIYVYPYMFIQ
+FT                   EDFEIFCYILKINITILQFSITENGMNEFNDATLPVEEALLNTYRIDYYYRHLYYIRSA
+FT                   IRAGSNVKGFYAWSFLDCNEWFAGFTVRFGLNFVD"

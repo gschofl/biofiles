@@ -16,15 +16,27 @@ An instance of the \code{\linkS4class{gbRecord}} or
 \code{\linkS4class{gbRecordList}} classes.
 }
 \description{
-Import data from GenBank/GenPept or Embl flat files into R, represented as
-an instance of the \code{\linkS4class{gbRecord}} or
+Import data from GenBank/GenPept, Embl, or IMGT/HLA flat files into R,
+represented as an instance of the \code{\linkS4class{gbRecord}} or
 \code{\linkS4class{gbRecordList}} classes.
 }
 \details{
 For a sample GenBank record see
 \url{http://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html},
 for a detailed description of the GenBank feature table format see
-\url{http://www.ncbi.nlm.nih.gov/collab/FT/}
+\url{http://www.ncbi.nlm.nih.gov/collab/FT/}.
+
+For a description of the EMBL flat file format see
+\url{ftp://ftp.ebi.ac.uk/pub/databases/embl/doc/usrman.txt}.
+
+For a description of the format and conventions of IMGT/HLA flat files
+see \url{http://www.ebi.ac.uk/ipd/imgt/hla/docs/manual.html}.
+}
+\note{
+The \code{\linkS4class{gbRecord}} class is modelled after the Genbank flat
+file format. Both Embl and IMGT/HLA files do not fit this model perfectly,
+so some pretty arbitrary choices were made to make the data from these files
+fitr the model.
 }
 \examples{
 \dontrun{

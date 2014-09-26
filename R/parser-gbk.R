@@ -1,17 +1,24 @@
 #' @include parser-general.R
 NULL
 
-.mandatory <- c("LOCUS", "DEFINITION", "ACCESSION", "VERSION", "FEATURES", "//")
+.gbk_mandatory <- c("LOCUS", "DEFINITION", "ACCESSION", "VERSION", "FEATURES", "//")
 
-parse_gbk_record <- function(rec) {
+#' Parser for GenBank/GenPept records.
+#' 
+#' @param x A character vector
+#' @return A \code{\linkS4class{gbRecord}} instance.
+#' @keywords internal
+gbk_record <- function(rec) {
   # get a vector with the positions of the main GenBank fields
   rec_idx <- grep("^[A-Z//]+", rec)
   rec_kwd <- strsplitN(rec[rec_idx], " +", 1L)
-  gb_contig <- gb_sequence <-  NULL
+  gbk_contig <- gbk_sequence <-  NULL
+  
   # Check the presence of mandatory fields
-  if (any(is.na(charmatch(.mandatory, rec_kwd)))) {
+  if (any(is.na(charmatch(.gbk_mandatory, rec_kwd)))) {
     stop("mandatory fields are missing from the GenBank file")
   }
+  
   ## get positions of features, origin, contig and end_of_record
   ftb_idx <- rec_idx[rec_kwd == "FEATURES"]
   ori_idx <- rec_idx[rec_kwd == "ORIGIN"]
@@ -20,13 +27,14 @@ parse_gbk_record <- function(rec) {
   ftb_end_idx <- rec_idx[which(rec_kwd == "FEATURES") + 1] - 1
   
   ## HEADER
-  seqenv <- seqinfo(gbHeader(gb_header = rec[seq.int(ftb_idx - 1)]), NULL)
+  seqenv <- seqinfo(gbk_header(x = rec[seq.int(ftb_idx - 1)]), NULL)
+  
   ## SEQUENCE
   if (length(ori_idx) > 0L) {
     # if "//" is right after "ORIGIN" there is no sequence
     # and gb_sequence stays set to NULL
     if (end_idx - ori_idx > 1L) {
-      gb_sequence <- rec[seq.int(ori_idx + 1, end_idx - 1)]
+      gbk_sequence <- rec[seq.int(ori_idx + 1, end_idx - 1)]
     }
     ## CONTIG
   } else if (length(ctg_idx) > 0L) {
@@ -34,87 +42,152 @@ parse_gbk_record <- function(rec) {
                              'CONTIG', 2L, fixed = TRUE)
     gb_contig <- gbLocation(contig_line)
   }
-  seqenv$sequence <- gbSequence(gb_sequence = gb_sequence,
-                                accession_no = getAccession(seqenv),
-                                seq_type = getMoltype(seqenv))
+  seqenv$sequence <- 
+    parse_sequence(seq = gbk_sequence, acc = getAccession(seqenv),
+                   seqtype = getMoltype(seqenv), src = "gbk")
+  
   ## FEATURES
-  gb_features <- rec[seq.int(ftb_idx + 1, ftb_end_idx)]
-  gb_features <- gbFeatures(gb_features, seqinfo = seqenv)
-  new_gbRecord(seqinfo = seqenv, features = gb_features, contig = gb_contig) 
+  ft <- rec[seq.int(ftb_idx + 1, ftb_end_idx)]
+  ft <- parse_features(x = ft, seqinfo = seqenv)
+  new_gbRecord(seqinfo = seqenv, features = ft, contig = gbk_contig) 
 }
 
-## characters permitted to occur in feature table component names:
-## [A-Z], [a-z], [0-9], [_'*-] --> [[:alnum]_'*\\-]
-##
-## Qualifiers:
-## A qualifier takes the form of a slash (/) followed by its name,
-## if applicable, an equals sign ( = ) and its value.
-## 
-## Qualifier value formats:
-## Free text; Controlled vocabulary or enumerated values; Citation or 
-## reference numbers
-##
-## Free text: "text"
-##   enclosed in double quotation marks; composed of printable
-##   characters (ASCII values 32-126 decimal); internal quotation markes are
-##   ""escaped"" by placing a second quotation mark immediately before.
-##
-## Controlled vocabulary/Enumerators:
-##   /anticodon = (pos:<base_range>,aa:<amino_acid>)
-##   /codon_start = 1, 2, or 3
-##   /direction = left, right, or both
-##   /estimated_length = unknown or <integer>
-##   /calculated_mol_wt = <integer>
-##   /mod_base = name of modified base
-##   /number = unquoted text
-##   /rpt_type = <repeat_type>
-##   /rpt_unit_range = <base_range>
-##   /tag_peptide = <base_range>
-##   /transl_except = (pos:location,aa:<amino_acid>)
-##   /transl_table = <integer>
-##  
-## Citations:
-##   /citation = [number] e.g. /citation = [3]
-##   /compare = [accession-number.sequence-version] e.g. /compare = AJ634337.1
-##
-gbFeatures <- function(gb_features, seqinfo) {
-  feature_start <- which(substr(gb_features, 6, 6) != " ")
-  fl <- ixsplit(gb_features, feature_start)
-  mc_cores <- floor(detectCores()*0.75)
-  id <- seq_along(feature_start)
-  ftbl <- mcmapply(gbFeature, feature = fl, id = id,
-                   MoreArgs = list(accession = getAccession(seqinfo)),
-                   SIMPLIFY = FALSE, USE.NAMES = FALSE, mc.cores = mc_cores)                   
-  IRanges::new2('gbFeatureTable', .Data = ftbl, .id = id, .seqinfo = seqinfo,
-                check = FALSE) 
-}
+#' @keywords internal
+gbk_header <- function(x) {
+  # generate a vector with the positions of the main GenBank keywords.
+  # keywords are all capitals, beginning in column 1 of a record.
+  gbk_idx <- grep("^[A-Z//]+", x)
+  gbk_kwd <- strsplitN(x[gbk_idx], split = " +", 1)
 
-join_seq <- function(seq, accession_no) {
-  mc_cores <- floor(detectCores()*0.75)
-  s <- unlist(mclapply(seq, function(x) {
-    collapse(strsplit(substr(x, 11, 75), " ")[[1L]], '')
-  }, mc.cores = mc_cores))
-  s <- c(paste0(">", accession_no), s)
-  s
-}
+  ## LOCUS (Mandatory)
+  locus <- gbk_locus(x[gbk_idx[gbk_kwd == "LOCUS"]])
 
-#' @importFrom Biostrings readDNAStringSet readAAStringSet BStringSet
-gbSequence <- function(gb_sequence, accession_no, seq_type) {
-  # read.BStringSet() does not support connections and
-  # currently only accepts fasta format. So we write out gb_sequence as
-  # a temporary fasta file and read it back in as an AAStringSet or
-  # DNAStringSet (mRNA etc seems to be encoded with Ts rather then Us,
-  # so we use DNAStringSets for RNA)
-  if (is.null(gb_sequence)) {
-    return(BStringSet())
+  ## DEFINITION (Mandatory)
+  def_idx <- which(gbk_kwd == "DEFINITION")
+  def_line <- x[seq.int(gbk_idx[def_idx], gbk_idx[def_idx + 1] - 1)]
+  definition <- collapse(sub("DEFINITION  ", "", def_line), ' ')
+
+  ## ACCESSION (Mandatory)
+  acc_line <- x[gbk_idx[gbk_kwd == "ACCESSION"]]
+  accession <- strsplitN(acc_line, split = "\\s+", 2L)
+
+  ## VERSION and GI (Mandatory)
+  ver_line <- x[gbk_idx[gbk_kwd == "VERSION"]]
+  version  <- usplit(ver_line, split = "\\s+")[2L]
+  seqid    <- paste0('gi|', usplit(ver_line, split = "GI:", fixed = TRUE)[2L])
+
+  ## DBLINK (Optional)
+  if (length(db_line <- x[gbk_idx[gbk_kwd == "DBLINK"]]) > 0L) {
+    dblink <- usplit(db_line, split = "Project: ", fixed = TRUE)[2L]
   } else {
-    tmp <- tempfile()
-    on.exit(unlink(tmp))
-    writeLines(text = join_seq(gb_sequence, accession_no), tmp)
-    origin <- switch(seq_type,
-                     AA = readAAStringSet(tmp, format = "fasta"),
-                     readDNAStringSet(tmp, format = "fasta"))
-    origin
+    dblink <- NA_character_
   }
+
+  ## DBSOURCE (GenPept only; sometimes more than one line)
+  if (length(dbsrc_idx <- which(gbk_kwd == "DBSOURCE")) > 0L) {
+    dbs_lines <- x[seq.int(gbk_idx[dbsrc_idx], gbk_idx[dbsrc_idx + 1] - 1)]
+    dbsource <- collapse(gsub("^ +", "", sub("DBSOURCE", "", dbs_lines)), "\n")
+  } else {
+    dbsource <- NA_character_
+  }
+
+  ## KEYWORDS (Mandatory)
+  key_line <- x[gbk_idx[gbk_kwd == "KEYWORDS"]]
+  keywords <- sub("KEYWORDS    ", "", key_line)
+
+  ## SOURCE with ORGANISM and the complete lineage (Mandatory)
+  src_idx <- which(gbk_kwd == 'SOURCE')
+  source_lines <- x[seq.int(gbk_idx[src_idx], gbk_idx[src_idx + 1] - 1)]                  
+  source <- sub("SOURCE      ", "", source_lines[1L])
+  organism <- sub("  ORGANISM  ", "", source_lines[2L])
+  taxonomy <- collapse(gsub("^ +", "", source_lines[-c(1L, 2L)]), ' ')
+
+  ## REFERENCES (Mandatory?)
+  if (length(ref_idx <- which(gbk_kwd == "REFERENCE")) > 0L) {
+    ref_lines <-
+      x[
+        seq.int(
+          gbk_idx[ref_idx[1]],
+          (gbk_idx[ref_idx[length(ref_idx)] + 1] - 1) %|na|% length(x)
+        )]
+    references <- gbk_reference_list(ref_lines)
+  } else {
+    references <- .gbReferenceList()
+  }
+
+  ## COMMENT (Optional)
+  if (length(gbk_idx[gbk_kwd == "COMMENT"]) > 0L) {
+    com_lines <- x[seq.int(min(gbk_idx[gbk_kwd == "COMMENT"]), length(x))]
+    comment <- collapse(gsub("^ +", "", sub("COMMENT", "", com_lines)), "\n")
+  } else {
+    comment <- NA_character_
+  }
+  
+  .gbHeader(
+    locus = locus,
+    definition = definition,
+    accession = accession,
+    version = version,
+    seqid = seqid,
+    dblink = dblink,
+    dbsource = dbsource,
+    keywords = keywords,
+    source = source,
+    organism = organism,
+    taxonomy = taxonomy,
+    references = references,
+    comment = comment
+  )
+}
+
+#' @keywords internal
+gbk_locus <- function(locus_line) {
+  tokens <- usplit(locus_line, split = "\\s+")[-1]
+  # GenBank format: 'bp', GenPept: 'aa'
+  gb <- if (tokens[3] == 'bp') TRUE else FALSE 
+  date_idx <- length(tokens)
+  divi_idx <- date_idx - 1
+  topo_idx <- date_idx - 2
+  if (gb && date_idx < 7 || !gb && date_idx < 6) {
+    # topology is missing
+    topo_idx <- NULL
+  }
+  .gbLocus(
+    lnm = tokens[1],
+    len = tokens[2],
+    mtp = if (gb) tokens[4] else 'AA',
+    top = tokens[topo_idx] %||% NA_character_,
+    div = tokens[divi_idx] %||% NA_character_,
+    cdt = tokens[date_idx],
+    mdt = tokens[date_idx]
+  )
+}
+
+#' @keywords internal
+gbk_reference <- function(ref) {
+  ## split by subkeywords
+  ref_idx <- grep("^ {0,3}[A-Z]+", ref)
+  ref_list <- ixsplit(ref, ref_idx, include_i = TRUE, collapse_x = TRUE)
+  ## 
+  kwd   <- vapply(ref_list, strsplitN, '\\s+', 1L, FUN.VALUE = "")
+  field <- vapply(ref_list, strsplitN, '^[A-Z]+\\s+(?!\\S)\\s', 2L, perl = TRUE, FUN.VALUE = "")
+  ##
+  ref <- set_reference()
+  ref$refline(field[kwd == "REFERENCE"])
+  ref$authors(field[kwd == "AUTHORS"])
+  ref$consrtm(field[kwd == "CONSRTM"])
+  ref$title(field[kwd == "TITLE"])
+  ref$journal(field[kwd == "JOURNAL"])
+  ref$pubmed(field[kwd == "PUBMED"])
+  ref$remark(field[kwd == "REMARK"])
+  ref$yield()
+}
+
+#' @keywords internal
+gbk_reference_list <- function(ref_lines) {
+  ## split references
+  ref_idx <- grep("REFERENCE", ref_lines, fixed = TRUE, ignore.case = FALSE)
+  ref_list <- ixsplit(ref_lines, ref_idx)
+  .gbReferenceList(ref = lapply(ref_list, gbk_reference))
 }
 

@@ -28,19 +28,22 @@ void parse_gb_feature_table(
     static const std::string WS(" ");
     // merge qualifier values that occupy more than one line
     // Define qualifier position: Optional blanks followed by forward slash
-    static const boost::regex QUAL_POS("^(FT)?\\s*/");
+    static const boost::regex QUAL_POS("^(FT)?\\s+/");
     static const boost::regex TRANS("^translation=");
     std::vector<std::string>::const_iterator s_it = feature_string.begin();
     for ( ; s_it != feature_string.end(); s_it++ ) {
         boost::regex_search( s_it->begin(), s_it->end(), m, QUAL_POS ); 
         if ( m[0].matched ) {
             merged.push_back( this_line );
-            this_line = boost::trim_left_copy_if(boost::trim_copy( *s_it ), boost::is_any_of("/"));
+            // If we have an embl file trim FT, whitespace, and /
+            // If we have a gbk file trim whitespace and /
+            this_line = boost::trim_right_copy( boost::trim_left_copy_if( *s_it, boost::is_any_of("FT /")));
         } else {
             if ( boost::regex_search( this_line, m, TRANS) ) {
-                this_line += boost::trim_copy( *s_it ); // don't add whitespace when joining translations
+                // don't add whitespace when joining translations
+                this_line += boost::trim_right_copy( boost::trim_left_copy_if( *s_it, boost::is_any_of("FT /"))); 
             } else {
-                this_line += WS + boost::trim_copy( *s_it );
+                this_line += WS + boost::trim_right_copy( boost::trim_left_copy_if( *s_it, boost::is_any_of("FT /")));
             }
         }
         // Push the last qualifier

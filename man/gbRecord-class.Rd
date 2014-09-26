@@ -6,8 +6,8 @@
 \title{Class \code{"gbRecord"}}
 \description{
 \dQuote{gbRecord} is an S4 class that provides a container for data
-parsed from a GenBank or GenPept records. For instantiation of a gbRecord
-object use the import function \code{\link{gbRecord}}.
+parsed from GenBank, GenPept, Embl or IMGT records. For instantiation of a
+gbRecord object use the import function \code{\link{gbRecord}}.
 }
 \section{Slots}{
 

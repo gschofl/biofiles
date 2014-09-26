@@ -1,17 +1,25 @@
-context("gbFeature parser checks")
+context("Feature parser checks")
 
-src <- readLines("sequences/source.gbk")
-cds <- readLines("sequences/CDS.gbk")
+src1 <- readLines("sequences/source.gbk")
+cds1 <- readLines("sequences/CDS.gbk")
 
 test_that("GenBank feature tables parse correctly", {
-  expect_is(gbFeature(src), 'gbFeature')
-  expect_is(gbFeature(cds), 'gbFeature')
+  expect_is(gbFeature(src1), 'gbFeature')
+  expect_is(gbFeature(cds1), 'gbFeature')
+})
+
+src2 <- readLines("sequences/source.embl")
+cds2 <- readLines("sequences/CDS.embl")
+
+test_that("Embl feature tables parse correctly", {
+  expect_is(gbFeature(src2), 'gbFeature')
+  expect_is(gbFeature(cds2), 'gbFeature')
 })
 
 context("gbFeature getter/setter checks")
 
 test_that("gbFeature accessors work", {
-  x <- biofiles:::gbFeature(cds, id = 10)
+  x <- biofiles:::gbFeature(cds2, id = 10)
   
   expect_output(biofiles:::.seqinfo(x), "Seqinfo:")
   expect_output(biofiles:::.header(x), "An empty .*gbHeader.* instance.")
@@ -26,14 +34,16 @@ test_that("gbFeature accessors work", {
   expect_equal(x[['key']], 'CDS')
   
   ## location
-  expect_equal(start(x), 338)
-  expect_equal(end(x), 2800)
-  expect_equal(span(x), 2463)
+  expect_equal(start(x), 14)
+  expect_equal(end(x), 1495)
+  expect_equal(span(x), 1482)
   expect_equal(strand(x), 1)
-  expect_equal(joint_range(x), c(338, 2800))
+  #expect_equal(joint_range(x), c(338, 2800))
   expect_equal(fuzzy(x), matrix(c(FALSE, FALSE), nrow = 1))
-  expect_output(show(location(x)), "338..2800")
-  expect_output(show(x[['location']]), "338..2800")
+  expect_output(show(location(x)), "14..1495")
+  expect_output(show(x[['location']]), "14..1495")
+
+  x <- biofiles:::gbFeature(cds1, id = 10)
   
   ## specific qualifiers
   expect_equal(locusTag(x), "STMUK_0002")
@@ -57,7 +67,7 @@ test_that("gbFeature accessors work", {
 })
 
 test_that("gbFeature replacement methods work", {
-  x <- biofiles:::gbFeature(cds, id = 10)
+  x <- biofiles:::gbFeature(cds1, id = 10)
   
   ## replace start
   start(x) <- 100

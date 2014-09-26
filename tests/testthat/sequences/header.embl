@@ -1,0 +1,35 @@
+ID   X56734; SV 1; linear; mRNA; STD; PLN; 1859 BP.
+XX
+AC   X56734; S46826;
+XX
+DT   12-SEP-1991 (Rel. 29, Created)
+DT   25-NOV-2005 (Rel. 85, Last updated, Version 11)
+XX
+DE   Trifolium repens mRNA for non-cyanogenic beta-glucosidase
+XX
+KW   beta-glucosidase.
+XX
+OS   Trifolium repens (white clover)
+OC   Eukaryota; Viridiplantae; Streptophyta; Embryophyta; Tracheophyta;
+OC   Spermatophyta; Magnoliophyta; eudicotyledons; core eudicotyledons; rosids;
+OC   fabids; Fabales; Fabaceae; Papilionoideae; Trifolieae; Trifolium.
+XX
+RN   [5]
+RP   1-1859
+RX   DOI; 10.1007/BF00039495.
+RX   PUBMED; 1907511.
+RA   Oxtoby E., Dunn M.A., Pancoro A., Hughes M.A.;
+RT   "Nucleotide and derived amino acid sequence of the cyanogenic
+RT   beta-glucosidase (linamarase) from white clover (Trifolium repens L.)";
+RL   Plant Mol. Biol. 17(2):209-219(1991).
+XX
+RN   [6]
+RP   1-1859
+RA   Hughes M.A.;
+RT   ;
+RL   Submitted (19-NOV-1990) to the INSDC.
+RL   Hughes M.A., University of Newcastle Upon Tyne, Medical School, Newcastle
+RL   Upon Tyne, NE2 4HH, UK
+XX
+DR   EuropePMC; PMC99098; 11752244.
+XX

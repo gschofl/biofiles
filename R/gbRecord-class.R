@@ -7,8 +7,8 @@ setClassUnion("gbLocationOrNull", members = c("gbLocation", "NULL"))
 #' Class \code{"gbRecord"}
 #'
 #' \dQuote{gbRecord} is an S4 class that provides a container for data
-#' parsed from a GenBank or GenPept records. For instantiation of a gbRecord
-#' object use the import function \code{\link{gbRecord}}.
+#' parsed from GenBank, GenPept, Embl or IMGT records. For instantiation of a
+#' gbRecord object use the import function \code{\link{gbRecord}}.
 #' 
 #' @slot seqinfo A \code{"\linkS4class{seqinfo}"} instance; This is a 
 #' reference class holding the sequence as an \code{"\linkS4class{XStringSet}"}
@@ -45,15 +45,27 @@ IRanges::setValidity2("gbRecord", function(object) {
 
 #' Read a GenBank/GenPept or Embl format file.
 #' 
-#' Import data from GenBank/GenPept or Embl flat files into R, represented as
-#' an instance of the \code{\linkS4class{gbRecord}} or
+#' Import data from GenBank/GenPept, Embl, or IMGT/HLA flat files into R,
+#' represented as an instance of the \code{\linkS4class{gbRecord}} or
 #' \code{\linkS4class{gbRecordList}} classes.
 #' 
 #' @details
 #' For a sample GenBank record see
 #' \url{http://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html},
 #' for a detailed description of the GenBank feature table format see
-#' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}
+#' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}.
+#' 
+#' For a description of the EMBL flat file format see
+#' \url{ftp://ftp.ebi.ac.uk/pub/databases/embl/doc/usrman.txt}.
+#' 
+#' For a description of the format and conventions of IMGT/HLA flat files
+#' see \url{http://www.ebi.ac.uk/ipd/imgt/hla/docs/manual.html}.
+#'
+#' @note
+#' The \code{\linkS4class{gbRecord}} class is modelled after the Genbank flat
+#' file format. Both Embl and IMGT/HLA files do not fit this model perfectly,
+#' so some pretty arbitrary choices were made to make the data from these files
+#' fitr the model.
 #'
 #' @param rcd A vector of paths to GenBank/Embl format records,
 #' an \code{\link[reutils]{efetch}} object containing GenBank record(s), or
