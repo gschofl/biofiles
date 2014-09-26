@@ -21,20 +21,21 @@ gbk_record <- function(rec) {
   
   ## get positions of features, origin, contig and end_of_record
   ftb_idx <- rec_idx[rec_kwd == "FEATURES"]
-  ori_idx <- rec_idx[rec_kwd == "ORIGIN"]
+  seq_idx <- rec_idx[rec_kwd == "ORIGIN"]
   ctg_idx <- rec_idx[rec_kwd == "CONTIG"]
   end_idx <- rec_idx[rec_kwd == "//"]
   ftb_end_idx <- rec_idx[which(rec_kwd == "FEATURES") + 1] - 1
   
   ## HEADER
-  seqenv <- seqinfo(gbk_header(x = rec[seq.int(ftb_idx - 1)]), NULL)
+  x <- rec[seq.int(ftb_idx - 1)]
+  seqenv <- seqinfo(gbk_header(x), NULL)
   
   ## SEQUENCE
-  if (length(ori_idx) > 0L) {
+  if (length(seq_idx) > 0L) {
     # if "//" is right after "ORIGIN" there is no sequence
     # and gb_sequence stays set to NULL
-    if (end_idx - ori_idx > 1L) {
-      gbk_sequence <- rec[seq.int(ori_idx + 1, end_idx - 1)]
+    if (end_idx - seq_idx > 1L) {
+      gbk_sequence <- rec[seq.int(seq_idx + 1, end_idx - 1)]
     }
     ## CONTIG
   } else if (length(ctg_idx) > 0L) {

@@ -1,7 +1,7 @@
 #' @include parser-general.R
 NULL
 
-.embl_mandatory <- c("ID", "AC", "DT", "DE", "KW", "OS", "RN", "DR", "FH")
+.embl_mandatory <- c("ID", "AC", "DT", "DE", "KW", "OS", "RN", "FH")
 
 #' Parser for Embl Records.
 #' 
@@ -9,9 +9,10 @@ NULL
 #' @return A \code{\linkS4class{gbRecord}} instance.
 #' @keywords internal
 embl_record <- function(rec) {
-  # get a vector with the positions of the main Embl fields
+  # get a vector with the positions of the main Embl fields by grepping the
+  # spacers (XX) and adding one to the index
   rec_idx <- c(1, grep("^XX", rec) + 1L)
-  rec_kwd <- strsplitN(rec[rec_idx], " +", 1L)
+  rec_kwd <- strsplitN(rec[rec_idx], "\\s+", 1L)
   embl_contig <- embl_sequence <-  NULL
   
   # Check the presence of mandatory fields
@@ -19,22 +20,23 @@ embl_record <- function(rec) {
     stop("mandatory fields are missing from the Embl file")
   }
   
-  ## get positions of features, origin, contig and end_of_record
+  ## get positions of features, sequence, contig and end_of_record
   ftb_idx <- rec_idx[rec_kwd == "FH"] + 2L
-  ori_idx <- rec_idx[rec_kwd == "SQ"] + 1L
+  seq_idx <- rec_idx[rec_kwd == "SQ"] + 1L
   ctg_idx <- rec_idx[rec_kwd == "CO"]
   end_idx <- grep("^//", rec)
   ftb_end_idx <- rec_idx[which(rec_kwd == "FH") + 1] - 1
   
   ## HEADER
-  seqenv <- seqinfo(embl_header(x = rec[seq.int(ftb_idx - 3)]), NULL)
+  x <- rec[seq.int(ftb_idx - 3)]
+  seqenv <- seqinfo(embl_header(x), NULL)
   
   ## SEQUENCE
-  if (length(ori_idx) > 0L) {
+  if (length(seq_idx) > 0L) {
     # if "//" is right after "ORIGIN" there is no sequence
     # and gb_sequence stays set to NULL
     if (end_idx - ori_idx > 1L) {
-      embl_sequence <- rec[seq.int(ori_idx + 1, end_idx - 1)]
+      embl_sequence <- rec[seq.int(seq_idx + 1, end_idx - 1)]
     }
     ## CONTIG
   } else if (length(ctg_idx) > 0L) {
@@ -73,17 +75,17 @@ embl_header <- function(x) {
   ## SV [sequence version] (Optional)
   version <- embl_line(x, kwd, 'SV') %||% NA_character_
   seqid    <- NA_character_
-  
+
   ## PR [project identifier] (Optional)
   dblink <- if (length(db_line <- embl_line(x, kwd, "PR")) > 0L) {
-    usplit(db_line, split = "Project: ", fixed = TRUE)[2L]
+    usplit(usplit(db_line, split = "Project: ?")[2L], ";\\s*")
   } else {
     NA_character_
   }
   
   ## DR [Database cross-reference] (Optional)
   dbsource <- embl_line(x, kwd, "DR", ' ')
-  
+
   ## KW [keyword] (Mandatory)
   keywords <- embl_line(x, kwd, "KW", ' ')
   
@@ -102,7 +104,7 @@ embl_header <- function(x) {
   
   ## CC [comments or notes] (Optional)
   comment <- embl_line(x, kwd, 'CC', ' ') %||% NA_character_
-  
+
   .gbHeader(
     locus = locus,
     definition = definition,
@@ -122,15 +124,23 @@ embl_header <- function(x) {
 
 #' @keywords internal
 embl_locus <- function(locus_line, date_line) {
+  ## The tokens represent:
+  ## 1. Primary accession number
+  ## 2. Sequence version number (Currently we don't use SV)
+  ## 3. Topology: 'circular' or 'linear'
+  ## 4. Molecule type
+  ## 5. Data class
+  ## 6. Taxonomic division (not always present)
+  ## 7. Sequence length
   tokens <- usplit(locus_line, split = ";\\s+")
-  ntok <- length(tokens) 
+  ntok <- length(tokens)
   seqlen <- usplit(tokens[ntok], " ")
-  dates <- usplit(date_line, " .+")
+  dates <- usplit(date_line, "\\s.+")
   .gbLocus(
-    lnm = tokens[1], ## locus name; primary accession number
-    len = as.integer(seqlen[1]), ## Sequence length.
-    mtp = if (seqlen[2] == 'BP.') 'bp' else 'AA',
-    top = tokens[3], ## topology (circular or linear)
+    lnm = tokens[1],
+    len = as.integer(seqlen[1]),
+    mtp = if (seqlen[2] != 'BP.') 'AA' else tokens[4],
+    top = tokens[3],
     div = if (ntok > 6) paste0(tokens[5], '/', tokens[6]) else tokens[5], ## combine data class and taxonomic division
     cdt = dates[1],
     mdt = dates[2]
