@@ -11,7 +11,7 @@ before_install:
 
 install:
   - ./travis-tool.sh r_binary_install Rcpp knitr foreach iterators RCurl doParallel testthat
-  - ./travis-tool.sh bioc_install BiocGenerics BiocStyle Biostrings GenomicRanges IRanges XVector
+  - ./travis-tool.sh bioc_install BiocGenerics BiocStyle Biostrings GenomeInfoDb GenomicRanges IRanges S4Vectors XVector
   - ./travis-tool.sh install_deps
 
 script: ./travis-tool.sh run_tests
