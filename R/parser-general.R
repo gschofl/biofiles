@@ -1,5 +1,4 @@
 #' @importFrom Biostrings DNAStringSet
-#' @importFrom IRanges new2
 #' @importFrom parallel mclapply mcmapply detectCores
 #' @importFrom foreach foreach registerDoSEQ "%dopar%"
 #' @importFrom iterators iter
@@ -9,7 +8,7 @@ NULL
 ## see "http://r.789695.n4.nabble.com/R-CMD-check-and-foreach-code-td4687660.html"
 globalVariables("rec")
 
-parse_record <- function(rcd) {
+parse_record <- function(rcd, progress = FALSE) {
   ## check that the gbk/embl record is not empty
   if (length(rcd) == 0L) {
     stop("This \"gbRecord\" is empty.")
@@ -17,6 +16,7 @@ parse_record <- function(rcd) {
   ## check if gbk/embl record contains multiple entries
   end_of_record <- grep('^//$', rcd)
   n_records <- length(end_of_record)
+  pb <- make_progress_bar(n_records)
   if (n_records > 1L) {
     start_of_record <- c(1, end_of_record[-n_records] + 1)
     irec <- iter(ixsplit(rcd, start_of_record))
@@ -25,15 +25,15 @@ parse_record <- function(rcd) {
     registerDoSEQ()
     irec <- iter(list(rcd))
   }
-  #counter <- 1
   rcd_list <- if (is.gbk(rcd)) {
-    foreach(rec = irec, .inorder = FALSE) %dopar% gbk_record(rec)
+    foreach(rec = irec, .inorder = FALSE) %dopar% {
+      if (progress) pb()
+      gbk_record(rec)
+    }
   } else if (is.embl(rcd)) {
     foreach(rec = irec, .inorder = FALSE) %dopar% {
-      rs <- embl_record(rec)
-      #cat("Count: ", counter, "\n", sep = "")
-      #counter <- counter + 1
-      rs
+      if (progress) pb()
+      embl_record(rec)
     }
   } else {
     stop("Unknown format <", rcd[1], ">")
@@ -42,6 +42,56 @@ parse_record <- function(rcd) {
     rcd_list[[1L]]
   } else {
     gbRecordList(rcd_list)
+  }
+}
+
+make_progress_bar <- function(n) {
+  now <- function() {
+    proc.time()[[3]]
+  }
+  
+  tick <- function() {
+    if (i < n) {
+      i <<- i + 1L
+    }
+  }
+  
+  repstr <- function(x, i) {
+    paste(rep.int(x, i), collapse = "")
+  }
+  
+  width <- function() {
+    getOption("width") - nchar("|[100%] - 100h to go.") - 2
+  }
+  
+  cat_line <- function(...) {
+    msg <- paste0(..., collapse = "")
+    gap <- max(c(0, getOption("width") - nchar(msg, "width")))
+    cat("\r", msg, rep.int(" ", gap), sep = "")
+    flush.console()
+  }
+  
+  show_time <- function(x) {
+    if (x < 60) {
+      paste0(round(x), "s")
+    } else if (x < 60*60) {
+      paste0(round(x/60), "m")
+    } else {
+      paste0(round(x/(60*60)), "h")
+    }
+  }
+  
+  i <- 0L
+  init_time <- now()
+  
+  function() {
+    tick()
+    avg <- (now() - init_time) / i
+    time_left <- (n - i)*avg
+    nbars <- trunc(i/n*width())
+    cat_line("|", repstr("=", nbars), repstr(" ", width() - nbars), "| [",
+             format(round(i/n*100), width = 3), "%] - ", show_time(time_left),
+             " to go.")
   }
 }
 
@@ -87,7 +137,7 @@ parse_features <- function(x, seqinfo) {
   ftbl <- mcmapply(gbFeature, feature = fl, id = id,
                    MoreArgs = list(accession = getAccession(seqinfo)[1]),
                    SIMPLIFY = FALSE, USE.NAMES = FALSE, mc.cores = mc_cores)                   
-  IRanges::new2('gbFeatureTable', .Data = ftbl, .id = id, .seqinfo = seqinfo, check = FALSE) 
+  new2('gbFeatureTable', .Data = ftbl, .id = id, .seqinfo = seqinfo, check = FALSE) 
 }
 
 #' @importFrom Biostrings readDNAStringSet readAAStringSet BStringSet

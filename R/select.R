@@ -5,7 +5,6 @@
 #' @param .cols gbFeature annotations returned as a data.frame
 #'
 #' @keywords internal
-#' @importFrom IRanges elementMetadata "elementMetadata<-"
 #' @include filter.R
 .select <- function (x, ..., .cols = NULL) {
   cols <- unique(c(c(...), .cols))

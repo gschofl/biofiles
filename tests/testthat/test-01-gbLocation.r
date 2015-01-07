@@ -114,7 +114,7 @@ test_that("gbLocation replacement methods work", {
     end(a) <- c(9, 200),
     "One or more ranges with second endpoint before first")
   
-  strand(a) = -1
+  strand(a) <- -1
   expect_equal(strand(a), c(-1, -1))
 
 })

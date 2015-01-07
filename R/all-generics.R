@@ -35,7 +35,8 @@ NULL
 
 # getter/setter generics -------------------------------------------------
 
-#' Get or set the start position of genomic features
+### The "start" and "start<- generics are defined in the BiocGenerics package.
+#' Get the start position of genomic features
 #' 
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
@@ -44,8 +45,8 @@ NULL
 #' @return An integer vector or a list of integer vectors.
 #' @seealso
 #'   \code{\link{end}}, \code{\link{strand}}, \code{\link{span}}, \code{\link{ranges}}
-#' @rdname start-methods
-#' @importFrom stats start
+#' @importFrom BiocGenerics start
+#' @export
 #' @examples
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' 
@@ -54,12 +55,23 @@ NULL
 #' start(cds)
 setGeneric("start")
 
+#' Set the start position of genomic features
+#' 
+#' @param x A \code{\linkS4class{gbFeature}} or \code{\linkS4class{gbFeatureTable}}
+#' object.
 #' @param check if \code{FALSE}, don't perform validity checks.
 #' @param value The start information to set on \code{x}.
-#' @importFrom IRanges "start<-"
-#' @rdname start-methods
+#' @importFrom BiocGenerics "start<-"
+#' @export
+#' @examples
+#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
+#' 
+#' cds <- x["CDS"]
+#' start(cds) <- 10
+#' start(cds)
 setGeneric("start<-")
 
+### The "end" and "end<- generics are defined in the BiocGenerics package.
 #' Get or set the end position of genomic features
 #' 
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
@@ -69,8 +81,8 @@ setGeneric("start<-")
 #' @return An integer vector or a list of integer vectors.
 #' @seealso
 #'   \code{\link{start}}, \code{\link{strand}}, \code{\link{span}}, \code{\link{ranges}}
-#' @rdname end-methods
-#' @importFrom stats end
+#' @importFrom BiocGenerics end
+#' @export
 #' @examples
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' 
@@ -81,11 +93,12 @@ setGeneric("end")
 
 #' @param check if \code{FALSE}, don't perform validity checks.
 #' @param value The end information to set on \code{x}.
-#' @importFrom IRanges "end<-"
-#' @rdname end-methods
+#' @importFrom BiocGenerics "end<-"
+#' @export
+#' @rdname end
 setGeneric("end<-")
 
-### The "strand" generic is defined in the BiocGenerics package.
+### The "strand" and "strand<-" generics are defined in the BiocGenerics package.
 #' Get or set the strand of genomic features
 #'
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
@@ -96,15 +109,16 @@ setGeneric("end<-")
 #' \code{NA}
 #' @seealso
 #'   \code{\link{start}}, \code{\link{end}}, \code{\link{span}}, \code{\link{ranges}}
-#' @rdname strand-methods
 #' @importFrom BiocGenerics strand
+#' @export
 #' @examples
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' strand(x)
 setGeneric("strand")
 
-#' @rdname strand-methods
+#' @rdname strand
 #' @importFrom BiocGenerics strand<-
+#' @export
 setGeneric("strand<-")
 
 #' Get the span of genomic features.
@@ -116,7 +130,7 @@ setGeneric("strand<-")
 #' @return An integer vector or a list of integer vectors.
 #' @seealso
 #'   \code{\link{start}}, \code{\link{end}}, \code{\link{strand}}, \code{\link{ranges}}
-#' @rdname span-methods
+#' @export
 #' @examples
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' span(x)
@@ -124,7 +138,7 @@ setGeneric("span", signature = "x", function (x, ...) {
   standardGeneric("span")
 })
 
-#' @rdname span-methods
+#' @rdname span
 #' @export
 setGeneric("joint_range", signature = "x", function(x) standardGeneric("joint_range"))
 
@@ -143,8 +157,8 @@ setGeneric("joint_range", signature = "x", function(x) standardGeneric("joint_ra
 #' @seealso
 #'   \code{\link{start}}, \code{\link{end}}, \code{\link{span}}, \code{\link{strand}},
 #'   \code{\link{location}}, \code{\link{key}}, \code{\link{qualif}}
-#' @rdname ranges-methods
 #' @importFrom IRanges ranges
+#' @export
 #' @examples
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' 
@@ -167,7 +181,6 @@ setGeneric("ranges")
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
 #' @param ... Further arguments passed to methods.
 #' @return A logical matrix.
-#' @rdname fuzzy-methods
 #' @export
 #' @examples
 #' l <- as.gbLocation("complement(<123..150)")
@@ -184,7 +197,7 @@ setGeneric("fuzzy", signature = "x", function (x, ...) {
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
 #' @param ... Further arguments passed to methods.
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 #' @examples
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
@@ -196,71 +209,71 @@ setGeneric("fuzzy", signature = "x", function (x, ...) {
 #' getDate(x)
 setGeneric('getLocus', function (x, ...) standardGeneric('getLocus'))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric("getLength", function (x, ...) standardGeneric('getLength'))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric('getMoltype', function (x, ...) standardGeneric('getMoltype'))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric('getTopology', function (x, ...) standardGeneric('getTopology'))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric('getDivision', function (x, ...) standardGeneric('getDivision'))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric('getDate', function (x) standardGeneric('getDate'))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric("getDefinition", function (x, ...) standardGeneric("getDefinition"))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric("getAccession", function (x, ...) standardGeneric("getAccession"))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric("getVersion", function (x, ...) standardGeneric("getVersion"))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric("getGeneID", function (x, ...) standardGeneric("getGeneID"))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric('getDBLink', function (x) standardGeneric('getDBLink'))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric('getDBSource', function (x) standardGeneric('getDBSource'))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric('getSource', function (x) standardGeneric('getSource'))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric('getOrganism', function (x) standardGeneric('getOrganism'))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric('getTaxonomy', function (x) standardGeneric('getTaxonomy'))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric('getKeywords', function (x) standardGeneric('getKeywords'))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric('getReference', function (x) standardGeneric('getReference'))
 
-#' @rdname accessor-methods
+#' @rdname accessors
 #' @export
 setGeneric('getComment', function (x) standardGeneric('getComment'))
 
@@ -334,6 +347,7 @@ setGeneric("header", function(x, ...) standardGeneric("header"))
 #' \code{\linkS4class{gbRecordList}}.
 #' @param ... Arguments to be passed to methods.
 #' @rdname summary-methods
+#' @export
 #' @examples
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' summary(x)
@@ -650,7 +664,6 @@ setGeneric("hasQualif", signature = c("x", "qualifier"), function(x, qualifier, 
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A \code{\linkS4class{gbFeatureTable}} object.
-#' @rdname shift-methods
 #' @export
 #' @examples
 #' load(system.file("extdata", "S_cerevisiae_mito.rda", package = "biofiles"))

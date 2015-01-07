@@ -76,7 +76,7 @@ translation <- function(x) AAStringSet(.translation(x))
 #' @param merge Merge the retrieved contig sequences.
 #' @return A \code{\linkS4class{DNAStringSet}} instance.
 #' @importFrom Biostrings unlist DNAStringSet
-#' @importFrom IRanges metadata "metadata<-" width
+#' @importFrom S4Vectors "metadata<-" width
 #' @importFrom reutils efetch
 #' @export
 getContigSeq <- function(x, merge = TRUE) { 

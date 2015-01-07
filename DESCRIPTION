@@ -16,6 +16,7 @@ Imports:
     BiocGenerics,
     Biostrings,
     foreach,
+    GenomeInfoDb,
     GenomicRanges,
     IRanges,
     iterators,
@@ -24,6 +25,7 @@ Imports:
     RCurl,
     reutils,
     stats,
+    S4Vectors,
     XVector
 Suggests:
     doParallel,

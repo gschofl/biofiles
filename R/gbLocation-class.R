@@ -27,8 +27,6 @@ NULL
 #' For more information see the 
 #' \href{ftp://ftp.ncbi.nih.gov/genbank/gbrel.txt}{GenBank Release Note}
 #' 
-#' @name gbLocation-class
-#' @rdname gbLocation-class
 #' @keywords classes internal
 setClass("gbLocation",
          representation(range = "matrix",
@@ -48,8 +46,8 @@ setClass("gbLocation",
 
 
 #' @keywords internal
-#' @importFrom IRanges setValidity2
-IRanges::setValidity2("gbLocation", function(object) {
+#' @importFrom S4Vectors setValidity2
+setValidity2("gbLocation", function(object) {
   # check range matrix
   if (!is.integer(object@range) || dim(object@range)[2] != 2 )
     return( "The 'range' slot should be a two-column, integer matrix." )
@@ -77,8 +75,7 @@ IRanges::setValidity2("gbLocation", function(object) {
 # Getter-methods ---------------------------------------------------------
 
 
-#' @rdname start-methods
-#' @export
+#' @describeIn start
 setMethod("start", "gbLocation", function(x, join = FALSE) {
   if (join) {
     min(x@range[, 1, drop = TRUE])
@@ -87,8 +84,7 @@ setMethod("start", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @rdname end-methods
-#' @export
+#' @describeIn end
 setMethod("end", "gbLocation", function(x, join = FALSE) {
   if (join) {
     max(x@range[, 2, drop = TRUE])
@@ -97,8 +93,7 @@ setMethod("end", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @rdname span-methods
-#' @export
+#' @describeIn span
 setMethod("span", "gbLocation", function(x, join = FALSE) {
   if (join) {
     max(x@range[, 2]) - min(x@range[, 1]) + 1L
@@ -107,14 +102,12 @@ setMethod("span", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @rdname span-methods
-#' @export
+#' @describeIn span
 setMethod("joint_range", "gbLocation", function(x) {
   range(x@range)
 })
 
-#' @rdname strand-methods
-#' @export
+#' @describeIn strand
 setMethod("strand", "gbLocation", function(x, join = FALSE) {
   if (join || dim(x@range)[1] == 1L) {
     unique(x@strand)
@@ -123,68 +116,62 @@ setMethod("strand", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @rdname fuzzy-methods
-#' @export
+#' @describeIn fuzzy
 setMethod("fuzzy", "gbLocation", function(x) x@fuzzy)
 
-#' @rdname accessor-methods
-#' @export
+#' @rdname accessors
 setMethod("getAccession", "gbLocation", function(x) x@accession)
 
 
 # Replace methods -----------------------------------------------------
 
+.gbLocation_replace_start <- function(x, check = TRUE, value) {
+  nrow <- dim(x@range)[1]
+  if (!is.numeric(value))
+    stop("replacement 'value' must be numeric")
+  if (length(value) != nrow)
+    stop("This gbLocation contains ", nrow, " start values")
+  
+  if (all(x@range[, 1] == x@range[, 2])) {
+    x@range[, 1] <- as.integer(value)
+    x@range[, 2] <- as.integer(value)
+  } else {
+    x@range[, 1] <- as.integer(value)
+  }
+  if (check)
+    validObject(x)
+  x
+}
 
-#' @name start<-
-#' @rdname start-methods
-#' @export
-#' @aliases start<-,gbLocation-method
-setReplaceMethod("start", "gbLocation",
-                 function(x, check = TRUE, value) {
-                   nrow <- dim(x@range)[1]
-                   if (!is.numeric(value))
-                     stop("replacement 'value' must be numeric")
-                   if (length(value) != nrow)
-                     stop("This gbLocation contains ", nrow, " start values")
-   
-                   if (all(x@range[,1] == x@range[,2])) {
-                     x@range[,1] <- as.integer(value)
-                     x@range[,2] <- as.integer(value)
-                   } else {
-                     x@range[,1] <- as.integer(value)
-                   }
-                   if (check)
-                     validObject(x)
-                   x
-                 })
+#' @describeIn start<-
+setReplaceMethod("start", "gbLocation", function(x, ..., value) 
+  .gbLocation_replace_start(x, ..., value = value)
+)
 
-#' @name end<-
-#' @export
-#' @rdname end-methods
-#' @aliases end<-,gbLocation-method
-setReplaceMethod("end", "gbLocation",
-                 function(x, check = TRUE, value) {
-                   nrow <- dim(x@range)[1]
-                   if (!is.numeric(value))
-                     stop("replacement 'value' must be numeric")
-                   if (length(value) != nrow)
-                     stop("This gbLocation contains ", nrow ," end values")
-                   
-                   if (all(x@range[,2] == x@range[,1])) {
-                     x@range[,2] <- as.integer(value)
-                     x@range[,1] <- as.integer(value)
-                   } else {
-                     x@range[,2] <- as.integer(value)
-                   }
-                   if (check)
-                     validObject(x)
-                   x
-                 })
+.gbLocation_replace_end <- function(x, check = TRUE, value) {
+  nrow <- dim(x@range)[1]
+  if (!is.numeric(value))
+    stop("replacement 'value' must be numeric")
+  if (length(value) != nrow)
+    stop("This gbLocation contains ", nrow ," end values")
+  
+  if (all(x@range[, 2] == x@range[, 1])) {
+    x@range[, 2] <- as.integer(value)
+    x@range[, 1] <- as.integer(value)
+  } else {
+    x@range[, 2] <- as.integer(value)
+  }
+  if (check)
+    validObject(x)
+  x
+}
 
-#' @name strand<-
-#' @export
-#' @rdname strand-methods
-#' @aliases strand<-,gbLocation-method
+#' @describeIn end
+setReplaceMethod("end", "gbLocation", function(x, ..., value) 
+  .gbLocation_replace_end(x, ..., value = value)
+)
+
+#' @describeIn strand
 setReplaceMethod("strand", "gbLocation",
                  function(x, value) {
                    nrow <- dim(x@range)[1]
@@ -288,8 +275,7 @@ as.gbLocation <- function(base_span) {
 # shift ---------------------------------------------------------------
 
 
-#' @rdname shift-methods
-#' @export
+#' @describeIn shift
 setMethod("shift", "gbLocation", function(x, shift = 0L, ...) {
   if (!is.numeric(shift))
     stop("'shift' must be an integer")

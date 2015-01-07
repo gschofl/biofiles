@@ -1,5 +1,6 @@
-#' @importFrom IRanges DataFrame Rle
-#' @importFrom GenomicRanges GRanges GRangesList Seqinfo
+#' @importFrom S4Vectors DataFrame Rle
+#' @importFrom GenomicRanges GRanges GRangesList 
+#' @importFrom GenomeInfoDb Seqinfo
 NULL
 
 .GRanges <- function(x, join = FALSE, include = "none", exclude = "", key = TRUE) {

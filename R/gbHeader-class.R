@@ -587,36 +587,36 @@ setMethod('.locus', 'seqinfo', function(x) .header(x)$locus)
 
 ## Getters
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getLocus", "seqinfo", function(x) .locus(x)$lnm)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getLength", "seqinfo", function(x) .locus(x)$len)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getMoltype", "seqinfo", function(x) .locus(x)$mtp)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getTopology", "seqinfo", function(x) .locus(x)$top)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getDivision", "seqinfo", function(x) .locus(x)$div)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getDate", "seqinfo", function(x) {
   c(create_date = .locus(x)$cdt, update_date = .locus(x)$mdt)
 })
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getDefinition", "seqinfo", function(x) .header(x)$definition)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getAccession", "seqinfo", function(x) .header(x)$accession)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getVersion", "seqinfo", function(x) .header(x)$version)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getGeneID", "seqinfo", function(x, db = 'gi') {
   seqid <- .header(x)$seqid
   if (is.na(seqid)) {
@@ -627,27 +627,27 @@ setMethod("getGeneID", "seqinfo", function(x, db = 'gi') {
   }
 })
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getDBLink", "seqinfo", function(x) .header(x)$dblink)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getDBSource", "seqinfo", function(x) .header(x)$dbsource)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getSource", "seqinfo", function(x) .header(x)$source)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getOrganism", "seqinfo", function(x) .header(x)$organism)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getTaxonomy", "seqinfo", function(x) .header(x)$taxonomy)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getReference", "seqinfo", function(x) .header(x)$references)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getKeywords", "seqinfo", function(x) .header(x)$keywords)
 
-#' @rdname accessor-methods
+#' @rdname accessors
 setMethod("getComment", "seqinfo", function(x) .header(x)$comment)
 
