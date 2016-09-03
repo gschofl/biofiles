@@ -1,7 +1,3 @@
-#' @importFrom assertthat assert_that on_failure<- is.string
-#' @importFrom stats setNames
-NULL
-
 is.empty <- function(x) {
   is.null(x) || length(x) == 0L || (length(x) == 1L && !nzchar(x))
 }
@@ -23,7 +19,7 @@ assertthat::on_failure(all_empty) <- function(call, env) {
 }
 
 is_in <- function(x, table) {
-  assert_that(length(x) == 1L)
+  assertthat::assert_that(length(x) == 1L)
   x %in% table
 }
 assertthat::on_failure(is_in) <- function(call, env) {
@@ -86,7 +82,7 @@ merge_dups <- function(x) {
 }
 
 modify_list <- function(a, b, mode = c("replace", "merge")) {
-  assert_that(is.list(a), is.list(b))
+  assertthat::assert_that(is.list(a), is.list(b))
   mode <- match.arg(mode)
   a_names <- names(a)
   for (v in names(b)) {
@@ -101,12 +97,11 @@ modify_list <- function(a, b, mode = c("replace", "merge")) {
   a
 }
 
-#' @importFrom reutils make_flattener
 flatten1 <- reutils::make_flattener(flatten.at = 1)
 flatten2 <- reutils::make_flattener(flatten.at = 2)
 
 re <- function(x) {
-  assert_that(is.string(x))
+  assertthat::assert_that(assertthat::is.string(x))
   structure(x, class = "regexp")
 }
 
@@ -187,7 +182,7 @@ collapse <- function(x, sep = ' ') {
   if (is.list(x)) {
     vapply(x, collapse, sep = sep, FUN.VALUE = '')
   } else {
-    paste0(trim(x), collapse = sep)
+    paste0(trimws(x), collapse = sep)
   }
 }
 
@@ -230,7 +225,7 @@ count_re <- function(x, re) {
 #' @param msg Additional message if the test fails.
 #' @keywords internal
 has_command <- function(cmd, msg = "") {
-  assert_that(is.string(cmd))
+  assertthat::assert_that(assertthat::is.string(cmd))
   unname(Sys.which(cmd) != "")
 }
 assertthat::on_failure(has_command) <- function(call, env) {
@@ -263,7 +258,7 @@ assertthat::on_failure(has_command) <- function(call, env) {
 linebreak <- function(s, width = getOption("width") - 2,
                       indent = 0, offset = 0, split = ' ',
                       FORCE = FALSE, FULL_FORCE = FALSE) {
-  assert_that(offset >= 0)
+  assertthat::assert_that(offset >= 0)
   first_pass <- TRUE
   s <- as.character(s)
   if (length(s) == 0) return("")
@@ -276,7 +271,7 @@ linebreak <- function(s, width = getOption("width") - 2,
     indent <- abs(indent)
     offset_string <- paste0("\n", dup(' ', offset))
     if (!FULL_FORCE) {
-      s <- gsub("\\s+", " ", trim(s), perl = TRUE)
+      s <- gsub("\\s+", " ", trimws(s), perl = TRUE)
     }
     fws <- regexpr(split, s, perl = TRUE)
     if (first_pass) {
@@ -372,7 +367,7 @@ get_compounds <- function(x) {
   if (n == 0) {
     ans <- rep(NA_character_, length(els))
     if (use.names) {
-      return(setNames(ans, trim(els, "\\\\b")))
+      return(stats::setNames(ans, trim(els, "\\\\b")))
     } else {
       return(ans)
     }
@@ -383,14 +378,14 @@ get_compounds <- function(x) {
       ans <- q[idx]
     } else {
       els <- els %||% which
-      ans <- setNames(rep(NA_character_, length(els)), trim(which, "\\\\b"))
+      ans <- stats::setNames(rep(NA_character_, length(els)), trim(which, "\\\\b"))
     }
   } else {
     ans <- lapply(lapply(which, grepl, names(q)), function(i) q[i])
     na  <- which(vapply(ans, length, 0) == 0)
     if (length(na) > 0) {
       for (i in na) {
-        ans[[i]] <- setNames(NA_character_, nm = trim(which[i], "\\\\b"))
+        ans[[i]] <- stats::setNames(NA_character_, nm = trim(which[i], "\\\\b"))
       }
     }
   }
@@ -402,11 +397,11 @@ get_compounds <- function(x) {
     dbx_dbnm <- vapply(dbx, `[`, 1L, FUN.VALUE = "", USE.NAMES = FALSE)
     dbx_dbid <- vapply(dbx, `[`, 2L, FUN.VALUE = "", USE.NAMES = FALSE)
     if (length(dbxrefs) > 0) {
-      ans <- c(ans[!dbx_idx], setNames(dbx_dbid[match(dbxrefs, dbx_dbnm)],
-                                       paste0('db_xref.', dbxrefs)))
+      ans <- c(ans[!dbx_idx], stats::setNames(dbx_dbid[match(dbxrefs, dbx_dbnm)],
+                                              paste0('db_xref.', dbxrefs)))
     } else {
       nm <- if (all(is.na(dbx_dbnm))) "" else paste0('db_xref.', dbx_dbnm)
-      ans <- c(ans[!dbx_idx], setNames(dbx_dbid, nm))
+      ans <- c(ans[!dbx_idx], stats::setNames(dbx_dbid, nm))
     }
   }
   return(if (use.names) ans else unname(ans))
@@ -478,6 +473,7 @@ get_compounds <- function(x) {
   }
 }
 
+#' @importFrom Biostrings DNAStringSet AAStringSet BStringSet
 .seq_access <- function(x) {
   seq <- .sequence(x)
   if (length(seq) == 0) {
@@ -493,12 +489,11 @@ get_compounds <- function(x) {
 }
 
 # merge Sequences
-#' @importFrom Biostrings xscat
 merge_seq <- function(seq, x, SEQFUN) {
   if (length(start(x)) == 1L) {
     outseq <- XVector::subseq(x = seq, start = start(x), end = end(x))
   } else {
-    outseq <- do.call(xscat, Map(subseq, x = seq, start = start(x), end = end(x)))
+    outseq <- do.call(Biostrings::xscat, Map(XVector::subseq, x = seq, start = start(x), end = end(x)))
   }
   outseq <- SEQFUN(outseq)
   outseq@ranges@NAMES <- .defline(x)

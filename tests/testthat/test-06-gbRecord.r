@@ -1,8 +1,8 @@
 context("gbRecord parser checks (GenBank files)")
 
 if (getOption('biofiles.test.parser')) {
-  #nuc.efetch <- efetch('457866357', 'nuccore', 'gb')
-  #save(nuc.efetch, file="tests/testthat/sequences/nuc.efetch.RData")
+  #nuc.efetch <- reutils::efetch('457866357', 'nuccore', 'gb')
+  #save(nuc.efetch, file = "sequences/nuc.efetch.RData")
   load("sequences/nuc.efetch.RData")
   nuc.efetch <- gbRecord(nuc.efetch)
   nuc <- gbRecord("sequences/nucleotide.gbk")
@@ -55,8 +55,8 @@ context("gbRecord parser checks (GenPept files)")
 
 
 if (getOption('biofiles.test.parser')) {
-  #prot.efetch <- efetch(c('459479542','379049216'), 'protein', 'gp')
-  #save(prot.efetch, file="tests/testthat/sequences/prot.efetch.RData")
+  #prot.efetch <- reutils::efetch(c('459479542','379049216'), 'protein', 'gp')
+  #save(prot.efetch, file = "sequences/prot.efetch.RData")
   load("sequences/prot.efetch.RData")
   prot.efetch <- gbRecord(prot.efetch)
   prot <- gbRecord("sequences/protein.gp")

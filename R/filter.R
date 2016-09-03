@@ -5,7 +5,6 @@
 #' @param .cols gbFeature annotations returned as a data.frame
 #'
 #' @keywords internal
-#' @importFrom IRanges IRanges findOverlaps subjectHits
 .filter <- function(x, ..., .cols = NULL) {
   keys <- parse_keys(...)
   if (is.null(keys)) {
@@ -20,12 +19,12 @@
   if (!is.null(keys$range)) {
     start <- keys$range$start
     end <- keys$range$end
-    subject_range <- as(.IRanges(x), "IntervalTree")
+    subject_range <- .IRanges(x)
     start[is.na(start)] <- 1
     end[is.na(end)] <- max(end(subject_range))
-    query_range <- as(IRanges(start, end), 'IntervalTree')
-    ovl <- findOverlaps(query_range, subject_range)
-    x <- x[subjectHits(ovl)]
+    query_range <- IRanges::IRanges(start, end)
+    ovl <- IRanges::findOverlaps(query_range, subject_range)
+    x <- x[S4Vectors::subjectHits(ovl)]
   }
   # for the selected range restrict features to
   # the selected keys 

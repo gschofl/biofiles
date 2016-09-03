@@ -26,14 +26,14 @@ test_that("Accessors work for gbFeatures", {
   
   expect_true(end(x) - start(x) + 1 == span(x))
   expect_equal(strand(x), 1)
-  expect_equal(fuzzy(x), matrix(c(FALSE,FALSE), nrow=1))
+  expect_equal(fuzzy(x), matrix(c(FALSE,FALSE), nrow = 1))
   
   expect_equal(index(x), 7)
   expect_equal(key(x), 'CDS')
   expect_output(show(location(x)), "1521..2414")
   
-  expect_equal(qualif(x, 'gene', use.names=FALSE), 'cpaB')
-  expect_equal(qualif(x, 'bla', use.names=FALSE), NA_character_)
+  expect_equal(qualif(x, 'gene', use.names = FALSE), 'cpaB')
+  expect_equal(qualif(x, 'bla', use.names = FALSE), NA_character_)
   expect_equal(length(qualif(x, c("gene", "protein_id"))), 2)
   
   expect_equal(unname(dbxref(x)), "7208424")

@@ -1,6 +1,3 @@
-#' @importFrom IRanges IRanges follow precede split queryHits subjectHits
-NULL
-
 #' @keywords internal
 find_neighbors <- function(query, subject, n = 5,  direction = 'flanking',
                            include_key = 'any', exclude_key = 'none') {
@@ -52,11 +49,11 @@ find_neighbors <- function(query, subject, n = 5,  direction = 'flanking',
       hits <- f(x = query, subject = subject_range, select = "all")
       ## with multiple queries we have to split the hits and loop over them
       ## with a single query this takes no effect anyways.
-      split_hits <- IRanges::split(hits, queryHits(hits))
-      new_query <- IRanges()
+      split_hits <- IRanges::split(hits, S4Vectors::queryHits(hits))
+      new_query <- IRanges::IRanges()
       ## loop over potentially multiple queries
       for (j in seq_along(split_hits)) {
-        hit_idx <- subjectHits(split_hits[[j]])
+        hit_idx <- S4Vectors::subjectHits(split_hits[[j]])
         new_range <- subject_range[hit_idx, ]
         UID[[j]] <- c(UID[[j]], subject_idx[hit_idx])
         new_query <- c(new_query, new_range)

@@ -1,4 +1,3 @@
-#' @importFrom Biostrings writeXStringSet
 #' @export
 #' @rdname write.FeatureTable-methods
 setMethod("write.FeatureTable", "gbRecord", 
@@ -23,7 +22,7 @@ setMethod("write.FeatureTable", "gbFeatureTable",
 .write_feature_table <- function(x, file, tablename = "", dbname = "",
                                  sequence = FALSE, append = FALSE) {
   # write header
-  header <- trim(sprintf(">Feature %s %s", getAccession(x), tablename))
+  header <- trimws(sprintf(">Feature %s %s", getAccession(x), tablename))
   cat(paste0(header, sep = "\n"), file = file)
   
   # kick out source if present
@@ -38,7 +37,7 @@ setMethod("write.FeatureTable", "gbFeatureTable",
   if (sequence) {
     seq <- getSequence(x)
     names(seq) <- getAccession(x)
-    writeXStringSet(seq, filepath = replace_ext(file, "fna"), format = "fasta")
+    Biostrings::writeXStringSet(seq, filepath = replace_ext(file, "fna"), format = "fasta")
   }
   
   invisible(NULL)

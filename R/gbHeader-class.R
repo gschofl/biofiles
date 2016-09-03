@@ -578,7 +578,7 @@ setMethod('.header', 'seqinfo', function(x) {
 
 setMethod('.sequence', 'seqinfo', function(x) {
   if (x$sequence_is_empty()) {
-    return(new("BStringSet"))
+    return(Biostrings::BStringSet())
   }
   x$sequence
 })

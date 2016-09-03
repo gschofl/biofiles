@@ -1,14 +1,12 @@
-#' @importFrom RCurl getCurlHandle basicTextGatherer curlOptions
-#' @importFrom RCurl curlSetOpt chunkToLineReader curlPerform
 #' @importFrom iterators iter
 #' @importFrom foreach foreach "%do%"
-fetchGbRecords <- function(urls, ..., curl = getCurlHandle()) {
+fetchGbRecords <- function(urls, ..., curl = RCurl::getCurlHandle()) {
   content <- list()
   foreach(url = iter(urls)) %do% {
     content[[url]] <- gbReader(...)
-    opts <- curlOptions(url = url, writefunc = chunkToLineReader(content[[url]]$update)$read)
-    curl <- curlSetOpt(.opts = opts, curl = curl, ...)
-    tryCatch(curlPerform(curl = curl), error = function(e) {
+    opts <- RCurl::curlOptions(url = url, writefunc = RCurl::chunkToLineReader(content[[url]]$update)$read)
+    curl <- RCurl::curlSetOpt(.opts = opts, curl = curl, ...)
+    tryCatch(RCurl::curlPerform(curl = curl), error = function(e) {
       warning(e$message, immediate. = TRUE)
     })
   }
@@ -16,15 +14,15 @@ fetchGbRecords <- function(urls, ..., curl = getCurlHandle()) {
 }
 
 
-fetchHeader <- function(urls, ..., curl = getCurlHandle()) {
+fetchHeader <- function(urls, ..., curl = RCurl::getCurlHandle()) {
   content <- list()
   foreach(url = iter(urls)) %do% {
-    content[[url]] <- basicTextGatherer()
-    opts <- curlOptions(url = url, headerfunc = content[[url]]$update, 
-                        writefunc = content[[url]]$update, nobody = TRUE,
-                        header = TRUE)
-    curl <- curlSetOpt(.opts = opts, curl = curl, ...)
-    tryCatch(curlPerform(curl = curl), error = function(e) {
+    content[[url]] <- RCurl::basicTextGatherer()
+    opts <- RCurl::curlOptions(url = url, headerfunc = content[[url]]$update, 
+                               writefunc = content[[url]]$update, nobody = TRUE,
+                               header = TRUE)
+    curl <- RCurl::curlSetOpt(.opts = opts, curl = curl, ...)
+    tryCatch(RCurl::curlPerform(curl = curl), error = function(e) {
       warning(e$message, immediate. = TRUE)
     })
   }
@@ -39,7 +37,7 @@ contentLength <- function(urls, unit = "Mb") {
     h <- usplit(headers[[url]]$value(), '\n|\r\n')
     len <- as.numeric(strsplitN(unique(grep("Content-Length", h, value = TRUE)), ':\\s+', 2))
     len <- switch(unit, b = len, kb = (len/1024), Mb = (len/1024^2), Gb = (len/1024^3))
-    setNames(len, basename(url))
+    stats::setNames(len, basename(url))
   }
   attr(res, "unit") <- unit
   res
@@ -103,14 +101,15 @@ genomeRecordFromNCBI <- function(which, ignore.case = TRUE, .parse = TRUE, ...) 
   base_url <- "ftp://ftp.ncbi.nih.gov/genomes/" 
   which <- usplit(which, "/", fixed = TRUE)
   
-  g <- basicTextGatherer()
-  curl <- getCurlHandle(header = FALSE, ftplistonly = TRUE, ftp.use.epsv = FALSE)
+  g <- RCurl::basicTextGatherer()
+  curl <- RCurl::getCurlHandle(header = FALSE, ftplistonly = TRUE, ftp.use.epsv = FALSE)
   
-  while(length(which) > 0) {
+  while (length(which) > 0) {
     base_url <- paste0(base_url, which[1], '/')
-    tryCatch(curlPerform(url = base_url, writefunction = g$update, curl = curl), error = function(e) {
-      stop(e$message, call. = TRUE)
-    })
+    tryCatch(RCurl::curlPerform(url = base_url, writefunction = g$update, curl = curl),
+             error = function(e) {
+               stop(e$message, call. = TRUE)
+             })
     which <- which[-1]
     x <- usplit(g$value(), '\n')
     target <- x[grep(which[1] %|na|% '\\.gbk$', x, ignore.case = ignore.case)]
@@ -141,7 +140,7 @@ genomeRecordFromNCBI <- function(which, ignore.case = TRUE, .parse = TRUE, ...) 
     }
     g$reset()
   }
-  curl <- curlSetOpt(ftplistonly = FALSE, curl = curl)
+  curl <- RCurl::curlSetOpt(ftplistonly = FALSE, curl = curl)
   res <- fetchGbRecords(urls, ..., curl = curl)
   gbkList <- list()
   for (gb in names(res)) {

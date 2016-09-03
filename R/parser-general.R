@@ -1,5 +1,3 @@
-#' @importFrom Biostrings DNAStringSet
-#' @importFrom parallel mclapply mcmapply detectCores
 #' @importFrom foreach foreach registerDoSEQ "%dopar%"
 #' @importFrom iterators iter
 NULL
@@ -132,15 +130,16 @@ make_progress_bar <- function(n) {
 parse_features <- function(x, seqinfo) {
   feature_start <- which(substr(x, 6, 6) != " ")
   fl <- ixsplit(x, feature_start)
-  mc_cores <- floor(detectCores()*0.75)
+  mc_cores <- floor(parallel::detectCores()*0.75)
   id <- seq_along(feature_start)
-  ftbl <- mcmapply(gbFeature, feature = fl, id = id,
-                   MoreArgs = list(accession = getAccession(seqinfo)[1]),
-                   SIMPLIFY = FALSE, USE.NAMES = FALSE, mc.cores = mc_cores)                   
-  new2('gbFeatureTable', .Data = ftbl, .id = id, .seqinfo = seqinfo, check = FALSE) 
+  ftbl <- parallel::mcmapply(
+    gbFeature, feature = fl, id = id,
+    MoreArgs = list(accession = getAccession(seqinfo)[1]),
+    SIMPLIFY = FALSE, USE.NAMES = FALSE, mc.cores = mc_cores
+  )                   
+  S4Vectors::new2('gbFeatureTable', .Data = ftbl, .id = id, .seqinfo = seqinfo, check = FALSE) 
 }
 
-#' @importFrom Biostrings readDNAStringSet readAAStringSet BStringSet
 #' @keywords internal
 parse_sequence <- function(seq, acc, seqtype, src) {
   # read.BStringSet() does not support connections and
@@ -149,14 +148,14 @@ parse_sequence <- function(seq, acc, seqtype, src) {
   # DNAStringSet (mRNA etc seems to be encoded with Ts rather then Us,
   # so we use DNAStringSets for RNA)
   if (is.null(seq)) {
-    return(BStringSet())
+    return(Biostrings::BStringSet())
   } else {
     tmp <- tempfile()
     on.exit(unlink(tmp))
     writeLines(text = join_seq(seq, acc, src), tmp)
     origin <- switch(seqtype,
-                     AA = readAAStringSet(tmp, format = "fasta"),
-                     readDNAStringSet(tmp, format = "fasta"))
+                     AA = Biostrings::readAAStringSet(tmp, format = "fasta"),
+                     Biostrings::readDNAStringSet(tmp, format = "fasta"))
     origin
   }
 }
@@ -164,11 +163,11 @@ parse_sequence <- function(seq, acc, seqtype, src) {
 join_seq <- function(seq, acc, src = c("gbk", "embl")) {
   src <- match.arg(src, c("gbk", "embl"))
   .substr <- switch(src,
-                    gbk = Partial('substr', start = 11, stop = 75),
+                    gbk  = Partial('substr', start = 11, stop = 75),
                     embl = Partial('substr', start = 6, stop = 70)
   )
-  mc_cores <- floor(detectCores()*0.75)
-  s <- unlist(mclapply(seq, function(x) {
+  mc_cores <- floor(parallel::detectCores()*0.75)
+  s <- unlist(parallel::mclapply(seq, function(x) {
     paste0(strsplit(.substr(x), ' ')[[1L]], collapse = '')
   }, mc.cores = mc_cores))
   s <- c(paste0(">", acc), s)

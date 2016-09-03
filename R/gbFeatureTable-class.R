@@ -1,7 +1,7 @@
-#' @importFrom S4Vectors new2
-NULL
+
 
 # gbFeatureTable-class -------------------------------------------------
+
 
 #' @include gbFeature-class.R
 NULL
@@ -29,7 +29,7 @@ setClass("gbFeatureTable",
          contains = "list")
 
 
-setValidity2("gbFeatureTable", function(object) {
+S4Vectors::setValidity2("gbFeatureTable", function(object) {
   if (!all(vapply(object@.Data, is, 'gbFeature', FUN.VALUE = logical(1))))
     return("All elements in a 'gbFeatureTable' must be 'gbFeature' instances")
 
@@ -352,24 +352,24 @@ setMethod("[", c("gbFeatureTable", "character", "missing", "ANY"),
           function(x, i, j, ..., drop = TRUE) {
             check <- list(...)$check %||% TRUE
             i <- which(vapply(x@.Data, slot, name = 'key', FUN.VALUE = '') == i)
-            new2('gbFeatureTable', .Data = x@.Data[i], .id = x@.id[i], 
-                 .seqinfo = x@.seqinfo, check = check)
+            S4Vectors::new2('gbFeatureTable', .Data = x@.Data[i], .id = x@.id[i], 
+                            .seqinfo = x@.seqinfo, check = check)
           })
 
 #' @rdname extract-methods
 setMethod("[", c("gbFeatureTable", "numeric", "missing", "ANY"),
           function(x, i, j, ..., drop = TRUE) {
             check <- list(...)$check %||% TRUE
-            new2('gbFeatureTable', .Data = x@.Data[i], .id = x@.id[i],
-                 .seqinfo = x@.seqinfo, check = check)
+            S4Vectors::new2('gbFeatureTable', .Data = x@.Data[i], .id = x@.id[i],
+                            .seqinfo = x@.seqinfo, check = check)
           })
 
 #' @rdname extract-methods
 setMethod("[", c("gbFeatureTable", "logical", "missing", "ANY"),
           function(x, i, j, ..., drop = TRUE) {
             check <- list(...)$check %||% TRUE
-            new2('gbFeatureTable', .Data = x@.Data[i], .id = x@.id[i],
-                 .seqinfo = x@.seqinfo, check = check)
+            S4Vectors::new2('gbFeatureTable', .Data = x@.Data[i], .id = x@.id[i],
+                            .seqinfo = x@.seqinfo, check = check)
           })
 
 #' @rdname extract-methods

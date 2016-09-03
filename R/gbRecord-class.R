@@ -1,5 +1,4 @@
 #' @include gbFeatureTable-class.R
-#' @importFrom reutils rettype retmode content
 NULL
 
 setClassUnion("gbLocationOrNull", members = c("gbLocation", "NULL"))
@@ -34,7 +33,7 @@ new_gbRecord <- setClass(
 )
 
 
-setValidity2("gbRecord", function(object) {
+S4Vectors::setValidity2("gbRecord", function(object) {
   # at the moment do nothing but the default checks
   TRUE
 })
@@ -51,15 +50,15 @@ setValidity2("gbRecord", function(object) {
 #' 
 #' @details
 #' For a sample GenBank record see
-#' \url{http://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html},
+#' \url{https://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html},
 #' for a detailed description of the GenBank feature table format see
-#' \url{http://www.ncbi.nlm.nih.gov/collab/FT/}.
+#' \url{https://www.ncbi.nlm.nih.gov/collab/FT/}.
 #' 
 #' For a description of the EMBL flat file format see
 #' \url{ftp://ftp.ebi.ac.uk/pub/databases/embl/doc/usrman.txt}.
 #' 
 #' For a description of the format and conventions of IMGT/HLA flat files
-#' see \url{http://www.ebi.ac.uk/ipd/imgt/hla/docs/manual.html}.
+#' see \url{https://www.ebi.ac.uk/ipd/imgt/hla/docs/manual.html}.
 #'
 #' @note
 #' The \code{\linkS4class{gbRecord}} class is modelled after the Genbank flat
@@ -97,8 +96,7 @@ setValidity2("gbRecord", function(object) {
 #' 
 #' ### import directly from NCBI
 #' \dontrun{
-#' require(reutils)
-#' x <- gbRecord(efetch("139189709", "protein", rettype = "gp", retmode = "text"))
+#' x <- gbRecord(reutils::efetch("139189709", "protein", rettype = "gp", retmode = "text"))
 #' x
 #' }
 #' 
@@ -118,8 +116,11 @@ gbRecord <- function(rcd, progress = FALSE) {
     return(new_gbRecord())
   }
   if (is(rcd, "efetch")) {
-    assert_that(retmode(rcd) == "text", rettype(rcd) %is_in% c('gb','gbwithparts','gp'))
-    rcd <- content(rcd, "textConnection")
+    assertthat::assert_that(
+      reutils::retmode(rcd) == "text",
+      reutils::rettype(rcd) %is_in% c('gb','gbwithparts','gp')
+    )
+    rcd <- reutils::content(rcd, "textConnection")
   }
   if (is(rcd, "textConnection")) {
     on.exit(close(rcd))
@@ -147,7 +148,6 @@ gbRecord <- function(rcd, progress = FALSE) {
 # show -------------------------------------------------------------------
 
 
-#' @importFrom XVector toString subseq
 show_gbRecord <- function(x) {
   if (.header(x)$is_empty()) {
     showme <- sprintf("An empty object of class %s.\n", sQuote(class(x)))
@@ -162,8 +162,9 @@ show_gbRecord <- function(x) {
           sprintf("ORIGIN      %s\n", XVector::toString(S))
         } else {
           sprintf("ORIGIN      %s\n            ...\n            %s\n",
-                  toString(subseq(S, start = 1, end = W-16)),
-                  toString(subseq(S, start = length(S[[1L]])-W+17, end = length(S[[1L]]))))
+                  XVector::toString(XVector::subseq(S, start = 1, end = W - 16)),
+                  XVector::toString(XVector::subseq(S, start = length(S[[1L]]) - W + 17,
+                                                    end = length(S[[1L]]))))
         }
       },
       sprintf("CONTIG      %s\n", linebreak(as(.contig(x), "character"), 
@@ -187,7 +188,7 @@ setMethod("summary", "gbRecord",
           function(object, n = 7, ...) {
             acc  <- getAccession(object)
             len  <- getLength(object)
-            type <- if (getMoltype(object) == 'AA')'aa' else'bp'
+            type <- if (getMoltype(object) == 'AA') 'aa' else'bp'
             def  <- ellipsize(obj = getDefinition(object),
                               width = getOption("width") - nchar(len) - nchar(type) - 8)
             cat(sprintf("[[%s]]\n  %i %s: %s\n", acc, len, type, def), sep = "")

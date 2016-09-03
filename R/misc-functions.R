@@ -60,9 +60,8 @@ geneID <- Partial("qualif", which = "gene", use.names = FALSE)
 #' @param x A \code{\linkS4class{gbRecord}}, \code{\linkS4class{gbFeatureTable}},
 #' or, \code{\linkS4class{gbFeature}} instance.
 #' @return An \code{\linkS4class{AAStringSet}}.
-#' @importFrom Biostrings AAStringSet
 #' @export
-translation <- function(x) AAStringSet(.translation(x))
+translation <- function(x) Biostrings::AAStringSet(.translation(x))
 
 
 #' Retrieve the sequence of a contig
@@ -75,29 +74,26 @@ translation <- function(x) AAStringSet(.translation(x))
 #' @param x A \code{\linkS4class{gbRecord}} object.
 #' @param merge Merge the retrieved contig sequences.
 #' @return A \code{\linkS4class{DNAStringSet}} instance.
-#' @importFrom Biostrings unlist DNAStringSet
-#' @importFrom S4Vectors "metadata<-" width
-#' @importFrom reutils efetch
 #' @export
 getContigSeq <- function(x, merge = TRUE) { 
-  db <- switch(getMoltype(x), AA = "protein", "nuccore")
+  db     <- switch(getMoltype(x), AA = "protein", "nuccore")
   contig <- .contig(x)
-  s <- start(contig)
-  e <- end(contig)
-  w <- span(contig)
-  str <- strand(contig)
-  acc <- getAccession(contig)
-  dna <- DNAStringSet()
+  s      <- start(contig)
+  e      <- end(contig)
+  w      <- span(contig)
+  str    <- strand(contig)
+  acc    <- getAccession(contig)
+  dna    <- Biostrings::DNAStringSet()
   for (i in seq_along(acc)) {
     if (!nzchar(acc[i])) {
-      dna <- c(dna, DNAStringSet(dup('N', w[i])))
+      dna <- c(dna, Biostrings::DNAStringSet(dup('N', w[i])))
       dna@ranges@NAMES[i] <- paste0('Gap:', w[i])
     } else {
-      f <- efetch(acc[i], db, "fasta", "xml", seqstart = s[i], seqstop = e[i])
+      f <- reutils::efetch(acc[i], db, "fasta", "xml", seqstart = s[i], seqstop = e[i])
       if (str[i]  == -1) {
-        dna <- c(dna, reverseComplement(DNAStringSet(f$xmlValue("//TSeq_sequence"))))
+        dna <- c(dna, Biostrings::reverseComplement(Biostrings::DNAStringSet(f$xmlValue("//TSeq_sequence"))))
       } else {
-        dna <- c(dna, DNAStringSet(f$xmlValue("//TSeq_sequence")))
+        dna <- c(dna, Biostrings::DNAStringSet(f$xmlValue("//TSeq_sequence")))
       }
       dna@ranges@NAMES[i] <- paste0('Acc:', f$xmlValue("//TSeq_accver"),
                                     ';GI:', f$xmlValue("//TSeq_gi"),
@@ -108,15 +104,15 @@ getContigSeq <- function(x, merge = TRUE) {
   }
   
   if (merge) {
-    is <- c(1, cumsum(width(dna)) + 1)
+    is <- c(1, cumsum(S4Vectors::width(dna)) + 1)
     is <- is[-length(is)]
-    ie <- cumsum(width(dna))
-    r <- IRanges(start = is, end = ie, names = names(dna))
-    res <- DNAStringSet(unlist(dna))
-    metadata(res) <- list(ranges = r)
+    ie <- cumsum(S4Vectors::width(dna))
+    r <- IRanges::IRanges(start = is, end = ie, names = names(dna))
+    res <- Biostrings::DNAStringSet(unlist(dna))
+    S4Vectors::metadata(res) <- list(ranges = r)
     return(res)
   }
-  
+
   dna
 }
 

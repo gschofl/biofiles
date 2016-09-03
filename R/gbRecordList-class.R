@@ -36,7 +36,7 @@ gbRecordList <- function(...) {
 }
 
 
-setValidity2("gbRecordList", function (object) {
+S4Vectors::setValidity2("gbRecordList", function (object) {
   if (!all(vapply(object@.Data, is, "gbRecord", FUN.VALUE = logical(1))))
     return("All elements in a gbRecordList must be gbRecord objects")
   
@@ -157,8 +157,9 @@ setMethod("getSequence", "gbRecordList", function (x) {
 #' @describeIn ranges
 setMethod("ranges", "gbRecordList",
           function (x, join = FALSE, key = TRUE, include = "none", exclude = "") {
-            GRangesList(lapply(x, ranges, join = join, key = key,
-                               include = include, exclude = exclude))
+            GenomicRanges::GRangesList(
+              lapply(x, ranges, join = join, key = key, include = include, exclude = exclude)
+            )
           })
 
 #' @describeIn start

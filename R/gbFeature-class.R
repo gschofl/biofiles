@@ -37,7 +37,7 @@ setClass(
   )
 )
 
-setValidity2("gbFeature", function(object) {
+S4Vectors::setValidity2("gbFeature", function(object) {
   TRUE
 })
 
@@ -212,12 +212,12 @@ setMethod("getHeader", "gbFeature", function(x) .header(.seqinfo(x)))
 #' @rdname getSequence-methods
 setMethod("getSequence", "gbFeature", function(x) .seq_access(x))
 
-#' @describeIn ranges
+#' @describeIn ranges Get the range of GenBank features.
 setMethod("ranges", "gbFeature", function(x, include = "none", exclude = "", join = FALSE) {
   .GRanges(x, include = include, exclude = exclude, join = join)
 })
 
-#' @describeIn start
+#' @describeIn start Get the start values of GenBank features.
 setMethod("start", "gbFeature", function(x, join = FALSE) {
   start(x@location, join = join)
 })
@@ -231,12 +231,12 @@ setMethod("start", "gbFeature", function(x, join = FALSE) {
   x
 }
 
-#' @describeIn start<-
+#' @describeIn start<- Set the start values of GenBank features.
 setReplaceMethod("start", "gbFeature", function(x, ..., value)
   .gbFeature_replace_start(x, ..., value = value)
 )
 
-#' @describeIn end
+#' @describeIn end Get the end values of GenBank features.
 setMethod("end", "gbFeature", function(x, join = FALSE) { 
   end(x@location, join = join)
 })
@@ -249,28 +249,28 @@ setMethod("end", "gbFeature", function(x, join = FALSE) {
   x
 }
 
-#' @describeIn end
+#' @describeIn end<- Set the end values of GenBank features.
 setReplaceMethod("end", "gbFeature", function(x, ..., value)
   .gbFeature_replace_end(x, ..., value = value)
 )
 
-#' @describeIn strand
+#' @describeIn strand Get the strand of GenBank features.
 setMethod("strand", "gbFeature", function(x, join = FALSE) {
   strand(x@location, join = join)
 })
 
-#' @describeIn strand
+#' @describeIn strand<- Set the strand of GenBank features.
 setReplaceMethod("strand", "gbFeature", function(x, value) { 
   strand(x@location) <- value
   x
 })
 
-#' @describeIn span
+#' @describeIn span The span of GenBank features
 setMethod("span", "gbFeature", function(x, join = FALSE) {
   span(x@location, join = join)
 })
 
-#' @describeIn span
+#' @describeIn span The oint range  of GenBank features
 setMethod("joint_range", "gbFeature", function(x) {
   joint_range(x@location)
 })
@@ -287,7 +287,7 @@ setMethod("dbxref", "gbFeature", function(x, db = NULL, ...) {
 #' @rdname location-methods
 setMethod("location", "gbFeature", function(x) x@location)
 
-#' @describeIn fuzzy
+#' @describeIn fuzzy Has a  GenBank feature a fuzzy start or end?
 setMethod("fuzzy", "gbFeature", function(x) fuzzy(x@location))
 
 #' @rdname index-methods
@@ -315,7 +315,7 @@ setMethod("qualif", "gbFeature", function(x, which, fixed = FALSE, use.names = T
 
 #' @rdname qualif-methods
 setReplaceMethod("qualif", "gbFeature", function(x, which, check = TRUE, value) {
-  assert_that(!missing(which))
+  assertthat::assert_that(!missing(which))
   x@qualifiers[which] <- value
   if (check)
     validObject(x)
@@ -350,7 +350,7 @@ setMethod("hasQualif", "gbFeature", function(x, qualifier) {
 # shift ---------------------------------------------------------------
 
 
-#' @describeIn shift
+#' @describeIn shift Shift a GenBank feature
 setMethod("shift", "gbFeature", function(x, shift = 0L, ...) {
   x@location <- shift(x@location, shift)
   x

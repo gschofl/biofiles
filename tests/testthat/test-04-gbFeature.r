@@ -20,11 +20,10 @@ context("gbFeature getter/setter checks")
 
 test_that("gbFeature accessors work", {
   x <- biofiles:::gbFeature(cds2, id = 10)
-  
-  expect_output(biofiles:::.seqinfo(x), "Seqinfo:")
-  expect_output(biofiles:::.header(x), "An empty .*gbHeader.* instance.")
-  expect_output(biofiles:::.locus(x), "An empty .*gbLocus.* instance.")
-  expect_output(biofiles:::.sequence(x), "A BStringSet instance of length 0")
+  expect_is(biofiles:::.seqinfo(x), "seqinfo")
+  expect_is(biofiles:::.header(x), "gbHeader")
+  expect_is(biofiles:::.locus(x), "gbLocus")
+  expect_is(biofiles:::.sequence(x), "BStringSet")
   
   ## index
   expect_equal(index(x), 10)
@@ -38,7 +37,7 @@ test_that("gbFeature accessors work", {
   expect_equal(end(x), 1495)
   expect_equal(span(x), 1482)
   expect_equal(strand(x), 1)
-  #expect_equal(joint_range(x), c(338, 2800))
+  expect_equal(joint_range(x), c(14, 1495))
   expect_equal(fuzzy(x), matrix(c(FALSE, FALSE), nrow = 1))
   expect_output(show(location(x)), "14..1495")
   expect_output(show(x[['location']]), "14..1495")
@@ -81,8 +80,8 @@ test_that("gbFeature replacement methods work", {
   expect_error(start(x) <- 300)
   ## try again, switching off validity checks
   start(x, check = FALSE) <- 300
-  expect_output(location(x), "300..200")
-  
+  expect_is(location(x), "gbLocation")
+
   ## replace key
   ## Should we check for valid keys?
   key(x) <- "FOO"

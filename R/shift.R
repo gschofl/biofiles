@@ -1,5 +1,3 @@
-#' @importFrom Biostrings reverseComplement
-NULL
 
 setAs(from = "gbFeatureTable", to = "gbRecord", function(from) {
   new_gbRecord(seqinfo = from@.seqinfo, features = from, contig = NULL)
@@ -22,7 +20,7 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
   ## genes that span the start/end of a circular chromosome
   ## genes with trans-splicing structure
   ## e.g.: join(complement(331719..331758),487030..487064)
-  assert_that(all(is_compound(fList)))
+  assertthat::assert_that(all(is_compound(fList)))
   lapply(fList, function(f) {
     lRange <- f@location@range 
     if (lRange[-nrow(lRange), 2] - lRange[-1,1] < 1 &&
@@ -45,7 +43,7 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
 }
 
 .shift <- function(x, shift = 0L, split = FALSE, order = TRUE) {
-  assert_that(is(x, "gbRecord") || is(x, "gbFeatureTable"))
+  assertthat::assert_that(is(x, "gbRecord") || is(x, "gbFeatureTable"))
   was.gbRecord <- FALSE
   if (is(x, "gbRecord")) {
     x <- .features(x)
@@ -105,11 +103,11 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
   seq <- .sequence(seqinfo)
   seq_len <- seq@ranges@width
   if (shift > 0) {
-    seqinfo$sequence <- xscat(subseq(seq, seq_len - shift + 1),
-                              subseq(seq, 1, seq_len - shift))
+    seqinfo$sequence <- Biostrings::xscat(XVector::subseq(seq, seq_len - shift + 1),
+                                          XVector::subseq(seq, 1, seq_len - shift))
   } else {
-    seqinfo$sequence <- xscat(subseq(seq, abs(shift) + 1),
-                              subseq(seq, 1, abs(shift)))
+    seqinfo$sequence <- Biostrings::xscat(XVector::subseq(seq, abs(shift) + 1),
+                                          XVector::subseq(seq, 1, abs(shift)))
   }
   names(seqinfo$sequence) <- getAccession(f)
   x <- new('gbFeatureTable', .Data = c(src, f), .id = c(src@.id, f@.id), .seqinfo = seqinfo)
@@ -119,7 +117,7 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
 
 
 .revcomp <- function(x, order = TRUE) {
-  assert_that(is(x, "gbRecord") || is(x, "gbFeatureTable"))
+  assertthat::assert_that(is(x, "gbRecord") || is(x, "gbFeatureTable"))
   was.gbRecord <- FALSE
   if (is(x, "gbRecord")) {
     x <- .features(x)
@@ -141,7 +139,7 @@ merge_split <- function(fList, omit_unmergables = FALSE) {
   ## update sequence
   seqinfo <- x@.seqinfo$clone()
   seq <- .sequence(seqinfo)
-  seqinfo$sequence <- reverseComplement(seq)
+  seqinfo$sequence <- Biostrings::reverseComplement(seq)
   names(seqinfo$sequence) <- getAccession(x)
   x <- new('gbFeatureTable', .Data = x, .id = x@.id, .seqinfo = seqinfo)
   x <- if (was.gbRecord) as(x, "gbRecord") else x

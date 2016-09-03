@@ -8,11 +8,8 @@ files, and methods for interacting with annotation and sequence data.
 
 ### Installation
 
-This package is ony available via github. It currently depends on the Boost
-regex library and will be made available on CRAN as soon as C++11 support is in
-place on CRAN and I can get rid of this external dependency.
-
-
+This package is currently ony available via github. It depends on the Boost
+regex library.
 
 ```r
 install.packages("devtools")  # if not already installed

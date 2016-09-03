@@ -46,8 +46,7 @@ setClass("gbLocation",
 
 
 #' @keywords internal
-#' @importFrom S4Vectors setValidity2
-setValidity2("gbLocation", function(object) {
+S4Vectors::setValidity2("gbLocation", function(object) {
   # check range matrix
   if (!is.integer(object@range) || dim(object@range)[2] != 2 )
     return( "The 'range' slot should be a two-column, integer matrix." )
@@ -75,7 +74,7 @@ setValidity2("gbLocation", function(object) {
 # Getter-methods ---------------------------------------------------------
 
 
-#' @describeIn start
+#' @describeIn start Get the start values of GenBank locations.
 setMethod("start", "gbLocation", function(x, join = FALSE) {
   if (join) {
     min(x@range[, 1, drop = TRUE])
@@ -84,7 +83,7 @@ setMethod("start", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @describeIn end
+#' @describeIn end Get the end values of GenBank locations.
 setMethod("end", "gbLocation", function(x, join = FALSE) {
   if (join) {
     max(x@range[, 2, drop = TRUE])
@@ -93,7 +92,7 @@ setMethod("end", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @describeIn span
+#' @describeIn span The span of GenBank locations.
 setMethod("span", "gbLocation", function(x, join = FALSE) {
   if (join) {
     max(x@range[, 2]) - min(x@range[, 1]) + 1L
@@ -102,12 +101,12 @@ setMethod("span", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @describeIn span
+#' @describeIn span The joint range of GenBank locations.
 setMethod("joint_range", "gbLocation", function(x) {
   range(x@range)
 })
 
-#' @describeIn strand
+#' @describeIn strand The strand of GenBank locations.
 setMethod("strand", "gbLocation", function(x, join = FALSE) {
   if (join || dim(x@range)[1] == 1L) {
     unique(x@strand)
@@ -116,7 +115,7 @@ setMethod("strand", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @describeIn fuzzy
+#' @describeIn fuzzy Has a  GenBank location a fuzzy start or end?
 setMethod("fuzzy", "gbLocation", function(x) x@fuzzy)
 
 #' @rdname accessors
@@ -143,7 +142,7 @@ setMethod("getAccession", "gbLocation", function(x) x@accession)
   x
 }
 
-#' @describeIn start<-
+#' @describeIn start<- Set the start values of GenBank locations.
 setReplaceMethod("start", "gbLocation", function(x, ..., value) 
   .gbLocation_replace_start(x, ..., value = value)
 )
@@ -166,12 +165,12 @@ setReplaceMethod("start", "gbLocation", function(x, ..., value)
   x
 }
 
-#' @describeIn end
+#' @describeIn end Set the end values of GenBank locations.
 setReplaceMethod("end", "gbLocation", function(x, ..., value) 
   .gbLocation_replace_end(x, ..., value = value)
 )
 
-#' @describeIn strand
+#' @describeIn strand Set the strand of GenBank locations.
 setReplaceMethod("strand", "gbLocation",
                  function(x, value) {
                    nrow <- dim(x@range)[1]
@@ -275,7 +274,7 @@ as.gbLocation <- function(base_span) {
 # shift ---------------------------------------------------------------
 
 
-#' @describeIn shift
+#' @describeIn shift Shift a GenBank location.
 setMethod("shift", "gbLocation", function(x, shift = 0L, ...) {
   if (!is.numeric(shift))
     stop("'shift' must be an integer")

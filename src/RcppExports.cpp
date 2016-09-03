@@ -6,35 +6,27 @@
 using namespace Rcpp;
 
 // gbFeature
-SEXP gbFeature(std::vector<std::string> feature, std::string accession = "", int id = 0);
+SEXP gbFeature(std::vector<std::string> feature, std::string accession, int id);
 RcppExport SEXP biofiles_gbFeature(SEXP featureSEXP, SEXP accessionSEXP, SEXP idSEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< std::vector<std::string> >::type feature(featureSEXP );
-        Rcpp::traits::input_parameter< std::string >::type accession(accessionSEXP );
-        Rcpp::traits::input_parameter< int >::type id(idSEXP );
-        SEXP __result = gbFeature(feature, accession, id);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type feature(featureSEXP);
+    Rcpp::traits::input_parameter< std::string >::type accession(accessionSEXP);
+    Rcpp::traits::input_parameter< int >::type id(idSEXP);
+    __result = Rcpp::wrap(gbFeature(feature, accession, id));
+    return __result;
 END_RCPP
 }
 // gbLocation
-SEXP gbLocation(std::string gb_base_span, std::string accession = "");
+SEXP gbLocation(std::string gb_base_span, std::string accession);
 RcppExport SEXP biofiles_gbLocation(SEXP gb_base_spanSEXP, SEXP accessionSEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< std::string >::type gb_base_span(gb_base_spanSEXP );
-        Rcpp::traits::input_parameter< std::string >::type accession(accessionSEXP );
-        SEXP __result = gbLocation(gb_base_span, accession);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< std::string >::type gb_base_span(gb_base_spanSEXP);
+    Rcpp::traits::input_parameter< std::string >::type accession(accessionSEXP);
+    __result = Rcpp::wrap(gbLocation(gb_base_span, accession));
+    return __result;
 END_RCPP
 }

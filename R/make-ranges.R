@@ -1,16 +1,11 @@
-#' @importFrom S4Vectors DataFrame Rle
-#' @importFrom GenomicRanges GRanges GRangesList 
-#' @importFrom GenomeInfoDb Seqinfo
-NULL
-
 .GRanges <- function(x, join = FALSE, include = "none", exclude = "", key = TRUE) {
   if (length(x) == 0) {
-    return(GRanges())
+    return(GenomicRanges::GRanges())
   }
   if (key) {
-    qual <- DataFrame(key = key(x))
+    qual <- S4Vectors::DataFrame(key = key(x))
   } else {
-    qual <- DataFrame()
+    qual <- S4Vectors::DataFrame()
   }
   if (any(include != "none")) {
     if (all(include == "all")) {
@@ -18,7 +13,7 @@ NULL
     } else {
       which <- setdiff(include, exclude)
     }
-    qual <- c(qual, DataFrame(.simplify(.qual_access(x, which, fixed = TRUE),
+    qual <- c(qual, S4Vectors::DataFrame(.simplify(.qual_access(x, which, fixed = TRUE),
                                         unlist = FALSE)))
   }
   
@@ -39,22 +34,28 @@ NULL
       qual <- qual[i, , drop = FALSE] 
   }
 
-  seqinfo <- Seqinfo(seqnames = getAccession(x),
-                     seqlengths = getLength(x),
-                     isCircular = getTopology(x) == 'circular',
-                     genome = getDefinition(x))
+  seqinfo <- GenomeInfoDb::Seqinfo(
+    seqnames = getAccession(x),
+    seqlengths = getLength(x),
+    isCircular = getTopology(x) == 'circular',
+    genome = getDefinition(x)
+  )
   
-  GRanges(seqnames = Rle(getAccession(x)), ranges = IRanges(start, end, names = names),
-          strand = strand, qual, seqinfo = seqinfo)
+  GenomicRanges::GRanges(
+    seqnames = S4Vectors::Rle(getAccession(x)),
+    ranges = IRanges::IRanges(start, end, names = names),
+    strand = S4Vectors::Rle(strand),
+    qual, seqinfo = seqinfo
+  )
 }
 
 
 .IRanges <- function(x) {
   if (length(x) == 0) {
-    return(IRanges())
+    return(IRanges::IRanges())
   }
   jr <- matrix(joint_range(x), ncol = 2)
-  IRanges(start = jr[, 1], end = jr[, 2], names = index(x))
+  IRanges::IRanges(start = jr[, 1], end = jr[, 2], names = index(x))
 }
 
 

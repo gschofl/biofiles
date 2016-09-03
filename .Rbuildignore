@@ -6,3 +6,4 @@
 scratch\.[rR]
 ^README\.*
 ^\.travis\.yml$
+^codecov\.yml$
