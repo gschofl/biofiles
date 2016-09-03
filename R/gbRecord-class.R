@@ -124,14 +124,14 @@ gbRecord <- function(rcd, progress = FALSE) {
   }
   if (is(rcd, "textConnection")) {
     on.exit(close(rcd))
-    return(parse_record(rcd = readLines(rcd), progress = progress))
+    return(parse_gb_record(rcd = readLines(rcd), progress = progress))
   } else if (tryCatch(all(file.exists(rcd)), error = function(e) FALSE)) {
     n <- length(rcd)
     rcd_list <- vector("list", n)
     for (i in seq_len(n)) {
       con <- file(rcd[i], open = "rt")
       on.exit(close(con))
-      rcd_list[[i]] <- parse_record(rcd = readLines(con), progress = progress)
+      rcd_list[[i]] <- parse_gb_record(rcd = readLines(con), progress = progress)
     }
     if (length(rcd_list) == 1L) {
       return(rcd_list[[1L]])
@@ -158,7 +158,7 @@ show_gbRecord <- function(x) {
       sprintf("An object of class %s, with %i features\n", sQuote(class(x)), length(x)),
       .header(x)$to_string(write_to_file = FALSE),
       if (length(S) != 0) {
-        if (width(S) < W - 16) {
+        if (S4Vectors::width(S) < W - 16) {
           sprintf("ORIGIN      %s\n", XVector::toString(S))
         } else {
           sprintf("ORIGIN      %s\n            ...\n            %s\n",
@@ -249,38 +249,55 @@ setMethod(".defline", "gbRecord", function(x) {
 
 #' @rdname accessors
 setMethod("getLocus", "gbRecord", function(x) getLocus(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getLength", "gbRecord", function(x) getLength(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getMoltype", "gbRecord", function(x) getMoltype(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getTopology", "gbRecord", function(x) getTopology(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getDivision", "gbRecord", function(x) getDivision(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getDate", "gbRecord", function(x) getDate(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getDefinition", "gbRecord", function(x) getDefinition(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getAccession", "gbRecord", function(x) getAccession(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getVersion", "gbRecord", function(x) getVersion(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getGeneID", "gbRecord", function(x, db = 'gi') getGeneID(.seqinfo(x), db = db) )
+
 #' @rdname accessors
 setMethod("getDBLink", "gbRecord", function(x) getDBLink(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getDBSource", "gbRecord", function(x) getDBSource(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getSource", "gbRecord", function(x) getSource(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getOrganism", "gbRecord", function(x) getOrganism(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getTaxonomy", "gbRecord", function(x) getTaxonomy(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getReference", "gbRecord", function(x) getReference(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getKeywords", "gbRecord", function(x) getKeywords(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getComment", "gbRecord", function(x) getComment(.seqinfo(x)))
 
@@ -299,29 +316,29 @@ setMethod("ft", "gbRecord", function(x) .features(x))
 #' @rdname getSequence-methods
 setMethod("getSequence", "gbRecord",  function(x) .sequence(x))
 
-#' @describeIn ranges
+#' @rdname ranges
 setMethod("ranges", "gbRecord",
           function(x, join = FALSE, key = TRUE, include = "none", exclude = "") {
             .GRanges(x = .features(x), join = join, include = include,
                      exclude = exclude, key = key)
           })
 
-#' @describeIn start
+#' @rdname start
 setMethod("start", "gbRecord", function(x, join = FALSE) {
   start(.features(x), join = join)
 })
 
-#' @describeIn end
+#' @rdname end
 setMethod("end", "gbRecord", function(x, join = FALSE) {
   end(.features(x), join = join)
 })
 
-#' @describeIn strand
+#' @rdname strand
 setMethod("strand", "gbRecord", function(x, join = FALSE) {
   strand(.features(x), join = join)
 })
 
-#' @describeIn span
+#' @rdname span
 setMethod("span", "gbRecord", function(x, join = FALSE) {
   span(.features(x), join = join)
 })
@@ -336,7 +353,7 @@ setMethod("location", "gbRecord", function(x, join = FALSE) {
   lapply(.features(x), location)
 })
 
-#' @describeIn fuzzy
+#' @rdname fuzzy
 setMethod("fuzzy", "gbRecord", function(x) {
   do.call(rbind, lapply(.features(x), fuzzy))
 })
@@ -461,7 +478,7 @@ setMethod("select", "gbRecord", function(x, ..., .cols = NULL) {
   .select(.features(x), ..., .cols = .cols)
 })
 
-#' @describeIn shift
+#' @rdname shift
 setMethod("shift", "gbRecord", function(x, shift, split = FALSE, order = TRUE) {
   .shift(x = x, shift = shift, split = split, order = order)
 })

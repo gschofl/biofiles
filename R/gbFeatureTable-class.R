@@ -68,16 +68,16 @@ setMethod("summary", "gbFeatureTable", function(object, n = 8, ...) {
     key  <- c("Feature", key(hd), "...", key(tl))
     loc  <- c(location(hd), "...", location(tl))
     loc  <- c("Location", vapply(loc, as, "character", FUN.VALUE = ""))
-    gene <- c("GeneId", geneID(hd), "...", geneID(tl))
-    prod <- c("Product", product(hd), "...", product(tl))
-    note <- c("Note", collapse(as.list(note(hd)), '; '), "...", collapse(as.list(note(tl)), '; '))
+    gene <- c("GeneId", geneID(hd), "...", geneID(tl)) %|NA|% "NA"
+    prod <- c("Product", product(hd), "...", product(tl)) %|NA|% "NA"
+    note <- c("Note", collapse(as.list(note(hd)), '; '), "...", collapse(as.list(note(tl)), '; ')) %|NA|% "NA"
   } else {
     idx <- c("Id", index(object))
     key <- c("Feature", key(object))
     loc <- c("Location", vapply(location(object), as, "character", FUN.VALUE = ""))
-    gene <- c("GeneId", geneID(object))
-    prod <- c("Product", product(object))
-    note <- c("Note", collapse(as.list(note(object)), '; '))
+    gene <- c("GeneId", geneID(object)) %|NA|% "NA"
+    prod <- c("Product", product(object)) %|NA|% "NA"
+    note <- c("Note", collapse(as.list(note(object)), '; ')) %|NA|% "NA"
   }
   max_idx_len    <- max(nchar(idx))
   max_key_len    <- max(nchar(key))
@@ -121,43 +121,59 @@ setMethod(".defline", "gbFeatureTable", function(x) {
   vapply(x, .defline, "", USE.NAMES = FALSE)
 })
 
-
 # getters ----------------------------------------------------------------
 
 #' @rdname accessors
 setMethod("getLocus", "gbFeatureTable", function(x) getLocus(.seqinfo(x)) )
+
 #' @rdname accessors
 setMethod("getLength", "gbFeatureTable", function(x) getLength(.seqinfo(x)) )
+
 #' @rdname accessors
 setMethod("getMoltype", "gbFeatureTable", function(x) getMoltype(.seqinfo(x)) )
+
 #' @rdname accessors
 setMethod("getTopology", "gbFeatureTable", function(x) getTopology(.seqinfo(x)) )
+
 #' @rdname accessors
 setMethod("getDivision", "gbFeatureTable", function(x) getDivision(.seqinfo(x)) )
+
 #' @rdname accessors
 setMethod("getDate", "gbFeatureTable", function(x) getDate(.seqinfo(x)) )
+
 #' @rdname accessors
 setMethod("getDefinition", "gbFeatureTable", function(x) getDefinition(.seqinfo(x)) )
+
 #' @rdname accessors
 setMethod("getAccession", "gbFeatureTable", function(x) getAccession(.seqinfo(x)) )
+
 #' @rdname accessors
 setMethod("getVersion", "gbFeatureTable", function(x) getVersion(.seqinfo(x)) )
+
 #' @rdname accessors
 setMethod("getGeneID", "gbFeatureTable", function(x, db = 'gi') getGeneID(.seqinfo(x), db = db) )
+
 #' @rdname accessors
 setMethod("getDBLink", "gbFeatureTable", function(x) getDBLink(.seqinfo(x)) )
+
 #' @rdname accessors
 setMethod("getDBSource", "gbFeatureTable", function(x) getDBSource(.seqinfo(x)) )
+
 #' @rdname accessors
 setMethod("getSource", "gbFeatureTable", function(x) getSource(.seqinfo(x)) )
+
 #' @rdname accessors
 setMethod("getOrganism", "gbFeatureTable", function(x) getOrganism(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getTaxonomy", "gbFeatureTable", function(x) getTaxonomy(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getReference", "gbFeatureTable", function(x) getReference(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getKeywords", "gbFeatureTable", function(x) getKeywords(.seqinfo(x)))
+
 #' @rdname accessors
 setMethod("getComment", "gbFeatureTable", function(x) getComment(.seqinfo(x)))
 
@@ -170,13 +186,13 @@ setMethod("header", "gbFeatureTable", function(x) .header(.seqinfo(x)))
 #' @rdname getSequence-methods
 setMethod("getSequence", "gbFeatureTable", function(x) .seq_access(x))
 
-#' @describeIn ranges
+#' @rdname ranges
 setMethod("ranges", "gbFeatureTable", function(x, join = FALSE, key = TRUE,
                                               include = "none", exclude = "") {
   .GRanges(x, join = join, include = include, exclude = exclude, key = key)
 })
 
-#' @describeIn start
+#' @rdname start
 setMethod("start", "gbFeatureTable", function(x, join = FALSE) {
   ans <- lapply(x, start, join = join)
   if (join || all(vapply(ans, length, 0) == 1L)) {
@@ -195,12 +211,12 @@ setMethod("start", "gbFeatureTable", function(x, join = FALSE) {
   new('gbFeatureTable', .Data = new_x, .id = x@.id, .seqinfo = x@.seqinfo)
 }
 
-#' @describeIn start<-
+#' @rdname start
 setReplaceMethod("start", "gbFeatureTable", function(x, ..., value)
   .gbFeatureTable_replace_start(x, ..., value = value)
 )
 
-#' @describeIn end
+#' @rdname end
 setMethod("end", "gbFeatureTable", function(x, join = FALSE) {
   ans <- lapply(x, end, join = join)
   if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
@@ -219,12 +235,12 @@ setMethod("end", "gbFeatureTable", function(x, join = FALSE) {
   new('gbFeatureTable', .Data = new_x, .id = x@.id, .seqinfo = x@.seqinfo)
 }
 
-#' @describeIn end
+#' @rdname end
 setReplaceMethod("end", "gbFeatureTable", function(x, ..., value)
   .gbFeatureTable_replace_end(x, ..., value = value)
 )
 
-#' @describeIn strand
+#' @rdname strand
 setMethod("strand", "gbFeatureTable", function(x, join = FALSE) {
   ans <- lapply(x, strand, join = join)        
   if (join || all(vapply(ans, length, numeric(1)) == 1L)) {
@@ -234,8 +250,8 @@ setMethod("strand", "gbFeatureTable", function(x, join = FALSE) {
   }
 })
 
-#' @describeIn strand
-setReplaceMethod("strand", "gbFeatureTable", function(x, value) {
+#' @rdname strand
+setReplaceMethod("strand", "gbFeatureTable", function(x, ..., value) {
   value <- recycle(val = value, len = length(x))
   new_x <- Map(function(Feature, val) { 
     strand(Feature) <- val
@@ -245,7 +261,7 @@ setReplaceMethod("strand", "gbFeatureTable", function(x, value) {
   new('gbFeatureTable', .Data = new_x, .id = x@.id, .seqinfo = x@.seqinfo)
 })
 
-#' @describeIn span
+#' @rdname span
 setMethod("span", "gbFeatureTable", function(x, join = FALSE) {
   ans <- lapply(x, span, join = join)
   if (all(vapply(ans, length, 0) == 1L)) {
@@ -255,7 +271,7 @@ setMethod("span", "gbFeatureTable", function(x, join = FALSE) {
   }
 })
 
-#' @describeIn span
+#' @rdname span
 setMethod("joint_range", "gbFeatureTable", function(x) {
   do.call("rbind", lapply(x, joint_range))
 })
@@ -274,7 +290,7 @@ setMethod("location", "gbFeatureTable", function(x, join = FALSE) {
   lapply(x, location)
 })
 
-#' @describeIn fuzzy
+#' @rdname fuzzy
 setMethod("fuzzy", "gbFeatureTable", function(x) {
   do.call(rbind, lapply(x, fuzzy))
 })
@@ -425,7 +441,7 @@ setMethod("select", "gbFeatureTable", function(x, ..., .cols = NULL) {
 })
 
 
-#' @describeIn shift
+#' @rdname shift
 setMethod("shift", "gbFeatureTable", function(x, shift = 0L, split = FALSE, order = FALSE) {
   .shift(x = x, shift = shift, split = split, order = order)
 })

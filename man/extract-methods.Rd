@@ -44,6 +44,8 @@ and \code{gbRecord}s, a \code{character} index is matched against feature keys;
 
 \item{j}{Not used.}
 
+\item{name}{The name of the element to extract.}
+
 \item{...}{Not used.}
 
 \item{drop}{Not used.}

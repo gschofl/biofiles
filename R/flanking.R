@@ -49,7 +49,7 @@ find_neighbors <- function(query, subject, n = 5,  direction = 'flanking',
       hits <- f(x = query, subject = subject_range, select = "all")
       ## with multiple queries we have to split the hits and loop over them
       ## with a single query this takes no effect anyways.
-      split_hits <- IRanges::split(hits, S4Vectors::queryHits(hits))
+      split_hits <- S4Vectors::split(hits, S4Vectors::queryHits(hits))
       new_query <- IRanges::IRanges()
       ## loop over potentially multiple queries
       for (j in seq_along(split_hits)) {

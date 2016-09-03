@@ -39,6 +39,10 @@ assertthat::on_failure(is_in) <- function(call, env) {
   if (is.na(a)) force(b) else a
 }
 
+"%|NA|%" <- function(a, b) {
+  ifelse(is.na(a), b, a)
+}
+
 "%|AA|%" <- function(a, b) {
   if (a == 'AA') force(b) else a
 }
@@ -407,8 +411,6 @@ get_compounds <- function(x) {
   return(if (use.names) ans else unname(ans))
 }
 
-#' @return A named character vector or a list of named character vectors
-#' of the qualifiers specified in \code{which}
 .qual_access <- function(x, which = "", fixed = FALSE, use.names = TRUE) {
   dbxrefs <- NULL
   dbx <- grepl('db_xref[:.].+', which)

@@ -3,7 +3,7 @@
 #' @param x A gbFeatureTable
 #' @param ... key=value pairs interpreted as filters
 #' @param .cols gbFeature annotations returned as a data.frame
-#'
+#' @rdname dot-filter
 #' @keywords internal
 .filter <- function(x, ..., .cols = NULL) {
   keys <- parse_keys(...)

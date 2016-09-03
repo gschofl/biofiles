@@ -6,7 +6,7 @@ NULL
 ## see "http://r.789695.n4.nabble.com/R-CMD-check-and-foreach-code-td4687660.html"
 globalVariables("rec")
 
-parse_record <- function(rcd, progress = FALSE) {
+parse_gb_record <- function(rcd, progress = FALSE) {
   ## check that the gbk/embl record is not empty
   if (length(rcd) == 0L) {
     stop("This \"gbRecord\" is empty.")
@@ -66,7 +66,7 @@ make_progress_bar <- function(n) {
     msg <- paste0(..., collapse = "")
     gap <- max(c(0, getOption("width") - nchar(msg, "width")))
     cat("\r", msg, rep.int(" ", gap), sep = "")
-    flush.console()
+    utils::flush.console()
   }
   
   show_time <- function(x) {

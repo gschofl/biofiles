@@ -12,9 +12,9 @@ BiocStyle::latex(width = 90)
 
 \title{Using the biofiles package}
 \author{Gerhard Schöfl \\
-        Dept. for Cell and Molecular Biology \\
-        Hans-Knöll Institute \\
-        Jena, Germany}
+        Dept. of Bioinformatics \\
+        DKMS Life Science Lab,  \\
+        Dresden, Germany}
 
 \begin{document}
 \maketitle
@@ -71,11 +71,11 @@ mito
 saveRecord(mito)
 rm(mito)
 mito <- loadRecord("NC_001224.rds")
-summary(mito, n=3)
+summary(mito, n = 3)
 @
 
 <<display-store-mito, eval=TRUE, echo=FALSE>>=
-summary(mito, n=3)
+summary(mito, n = 3)
 @
 
 \section{Summarising a Genbank record}

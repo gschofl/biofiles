@@ -36,7 +36,7 @@ gbRecordList <- function(...) {
 }
 
 
-S4Vectors::setValidity2("gbRecordList", function (object) {
+S4Vectors::setValidity2("gbRecordList", function(object) {
   if (!all(vapply(object@.Data, is, "gbRecord", FUN.VALUE = logical(1))))
     return("All elements in a gbRecordList must be gbRecord objects")
   
@@ -44,7 +44,7 @@ S4Vectors::setValidity2("gbRecordList", function (object) {
 })
 
 
-setMethod("show", "gbRecordList", function (object) { 
+setMethod("show", "gbRecordList", function(object) { 
   if (all(is.na(getAccession(object)))) {
     cat(sprintf("%s instance with zero records\n", sQuote(class(object))))
   } else {
@@ -60,7 +60,7 @@ setMethod("show", "gbRecordList", function (object) {
 })
 
 #' @rdname summary-methods
-setMethod("summary", "gbRecordList", function (object, n = 2, ...) {
+setMethod("summary", "gbRecordList", function(object, n = 2, ...) {
   x <- lapply(object, summary, n = n, ... = ...)
   invisible(NULL)
 })
@@ -70,75 +70,75 @@ setMethod("summary", "gbRecordList", function (object, n = 2, ...) {
 
 
 #' @rdname accessors
-setMethod("getLocus", "gbRecordList", function (x) {
+setMethod("getLocus", "gbRecordList", function(x) {
   vapply(x, getLocus, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getLength", "gbRecordList", function (x) {
+setMethod("getLength", "gbRecordList", function(x) {
   vapply(x, getLength, FUN.VALUE = 0L, USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getMoltype", "gbRecordList", function (x) {
+setMethod("getMoltype", "gbRecordList", function(x) {
   vapply(x, getMoltype, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getTopology", "gbRecordList", function (x) {
+setMethod("getTopology", "gbRecordList", function(x) {
   vapply(x, getTopology, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getDivision", "gbRecordList", function (x) {
+setMethod("getDivision", "gbRecordList", function(x) {
   vapply(x, getDivision, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getDate", "gbRecordList", function (x) {
+setMethod("getDate", "gbRecordList", function(x) {
   Map(getDate, x)
 })
 #' @rdname accessors
-setMethod("getDefinition", "gbRecordList", function (x) {
+setMethod("getDefinition", "gbRecordList", function(x) {
   vapply(x, getDefinition, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getAccession", "gbRecordList", function (x) {
+setMethod("getAccession", "gbRecordList", function(x) {
   vapply(x, getAccession, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getVersion", "gbRecordList", function (x) {
+setMethod("getVersion", "gbRecordList", function(x) {
   vapply(x, getVersion, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getGeneID", "gbRecordList", function (x, db = 'gi') {
+setMethod("getGeneID", "gbRecordList", function(x, db = 'gi') {
   vapply(x, getGeneID, db = db, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getDBLink", "gbRecordList", function (x) {
+setMethod("getDBLink", "gbRecordList", function(x) {
   vapply(x, getDBLink, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getDBSource", "gbRecordList", function (x) {
+setMethod("getDBSource", "gbRecordList", function(x) {
   vapply(x, getDBSource, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getSource", "gbRecordList", function (x) {
+setMethod("getSource", "gbRecordList", function(x) {
   vapply(x, getSource, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getOrganism", "gbRecordList", function (x) {
+setMethod("getOrganism", "gbRecordList", function(x) {
   vapply(x, getOrganism, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getTaxonomy", "gbRecordList", function (x) {
+setMethod("getTaxonomy", "gbRecordList", function(x) {
   vapply(x, getTaxonomy, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getReference", "gbRecordList", function (x) {
+setMethod("getReference", "gbRecordList", function(x) {
   Map(getReference, x)
 })
 #' @rdname accessors
-setMethod("getKeywords", "gbRecordList", function (x) {
+setMethod("getKeywords", "gbRecordList", function(x) {
   vapply(x, getKeywords, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname accessors
-setMethod("getComment", "gbRecordList", function (x) {
+setMethod("getComment", "gbRecordList", function(x) {
   vapply(x, getComment, FUN.VALUE = "", USE.NAMES = FALSE)
 })
 #' @rdname getFeatures-methods
@@ -150,39 +150,39 @@ setMethod("ft", "gbRecordList", function(x) {
   .mapply(.features(), list(x = x), NULL)
 })       
 #' @rdname getSequence-methods
-setMethod("getSequence", "gbRecordList", function (x) {
+setMethod("getSequence", "gbRecordList", function(x) {
   Reduce(append, .mapply(.sequence, list(x = x), NULL))
 })
 
-#' @describeIn ranges
+#' @rdname ranges
 setMethod("ranges", "gbRecordList",
-          function (x, join = FALSE, key = TRUE, include = "none", exclude = "") {
+          function(x, join = FALSE, key = TRUE, include = "none", exclude = "") {
             GenomicRanges::GRangesList(
               lapply(x, ranges, join = join, key = key, include = include, exclude = exclude)
             )
           })
 
-#' @describeIn start
-setMethod("start", "gbRecordList", function (x, join = FALSE) {
+#' @rdname start
+setMethod("start", "gbRecordList", function(x, join = FALSE) {
   lapply(x, start, join = join)
 })
 
-#' @describeIn end
-setMethod("end", "gbRecordList", function (x, join = FALSE) {
+#' @rdname end
+setMethod("end", "gbRecordList", function(x, join = FALSE) {
   lapply(x, end, join = join)
 })
 
-#' @describeIn strand
-setMethod("strand", "gbRecordList", function (x, join = FALSE) {
+#' @rdname strand
+setMethod("strand", "gbRecordList", function(x, join = FALSE) {
   lapply(x, strand, join = join)
 })
 
-#' @describeIn span
+#' @rdname span
 setMethod("span", "gbRecordList", function(x, join = FALSE) {
   lapply(x, span, join = join)
 })
 
-#' @describeIn fuzzy
+#' @rdname fuzzy
 setMethod("fuzzy", "gbRecordList", function(x) {
   lapply(x, fuzzy)
 })
@@ -261,10 +261,10 @@ setMethod("select", "gbRecordList", function(x, ..., .cols = NULL) {
 # internal ---------------------------------------------------------------
 
 
-setMethod('.dbSource', 'gbRecordList', function (x) {
+setMethod('.dbSource', 'gbRecordList', function(x) {
   vapply(x, .dbSource, character(1), USE.NAMES = FALSE)
 })
 
-setMethod(".defline", "gbRecordList", function (x) {
+setMethod(".defline", "gbRecordList", function(x) {
   paste0('gi|', getGeneID(x), .dbSource(x), getAccession(x), ' ', getDefinition(x))
 })

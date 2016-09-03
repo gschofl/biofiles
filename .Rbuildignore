@@ -7,3 +7,4 @@ scratch\.[rR]
 ^README\.*
 ^\.travis\.yml$
 ^codecov\.yml$
+^cran-comments\.md$

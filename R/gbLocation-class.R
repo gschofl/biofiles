@@ -74,7 +74,7 @@ S4Vectors::setValidity2("gbLocation", function(object) {
 # Getter-methods ---------------------------------------------------------
 
 
-#' @describeIn start Get the start values of GenBank locations.
+#' @rdname start
 setMethod("start", "gbLocation", function(x, join = FALSE) {
   if (join) {
     min(x@range[, 1, drop = TRUE])
@@ -83,7 +83,7 @@ setMethod("start", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @describeIn end Get the end values of GenBank locations.
+#' @rdname end
 setMethod("end", "gbLocation", function(x, join = FALSE) {
   if (join) {
     max(x@range[, 2, drop = TRUE])
@@ -92,7 +92,7 @@ setMethod("end", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @describeIn span The span of GenBank locations.
+#' @rdname span
 setMethod("span", "gbLocation", function(x, join = FALSE) {
   if (join) {
     max(x@range[, 2]) - min(x@range[, 1]) + 1L
@@ -101,12 +101,12 @@ setMethod("span", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @describeIn span The joint range of GenBank locations.
+#' @rdname span
 setMethod("joint_range", "gbLocation", function(x) {
   range(x@range)
 })
 
-#' @describeIn strand The strand of GenBank locations.
+#' @rdname strand
 setMethod("strand", "gbLocation", function(x, join = FALSE) {
   if (join || dim(x@range)[1] == 1L) {
     unique(x@strand)
@@ -115,7 +115,7 @@ setMethod("strand", "gbLocation", function(x, join = FALSE) {
   }
 })
 
-#' @describeIn fuzzy Has a  GenBank location a fuzzy start or end?
+#' @rdname fuzzy
 setMethod("fuzzy", "gbLocation", function(x) x@fuzzy)
 
 #' @rdname accessors
@@ -142,7 +142,7 @@ setMethod("getAccession", "gbLocation", function(x) x@accession)
   x
 }
 
-#' @describeIn start<- Set the start values of GenBank locations.
+#' @rdname start
 setReplaceMethod("start", "gbLocation", function(x, ..., value) 
   .gbLocation_replace_start(x, ..., value = value)
 )
@@ -165,25 +165,28 @@ setReplaceMethod("start", "gbLocation", function(x, ..., value)
   x
 }
 
-#' @describeIn end Set the end values of GenBank locations.
+#' @rdname end
 setReplaceMethod("end", "gbLocation", function(x, ..., value) 
   .gbLocation_replace_end(x, ..., value = value)
 )
 
-#' @describeIn strand Set the strand of GenBank locations.
-setReplaceMethod("strand", "gbLocation",
-                 function(x, value) {
-                   nrow <- dim(x@range)[1]
-                   if (length(value) > nrow)
-                     value <- value[seq_len(nrow)]
-                   if (length(value) < nrow)
-                     value <- recycle(value, nrow)
-                   if (is.character(value))
-                     value <- vapply(value, switch, '+' = 1L, '-' = -1L, NA_integer_,
-                                     FUN.VALUE = integer(1))
-                   x@strand <- as.integer(value)
-                   x
-                 })
+.gbLocation_replace_strand <- function(x, ..., value) {
+  nrow <- dim(x@range)[1]
+  if (length(value) > nrow)
+    value <- value[seq_len(nrow)]
+  if (length(value) < nrow)
+    value <- recycle(value, nrow)
+  if (is.character(value))
+    value <- vapply(value, switch, '+' = 1L, '-' = -1L, NA_integer_,
+                    FUN.VALUE = integer(1))
+  x@strand <- as.integer(value)
+  x
+}
+
+#' @rdname strand
+setReplaceMethod("strand", "gbLocation", function(x, ..., value) {
+  .gbLocation_replace_strand(x, ..., value = value)
+})
 
 
 # Coerce-methods ------------------------------------------------------
@@ -274,7 +277,7 @@ as.gbLocation <- function(base_span) {
 # shift ---------------------------------------------------------------
 
 
-#' @describeIn shift Shift a GenBank location.
+#' @rdname shift
 setMethod("shift", "gbLocation", function(x, shift = 0L, ...) {
   if (!is.numeric(shift))
     stop("'shift' must be an integer")

@@ -3,7 +3,7 @@
 #' @param x A gbFeatureTable
 #' @param ... character keys
 #' @param .cols gbFeature annotations returned as a data.frame
-#'
+#' @rdname dot-select
 #' @keywords internal
 #' @include filter.R
 .select <- function (x, ..., .cols = NULL) {

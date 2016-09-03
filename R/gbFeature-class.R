@@ -148,6 +148,7 @@ setMethod(".defline", "gbFeature", function(x) {
 
 # getters ----------------------------------------------------------------
 
+
 #' @rdname accessors
 setMethod("getLocus", "gbFeature", function(x) getLocus(.seqinfo(x)) )
 
@@ -212,12 +213,12 @@ setMethod("getHeader", "gbFeature", function(x) .header(.seqinfo(x)))
 #' @rdname getSequence-methods
 setMethod("getSequence", "gbFeature", function(x) .seq_access(x))
 
-#' @describeIn ranges Get the range of GenBank features.
+#' @rdname ranges
 setMethod("ranges", "gbFeature", function(x, include = "none", exclude = "", join = FALSE) {
   .GRanges(x, include = include, exclude = exclude, join = join)
 })
 
-#' @describeIn start Get the start values of GenBank features.
+#' @rdname start
 setMethod("start", "gbFeature", function(x, join = FALSE) {
   start(x@location, join = join)
 })
@@ -231,12 +232,12 @@ setMethod("start", "gbFeature", function(x, join = FALSE) {
   x
 }
 
-#' @describeIn start<- Set the start values of GenBank features.
+#' @rdname start
 setReplaceMethod("start", "gbFeature", function(x, ..., value)
   .gbFeature_replace_start(x, ..., value = value)
 )
 
-#' @describeIn end Get the end values of GenBank features.
+#' @rdname end
 setMethod("end", "gbFeature", function(x, join = FALSE) { 
   end(x@location, join = join)
 })
@@ -249,28 +250,28 @@ setMethod("end", "gbFeature", function(x, join = FALSE) {
   x
 }
 
-#' @describeIn end<- Set the end values of GenBank features.
+#' @rdname end
 setReplaceMethod("end", "gbFeature", function(x, ..., value)
   .gbFeature_replace_end(x, ..., value = value)
 )
 
-#' @describeIn strand Get the strand of GenBank features.
+#' @rdname strand
 setMethod("strand", "gbFeature", function(x, join = FALSE) {
   strand(x@location, join = join)
 })
 
-#' @describeIn strand<- Set the strand of GenBank features.
-setReplaceMethod("strand", "gbFeature", function(x, value) { 
-  strand(x@location) <- value
+#' @rdname strand
+setReplaceMethod("strand", "gbFeature", function(x, ..., value) { 
+  strand(x@location, ...) <- value
   x
 })
 
-#' @describeIn span The span of GenBank features
+#' @rdname span
 setMethod("span", "gbFeature", function(x, join = FALSE) {
   span(x@location, join = join)
 })
 
-#' @describeIn span The oint range  of GenBank features
+#' @rdname span
 setMethod("joint_range", "gbFeature", function(x) {
   joint_range(x@location)
 })
@@ -287,7 +288,7 @@ setMethod("dbxref", "gbFeature", function(x, db = NULL, ...) {
 #' @rdname location-methods
 setMethod("location", "gbFeature", function(x) x@location)
 
-#' @describeIn fuzzy Has a  GenBank feature a fuzzy start or end?
+#' @rdname fuzzy
 setMethod("fuzzy", "gbFeature", function(x) fuzzy(x@location))
 
 #' @rdname index-methods
@@ -350,7 +351,7 @@ setMethod("hasQualif", "gbFeature", function(x, qualifier) {
 # shift ---------------------------------------------------------------
 
 
-#' @describeIn shift Shift a GenBank feature
+#' @rdname shift
 setMethod("shift", "gbFeature", function(x, shift = 0L, ...) {
   x@location <- shift(x@location, shift)
   x
@@ -369,6 +370,7 @@ setMethod("[[", c("gbFeature", "character", "missing"), function(x, i, j) {
   }
 })
 
+#' @param name The name of the element to extract.
 #' @rdname extract-methods
 setMethod("$", "gbFeature", function(x, name) {
   if (name %in% c("key", "location", ".id")) {

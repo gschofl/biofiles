@@ -36,7 +36,7 @@ NULL
 # getter/setter generics -------------------------------------------------
 
 ### The "start" and "start<- generics are defined in the BiocGenerics package.
-#' Get the start position of genomic features
+#' Get or set the start position of genomic features
 #' 
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
@@ -50,23 +50,19 @@ NULL
 #' @examples
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' 
+#' ## start
 #' start(x)
 #' cds <- x["CDS"]
 #' start(cds)
 setGeneric("start")
 
-#' Set the start position of genomic features
-#' 
-#' @param x A \code{\linkS4class{gbFeature}} or \code{\linkS4class{gbFeatureTable}}
-#' object.
-#' @param check if \code{FALSE}, don't perform validity checks.
 #' @param value The start information to set on \code{x}.
 #' @importFrom BiocGenerics "start<-"
+#' @rdname start
 #' @export
 #' @examples
-#' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' 
-#' cds <- x["CDS"]
+#' ## `start<-`
 #' start(cds) <- 10
 #' start(cds)
 setGeneric("start<-")
@@ -86,20 +82,26 @@ setGeneric("start<-")
 #' @examples
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' 
+#' ## end
 #' end(x)
 #' cds <- x["CDS"]
 #' end(cds)
 setGeneric("end")
 
-#' @param check if \code{FALSE}, don't perform validity checks.
 #' @param value The end information to set on \code{x}.
 #' @importFrom BiocGenerics "end<-"
-#' @export
 #' @rdname end
+#' @export
+#' @examples
+#' 
+#' ## `end<-`
+#' end(cds) <- 1000
+#' end(cds)
+#' ranges(cds)
 setGeneric("end<-")
 
 ### The "strand" and "strand<-" generics are defined in the BiocGenerics package.
-#' Get or set the strand of genomic features
+#' Get or set the strand information of genomic features
 #'
 #' @param x A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 #' \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.
@@ -113,12 +115,19 @@ setGeneric("end<-")
 #' @export
 #' @examples
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
+#' 
+#' ## strand
 #' strand(x)
 setGeneric("strand")
 
-#' @rdname strand
-#' @importFrom BiocGenerics strand<-
+#' @param value The strand information to set on \code{x}.
+#' @importFrom BiocGenerics "strand<-"
 #' @export
+#' @rdname strand
+#' @examples
+#' 
+#' ## `strand<-`
+#' showMethods("strand<-")
 setGeneric("strand<-")
 
 #' Get the span of genomic features.
@@ -134,7 +143,7 @@ setGeneric("strand<-")
 #' @examples
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' span(x)
-setGeneric("span", signature = "x", function (x, ...) {
+setGeneric("span", signature = "x", function(x, ...) {
   standardGeneric("span")
 })
 
@@ -188,7 +197,7 @@ setGeneric("ranges")
 #' 
 #' ## note that start() or end() return exact positions even if they are fuzzy.
 #' start(l)
-setGeneric("fuzzy", signature = "x", function (x, ...) {
+setGeneric("fuzzy", signature = "x", function(x, ...) {
   standardGeneric("fuzzy")
 })
 
@@ -207,75 +216,75 @@ setGeneric("fuzzy", signature = "x", function (x, ...) {
 #' getGeneID(x)
 #' getReference(x)
 #' getDate(x)
-setGeneric('getLocus', function (x, ...) standardGeneric('getLocus'))
+setGeneric('getLocus', function(x, ...) standardGeneric('getLocus'))
 
 #' @rdname accessors
 #' @export
-setGeneric("getLength", function (x, ...) standardGeneric('getLength'))
+setGeneric("getLength", function(x, ...) standardGeneric('getLength'))
 
 #' @rdname accessors
 #' @export
-setGeneric('getMoltype', function (x, ...) standardGeneric('getMoltype'))
+setGeneric('getMoltype', function(x, ...) standardGeneric('getMoltype'))
 
 #' @rdname accessors
 #' @export
-setGeneric('getTopology', function (x, ...) standardGeneric('getTopology'))
+setGeneric('getTopology', function(x, ...) standardGeneric('getTopology'))
 
 #' @rdname accessors
 #' @export
-setGeneric('getDivision', function (x, ...) standardGeneric('getDivision'))
+setGeneric('getDivision', function(x, ...) standardGeneric('getDivision'))
 
 #' @rdname accessors
 #' @export
-setGeneric('getDate', function (x) standardGeneric('getDate'))
+setGeneric('getDate', function(x) standardGeneric('getDate'))
 
 #' @rdname accessors
 #' @export
-setGeneric("getDefinition", function (x, ...) standardGeneric("getDefinition"))
+setGeneric("getDefinition", function(x, ...) standardGeneric("getDefinition"))
 
 #' @rdname accessors
 #' @export
-setGeneric("getAccession", function (x, ...) standardGeneric("getAccession"))
+setGeneric("getAccession", function(x, ...) standardGeneric("getAccession"))
 
 #' @rdname accessors
 #' @export
-setGeneric("getVersion", function (x, ...) standardGeneric("getVersion"))
+setGeneric("getVersion", function(x, ...) standardGeneric("getVersion"))
 
 #' @rdname accessors
 #' @export
-setGeneric("getGeneID", function (x, ...) standardGeneric("getGeneID"))
+setGeneric("getGeneID", function(x, ...) standardGeneric("getGeneID"))
 
 #' @rdname accessors
 #' @export
-setGeneric('getDBLink', function (x) standardGeneric('getDBLink'))
+setGeneric('getDBLink', function(x) standardGeneric('getDBLink'))
 
 #' @rdname accessors
 #' @export
-setGeneric('getDBSource', function (x) standardGeneric('getDBSource'))
+setGeneric('getDBSource', function(x) standardGeneric('getDBSource'))
 
 #' @rdname accessors
 #' @export
-setGeneric('getSource', function (x) standardGeneric('getSource'))
+setGeneric('getSource', function(x) standardGeneric('getSource'))
 
 #' @rdname accessors
 #' @export
-setGeneric('getOrganism', function (x) standardGeneric('getOrganism'))
+setGeneric('getOrganism', function(x) standardGeneric('getOrganism'))
 
 #' @rdname accessors
 #' @export
-setGeneric('getTaxonomy', function (x) standardGeneric('getTaxonomy'))
+setGeneric('getTaxonomy', function(x) standardGeneric('getTaxonomy'))
 
 #' @rdname accessors
 #' @export
-setGeneric('getKeywords', function (x) standardGeneric('getKeywords'))
+setGeneric('getKeywords', function(x) standardGeneric('getKeywords'))
 
 #' @rdname accessors
 #' @export
-setGeneric('getReference', function (x) standardGeneric('getReference'))
+setGeneric('getReference', function(x) standardGeneric('getReference'))
 
 #' @rdname accessors
 #' @export
-setGeneric('getComment', function (x) standardGeneric('getComment'))
+setGeneric('getComment', function(x) standardGeneric('getComment'))
 
 
 # header, features, sequence ------------------------------------------------
@@ -364,7 +373,7 @@ setGeneric("summary")
 #' @examples
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' index(x)
-setGeneric("index", signature = "x", function (x, ...) {
+setGeneric("index", signature = "x", function(x, ...) {
   standardGeneric("index")
 })
 
@@ -380,7 +389,7 @@ setGeneric("index", signature = "x", function (x, ...) {
 #' @examples
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 #' location(x)
-setGeneric("location", signature = "x", function (x, ...) {
+setGeneric("location", signature = "x", function(x, ...) {
   standardGeneric("location")
 })
 

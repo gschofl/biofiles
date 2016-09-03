@@ -1,4 +1,4 @@
-# biofiles configure.in by Gerhard Schöfl <gschofl@yahoo.de>
+# biofiles configure.in by Gerhard Schöfl <gerhard.schöfl@gmail.com>
 #
 # Modified after:
 #
@@ -12,7 +12,7 @@
 AC_PREREQ([2.67])
 
 # Process with autoconf to produce a configure script.
-AC_INIT(biofiles, 0.3.0, gschofl@yahoo.de, https://github.com/gschofl/biofiles)
+AC_INIT(biofiles, 0.4.0, gerhard.schöfl@gmail.com, https://github.com/gschofl/biofiles)
 
 # Using C++
 AC_LANG(C++)

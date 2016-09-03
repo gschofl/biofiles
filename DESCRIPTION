@@ -1,7 +1,7 @@
 Package: biofiles
 Type: Package
-Title: An interface for GenBank/GenPept flat files
-Version: 0.3.3
+Title: An Interface for GenBank/GenPept Flat Files
+Version: 0.4.0
 Date: 2016-09-03
 Author: Gerhard Schöfl [aut, cre]
 Maintainer: Gerhard Schöfl <gerhard.schofl@gmail.com>
@@ -38,7 +38,6 @@ Encoding: UTF-8
 URL: https://github.com/gschofl/biofiles
 BugReports: https://github.com/gschofl/biofiles/issues
 SystemRequirements: Boost regex libraries from http://www.boost.org
-Roxygen: list(wrap = FALSE)
 Collate:
     'RcppExports.R'
     'utils.R'
