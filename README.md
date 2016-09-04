@@ -1,6 +1,6 @@
 # biofiles - an interface to GenBank/GenPept files in R
 
-[![Build Status](https://travis-ci.org/gschofl/biofiles.png?branch=master)](https://travis-ci.org/gschofl/biofiles)
+[![Travis-CI Build Status](https://travis-ci.org/gschofl/biofiles.svg?branch=master)](https://travis-ci.org/gschofl/biofiles)
 
 This is an R package for interfacing with GenBank and GenPept flat
 file records. It includes utilities for reading and writing GenBank
@@ -8,13 +8,19 @@ files, and methods for interacting with annotation and sequence data.
 
 ### Installation
 
-This package is currently ony available via github. It depends on the Boost
-regex library.
+This package is currently ony available via github. 
+It depends on the Boost regex library and I have so far only tested it on Ubuntu.
+
+On Ubuntu run
+```sh
+sudo apt install libboost-regex-dev
+```
+before attempting to install `biofiles`.
+
 
 ```r
 install.packages("devtools")  # if not already installed
-library("devtools")
-install_github("gschofl/biofiles")
+devtools::install_github("gschofl/biofiles")
 ```
 
 
@@ -29,8 +35,8 @@ Let's download a small bacterial genome, _Chlamydophila psittaci_ DC15
 
 
 ```r
-require(reutils)
-gb_file <- efetch("CP002806", "nuccore", rettype = "gbwithparts", retmode = "text")
+library(reutils)
+gb_file <- reutils::efetch("CP002806", "nuccore", rettype = "gbwithparts", retmode = "text")
 ```
 
 

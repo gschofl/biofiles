@@ -17,5 +17,6 @@ packrat/
 *.gz
 *.toc
 *.status
+*.*~
 
 
