@@ -8,3 +8,4 @@ scratch\.[rR]
 ^\.travis\.yml$
 ^codecov\.yml$
 ^cran-comments\.md$
+^appveyor\.yml$

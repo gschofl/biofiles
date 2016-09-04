@@ -1,6 +1,7 @@
 # biofiles - an interface to GenBank/GenPept files in R
 
 [![Travis-CI Build Status](https://travis-ci.org/gschofl/biofiles.svg?branch=master)](https://travis-ci.org/gschofl/biofiles)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/gschofl/biofiles?branch=master&svg=true)](https://ci.appveyor.com/project/gschofl/biofiles)
 
 This is an R package for interfacing with GenBank and GenPept flat
 file records. It includes utilities for reading and writing GenBank
