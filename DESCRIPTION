@@ -1,7 +1,7 @@
 Package: biofiles
 Type: Package
 Title: An Interface for GenBank/GenPept Flat Files
-Version: 0.4.0
+Version: 0.4.0.9000
 Date: 2016-09-03
 Author: Gerhard Schöfl [aut, cre]
 Maintainer: Gerhard Schöfl <gerhard.schofl@gmail.com>
