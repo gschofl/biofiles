@@ -15,6 +15,7 @@ install:
 build_script:
   - Rscript -e "source('http://bioconductor.org/biocLite.R')"
   - travis-tool.sh install_deps
+  - travis-tool.sh install_bioc BiocGenerics Biostrings GenomeInfoDb GenomicRanges IRanges S4Vectors XVector BiocStyle
 
 test_script:
   - travis-tool.sh run_tests
