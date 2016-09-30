@@ -1,5 +1,4 @@
 #include "biofiles.h"
-#include <boost/algorithm/string_regex.hpp>
 
 using namespace Rcpp;
 
@@ -20,20 +19,21 @@ void parse_gb_location(
     std::string &accession )
 {
     // clean up possible whitespace
-    span.erase( remove_if(span.begin(), span.end(), ::isspace), span.end());
+    span.erase(remove_if(begin(span), end(span), ::isspace), end(span));
 
-    // iterator over the complete gb_base_span
-    std::string::const_iterator b_it, e_it; 
-    b_it = span.begin();
-    e_it = span.end();
-    boost::smatch m;
-  
     // initialise a BaseSpan
     BaseSpan bs;
+    
+    // initialise match results
+    std::smatch m;
+    
+    // iterator over span
+    std::string::const_iterator first = span.begin();
+    std::string::const_iterator last = span.end();
   
     // test for a possibly complemented simple location
     try {
-      if ( boost::regex_match(b_it, e_it, m, PCSL) ) {
+      if (std::regex_match(first, last, m, PCSL)) {
         
           parse_simple_span(bs, span, accession);
           
@@ -57,28 +57,31 @@ void parse_gb_location(
           location.slot("type") = bs.type;
           
       // test for a possibly complemented compound location
-      } else if ( boost::regex_match( b_it, e_it, m, PCCL ) ) {
+      } else if (std::regex_match(first, last, m, PCCL)) {
           // test for complementary strand
           int strand(1);
-          if ( boost::regex_search( b_it, e_it, m, COMPL ) ) {
+          if (std::regex_search(first, last, m, COMPL)) {
               strand = -1;
           }  
           
           // get compound span
-          boost::regex_search( b_it, e_it, m, CL );
-          b_it = m[0].first;
-          e_it = m[0].second;  
+          std::regex_search(first, last, m, CL);
+          first = m[0].first;
+          last = m[0].second;  
           
           // get compound type
-          boost::regex_search( b_it, e_it, m, CMPND );
+          std::regex_search(first, last, m, CMPND);
           std::string compound( m[0] );
           
           // get span strings
-          boost::regex_search( b_it, e_it, m, SLC );
+          std::regex_search(first, last, m, SLC);
           std::string span_str( m[0] );
           
           std::vector<std::string > spans;
-          boost::split_regex( spans, span_str, boost::regex("\\s*,\\s*") );
+          std::sregex_token_iterator
+            first_it{begin(span_str), end(span_str), COMMA, -1},
+            last_it;
+          std::copy(first_it, last_it, std::back_inserter(spans));
           
           int nrows = spans.size();
           Rcpp::IntegerMatrix   rangeMat( nrows, 2 );
@@ -90,7 +93,7 @@ void parse_gb_location(
             
           for (int i = 0; i < nrows; ++i) {
               std::string span = spans[i];
-              parse_simple_span( bs, span, accession );
+              parse_simple_span(bs, span, accession);
               
               // get positions
               rangeMat(i, 0) = bs.range[0];
@@ -131,12 +134,11 @@ void parse_simple_span(
     std::string &simple_span,
     std::string &accession )
 {
-    std::string::const_iterator b_it, e_it;
-    b_it = simple_span.begin();
-    e_it = simple_span.end();
-    boost::smatch m;
+    std::smatch m;
+    std::string::const_iterator first = simple_span.begin();
+    std::string::const_iterator last = simple_span.end();
     //Rcpp::Rcout << "'" << simple_span << "' => ";
-    //Rcpp::Rcout << *b_it << " ... " << *e_it << std::endl;
+    //Rcpp::Rcout << *first << " ... " << *last << std::endl;
     
     // initialize and set defaults
     std::string start, end;
@@ -147,18 +149,19 @@ void parse_simple_span(
     std::string type("R");
   
     // test for complement
-    if ( boost::regex_search(b_it, e_it, m, COMPL) ) {
+    if (std::regex_search(first, last, m, COMPL)) {
+        // we have matched "complement(m..n)"
         strand = -1;
     }
     
     // test for gap
-    if ( boost::regex_search(b_it, e_it, m, GAP) ) {
-        // we have matched a gap -> gap(), gap(X), gap(unkX)
+    if (std::regex_search(first, last, m, GAP)) {
+        // we have matched "gap(), gap(X), gap(unkX)"
         type = "G";
         accession = "";
         start = "1";
         // gap length
-        boost::regex_search(b_it, e_it, m, GAPLEN);
+        std::regex_search(first, last, m, GAPLEN);
         if (m[1].matched /* gap(unkX) */ | !m[2].matched /* gap() */) {
             fuzzy[0] = true;
         }
@@ -170,41 +173,37 @@ void parse_simple_span(
     } else {
         // match remote accession (capture group 1) and
         // genomic span (capture group 4)
-        boost::regex_search(b_it, e_it, m, RASL);
+        std::regex_search(first, last, m, RASL);
         if (m[1].matched) {
             remote = true;
             accession = m[2];  // remote accession without colon
-            b_it = m[4].first;
-            e_it = m[4].second;
+            first = m[4].first;
+            last = m[4].second;
         } else {
-            b_it = m[0].first;
-            e_it = m[0].second;
+            first = m[0].first;
+            last = m[0].second;
         }
         //Rcpp::Rcout << accn << std::endl;
         //Rcpp::Rcout << "'" << simple_span << "' => ";
-        //Rcpp::Rcout << *b_it << " ... " << *e_it << std::endl;
+        //Rcpp::Rcout << *first << " ... " << *last << std::endl;
 
         // get type
-        if ( boost::regex_search(b_it, e_it, m, BETWEEN_BASES) ) {
+        if (std::regex_search(first, last, m, BETWEEN_BASES)) {
             type = "B";
         }
   
         // split span
-        boost::regex_search(b_it, e_it, m, BASESPLIT);
+        std::regex_search(first, last, m, BASESPLIT);
         start = m[1];
-        if ( m[3].matched ) {
+        if (m[3].matched) {
             end = m[3];
         } else {
             end = start;
         }
-        
         //Rcpp::Rcout << "'" << simple_span << "' => ";
         //Rcpp::Rcout << start << " ... " << end << std::endl;
-        // get fuzzy and make sure we also catch the usage in IMGT/HLA
-        static const boost::regex FUZZY_START("^<\\d+$");
-        static const boost::regex FUZZY_END("^>\\d+$|^\\d+>$");
-        fuzzy[0] = boost::regex_match(start, m, FUZZY_START );
-        fuzzy[1] = boost::regex_match(end, m, FUZZY_END );
+        fuzzy[0] = std::regex_match(start, m, FUZZY_START);
+        fuzzy[1] = std::regex_match(end, m, FUZZY_END);
     }
 
     // get range
@@ -231,8 +230,7 @@ void parse_simple_span(
     }
 }
 
-
-unsigned int extractNumber(const std::string& str) {
+static inline unsigned int extractNumber(const std::string& str) {
     std::string temp;
     std::string::const_iterator it;
     for (it = str.begin(); it != str.end(); it++)
@@ -241,6 +239,5 @@ unsigned int extractNumber(const std::string& str) {
             temp += *it;
         }
     }
-    return( atoi(temp.c_str()) );
+    return(atoi(temp.c_str()));
 }
-

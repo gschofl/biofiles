@@ -4,7 +4,9 @@
 #include <Rcpp.h>
 #include <string>
 #include <vector>
-#include <boost/regex.hpp>
+#include <algorithm>
+#include <iterator>
+#include <regex>
 
 struct BaseSpan {
     std::vector<unsigned int> range;
@@ -25,11 +27,6 @@ void parse_gb_location(
     std::string &span,
     std::string &accession );
 
-void parse_gb_location2(
-    Rcpp::S4 &location,
-    std::string &span,
-    std::string &accession );
-
 void parse_gb_feature_table(
     Rcpp::S4& gb_feature,
     const std::vector<std::string>& feature_string,
@@ -38,7 +35,13 @@ void parse_gb_feature_table(
 Rcpp::CharacterVector parse_gb_qualifiers( 
     const std::vector<std::string>& qualifiers );
     
-unsigned int extractNumber(const std::string& str);
+static inline unsigned int extractNumber(const std::string& str);
+
+static inline std::string ltrim(std::string str, std::string ch);
+
+static inline std::string rtrim(std::string str, std::string ch);
+
+static inline std::string trim(std::string str, std::string ch);
 
 /*
  * The notation '55^56' describes a site between two adjoining nucleotides,
@@ -65,39 +68,48 @@ unsigned int extractNumber(const std::string& str);
  */
 
 // complement
-static const boost::regex COMPL("^complement");
+static const std::regex COMPL("^complement");
 
 // gap
-static const boost::regex GAP("^gap");
+static const std::regex GAP("^gap");
+
+// gap length
+static const std::regex GAPLEN("gap\\((unk)?(\\d+)?\\)");
 
 // compound
-static const boost::regex CMPND("(join|order|bond)");
+static const std::regex CMPND("(join|order|bond)");
 
 // BETWEEN_BASES type
-static const boost::regex BETWEEN_BASES("\\d+\\^\\d+");
+static const std::regex BETWEEN_BASES("\\d+\\^\\d+");
 
 /* 
-split bases
-IMGT/HLA uses location string like "<1..546>" although they should
-read "<1..>546". Aaargh!
-*/
-static const boost::regex BASESPLIT(
-    "([<>]?\\d+>?)(\\.\\.|\\^)?(>?\\d+>?)?");
-    
-// gap length
-static const boost::regex GAPLEN("gap\\((unk)?(\\d+)?\\)");
+ split bases
+ IMGT/HLA uses fuzzy location strings like "<1..546>" although they should
+ read "<1..>546". Aaargh!
+ */
+static const std::regex BASESPLIT(
+    "([<>]?\\d+>?)(\\.\\.|\\^)?(>?\\d+>?)?", std::regex::optimize);
+
+// FUZZY start and make sure we also catch the aberrant usage in IMGT/HLA
+static const std::regex FUZZY_START("^<\\d+$");
+
+// FUZZY end
+static const std::regex FUZZY_END("^>\\d+$|^\\d+>$");
+
+// split on comma
+static const std::regex COMMA("\\s*,\\s*");
 
 // remote accession
-static const boost::regex RA(
-    "[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?\\:");
+static const std::regex RA(
+    "[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?\\:", std::regex::optimize);
 
 // simple location possibly with remote accession
-static const boost::regex RASL(
+static const std::regex RASL(
     "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"
-    "(<?\\d+\\.\\.>?\\d+>?|\\d+\\^\\d+|[<>]?\\d+>?)");
+    "(<?\\d+\\.\\.>?\\d+>?|\\d+\\^\\d+|[<>]?\\d+>?)", std::regex::optimize);
 
 // Possibly complemented simple location
-static const boost::regex PCSL(
+static const std::regex PCSL(
     "^("
         "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"  
         "(<?\\d+\\.\\.>?\\d+>?|\\d+\\^\\d+|[<>]?\\d+>?)"
@@ -106,10 +118,10 @@ static const boost::regex PCSL(
             "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"
             "(<?\\d+\\.\\.>?\\d+>?|\\d+\\^\\d+|[<>]?\\d+>?|(unk)?(\\d+)?)"
         "\\)"
-    ")$");
+    ")$", std::regex::optimize);
 
 // Simple locations in compound
-static const boost::regex SLC(
+static const std::regex SLC(
     "("
         "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"  
         "(<?\\d+\\.\\.>?\\d+>?|\\d+\\^\\d+|[<>]?\\d+>?)"
@@ -129,10 +141,10 @@ static const boost::regex SLC(
                 "(<?\\d+\\.\\.>?\\d+>?|\\d+\\^\\d+|[<>]?\\d+>?|(unk)?(\\d+)?)"
             "\\)"
         ")"
-    ")*");
+    ")*", std::regex::optimize);
 
 // compound location
-static const boost::regex CL(
+static const std::regex CL(
     "(join|order|bond)\\("
         "("
             "(([a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9]+)?)\\:)?"  
@@ -154,10 +166,10 @@ static const boost::regex CL(
                 "\\)"
             ")"
         ")*"
-    "\\)");
+    "\\)", std::regex::optimize);
 
 // possibly complemented compound location
-static const boost::regex PCCL(
+static const std::regex PCCL(
     "^("
         "(join|order|bond)\\("
             "("
@@ -206,6 +218,6 @@ static const boost::regex PCCL(
                 ")*"
             "\\)"
         "\\)"
-    ")$");
+    ")$", std::regex::optimize);
 
 #endif // __BIOFILES__

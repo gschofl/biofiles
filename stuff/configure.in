@@ -29,14 +29,14 @@ CXXFLAGS=$("${R_HOME}/bin/R" CMD config CXXFLAGS)
 
 # check for non-standard library: boost_regex
 AC_LANG_PUSH([C++])
-AC_CHECK_HEADERS([boost/regex.hpp], [],
-    [AC_MSG_ERROR(Boost regex libraries not found.)])
-AC_CHECK_HEADERS([boost/algorithm/string_regex.hpp], [],
-    [AC_MSG_ERROR(Boost regex libraries not found.)])
+#AC_CHECK_HEADERS([boost/regex.hpp], [],
+#    [AC_MSG_ERROR(Boost regex libraries not found.)])
+#AC_CHECK_HEADERS([boost/algorithm/string_regex.hpp], [],
+#    [AC_MSG_ERROR(Boost regex libraries not found.)])
 AC_LANG_POP([C++])
 
 ## Add boost library option
-AC_SUBST([PKG_LIBS],["${PKG_LIBS} -lboost_regex"])
+## AC_SUBST([PKG_LIBS],["${PKG_LIBS} -lboost_regex"])
 AC_SUBST(CXXFLAGS)
 AC_SUBST(LDFLAGS)
 AC_OUTPUT(src/Makevars)
