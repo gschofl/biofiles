@@ -3,30 +3,19 @@
 [![Travis-CI Build Status](https://travis-ci.org/gschofl/biofiles.svg?branch=master)](https://travis-ci.org/gschofl/biofiles)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/gschofl/biofiles?branch=master&svg=true)](https://ci.appveyor.com/project/gschofl/biofiles)
 
-This is an R package for interfacing with GenBank and GenPept flat
+This is an R package for interfacing with GenBank/GenPept or Embl flat
 file records. It includes utilities for reading and writing GenBank
 files, and methods for interacting with annotation and sequence data.
 
 ### Installation
 
-This package is currently ony available via github. 
-It depends on the Boost regex library and I have so far only tested it on Ubuntu.
-
-On Ubuntu run
-```sh
-sudo apt install libboost-regex-dev
-```
-before attempting to install `biofiles`.
-
+This package is currently ony available via github. It depends on a C++11
+compatible compiler and is so far only tested it on Ubuntu.
 
 ```r
 install.packages("devtools")  # if not already installed
 devtools::install_github("gschofl/biofiles")
 ```
-
-
-
-
 
 ### Basic functionality
 
