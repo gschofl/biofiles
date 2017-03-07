@@ -169,7 +169,7 @@ join_seq <- function(seq, acc, src = c("gbk", "embl")) {
   mc_cores <- floor(parallel::detectCores()*0.75)
   s <- unlist(parallel::mclapply(seq, function(x) {
     paste0(strsplit(.substr(x), ' ')[[1L]], collapse = '')
-  }, mc.cores = mc_cores))
+  }, mc.cores = 1))
   s <- c(paste0(">", acc), s)
   s
 }
