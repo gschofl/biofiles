@@ -135,7 +135,7 @@ parse_features <- function(x, seqinfo) {
   ftbl <- parallel::mcmapply(
     gbFeature, feature = fl, id = id,
     MoreArgs = list(accession = getAccession(seqinfo)[1]),
-    SIMPLIFY = FALSE, USE.NAMES = FALSE, mc.cores = mc_cores
+    SIMPLIFY = FALSE, USE.NAMES = FALSE, mc.cores = 1
   )                   
   S4Vectors::new2('gbFeatureTable', .Data = ftbl, .id = id, .seqinfo = seqinfo, check = FALSE) 
 }
