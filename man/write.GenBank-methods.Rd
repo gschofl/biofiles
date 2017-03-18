@@ -3,8 +3,8 @@
 \docType{methods}
 \name{write.GenBank}
 \alias{write.GenBank}
-\alias{write.GenBank,gbFeatureTable-method}
 \alias{write.GenBank,gbRecord-method}
+\alias{write.GenBank,gbFeatureTable-method}
 \title{Write GenBank records or features to file in GenBank format}
 \usage{
 write.GenBank(x, file, append = FALSE, ...)
@@ -44,4 +44,3 @@ write.GenBank(x, file = "data/marine_metagenome.gbk")
 write.GenBank(x["CDS"], file = "data/marine_metagenome_cds.gbk", header = FALSE, sequence = FALSE)
 }
 }
-

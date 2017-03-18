@@ -16,4 +16,3 @@ An \code{\linkS4class{AAStringSet}}.
 \description{
 Return the \emph{translation}s from GenBank features.
 }
-

@@ -17,4 +17,3 @@
 Filter gbFeatures from a FeatureTable
 }
 \keyword{internal}
-

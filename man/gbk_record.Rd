@@ -16,4 +16,3 @@ A \code{\linkS4class{gbRecord}} instance.
 Parser for GenBank/GenPept records.
 }
 \keyword{internal}
-

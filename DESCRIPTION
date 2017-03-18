@@ -62,4 +62,4 @@ Collate:
     'write-genbank.R'
     'zzz.R'
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

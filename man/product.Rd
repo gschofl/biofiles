@@ -16,4 +16,3 @@ A character vector of \emph{product}s.
 \description{
 Return the \emph{product} qualifiers from GenBank features.
 }
-

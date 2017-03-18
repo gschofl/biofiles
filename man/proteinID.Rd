@@ -16,4 +16,3 @@ A character vector of \emph{protein_id}s.
 \description{
 Return the \emph{protein_id} qualifiers from GenBank features.
 }
-

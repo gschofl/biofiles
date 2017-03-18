@@ -16,4 +16,3 @@ Uses \code{\link{Sys.which}} internally, so it should work
 on Windows and Unix.alikes.
 }
 \keyword{internal}
-

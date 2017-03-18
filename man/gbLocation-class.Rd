@@ -36,6 +36,6 @@ an "R" for \sQuote{range} (e.g., \code{1..200} or point position \code{200}),
 a "B" for \sQuote{between bases} (e.g., \code{36^37}), or a "G" for gaps
 (e.g., \code{gap()}, \code{gap(30)}, or \code{gap(unk30)}).}
 }}
+
 \keyword{classes}
 \keyword{internal}
-

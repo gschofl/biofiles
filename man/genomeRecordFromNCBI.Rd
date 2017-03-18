@@ -35,4 +35,3 @@ gbk <- genomeRecordFromNCBI("Bacteria/Chlamydia_muridarum", verbose = TRUE)
 
 }
 }
-

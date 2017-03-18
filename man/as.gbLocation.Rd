@@ -18,4 +18,3 @@ Create a \code{gbLocation} object out of a character string.
 \examples{
 as.gbLocation("join(1..10,12..20)")
 }
-

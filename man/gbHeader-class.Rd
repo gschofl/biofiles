@@ -2,6 +2,7 @@
 % Please edit documentation in R/gbHeader-class.R
 \docType{class}
 \name{gbHeader-class}
+\alias{gbHeader-class}
 \alias{.gbHeader}
 \alias{gbHeader-class}
 \title{Generator object for the \code{"gbHeader"} reference class}
@@ -21,6 +22,7 @@ Generates an object representing a GenBank/GenPept-format file header.
 
 \item{\code{write(file = "", append = FALSE, sep = "\\n")}}{Write a GenBank file header to file.}
 }}
+
 \section{Methods}{
 
 \describe{
@@ -64,9 +66,9 @@ Generates an object representing a GenBank/GenPept-format file header.
  All reference classes extend and inherit methods from
    \code{"\linkS4class{envRefClass}"}.
 }
+
 \examples{
 showClass("gbHeader")
 }
 \keyword{classes}
 \keyword{internal}
-

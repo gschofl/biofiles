@@ -11,9 +11,6 @@ This is an R package for interfacing with GenBank, GenPept, Embl and
 IMGT/HLA flat file records. It includes utilities for reading and writing
 GenBank files, and methods for interacting with annotation and sequence data.
 }
-\author{
-Gerhard Schöfl \email{gerhard.schofl@gmail.com}
-}
 \references{
 For a sample GenBank record see
 \url{https://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html}
@@ -27,5 +24,7 @@ For a description of the EMBL flat file format see
 For a description of the format and conventions of IMGT/HLA flat files
 see \url{https://www.ebi.ac.uk/ipd/imgt/hla/docs/manual.html}.
 }
+\author{
+Gerhard Schöfl \email{gerhard.schofl@gmail.com}
+}
 \keyword{package}
-

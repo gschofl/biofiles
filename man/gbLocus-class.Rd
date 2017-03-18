@@ -2,6 +2,7 @@
 % Please edit documentation in R/gbHeader-class.R
 \docType{class}
 \name{gbLocus-class}
+\alias{gbLocus-class}
 \alias{.gbLocus}
 \alias{gbLocus-class}
 \title{Generator object for the \code{"gbLocus"} reference class}
@@ -13,6 +14,7 @@ Generator object for the \code{"gbLocus"} reference class
 
 Generates an object representing a GenBank LOCUS line.
 }
+
 \note{
 Arguments to the \code{#new} method must be named arguments:
 \itemize{
@@ -56,9 +58,9 @@ Arguments to the \code{#new} method must be named arguments:
  All reference classes extend and inherit methods from
    \code{"\linkS4class{envRefClass}"}.
 }
+
 \examples{
 showClass("gbLocus")
 }
 \keyword{classes}
 \keyword{internal}
-

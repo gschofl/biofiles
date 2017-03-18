@@ -16,4 +16,3 @@ A character vector of \emph{locus_tag}s.
 \description{
 Return the \emph{locus_tag} qualifiers from GenBank features.
 }
-

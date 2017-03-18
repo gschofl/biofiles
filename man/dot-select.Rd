@@ -17,4 +17,3 @@
 Select annotations from a FeatureTable
 }
 \keyword{internal}
-

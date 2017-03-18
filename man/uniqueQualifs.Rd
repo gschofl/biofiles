@@ -16,4 +16,3 @@ A character vector of qualifier names.
 \description{
 Quickly list all qualifier names.
 }
-

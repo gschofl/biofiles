@@ -16,4 +16,3 @@ A \code{\linkS4class{gbRecord}} instance.
 Parser for Embl Records.
 }
 \keyword{internal}
-
