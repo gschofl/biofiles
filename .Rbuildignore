@@ -3,6 +3,7 @@
 ^cache/
 ^data/
 ^packrat/
+^stuff/
 scratch\.[rR]
 ^README\.*
 ^\.travis\.yml$
