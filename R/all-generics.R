@@ -161,6 +161,8 @@ setGeneric("joint_range", signature = "x", function(x) standardGeneric("joint_ra
 #' @param include Include qualifiers as metadata columns. Can be "none",
 #' "all", or a character vector of qualifier tags.
 #' @param exclude Exclude specific qualifiers.
+#' @param use.names Not used.
+#' @param use.mcols Not used.
 #' @param ... Further arguments passed to methods.
 #' @return A \code{\linkS4class{GRanges}} or \code{\linkS4class{GRangesList}} object.
 #' @seealso

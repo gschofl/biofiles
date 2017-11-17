@@ -262,9 +262,13 @@ setMethod("strand", "gbFeature", function(x, join = FALSE) {
 
 #' @rdname strand
 setReplaceMethod("strand", "gbFeature", function(x, ..., value) { 
+  .gbFeature_replace_strand(x, ..., value = value)
+})
+
+.gbFeature_replace_strand <- function(x, ..., value) {
   strand(x@location, ...) <- value
   x
-})
+}
 
 #' @rdname span
 setMethod("span", "gbFeature", function(x, join = FALSE) {

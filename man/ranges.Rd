@@ -28,6 +28,10 @@ ranges(x, use.names = TRUE, use.mcols = FALSE, ...)
 \item{x}{A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.}
 
+\item{use.names}{Not used.}
+
+\item{use.mcols}{Not used.}
+
 \item{...}{Further arguments passed to methods.}
 
 \item{include}{Include qualifiers as metadata columns. Can be "none",
