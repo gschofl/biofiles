@@ -2,8 +2,8 @@
 % Please edit documentation in R/gbRecordList-class.R
 \docType{class}
 \name{gbRecordList-class}
-\alias{gbRecordList}
 \alias{gbRecordList-class}
+\alias{gbRecordList}
 \title{Class \code{"gbRecordList"}}
 \usage{
 gbRecordList(...)
@@ -21,4 +21,3 @@ For instantiation of a gbRecordList object use the import function
 \code{\link{gbRecord}} or combine \code{gbRecord} objects using
 \code{gbRecordList}.
 }
-

@@ -16,4 +16,3 @@ An integer
 \description{
 Get the number of gbFeatures.
 }
-

@@ -79,4 +79,3 @@ gss
 \seealso{
 \code{\link{genomeRecordFromNCBI}}
 }
-

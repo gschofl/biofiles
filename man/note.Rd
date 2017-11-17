@@ -16,4 +16,3 @@ A character vector of \emph{note}s.
 \description{
 Return the \emph{note} qualifiers from GenBank features.
 }
-

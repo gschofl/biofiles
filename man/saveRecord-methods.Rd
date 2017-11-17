@@ -2,10 +2,10 @@
 % Please edit documentation in R/all-generics.R, R/write-genbank.R
 \docType{methods}
 \name{saveRecord}
-\alias{loadRecord}
 \alias{saveRecord}
 \alias{saveRecord,gbRecord-method}
 \alias{saveRecord,gbRecordList-method}
+\alias{loadRecord}
 \title{Save and load \code{gbRecord} objects.}
 \usage{
 saveRecord(x, file = NULL, dir = ".", ...)
@@ -40,4 +40,3 @@ aca <- loadRecord("./NC_009925_NC_009926_NC_009927_NC_009928_NC_009929_NC_0099__
 aca
 }
 }
-

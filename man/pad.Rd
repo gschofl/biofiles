@@ -22,4 +22,3 @@ A character vector.
 Pad a string
 }
 \keyword{internal}
-

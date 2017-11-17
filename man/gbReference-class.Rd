@@ -2,6 +2,7 @@
 % Please edit documentation in R/gbHeader-class.R
 \docType{class}
 \name{gbReference-class}
+\alias{gbReference-class}
 \alias{.gbReference}
 \alias{gbReference-class}
 \title{Generator object for the \code{"gbReference"} reference class}
@@ -18,6 +19,7 @@ Generates an  object representing a GenBank REFERENCE field.
 \describe{
 \item{\code{to_string(write_to_file = FALSE)}}{Generate a character string representation of a GenBank reference}
 }}
+
 \section{Methods}{
 
 \describe{
@@ -46,9 +48,9 @@ Generates an  object representing a GenBank REFERENCE field.
  All reference classes extend and inherit methods from
    \code{"\linkS4class{envRefClass}"}.
 }
+
 \examples{
 showClass("gbReference")
 }
 \keyword{classes}
 \keyword{internal}
-

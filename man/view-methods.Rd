@@ -21,4 +21,3 @@ view(x, n, ...)
 View all features in a \code{gbFeatureTable}
 }
 \keyword{internal}
-

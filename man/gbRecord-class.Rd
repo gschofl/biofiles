@@ -22,11 +22,12 @@ instance and header of the file containing metadata as a
 
 \item{\code{contig}}{If present, a CONTIG record.}
 }}
+
 \section{Accessor functions}{
 
  \code{\link{header}}, \code{\link{ft}}, \code{\link{ranges}}
 }
+
 \seealso{
 The constructor, \code{\link{gbRecord}}
 }
-

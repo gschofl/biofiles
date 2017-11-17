@@ -3,8 +3,8 @@
 \docType{methods}
 \name{write.FeatureTable}
 \alias{write.FeatureTable}
-\alias{write.FeatureTable,gbFeatureTable-method}
 \alias{write.FeatureTable,gbRecord-method}
+\alias{write.FeatureTable,gbFeatureTable-method}
 \title{Write GenBank records or features to file in Feature Table format}
 \usage{
 write.FeatureTable(x, file, tablename = "", dbname = "", sequence = FALSE,
@@ -43,4 +43,3 @@ load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
 write.FeatureTable(x, file = "data/marine_metagenome.tbl")
 }
 }
-

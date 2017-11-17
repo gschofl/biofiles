@@ -2,6 +2,7 @@
 % Please edit documentation in R/gbHeader-class.R
 \docType{class}
 \name{seqinfo-class}
+\alias{seqinfo-class}
 \alias{seqinfo}
 \alias{seqinfo-class}
 \title{Generator object for the \code{"seqinfo"} reference class}
@@ -14,6 +15,7 @@ Generator object for the \code{"seqinfo"} reference class
 
 Generates a container for header and sequence information.
 }
+
 \section{Methods}{
 
 \describe{
@@ -34,9 +36,9 @@ Generates a container for header and sequence information.
  All reference classes extend and inherit methods from
    \code{"\linkS4class{envRefClass}"}.
 }
+
 \examples{
 showClass("seqinfo")
 }
 \keyword{classes}
 \keyword{internal}
-
