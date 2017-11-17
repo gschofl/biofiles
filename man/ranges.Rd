@@ -10,7 +10,7 @@
 \alias{ranges,gbRecordList-method}
 \title{Extract features as \code{"\linkS4class{GRanges}"} objects.}
 \usage{
-ranges(x, ...)
+ranges(x, use.names = TRUE, use.mcols = FALSE, ...)
 
 \S4method{ranges}{gbFeature}(x, include = "none", exclude = "",
   join = FALSE)

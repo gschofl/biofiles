@@ -189,7 +189,7 @@ ranges(cds, join = TRUE, include = c("gene", "product", "db_xref"))
 All of the output in this vignette was produced under the following
 conditions:
 <<sessinfo>>=
-sessionInfo()
+devtools::session_info()
 @
 
 \end{document}
