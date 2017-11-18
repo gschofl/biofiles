@@ -17,18 +17,18 @@
                                         unlist = FALSE)))
   }
   
-  start <- start(x, join = join)
-  end <- end(x, join = join)
-  strand <- strand(x, join = join)
+  my_start  <- start(x, join = join)
+  my_end    <- end(x, join = join)
+  my_strand <- strand(x, join = join)
   lt <- .qual_access(x, which = 'locus_tag', fixed = TRUE)
   gene <- .qual_access(x, 'gene', fixed = TRUE)
   names <- ifelse(is.na(lt), gene, lt)
  
-  if (is.list(start)) {
-    i <- update_indices(start)
-    start <- unlist(start)
-    end <- unlist(end)
-    strand <- unlist(strand)
+  if (is.list(my_start)) {
+    i <- update_indices(my_start)
+    my_start <- unlist(my_start)
+    my_end <- unlist(my_end)
+    my_strand <- unlist(my_strand)
     names <- names[i]
     if (length(qual) > 0)
       qual <- qual[i, , drop = FALSE] 
@@ -43,9 +43,10 @@
   
   GenomicRanges::GRanges(
     seqnames = S4Vectors::Rle(getAccession(x)),
-    ranges = IRanges::IRanges(start, end, names = names),
-    strand = S4Vectors::Rle(strand),
-    qual, seqinfo = seqinfo
+    ranges   = IRanges::IRanges(my_start, my_end, names = names),
+    strand   = S4Vectors::Rle(my_strand),
+    qual,
+    seqinfo  = seqinfo
   )
 }
 

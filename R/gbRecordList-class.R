@@ -156,7 +156,7 @@ setMethod("getSequence", "gbRecordList", function(x) {
 
 #' @rdname ranges
 setMethod("ranges", "gbRecordList",
-          function(x, join = FALSE, key = TRUE, include = "none", exclude = "") {
+          function(x, join = FALSE, key = TRUE, include = "none", exclude = "", ...) {
             GenomicRanges::GRangesList(
               lapply(x, ranges, join = join, key = key, include = include, exclude = exclude)
             )

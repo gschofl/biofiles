@@ -214,7 +214,8 @@ setMethod("getHeader", "gbFeature", function(x) .header(.seqinfo(x)))
 setMethod("getSequence", "gbFeature", function(x) .seq_access(x))
 
 #' @rdname ranges
-setMethod("ranges", "gbFeature", function(x, include = "none", exclude = "", join = FALSE) {
+setMethod("ranges", "gbFeature", function(x, join = FALSE, key = TRUE,
+                                          include = "none", exclude = "", ...) {
   .GRanges(x, include = include, exclude = exclude, join = join)
 })
 

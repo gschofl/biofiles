@@ -6,7 +6,13 @@
 
 0 errors | 0 warnings | 2 notes
 
-* This is a new release.
+* checking CRAN incoming feasibility ... NOTE
+  
+  This is a new submission.
+  
+* Possibly mis-spelled words in DESCRIPTION
+
+  These are spelled correctly.
 
 * checking installed package size ... NOTE
 

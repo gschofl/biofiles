@@ -318,7 +318,7 @@ setMethod("getSequence", "gbRecord",  function(x) .sequence(x))
 
 #' @rdname ranges
 setMethod("ranges", "gbRecord",
-          function(x, join = FALSE, key = TRUE, include = "none", exclude = "") {
+          function(x, join = FALSE, key = TRUE, include = "none", exclude = "", ...) {
             .GRanges(x = .features(x), join = join, include = include,
                      exclude = exclude, key = key)
           })

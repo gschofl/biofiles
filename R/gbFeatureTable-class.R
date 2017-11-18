@@ -188,7 +188,7 @@ setMethod("getSequence", "gbFeatureTable", function(x) .seq_access(x))
 
 #' @rdname ranges
 setMethod("ranges", "gbFeatureTable", function(x, join = FALSE, key = TRUE,
-                                              include = "none", exclude = "") {
+                                              include = "none", exclude = "", ...) {
   .GRanges(x, join = join, include = include, exclude = exclude, key = key)
 })
 
