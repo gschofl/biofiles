@@ -1,15 +1,19 @@
 ## Test environments
-
-* local ubuntu 16.04 install, R 3.3.1
+* local ubuntu 16.04 install, R 3.4.2
 * win-builder (devel and release)
 
 ## R CMD check results
 
-0 errors | 2 warnings | 1 note
+0 errors | 0 warnings | 2 notes
 
 * This is a new release.
+
+* checking installed package size ... NOTE
+
+  This is all compiled code in the libs/ directory.
 
 ## Reverse dependencies
 
 This is a new release, so there are no reverse dependencies.
+
 

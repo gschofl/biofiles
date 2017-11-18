@@ -1,0 +1,173 @@
+---
+output: 
+  github_document:
+    html_preview: false
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+[![Travis-CI Build Status](https://travis-ci.org/gschofl/biofiles.svg?branch=master)](https://travis-ci.org/gschofl/biofiles)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/gschofl/biofiles?branch=master&svg=true)](https://ci.appveyor.com/project/gschofl/biofiles)
+[![Coverage Status](https://img.shields.io/codecov/c/github/gschofl/biofiles/master.svg)](https://codecov.io/github/gschofl/biofiles?branch=master)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/biofiles)](https://cran.r-project.org/package=biofiles)
+
+# biofiles - an interface to GenBank/GenPept files in R
+
+biofiles provides interfacing to GenBank/GenPept or Embl flat
+file records. It includes utilities for reading and writing GenBank
+files, and methods for interacting with annotation and sequence data.
+
+## Installation
+
+You can install biofiles from github with:
+
+```{r gh-installation, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("gschofl/biofiles")
+```
+
+It depends on a C++11 compatible compiler.
+
+## Basic functionality
+
+Let's download a small bacterial genome, _Chlamydophila psittaci_ DC15
+(GenBank acc. CP002806; GI 334693792) from NCBI.
+
+```{r chunk1}
+# install.packages("reutils")
+gb_file <- reutils::efetch("CP002806", "nuccore", rettype = "gbwithparts", retmode = "text")
+gb_file
+```
+
+Next, we parse the `efetch` object into a `gbRecord` instance.
+
+
+```{r chunk2}
+rec <- biofiles::gbRecord(gb_file)
+rec
+```
+
+
+The `summary` function provides an overview over the object:
+
+
+```{r chunk3}
+biofiles::summary(rec)
+```
+
+Various getter methods provide access to the data contained in a GenBank record;
+for instance:
+
+```{r chunk4}
+biofiles::getAccession(rec)
+```
+
+```{r chunk5}
+biofiles::getGeneID(rec)
+```
+
+```{r chunk6}
+biofiles::getDefinition(rec)
+```
+
+```{r chunk7}
+biofiles::getOrganism(rec)
+```
+
+
+```{r chunk8}
+biofiles::getSequence(rec)
+```
+
+```{r chunk9}
+biofiles::getReference(rec)
+```
+
+
+The function `uniqueQualifs()` provides an overview over the feature qualifiers used
+in a record:
+
+
+```{r chunk10}
+biofiles::uniqueQualifs(rec)
+```
+
+### Genbank Features
+
+The important part of a GenBank record will generally be the list of annotions
+or features.
+
+We can access the `gbFeatureList` of a `gbRecord` using `getFeatures()` or `ft()`:
+
+
+```{r chunk11}
+f <- biofiles::ft(rec)
+f
+```
+
+We can extract features either by numeric subsetting:
+
+```{r chunk12}
+f[[1]]
+```
+
+or we can subset by feature key:
+
+```{r chunk13}
+f["CDS"]
+```
+
+A more versatile method to narrow down the list of features of interest is the 
+function `filter()`.
+For instance, we can filter for all coding sequences (CDS) with the
+annotation "hypothetical" in the product qualifiers:
+
+```{r chunk14}
+hypo <- biofiles::filter(rec, key = "CDS", product = "hypothetical")
+biofiles::summary(hypo)
+```
+
+or we can filter for all elongation factors,
+
+```{r chunk15}
+elong <- biofiles::filter(rec, key = "CDS", product = "elongation factor")
+biofiles::summary(elong)
+```
+
+now let's extract the sequence for all elongation factors, and using the tools
+from the `Biostrings` packages, translate them into protein sequences. Note, that
+in order to do so, we first get the `gbFeatureTable` from the `gbRecord`, as otherwise
+we'd just extract the complete sequence associated with the GenBank record.
+
+```{r chunk16}
+dna <- biofiles::getSequence(biofiles::ft(elong))
+dna
+```
+
+```{r chunk17}
+str <- biofiles::strand(elong)
+dna_revcomp <- c(Biostrings::reverseComplement(dna[str == -1]), dna[str == 1])
+aa <- Biostrings::translate(dna_revcomp)
+names(aa) <- names(dna_revcomp)
+aa
+```
+
+We can use the `ranges()` method to extract `GRanges` objects defined in the
+Bioconductor package `GenomicRanges`:
+
+```{r chunk18}
+elong_ranges <- biofiles::ranges(elong, include = c("locus_tag", "protein_id", "product"))
+elong_ranges
+```
+
+
+
+
+

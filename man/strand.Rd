@@ -7,11 +7,11 @@
 \alias{strand}
 \alias{strand<-}
 \alias{strand,gbLocation-method}
-\alias{strand<-,gbLocation,ANY-method}
+\alias{strand<-,gbLocation-method}
 \alias{strand,gbFeature-method}
-\alias{strand<-,gbFeature,ANY-method}
+\alias{strand<-,gbFeature-method}
 \alias{strand,gbFeatureTable-method}
-\alias{strand<-,gbFeatureTable,ANY-method}
+\alias{strand<-,gbFeatureTable-method}
 \alias{strand,gbRecord-method}
 \alias{strand,gbRecordList-method}
 \title{Get or set the strand information of genomic features}
@@ -22,15 +22,15 @@ strand(x, ...) <- value
 
 \S4method{strand}{gbLocation}(x, join = FALSE)
 
-\S4method{strand}{gbLocation,ANY}(x, ...) <- value
+\S4method{strand}{gbLocation}(x, ...) <- value
 
 \S4method{strand}{gbFeature}(x, join = FALSE)
 
-\S4method{strand}{gbFeature,ANY}(x, ...) <- value
+\S4method{strand}{gbFeature}(x, ...) <- value
 
 \S4method{strand}{gbFeatureTable}(x, join = FALSE)
 
-\S4method{strand}{gbFeatureTable,ANY}(x, ...) <- value
+\S4method{strand}{gbFeatureTable}(x, ...) <- value
 
 \S4method{strand}{gbRecord}(x, join = FALSE)
 

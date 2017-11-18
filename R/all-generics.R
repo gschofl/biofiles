@@ -128,7 +128,7 @@ setGeneric("strand")
 #' 
 #' ## `strand<-`
 #' showMethods("strand<-")
-setGeneric("strand<-")
+setGeneric("strand<-", signature = "x")
 
 #' Get the span of genomic features.
 #'
@@ -321,7 +321,7 @@ setGeneric("ft", function(x, ...) standardGeneric("ft"))
 #' @export
 #' @examples
 #' \dontrun{
-#' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package = "biofiles")
+#' gbk_file <- system.file("extdata", "S_cerevisiae_mito.gb", package = "biofiles")
 #' x <- gbRecord(gbk_file)
 #' 
 #' ## extract the full-length sequence of the record.
@@ -519,10 +519,10 @@ setGeneric("saveRecord", function(x, file = NULL, dir = ".", ...) standardGeneri
 #' @examples
 #' \dontrun{
 #' load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
-#' write.GenBank(x, file = "data/marine_metagenome.gbk")
+#' write.GenBank(x, file = "data/marine_metagenome.gb")
 #' 
 #' ## write selected features to file.
-#' write.GenBank(x["CDS"], file = "data/marine_metagenome_cds.gbk", header = FALSE, sequence = FALSE)
+#' write.GenBank(x["CDS"], file = "data/marine_metagenome_cds.gb", header = FALSE, sequence = FALSE)
 #' }
 setGeneric("write.GenBank", function(x, file, append = FALSE, ...) {
   standardGeneric("write.GenBank")

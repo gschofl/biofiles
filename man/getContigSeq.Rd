@@ -21,3 +21,4 @@ A \code{\linkS4class{DNAStringSet}} instance.
 For GenBank records that contain a CONTIG field, try to get the contig
 sequences and (optionally) merge them into a single sequence.
 }
+\keyword{internal}

@@ -10,3 +10,6 @@ r:
 
 bioc_required: true
 
+after_success:
+  - Rscript -e 'covr::codecov()'
+  

@@ -9,7 +9,6 @@ packrat/
 stuff/
 *.cache
 *.html
-*.Rmd
 *.so
 *.o
 *.tex

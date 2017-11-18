@@ -45,7 +45,7 @@ fitr the model.
 \examples{
 \dontrun{
 ### import from file
-gbk_file <- system.file("extdata", "marine_metagenome.gbk", package = "biofiles")
+gbk_file <- system.file("extdata", "marine_metagenome.gb", package = "biofiles")
 x <- gbRecord(gbk_file)
 }
 
@@ -69,7 +69,7 @@ x
 ## gbRecordList. With many short records it pays of to
 ## run the parsing in parallel
 \dontrun{
-gss_file <- system.file("extdata", "gss.gbk", package = "biofiles")
+gss_file <- system.file("extdata", "gss.gb", package = "biofiles")
 library(doParallel)
 registerDoParallel(cores = 4)
 gss <- gbRecord(gss_file)

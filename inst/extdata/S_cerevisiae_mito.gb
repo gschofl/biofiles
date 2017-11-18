@@ -1,12 +1,11 @@
-LOCUS       NC_001224              85779 bp    DNA     circular PLN 06-SEP-2013
+LOCUS       NC_001224              85779 bp    DNA     circular PLN 05-JUN-2017
 DEFINITION  Saccharomyces cerevisiae S288c mitochondrion, complete genome.
 ACCESSION   NC_001224
-VERSION     NC_001224.1  GI:6226515
-DBLINK      Project: 128
-            BioProject: PRJNA128
-KEYWORDS    .
-SOURCE      mitochondrion Saccharomyces cerevisiae S288c
-  ORGANISM  Saccharomyces cerevisiae S288c
+VERSION     NC_001224.1
+DBLINK      BioProject: PRJNA128
+KEYWORDS    RefSeq.
+SOURCE      mitochondrion Saccharomyces cerevisiae S288C
+  ORGANISM  Saccharomyces cerevisiae S288C
             Eukaryota; Fungi; Dikarya; Ascomycota; Saccharomycotina;
             Saccharomycetes; Saccharomycetales; Saccharomycetaceae;
             Saccharomyces.
@@ -17,91 +16,98 @@ REFERENCE   1  (bases 1 to 85779)
   JOURNAL   FEBS Lett. 440 (3), 325-331 (1998)
    PUBMED   9872396
 REFERENCE   2  (bases 1 to 85779)
-  AUTHORS   Goffeau,A., Barrell,B.G., Bussey,H., Davis,R.W., Dujon,B.,
-            Feldmann,H., Galibert,F., Hoheisel,J.D., Jacq,C., Johnston,M.,
-            Louis,E.J., Mewes,H.W., Murakami,Y., Philippsen,P., Tettelin,H. and
-            Oliver,S.G.
-  TITLE     Life with 6000 genes
-  JOURNAL   Science 274 (5287), 546 (1996)
-   PUBMED   8849441
-REFERENCE   3  (bases 1 to 85779)
   CONSRTM   NCBI Genome Project
   TITLE     Direct Submission
-  JOURNAL   Submitted (12-MAY-2010) National Center for Biotechnology
+  JOURNAL   Submitted (14-JAN-2015) National Center for Biotechnology
             Information, NIH, Bethesda, MD 20894, USA
-REFERENCE   4  (bases 1 to 85779)
-  CONSRTM   Saccharomyces Genome Database (yeast-curator@genome.stanford.edu)
+REFERENCE   3  (bases 1 to 85779)
+  CONSRTM   The Saccharomyces Genome Database
   TITLE     Direct Submission
-  JOURNAL   Submitted (11-MAY-2010) Department of Genetics, Stanford
-            University, Saccharomyces Genome Database, Stanford, CA 94305-5120,
-            USA
+  JOURNAL   Submitted (12-DEC-2014) Genetics, Saccharomyces Genome Database,
+            Stanford University, Stanford, CA 94305, USA
+REFERENCE   4  (bases 1 to 85779)
+  CONSRTM   MIPS
+  TITLE     Direct Submission
+  JOURNAL   Submitted (16-DEC-1998) Max-Planck-Institut fuer Biochemie, Am
+            Klopferspitz 18a D-82152 Martinsried, Germany
 COMMENT     PROVISIONAL REFSEQ: This record has not yet been subject to final
-            NCBI review. The reference sequence is identical to AJ011856.
+            NCBI review. The reference sequence is identical to KP263414.
+            COMPLETENESS: full length.
 FEATURES             Location/Qualifiers
      source          1..85779
-                     /organism="Saccharomyces cerevisiae S288c"
+                     /organism="Saccharomyces cerevisiae S288C"
                      /organelle="mitochondrion"
                      /mol_type="genomic DNA"
                      /strain="S288C"
+                     /sub_strain="FY1679"
                      /db_xref="taxon:559292"
      gene            731..802
                      /locus_tag="tP(UGG)Q"
                      /db_xref="GeneID:854578"
+                     /db_xref="SGD:S000007328"
      tRNA            731..802
                      /locus_tag="tP(UGG)Q"
                      /product="tRNA-Pro"
-                     /db_xref="SGD:S000007328"
                      /db_xref="GeneID:854578"
+                     /db_xref="SGD:S000007328"
      STS             2406..2759
                      /standard_name="C9M35"
                      /db_xref="UniSTS:105392"
+     rep_origin      complement(4012..4312)
+                     /note="ORI1; mitochondrial DNA replication origin;
+                     non-essential for mitochondrial function"
+                     /db_xref="SGD:S000029667"
      gene            6546..8194
-                     /locus_tag="ST15S_rRNA"
+                     /gene="15S_RRNA"
+                     /locus_tag="Q0020"
                      /db_xref="GeneID:9164990"
-     rRNA            6546..8194
-                     /locus_tag="ST15S_rRNA"
-                     /product="15S ribosomal RNA"
-                     /note="15S_rRNA"
                      /db_xref="SGD:S000007287"
+     rRNA            6546..8194
+                     /gene="15S_RRNA"
+                     /locus_tag="Q0020"
+                     /product="15S ribosomal RNA"
+                     /note="ribosomal RNA of the small mitochondrial ribosomal
+                     subunit; MSU1 allele suppresses ochre stop mutations in
+                     mitochondrial protein-coding genes"
                      /db_xref="GeneID:9164990"
+                     /db_xref="SGD:S000007287"
      gene            9374..9447
                      /locus_tag="tW(UCA)Q"
                      /db_xref="GeneID:854581"
+                     /db_xref="SGD:S000007337"
      tRNA            9374..9447
                      /locus_tag="tW(UCA)Q"
                      /product="tRNA-Trp"
-                     /db_xref="SGD:S000007337"
+                     /note="mitochondrial tRNA, annotated as tryptophanyl tRNA
+                     (tRNA-Trp); predicted by tRNAscan-SE analysis to have
+                     specificity for selenocysteine"
                      /db_xref="GeneID:854581"
+                     /db_xref="SGD:S000007337"
+     rep_origin      complement(12510..12780)
+                     /note="ORI8; mitochondrial origin of replication"
+                     /db_xref="SGD:S000029331"
      gene            13818..26701
                      /gene="COX1"
                      /locus_tag="Q0045"
                      /gene_synonym="OXI3"
                      /db_xref="GeneID:854598"
-     mRNA            join(<13818..13986,16435..16470,18954..18991,20508..20984,
-                     21995..22246,23612..23746,25318..25342,26229..>26701)
-                     /gene="COX1"
-                     /locus_tag="Q0045"
-                     /gene_synonym="OXI3"
-                     /transcript_id="NM_001184352.1"
-                     /db_xref="GI:296148847"
-                     /db_xref="GeneID:854598"
+                     /db_xref="SGD:S000007260"
      CDS             join(13818..13986,16435..16470,18954..18991,20508..20984,
                      21995..22246,23612..23746,25318..25342,26229..26701)
                      /gene="COX1"
                      /locus_tag="Q0045"
                      /gene_synonym="OXI3"
                      /EC_number="1.9.3.1"
-                     /note="Subunit I of cytochrome c oxidase, which is the
-                     terminal member of the mitochondrial inner membrane
-                     electron transport chain; one of three
+                     /note="subunit I of cytochrome c oxidase (Complex IV);
+                     Complex IV is the terminal member of the mitochondrial
+                     inner membrane electron transport chain; one of three
                      mitochondrially-encoded subunits"
                      /codon_start=1
                      /transl_table=3
                      /product="cytochrome c oxidase subunit 1"
                      /protein_id="NP_009305.1"
-                     /db_xref="GI:6226519"
-                     /db_xref="SGD:S000007260"
                      /db_xref="GeneID:854598"
+                     /db_xref="SGD:S000007260"
                      /translation="MVQRWLYSTNAKDIAVLYFMLAIFSGMAGTAMSLIIRLELAAPG
                      SQYLHGNSQLFNVLVVGHAVLMIFFLVMPALIGGFGNYLLPLMIGATDTAFPRINNIA
                      FWVLPMGLVCLVTSTLVESGAGTGWTVYPPLSSIQAHSGPSVDLAIFALHLTSISSLL
@@ -116,28 +122,21 @@ FEATURES             Location/Qualifiers
                      /gene="AI5_ALPHA"
                      /locus_tag="Q0070"
                      /db_xref="GeneID:854597"
-     mRNA            join(<13818..13986,16435..16470,18954..18991,20508..20984,
-                     21995..>23167)
-                     /gene="AI5_ALPHA"
-                     /locus_tag="Q0070"
-                     /transcript_id="NM_001184357.1"
-                     /db_xref="GI:296148846"
-                     /db_xref="GeneID:854597"
+                     /db_xref="SGD:S000007265"
      CDS             join(13818..13986,16435..16470,18954..18991,20508..20984,
                      21995..23167)
                      /gene="AI5_ALPHA"
                      /locus_tag="Q0070"
                      /EC_number="3.1.-.-"
-                     /note="Endonuclease I-SceIV, involved in intron mobility;
+                     /note="endonuclease I-SceIV; involved in intron mobility;
                      encoded by a mobile group I intron within the
                      mitochondrial COX1 gene"
                      /codon_start=1
                      /transl_table=3
                      /product="intron-encoded DNA endonuclease aI5 alpha"
                      /protein_id="NP_009306.1"
-                     /db_xref="GI:6226524"
-                     /db_xref="SGD:S000007265"
                      /db_xref="GeneID:854597"
+                     /db_xref="SGD:S000007265"
                      /translation="MVQRWLYSTNAKDIAVLYFMLAIFSGMAGTAMSLIIRLELAAPG
                      SQYLHGNSQLFNVLVVGHAVLMIFFLVMPALIGGFGNYLLPLMIGATDTAFPRINNIA
                      FWVLPMGLVCLVTSTLVESGAGTGWTVYPPLSSIQAHSGPSVDLAIFALHLTSISSLL
@@ -154,25 +153,21 @@ FEATURES             Location/Qualifiers
                      /gene="AI4"
                      /locus_tag="Q0065"
                      /db_xref="GeneID:854596"
-     mRNA            join(<13818..13986,16435..16470,18954..18991,
-                     20508..>21935)
-                     /gene="AI4"
-                     /locus_tag="Q0065"
-                     /transcript_id="NM_001184356.1"
-                     /db_xref="GI:296148845"
-                     /db_xref="GeneID:854596"
+                     /db_xref="SGD:S000007264"
      CDS             join(13818..13986,16435..16470,18954..18991,20508..21935)
                      /gene="AI4"
                      /locus_tag="Q0065"
                      /EC_number="3.1.-.-"
-                     /note="I-SceII"
+                     /note="endonuclease I-SceII; encoded by a mobile group I
+                     intron within the mitochondrial COX1 gene; intron is
+                     normally spliced by the BI4p maturase but AI4p can mutate
+                     to acquire the same maturase activity"
                      /codon_start=1
                      /transl_table=3
                      /product="intron-encoded DNA endonuclease aI4"
                      /protein_id="NP_009307.2"
-                     /db_xref="GI:85666123"
-                     /db_xref="SGD:S000007264"
                      /db_xref="GeneID:854596"
+                     /db_xref="SGD:S000007264"
                      /translation="MVQRWLYSTNAKDIAVLYFMLAIFSGMAGTAMSLIIRLELAAPG
                      SQYLHGNSQLFNVLVVGHAVLMIFFLVMPALIGGFGNYLLPLMIGATDTAFPRINNIA
                      FWVLPMGLVCLVTSTLVESGAGTGWTVYPPLSSIQAHSGPSVDLAIFALHLTSISSLL
@@ -187,24 +182,19 @@ FEATURES             Location/Qualifiers
                      /gene="AI3"
                      /locus_tag="Q0060"
                      /db_xref="GeneID:854595"
-     mRNA            join(<13818..13986,16435..16470,18954..>19996)
-                     /gene="AI3"
-                     /locus_tag="Q0060"
-                     /transcript_id="NM_001184355.1"
-                     /db_xref="GI:296148844"
-                     /db_xref="GeneID:854595"
+                     /db_xref="SGD:S000007263"
      CDS             join(13818..13986,16435..16470,18954..19996)
                      /gene="AI3"
                      /locus_tag="Q0060"
                      /EC_number="3.1.-.-"
-                     /note="I-SceIII"
+                     /note="endonuclease I-SceIII; encoded by a mobile group I
+                     intron within the mitochondrial COX1 gene"
                      /codon_start=1
                      /transl_table=3
                      /product="intron-encoded DNA endonuclease aI3"
                      /protein_id="NP_009308.2"
-                     /db_xref="GI:85666122"
-                     /db_xref="SGD:S000007263"
                      /db_xref="GeneID:854595"
+                     /db_xref="SGD:S000007263"
                      /translation="MVQRWLYSTNAKDIAVLYFMLAIFSGMAGTAMSLIIRLELAAPG
                      SQYLHGNSQLFNVLVVGHAVLMIFFLVMPALIGGFGNQKRYESNNNNNQVMENKEYNL
                      KLNYDKLGPYLAGLIEGDGTITVQNSSSMKKSKYRPLIVVVFKLEDLELANYLCNLTK
@@ -217,25 +207,19 @@ FEATURES             Location/Qualifiers
                      /gene="AI2"
                      /locus_tag="Q0055"
                      /db_xref="GeneID:854594"
-     mRNA            join(<13818..13986,16435..>18830)
-                     /gene="AI2"
-                     /locus_tag="Q0055"
-                     /transcript_id="NM_001184354.1"
-                     /db_xref="GI:296148843"
-                     /db_xref="GeneID:854594"
+                     /db_xref="SGD:S000007262"
      CDS             join(13818..13986,16435..18830)
                      /gene="AI2"
                      /locus_tag="Q0055"
-                     /note="Reverse transcriptase required for splicing of the
-                     COX1 pre-mRNA, encoded by a mobile group II intron within
+                     /note="reverse transcriptase required for splicing of the
+                     COX1 pre-mRNA; encoded by a mobile group II intron within
                      the mitochondrial COX1 gene"
                      /codon_start=1
                      /transl_table=3
                      /product="intron-encoded reverse transcriptase aI2"
                      /protein_id="NP_009309.1"
-                     /db_xref="GI:6226521"
-                     /db_xref="SGD:S000007262"
                      /db_xref="GeneID:854594"
+                     /db_xref="SGD:S000007262"
                      /translation="MVQRWLYSTNAKDIAVLYFMLAIFSGMAGTAMSLIIRLELAAPG
                      SQYLHGNSQLFNVLVVGHAVLMIFCAPFRLIYHCIEVLIDKHISVYSINENFTVSFWF
                      WLLVVTYMVFRYVNHMAYPVGANSTGTMACHKSAGVKQPAQGKNCPMARLTNSCKECL
@@ -255,25 +239,19 @@ FEATURES             Location/Qualifiers
                      /gene="AI1"
                      /locus_tag="Q0050"
                      /db_xref="GeneID:854593"
-     mRNA            <13818..>16322
-                     /gene="AI1"
-                     /locus_tag="Q0050"
-                     /transcript_id="NM_001184353.1"
-                     /db_xref="GI:296148842"
-                     /db_xref="GeneID:854593"
+                     /db_xref="SGD:S000007261"
      CDS             13818..16322
                      /gene="AI1"
                      /locus_tag="Q0050"
-                     /note="Reverse transcriptase required for splicing of the
-                     COX1 pre-mRNA, encoded by a mobile group II intron within
+                     /note="reverse transcriptase required for splicing of the
+                     COX1 pre-mRNA; encoded by a mobile group II intron within
                      the mitochondrial COX1 gene"
                      /codon_start=1
                      /transl_table=3
                      /product="intron-encoded reverse transcriptase aI1"
                      /protein_id="NP_009310.1"
-                     /db_xref="GI:6226520"
-                     /db_xref="SGD:S000007261"
                      /db_xref="GeneID:854593"
+                     /db_xref="SGD:S000007261"
                      /translation="MVQRWLYSTNAKDIAVLYFMLAIFSGMAGTAMSLIIRLELAAPG
                      SQYLHGNSQLFNGAPTSAYISLMRTALVLWIINRYLKHMTNSVGANFTGTMACHKTPM
                      ISVGGVKCYMVRLTNFLQVFIRITISSYHLDMVKQVWLFYVEVIRLWFIVLDSTGSVK
@@ -293,26 +271,20 @@ FEATURES             Location/Qualifiers
                      /gene="AI5_BETA"
                      /locus_tag="Q0075"
                      /db_xref="GeneID:854599"
-     mRNA            join(<24156..24870,24906..>25255)
-                     /gene="AI5_BETA"
-                     /locus_tag="Q0075"
-                     /transcript_id="NM_001184358.1"
-                     /db_xref="GI:296148848"
-                     /db_xref="GeneID:854599"
+                     /db_xref="SGD:S000007266"
      CDS             join(24156..24870,24906..25255)
                      /gene="AI5_BETA"
                      /locus_tag="Q0075"
                      /EC_number="3.1.-.-"
-                     /note="Protein of unknown function, encoded within an
-                     intron of the mitochondrial COX1 gene; translational
-                     initiation codon is predicted to be ATA rather than ATG"
+                     /note="hypothetical protein; encoded within an intron of
+                     the mitochondrial COX1 gene; translational initiation
+                     codon is predicted to be ATA rather than ATG"
                      /codon_start=1
                      /transl_table=3
                      /product="intron-encoded DNA endonuclease aI5 beta"
                      /protein_id="NP_009311.2"
-                     /db_xref="GI:6381999"
-                     /db_xref="SGD:S000007266"
                      /db_xref="GeneID:854599"
+                     /db_xref="SGD:S000007266"
                      /translation="MLMLLMMILTNNKVFMETLYYYLMFNFQLMSPFGVPVPGPAPET
                      KDIKNLYESIMNNYINILNKYTININKDNINKLKFLDNYTEEEKGYYLSGLFEGDGNI
                      YTRCFSITFSLEDVLLANYLCTYFKIGHITAKYNFNKELTAVKWNIMKKKEQEVFMNY
@@ -325,29 +297,21 @@ FEATURES             Location/Qualifiers
                      /locus_tag="Q0080"
                      /gene_synonym="AAP1"
                      /db_xref="GeneID:854600"
-     mRNA            <27666..>27812
-                     /gene="ATP8"
-                     /locus_tag="Q0080"
-                     /gene_synonym="AAP1"
-                     /transcript_id="NM_001184359.1"
-                     /db_xref="GI:296148849"
-                     /db_xref="GeneID:854600"
+                     /db_xref="SGD:S000007267"
      CDS             27666..27812
                      /gene="ATP8"
                      /locus_tag="Q0080"
                      /gene_synonym="AAP1"
-                     /EC_number="3.6.3.14"
-                     /note="Subunit 8 of the F0 sector of mitochondrial inner
-                     membrane F1-F0 ATP synthase, encoded on the mitochondrial
-                     genome; ATP8 and ATP6 mRNAs are not translated in the
-                     absence of the F1 sector of ATPase"
+                     /note="subunit 8 of the F0 sector of mitochondrial F1F0
+                     ATP synthase; encoded on the mitochondrial genome; ATP8
+                     and ATP6 mRNAs are not translated in the absence of the F1
+                     sector of ATPase"
                      /codon_start=1
                      /transl_table=3
                      /product="F1F0 ATP synthase subunit 8"
                      /protein_id="NP_009312.1"
-                     /db_xref="GI:6226526"
-                     /db_xref="SGD:S000007267"
                      /db_xref="GeneID:854600"
+                     /db_xref="SGD:S000007267"
                      /translation="MPQLVPFYFMNQLTYGFLLMITLLILFSQFFLPMILRLYVSRLF
                      ISKL"
      gene            28487..29266
@@ -355,71 +319,63 @@ FEATURES             Location/Qualifiers
                      /locus_tag="Q0085"
                      /gene_synonym="OLI2; OLI4; PHO1"
                      /db_xref="GeneID:854601"
-     mRNA            <28487..>29266
-                     /gene="ATP6"
-                     /locus_tag="Q0085"
-                     /gene_synonym="OLI2; OLI4; PHO1"
-                     /transcript_id="NM_001184360.1"
-                     /db_xref="GI:296148850"
-                     /db_xref="GeneID:854601"
+                     /db_xref="SGD:S000007268"
      CDS             28487..29266
                      /gene="ATP6"
                      /locus_tag="Q0085"
                      /gene_synonym="OLI2; OLI4; PHO1"
-                     /EC_number="3.6.3.14"
-                     /note="Mitochondrially encoded subunit a of the F0 sector
-                     of mitochondrial F1F0 ATP synthase; translation is
+                     /note="subunit a of the F0 sector of mitochondrial F1F0
+                     ATP synthase; mitochondrially encoded; translation is
                      specifically activated by Atp22p; ATP6 and ATP8 mRNAs are
                      not translated in the absence of the F1 sector of ATPase"
                      /codon_start=1
                      /transl_table=3
-                     /product="F1F0 ATP synthase subunit 6"
+                     /product="F1F0 ATP synthase subunit a"
                      /protein_id="NP_009313.1"
-                     /db_xref="GI:6226527"
-                     /db_xref="SGD:S000007268"
                      /db_xref="GeneID:854601"
+                     /db_xref="SGD:S000007268"
                      /translation="MFNLLNTYITSPLDQFEIRTLFGLQSSFIDLSCLNLTTFSLYTI
                      IVLLVITSLYTLTNNNNKIIGSRWLISQEAIYDTIMNMTKGQIGGKNWGLYFPMIFTL
                      FMFIFIANLISMIPYSFALSAHLVFIISLSIVIWLGNTILGLYKHGWVFFSLFVPAGT
                      PLPLVPLLVIIETLSYFARAISLGLRLGSNILAGHLLMVILAGLTFNFMLINLFTLVF
                      GFVPLAMILAIMMLEFAIGIIQGYVWAILTASYLKDAVYLH"
+     rep_origin      30220..30594
+                     /note="ORI7; mitochondrial origin of replication"
+                     /db_xref="SGD:S000029673"
+     rep_origin      32231..32501
+                     /note="ORI2; mitochondrial origin of replication"
+                     /db_xref="SGD:S000029668"
      gene            35373..35444
                      /locus_tag="tE(UUC)Q"
                      /db_xref="GeneID:854603"
+                     /db_xref="SGD:S000007318"
      tRNA            35373..35444
                      /locus_tag="tE(UUC)Q"
                      /product="tRNA-Glu"
-                     /db_xref="SGD:S000007318"
+                     /note="mitochondrial glutamate tRNA (tRNA-Glu)"
                      /db_xref="GeneID:854603"
+                     /db_xref="SGD:S000007318"
      gene            36540..43647
                      /gene="COB"
                      /locus_tag="Q0105"
                      /gene_synonym="COB1; CYTB"
                      /db_xref="GeneID:854583"
-     mRNA            join(<36540..36954,37723..37736,39141..39217,40841..41090,
-                     42508..42558,43297..>43647)
-                     /gene="COB"
-                     /locus_tag="Q0105"
-                     /gene_synonym="COB1; CYTB"
-                     /transcript_id="NM_001184362.1"
-                     /db_xref="GI:296148854"
-                     /db_xref="GeneID:854583"
+                     /db_xref="SGD:S000007270"
      CDS             join(36540..36954,37723..37736,39141..39217,40841..41090,
                      42508..42558,43297..43647)
                      /gene="COB"
                      /locus_tag="Q0105"
                      /gene_synonym="COB1; CYTB"
-                     /note="Cytochrome b, mitochondrially encoded subunit of
-                     the ubiquinol-cytochrome c reductase complex which
-                     includes Cobp, Rip1p, Cyt1p, Cor1p, Qcr2p, Qcr6p, Qcr7p,
-                     Qcr8p, Qcr9p, and Qcr10p"
+                     /note="mitochondrially encoded subunit of the
+                     ubiquinol-cytochrome c reductase complex which includes
+                     Cobp, Rip1p, Cyt1p, Cor1p, Qcr2p, Qcr6p, Qcr7p, Qcr8p,
+                     Qcr9p, and Qcr10p"
                      /codon_start=1
                      /transl_table=3
                      /product="cytochrome b"
                      /protein_id="NP_009315.1"
-                     /db_xref="GI:6226529"
-                     /db_xref="SGD:S000007270"
                      /db_xref="GeneID:854583"
+                     /db_xref="SGD:S000007270"
                      /translation="MAFRKSNVYLSLVNSYIIDSPQPSSINYWWNMGSLLGLCLVIQI
                      VTGIFMAMHYSSNIELAFSSVEHIMRDVHNGYILRYLHANGASFFFMVMFMHMAKGLY
                      YGSYRSPRVTLWNVGVIIFILTIATAFLGYCCVYGQMSHWGATVITNLFSAIPFVGND
@@ -431,18 +387,12 @@ FEATURES             Location/Qualifiers
                      /gene="BI4"
                      /locus_tag="Q0120"
                      /db_xref="GeneID:854582"
-     mRNA            join(<36540..36954,37723..37736,39141..39217,
-                     40841..>42251)
-                     /gene="BI4"
-                     /locus_tag="Q0120"
-                     /transcript_id="NM_001184365.1"
-                     /db_xref="GI:296148853"
-                     /db_xref="GeneID:854582"
+                     /db_xref="SGD:S000007273"
      CDS             join(36540..36954,37723..37736,39141..39217,40841..42251)
                      /gene="BI4"
                      /locus_tag="Q0120"
                      /EC_number="3.1.-.-"
-                     /note="Mitochondrial mRNA maturase, forms a complex with
+                     /note="mitochondrial mRNA maturase; forms a complex with
                      Nam2p to mediate splicing of the bI4 intron of the COB
                      gene; encoded by both exon and intron sequences of
                      partially processed COB mRNA"
@@ -450,9 +400,8 @@ FEATURES             Location/Qualifiers
                      /transl_table=3
                      /product="intron-encoded RNA maturase bI4"
                      /protein_id="NP_009316.1"
-                     /db_xref="GI:6226532"
-                     /db_xref="SGD:S000007273"
                      /db_xref="GeneID:854582"
+                     /db_xref="SGD:S000007273"
                      /translation="MAFRKSNVYLSLVNSYIIDSPQPSSINYWWNMGSLLGLCLVIQI
                      VTGIFMAMHYSSNIELAFSSVEHIMRDVHNGYILRYLHANGASFFFMVMFMHMAKGLY
                      YGSYRSPRVTLWNVGVIIFILTIATAFLGYCCVYGQMSHWGATVITNLFSAIPFVGND
@@ -469,16 +418,11 @@ FEATURES             Location/Qualifiers
                      /gene="BI3"
                      /locus_tag="Q0115"
                      /db_xref="GeneID:854605"
-     mRNA            join(<36540..36954,37723..37736,39141..>40265)
-                     /gene="BI3"
-                     /locus_tag="Q0115"
-                     /transcript_id="NM_001184364.1"
-                     /db_xref="GI:296148852"
-                     /db_xref="GeneID:854605"
+                     /db_xref="SGD:S000007272"
      CDS             join(36540..36954,37723..37736,39141..40265)
                      /gene="BI3"
                      /locus_tag="Q0115"
-                     /note="Mitochondrial mRNA maturase, forms a complex with
+                     /note="mitochondrial mRNA maturase; forms a complex with
                      Mrs1p to mediate splicing of the bI3 intron of the COB
                      gene; encoded by both exon and intron sequences of
                      partially processed COB mRNA"
@@ -486,9 +430,8 @@ FEATURES             Location/Qualifiers
                      /transl_table=3
                      /product="cytochrome b mRNA maturase bI3"
                      /protein_id="NP_009317.1"
-                     /db_xref="GI:6226531"
-                     /db_xref="SGD:S000007272"
                      /db_xref="GeneID:854605"
+                     /db_xref="SGD:S000007272"
                      /translation="MAFRKSNVYLSLVNSYIIDSPQPSSINYWWNMGSLLGLCLVIQI
                      VTGIFMAMHYSSNIELAFSSVEHIMRDVHNGYILRYLHANGASFFFMVMFMHMAKGLY
                      YGSYRSPRVTLWNVGVIIFILTIATAFLGYCCVYGQMSHWGATVITNLFSAIPFVGND
@@ -503,25 +446,19 @@ FEATURES             Location/Qualifiers
                      /gene="BI2"
                      /locus_tag="Q0110"
                      /db_xref="GeneID:854604"
-     mRNA            join(<36540..36954,37723..>38579)
-                     /gene="BI2"
-                     /locus_tag="Q0110"
-                     /transcript_id="NM_001184363.1"
-                     /db_xref="GI:296148851"
-                     /db_xref="GeneID:854604"
+                     /db_xref="SGD:S000007271"
      CDS             join(36540..36954,37723..38579)
                      /gene="BI2"
                      /locus_tag="Q0110"
-                     /note="Mitochondrial mRNA maturase with a role in
-                     splicing, encoded by both exon and intron sequences of
+                     /note="mitochondrial mRNA maturase with a role in
+                     splicing; encoded by both exon and intron sequences of
                      partially processed COB mRNA"
                      /codon_start=1
                      /transl_table=3
                      /product="cytochrome b mRNA maturase bI2"
                      /protein_id="NP_009318.1"
-                     /db_xref="GI:6226530"
-                     /db_xref="SGD:S000007271"
                      /db_xref="GeneID:854604"
+                     /db_xref="SGD:S000007271"
                      /translation="MAFRKSNVYLSLVNSYIIDSPQPSSINYWWNMGSLLGLCLVIQI
                      VTGIFMAMHYSSNIELAFSSVEHIMRDVHNGYILRYLHANGASFFFMVMFMHMAKGLY
                      YGSYRSPRVTLWNVGVIIFILTIATAFLGYCCVYGQMSHWGNMNIASNMFNMMKTIYM
@@ -530,69 +467,62 @@ FEATURES             Location/Qualifiers
                      PLIKTRLGKKGKIRQYLKFNTWTYDSFNMIYSEWYIKNMSGKGNIKVIPKSLDNYLTP
                      LALAIWIMDDGCKLGKGLKFTTNCFSYKDVQYLTYLLHNKYNIKSTITKGNKENTQFV
                      IYVWKESMPILTKIVSPYIIPSMKYKLGNYL"
+     rep_origin      45227..47927
+                     /note="ORI6; mitochondrial origin of replication"
+                     /db_xref="SGD:S000029672"
      gene            46723..46953
                      /gene="OLI1"
                      /locus_tag="Q0130"
                      /gene_synonym="ATP9; OLI3"
                      /db_xref="GeneID:854584"
-     mRNA            <46723..>46953
-                     /gene="OLI1"
-                     /locus_tag="Q0130"
-                     /gene_synonym="ATP9; OLI3"
-                     /transcript_id="NM_001184366.1"
-                     /db_xref="GI:296148855"
-                     /db_xref="GeneID:854584"
+                     /db_xref="SGD:S000007274"
      CDS             46723..46953
                      /gene="OLI1"
                      /locus_tag="Q0130"
                      /gene_synonym="ATP9; OLI3"
-                     /EC_number="3.6.3.14"
                      /note="F0-ATP synthase subunit c (ATPase-associated
-                     proteolipid), encoded on the mitochondrial genome;
+                     proteolipid); encoded on the mitochondrial genome;
                      mutation confers oligomycin resistance; expression is
                      specifically dependent on the nuclear genes AEP1 and AEP2"
                      /codon_start=1
                      /transl_table=3
-                     /product="F1F0 ATP synthase subunit 9"
+                     /product="F0 ATP synthase subunit c"
                      /protein_id="NP_009319.1"
-                     /db_xref="GI:6226533"
-                     /db_xref="SGD:S000007274"
                      /db_xref="GeneID:854584"
+                     /db_xref="SGD:S000007274"
                      /translation="MQLVLAAKYIGAGISTIGLLGAGIGIAIVFAALINGVSRNPSIK
                      DTVFPMAILGFALSEATGLFCLMVSFLLLFGV"
      gene            48201..48290
                      /locus_tag="tS(UGA)Q2"
                      /db_xref="GeneID:854585"
+                     /db_xref="SGD:S000007333"
      tRNA            48201..48290
                      /locus_tag="tS(UGA)Q2"
                      /product="tRNA-Ser"
-                     /db_xref="SGD:S000007333"
+                     /note="mitochondrial serine tRNA (tRNA-Ser); predicted by
+                     tRNAscan-SE analysis"
                      /db_xref="GeneID:854585"
+                     /db_xref="SGD:S000007333"
      gene            48901..50097
                      /gene="VAR1"
                      /locus_tag="Q0140"
                      /db_xref="GeneID:854586"
-     mRNA            <48901..>50097
-                     /gene="VAR1"
-                     /locus_tag="Q0140"
-                     /transcript_id="NM_001184367.1"
-                     /db_xref="GI:296148856"
-                     /db_xref="GeneID:854586"
+                     /db_xref="SGD:S000007275"
      CDS             48901..50097
                      /gene="VAR1"
                      /locus_tag="Q0140"
-                     /note="Mitochondrial ribosomal protein of the small
-                     subunit, mitochondrially-encoded; polymorphic in different
+                     /note="mitochondrial ribosomal protein of the small
+                     subunit; mitochondrially-encoded; polymorphic in different
                      strains due to variation in number of AAT (asparagine)
                      codons; translated near the mitochondrial inner membrane;
-                     ribosomal protein VAR1"
+                     may have a role in loss of mitochondrial DNA under stress
+                     conditions"
                      /codon_start=1
                      /transl_table=3
-                     /product="Var1p"
+                     /product="mitochondrial 37S ribosomal protein VAR1"
                      /protein_id="NP_009320.1"
-                     /db_xref="GI:6226534"
-                     /db_xref="SGD:S000007275"
                      /db_xref="GeneID:854586"
+                     /db_xref="SGD:S000007275"
                      /translation="MKLKLLNMILSMMNKTNNNNNIIINNTLDSLMNKKLLLKNMLLD
                      MNNKKMNNMKRMLNNNNMNPAGANPVVHRIGPAGNINNKLQHLNNMNNWNTQIYNYNK
                      NMEIMNTMNDKLINKLLYKMMTLKLNNMNINKIIMSKTINQHSLNKLNIKFYYYNNDI
@@ -601,36 +531,44 @@ FEATURES             Location/Qualifiers
                      NLLNNNNNINNNNNYNNNNNNYIGNINNIYNNMTIDNIPMDILMYKYLVGWSIKFKGR
                      LSNNNGRTSTTNLLNGTFNNKKYLWSNINNNYKLNYIPSNHNLYNNSNINKNGKYNIK
                      VKLNFI"
+     rep_origin      complement(54567..54840)
+                     /note="ORI3; mitochondrial origin of replication"
+                     /db_xref="SGD:S000029669"
+     rep_origin      complement(56567..56832)
+                     /note="ORI4; mitochondrial origin of replication"
+                     /db_xref="SGD:S000029670"
      gene            58009..62447
-                     /locus_tag="ST21S_rRNA"
+                     /gene="21S_RRNA"
+                     /locus_tag="Q0158"
                      /db_xref="GeneID:9164988"
-     rRNA            join(58009..60724,61868..62447)
-                     /locus_tag="ST21S_rRNA"
-                     /product="21S ribosomal RNA"
-                     /note="21S_rRNA"
                      /db_xref="SGD:S000007288"
+     rRNA            join(58009..60274,61868..62447)
+                     /gene="21S_RRNA"
+                     /locus_tag="Q0158"
+                     /product="21S ribosomal RNA"
+                     /note="mitochondrial 21S rRNA; intron encodes the I-SceI
+                     DNA endonuclease"
                      /db_xref="GeneID:9164988"
+                     /db_xref="SGD:S000007288"
      gene            61022..61729
                      /gene="SCEI"
                      /locus_tag="Q0160"
                      /db_xref="GeneID:854590"
-     mRNA            <61022..>61729
-                     /gene="SCEI"
-                     /locus_tag="Q0160"
-                     /transcript_id="NM_001184371.1"
-                     /db_xref="GI:296148857"
-                     /db_xref="GeneID:854590"
+                     /db_xref="SGD:S000007279"
      CDS             61022..61729
                      /gene="SCEI"
                      /locus_tag="Q0160"
                      /EC_number="3.1.-.-"
+                     /note="I-SceI DNA endonuclease; encoded by the
+                     mitochondrial group I intron of the 21S_rRNA gene;
+                     mediates gene conversion that propagates the intron into
+                     intron-less copies of the 21S_rRNA gene"
                      /codon_start=1
                      /transl_table=3
                      /product="intron-encoded endonuclease I-SceI"
                      /protein_id="NP_009324.1"
-                     /db_xref="GI:6226538"
-                     /db_xref="SGD:S000007279"
                      /db_xref="GeneID:854590"
+                     /db_xref="SGD:S000007279"
                      /translation="MKNIKKNQVMNLGPNSKLLKEYKSQLIELNIEQFEAGIGLILGD
                      AYIRSRDEGKTYCMQFEWKNKAYMDHVCLLYDQWVLSPPHKKERVNHLGNLVITWGAQ
                      TFKHQAFNKLANLFIVNNKKTIPNNLVENYLTPMSLAYWFMDDGGKWDYNKNSTNKSI
@@ -639,159 +577,200 @@ FEATURES             Location/Qualifiers
      gene            63862..63937
                      /locus_tag="tT(UGU)Q1"
                      /db_xref="GeneID:854591"
+                     /db_xref="SGD:S000007334"
      tRNA            63862..63937
                      /locus_tag="tT(UGU)Q1"
                      /product="tRNA-Thr"
-                     /db_xref="SGD:S000007334"
+                     /note="mitochondrial threonine tRNA (tRNA-Thr); predicted
+                     by tRNAscan-SE analysis"
                      /db_xref="GeneID:854591"
+                     /db_xref="SGD:S000007334"
      gene            64415..64490
                      /locus_tag="tC(GCA)Q"
                      /db_xref="GeneID:854606"
+                     /db_xref="SGD:S000007316"
      tRNA            64415..64490
                      /locus_tag="tC(GCA)Q"
                      /product="tRNA-Cys"
-                     /db_xref="SGD:S000007316"
+                     /note="mitochondrial cysteine tRNA (tRNA-Cys)"
                      /db_xref="GeneID:854606"
+                     /db_xref="SGD:S000007316"
      gene            64596..64670
                      /locus_tag="tH(GUG)Q"
                      /db_xref="GeneID:854607"
+                     /db_xref="SGD:S000007321"
      tRNA            64596..64670
                      /locus_tag="tH(GUG)Q"
                      /product="tRNA-His"
-                     /db_xref="SGD:S000007321"
+                     /note="mitochondrial histidine tRNA (tRNA-His)"
                      /db_xref="GeneID:854607"
+                     /db_xref="SGD:S000007321"
      gene            66095..66179
                      /locus_tag="tL(UAA)Q"
                      /db_xref="GeneID:854609"
+                     /db_xref="SGD:S000007324"
      tRNA            66095..66179
                      /locus_tag="tL(UAA)Q"
                      /product="tRNA-Leu"
-                     /db_xref="SGD:S000007324"
+                     /note="mitochondrial leucine tRNA (tRNA-Leu); predicted by
+                     tRNAscan-SE analysis; required for mitochondrial
+                     translation and indirectly for maintenance of the
+                     mitochondrial genome; mutations in the orthologous human
+                     gene cause the neurological disease MELAS"
                      /db_xref="GeneID:854609"
+                     /db_xref="SGD:S000007324"
      gene            66210..66285
                      /locus_tag="tQ(UUG)Q"
                      /db_xref="GeneID:854610"
+                     /db_xref="SGD:S000007329"
      tRNA            66210..66285
                      /locus_tag="tQ(UUG)Q"
                      /product="tRNA-Gln"
-                     /db_xref="SGD:S000007329"
+                     /note="mitochondrial glutamine tRNA (tRNA-Gln); predicted
+                     by tRNAscan-SE analysis; thiolation of uridine at wobble
+                     position (34) requires Ncs6p"
                      /db_xref="GeneID:854610"
+                     /db_xref="SGD:S000007329"
      gene            67061..67134
                      /locus_tag="tK(UUU)Q"
                      /db_xref="GeneID:854611"
+                     /db_xref="SGD:S000007323"
      tRNA            67061..67134
                      /locus_tag="tK(UUU)Q"
                      /product="tRNA-Lys"
-                     /db_xref="SGD:S000007323"
+                     /note="mitochondrial lysine tRNA (tRNA-Lys); predicted by
+                     tRNAscan-SE analysis; modification of wobble base U34 is
+                     decreased at elevated temperatures, decreasing ability to
+                     decode AAG codons; this function is performed at high
+                     temperature by imported cytoplasmic tRNA-Lys with CUU
+                     anticodon"
                      /db_xref="GeneID:854611"
+                     /db_xref="SGD:S000007323"
      gene            67309..67381
                      /locus_tag="tR(UCU)Q1"
                      /db_xref="GeneID:854612"
+                     /db_xref="SGD:S000007331"
      tRNA            67309..67381
                      /locus_tag="tR(UCU)Q1"
                      /product="tRNA-Arg"
-                     /db_xref="SGD:S000007331"
+                     /note="mitochondrial arginine tRNA (tRNA-Arg)"
                      /db_xref="GeneID:854612"
+                     /db_xref="SGD:S000007331"
      gene            67468..67542
                      /locus_tag="tG(UCC)Q"
                      /db_xref="GeneID:854613"
+                     /db_xref="SGD:S000007320"
      tRNA            67468..67542
                      /locus_tag="tG(UCC)Q"
                      /product="tRNA-Gly"
-                     /db_xref="SGD:S000007320"
+                     /note="mitochondrial glycine tRNA (tRNA-Gly)"
                      /db_xref="GeneID:854613"
+                     /db_xref="SGD:S000007320"
      gene            68322..68396
                      /locus_tag="tD(GUC)Q"
                      /db_xref="GeneID:854614"
+                     /db_xref="SGD:S000007317"
      tRNA            68322..68396
                      /locus_tag="tD(GUC)Q"
                      /product="tRNA-Asp"
-                     /db_xref="SGD:S000007317"
+                     /note="mitochondrial aspartate tRNA (tRNA-Asp)"
                      /db_xref="GeneID:854614"
+                     /db_xref="SGD:S000007317"
      gene            69203..69288
                      /locus_tag="tS(GCU)Q1"
                      /db_xref="GeneID:854615"
+                     /db_xref="SGD:S000007332"
      tRNA            69203..69288
                      /locus_tag="tS(GCU)Q1"
                      /product="tRNA-Ser"
-                     /db_xref="SGD:S000007332"
+                     /note="mitochondrial serine tRNA (tRNA-Ser)"
                      /db_xref="GeneID:854615"
+                     /db_xref="SGD:S000007332"
      gene            69289..69362
                      /locus_tag="tR(ACG)Q2"
                      /db_xref="GeneID:854616"
+                     /db_xref="SGD:S000007330"
      tRNA            69289..69362
                      /locus_tag="tR(ACG)Q2"
                      /product="tRNA-Arg"
-                     /db_xref="SGD:S000007330"
+                     /note="mitochondrial arginine tRNA (tRNA-Arg)"
                      /db_xref="GeneID:854616"
+                     /db_xref="SGD:S000007330"
      gene            69846..69921
                      /locus_tag="tA(UGC)Q"
                      /db_xref="GeneID:854617"
+                     /db_xref="SGD:S000007315"
      tRNA            69846..69921
                      /locus_tag="tA(UGC)Q"
                      /product="tRNA-Ala"
-                     /db_xref="SGD:S000007315"
+                     /note="mitochondrial alanine tRNA (tRNA-Ala)"
                      /db_xref="GeneID:854617"
+                     /db_xref="SGD:S000007315"
      gene            70162..70237
                      /locus_tag="tI(GAU)Q"
                      /db_xref="GeneID:854618"
+                     /db_xref="SGD:S000007322"
      tRNA            70162..70237
                      /locus_tag="tI(GAU)Q"
                      /product="tRNA-Ile"
-                     /db_xref="SGD:S000007322"
+                     /note="mitochondrial isoleucine tRNA (tRNA-Ile); predicted
+                     by tRNAscan-SE analysis; mutations in human ortholog are
+                     linked to conditions such as progressive encephalopathy,
+                     metabolic syndrome, and hypomagnesaemia"
                      /db_xref="GeneID:854618"
+                     /db_xref="SGD:S000007322"
      gene            70824..70907
                      /locus_tag="tY(GUA)Q"
                      /db_xref="GeneID:854619"
+                     /db_xref="SGD:S000007338"
      tRNA            70824..70907
                      /locus_tag="tY(GUA)Q"
                      /product="tRNA-Tyr"
-                     /db_xref="SGD:S000007338"
+                     /note="mitochondrial tyrosine tRNA (tRNA-Tyr)"
                      /db_xref="GeneID:854619"
+                     /db_xref="SGD:S000007338"
      gene            71433..71503
                      /locus_tag="tN(GUU)Q"
                      /db_xref="GeneID:854620"
+                     /db_xref="SGD:S000007327"
      tRNA            71433..71503
                      /locus_tag="tN(GUU)Q"
                      /product="tRNA-Asn"
-                     /db_xref="SGD:S000007327"
+                     /note="mitochondrial asparagine tRNA (tRNA-Asn)"
                      /db_xref="GeneID:854620"
+                     /db_xref="SGD:S000007327"
      gene            72630..72705
                      /locus_tag="tM(CAU)Q1"
                      /db_xref="GeneID:854621"
+                     /db_xref="SGD:S000007325"
      tRNA            72630..72705
                      /locus_tag="tM(CAU)Q1"
                      /product="tRNA-Met"
-                     /db_xref="SGD:S000007325"
+                     /note="mitochondrial methionine tRNA (tRNA-Met); predicted
+                     by tRNAscan-SE analysis"
                      /db_xref="GeneID:854621"
+                     /db_xref="SGD:S000007325"
      gene            73758..74513
                      /gene="COX2"
                      /locus_tag="Q0250"
                      /gene_synonym="OXI1; OXII"
                      /db_xref="GeneID:854622"
-     mRNA            <73758..>74513
-                     /gene="COX2"
-                     /locus_tag="Q0250"
-                     /gene_synonym="OXI1; OXII"
-                     /transcript_id="NM_001184373.1"
-                     /db_xref="GI:296148858"
-                     /db_xref="GeneID:854622"
+                     /db_xref="SGD:S000007281"
      CDS             73758..74513
                      /gene="COX2"
                      /locus_tag="Q0250"
                      /gene_synonym="OXI1; OXII"
                      /EC_number="1.9.3.1"
-                     /note="Subunit II of cytochrome c oxidase, which is the
-                     terminal member of the mitochondrial inner membrane
-                     electron transport chain; one of three
+                     /note="subunit II of cytochrome c oxidase (Complex IV);
+                     Complex IV is the terminal member of the mitochondrial
+                     inner membrane electron transport chain; one of three
                      mitochondrially-encoded subunits"
                      /codon_start=1
                      /transl_table=3
                      /product="cytochrome c oxidase subunit 2"
                      /protein_id="NP_009326.1"
-                     /db_xref="GI:6226540"
-                     /db_xref="SGD:S000007281"
                      /db_xref="GeneID:854622"
+                     /db_xref="SGD:S000007281"
                      /translation="MLDLLRLQLTTFIMNDVPTPYACYFQDSATPNQEGILELHDNIM
                      FYLLVILGLVSWMLYTIVMTYSKNPIAYKYIKHGQTIEVIWTIFPAVILLIIAFPSFI
                      LLYLCDEVISPAMTIKAIGYQWYWKYEYSDFINDSGETVEFESYVIPDELLEEGQLRL
@@ -799,24 +778,17 @@ FEATURES             Location/Qualifiers
                      GACSELCGTGHANMPIKIEAVSLPKFLEWLNEQ"
      gene            74495..75984
                      /locus_tag="Q0255"
-                     /gene_synonym="ORF1"
+                     /note="ORF1"
                      /db_xref="GeneID:854623"
-     mRNA            join(<74495..75622,75663..75872,75904..>75984)
-                     /locus_tag="Q0255"
-                     /gene_synonym="ORF1"
-                     /transcript_id="NM_001184374.1"
-                     /db_xref="GI:296148859"
-                     /db_xref="GeneID:854623"
+                     /db_xref="SGD:S000007282"
      CDS             join(74495..75622,75663..75872,75904..75984)
                      /locus_tag="Q0255"
-                     /gene_synonym="ORF1"
                      /codon_start=1
                      /transl_table=3
                      /product="maturase-like protein"
                      /protein_id="NP_009327.1"
-                     /db_xref="GI:6226541"
-                     /db_xref="SGD:S000007282"
                      /db_xref="GeneID:854623"
+                     /db_xref="SGD:S000007282"
                      /translation="MIKWTMINIYLLLMFLIIKNNNNNNNYNNITKYNKDMDLYSIQS
                      PYIKNMNIIKRGYHTSLNNKLIIVQKDNKNNNKNNLEMDNFYKWLVGFTDGDGSFYIK
                      LNDKKYLRFFYGFRMHIDDKACLEKIRNMLNMPSNFEETTKTIMLVNSQKKWLYSNIV
@@ -829,81 +801,96 @@ FEATURES             Location/Qualifiers
      gene            77431..77505
                      /locus_tag="tF(GAA)Q"
                      /db_xref="GeneID:854624"
+                     /db_xref="SGD:S000007319"
      tRNA            77431..77505
                      /locus_tag="tF(GAA)Q"
                      /product="tRNA-Phe"
-                     /db_xref="SGD:S000007319"
+                     /note="mitochondrial phenylalanine tRNA (tRNA-Phe);
+                     predicted by tRNAscan-SE analysis"
                      /db_xref="GeneID:854624"
+                     /db_xref="SGD:S000007319"
      gene            complement(78089..78162)
-                     /locus_tag="tT(XXX)Q2"
+                     /locus_tag="tT(UAG)Q2"
                      /db_xref="GeneID:854625"
-     tRNA            complement(78089..78162)
-                     /locus_tag="tT(XXX)Q2"
-                     /product="tRNA-Thr"
                      /db_xref="SGD:S000007335"
+     tRNA            complement(78089..78162)
+                     /locus_tag="tT(UAG)Q2"
+                     /product="tRNA-Thr"
+                     /note="mitochondrial threonine tRNA (tRNA-Thr); decodes
+                     CUA codons as threonine rather than leucine; has an
+                     unusual enlarged 8-nt anticodon loop; may be
+                     evolutionarily derived from mitochondrial tRNA-His;
+                     conserved in some genera of budding yeasts"
                      /db_xref="GeneID:854625"
+                     /db_xref="SGD:S000007335"
      gene            78533..78608
                      /locus_tag="tV(UAC)Q"
                      /db_xref="GeneID:854626"
+                     /db_xref="SGD:S000007336"
      tRNA            78533..78608
                      /locus_tag="tV(UAC)Q"
                      /product="tRNA-Val"
-                     /db_xref="SGD:S000007336"
+                     /note="mitochondrial valine tRNA (tRNA-Val); predicted by
+                     tRNAscan-SE analysis"
                      /db_xref="GeneID:854626"
+                     /db_xref="SGD:S000007336"
      gene            79213..80022
                      /gene="COX3"
                      /locus_tag="Q0275"
                      /gene_synonym="OXI2"
                      /db_xref="GeneID:854627"
-     mRNA            <79213..>80022
-                     /gene="COX3"
-                     /locus_tag="Q0275"
-                     /gene_synonym="OXI2"
-                     /transcript_id="NM_001184375.1"
-                     /db_xref="GI:296148860"
-                     /db_xref="GeneID:854627"
+                     /db_xref="SGD:S000007283"
      CDS             79213..80022
                      /gene="COX3"
                      /locus_tag="Q0275"
                      /gene_synonym="OXI2"
                      /EC_number="1.9.3.1"
-                     /note="Subunit III of cytochrome c oxidase, which is the
-                     terminal member of the mitochondrial inner membrane
-                     electron transport chain; one of three
+                     /note="subunit III of cytochrome c oxidase (Complex IV);
+                     Complex IV is the terminal member of the mitochondrial
+                     inner membrane electron transport chain; one of three
                      mitochondrially-encoded subunits"
                      /codon_start=1
                      /transl_table=3
                      /product="cytochrome c oxidase subunit 3"
                      /protein_id="NP_009328.1"
-                     /db_xref="GI:6226542"
-                     /db_xref="SGD:S000007283"
                      /db_xref="GeneID:854627"
+                     /db_xref="SGD:S000007283"
                      /translation="MTHLERSRHQQHPFHMVMPSPWPIVVSFALLSLALSTALTMHGY
                      IGNMNMVYLALFVLLTSSILWFRDIVAEATYLGDHTMAVRKGINLGFLMFVLSEVLIF
                      AGLFWAYFHSAMSPDVTLGACWPPVGIEAVQPTELPLLNTIILLSSGATVTYSHHALI
                      AGNRNKALSGLLITFWLIVIFVTCQYIEYTNAAFTISDGVYGSVFYAGTGLHFLHMVM
                      LAAMLGVNYWRMRNYHLTAGHHVGYETTIIYTHVLDVIWLFLYVVFYWWGV"
+     rep_origin      82329..82600
+                     /note="ORI5; mitochondrial origin of replication"
+                     /db_xref="SGD:S000029671"
      gene            85035..85112
                      /locus_tag="tM(CAU)Q2"
                      /db_xref="GeneID:854628"
+                     /db_xref="SGD:S000007326"
      tRNA            85035..85112
                      /locus_tag="tM(CAU)Q2"
                      /product="tRNA-Met"
-                     /db_xref="SGD:S000007326"
+                     /note="mitochondrial formylated methionine tRNA
+                     (tRNA-fMet)"
                      /db_xref="GeneID:854628"
+                     /db_xref="SGD:S000007326"
      gene            85295..85777
-                     /locus_tag="RPM1"
+                     /gene="RPM1"
+                     /locus_tag="Q0285"
                      /db_xref="GeneID:9164989"
-     ncRNA           85295..85777
-                     /locus_tag="RPM1"
-                     /ncRNA_class="RNase_MRP_RNA"
-                     /product="RPM1"
-                     /note="RNA component of mitochondrial RNase P, which also
-                     contains the protein subunit Rpm2p; RNase P removes 5'
-                     extensions from mitochondrial tRNA precursors; RPM1 is
-                     conserved in bacteria, fungi, and protozoa"
                      /db_xref="SGD:S000029023"
+     ncRNA           85295..85777
+                     /ncRNA_class="RNase_MRP_RNA"
+                     /gene="RPM1"
+                     /locus_tag="Q0285"
+                     /product="RPM1"
+                     /note="RNA component of mitochondrial RNase P;
+                     mitochondrial RNase P also contains the protein subunit
+                     Rpm2p; RNase P removes 5' extensions from mitochondrial
+                     tRNA precursors; RPM1 is conserved in bacteria, fungi, and
+                     protozoa"
                      /db_xref="GeneID:9164989"
+                     /db_xref="SGD:S000029023"
 ORIGIN      
         1 ttcataatta attttttata tatatattat attataatat taatttatat tataaaaata
        61 atatttatta ttaaaatatt tattctcctt tcggggttcc ggctcccgtg gccgggcccc
@@ -2336,3 +2323,4 @@ ORIGIN
     85681 catatatata tattaataaa aaaaagtaat atatatatat atattggaat agttatatta
     85741 ttatacagaa atatgcttaa ttataatata atatccata
 //
+

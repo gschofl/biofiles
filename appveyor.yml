@@ -10,12 +10,13 @@ init:
 install:
   ps: Bootstrap
 
+cache:
+  - C:\RLibrary
+
 # Adapt as necessary starting from here
 
 build_script:
-  - Rscript -e "source('http://bioconductor.org/biocLite.R')"
   - travis-tool.sh install_deps
-  - travis-tool.sh install_bioc BiocGenerics Biostrings GenomeInfoDb GenomicRanges IRanges S4Vectors XVector BiocStyle
 
 test_script:
   - travis-tool.sh run_tests
@@ -23,16 +24,6 @@ test_script:
 on_failure:
   - 7z a failure.zip *.Rcheck\*
   - appveyor PushArtifact failure.zip
-
-environment:
-  global:
-    WARNINGS_ARE_ERRORS:
-    _R_CHECK_FORCE_SUGGESTS_: 0
-    R_ARCH: x64
-    USE_RTOOLS: true
-  
-  matrix:
-    - R_VERSION: release
 
 artifacts:
   - path: '*.Rcheck\**\*.log'
@@ -52,7 +43,3 @@ artifacts:
 
   - path: '\*_*.zip'
     name: Bits
-
-cache:
-  - C:\RLibrary
-  

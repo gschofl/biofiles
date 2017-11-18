@@ -74,7 +74,7 @@ translation <- function(x) Biostrings::AAStringSet(.translation(x))
 #' @param x A \code{\linkS4class{gbRecord}} object.
 #' @param merge Merge the retrieved contig sequences.
 #' @return A \code{\linkS4class{DNAStringSet}} instance.
-#' @export
+#' @keywords internal
 getContigSeq <- function(x, merge = TRUE) { 
   db     <- switch(getMoltype(x), AA = "protein", "nuccore")
   contig <- .contig(x)
@@ -120,7 +120,7 @@ getContigSeq <- function(x, merge = TRUE) {
 gbReader <- function(verbose = FALSE) {
   txt <- character()
   update <- function(str) {
-    con <- textConnection(str)
+    con <- gzcon(str)
     on.exit(close(con))
     txt <<- c(txt, readLines(con))
   }

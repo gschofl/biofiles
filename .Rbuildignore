@@ -10,3 +10,5 @@ scratch\.[rR]
 ^codecov\.yml$
 ^cran-comments\.md$
 ^appveyor\.yml$
+^README\.Rmd$
+^README-.*\.png$

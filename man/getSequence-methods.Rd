@@ -35,7 +35,7 @@ Get the sequence from a GenBank record.
 }
 \examples{
 \dontrun{
-gbk_file <- system.file("extdata", "S_cerevisiae_mito.gbk", package = "biofiles")
+gbk_file <- system.file("extdata", "S_cerevisiae_mito.gb", package = "biofiles")
 x <- gbRecord(gbk_file)
 
 ## extract the full-length sequence of the record.

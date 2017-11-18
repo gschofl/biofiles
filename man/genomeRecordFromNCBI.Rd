@@ -8,8 +8,8 @@ genomeRecordFromNCBI(which, ignore.case = TRUE, .parse = TRUE, ...)
 }
 \arguments{
 \item{which}{Path to an organism on NCBI's
-\href{ftp://ftp.ncbi.nih.gov/genomes/}{Genomes FTP site}. Examples would be
-\code{Bacteria/Acetinobacter*} or \code{Viruses/Bat_coronavirus*}.
+\href{ftp://ftp.ncbi.nih.gov/genomes/genbank/refseq}{Genomes/RefSeq FTP site}. Examples would be
+\code{bacteria/Acetobacter_aceti/latest_assembly_versions/GCF_002723895.1_ASM272389v1}.
 If there are multiple matching directories the user will be prompted to choose
 one. If there are multiple matching \code{gbk} files the user will also be
 prompted to choose one or more.}
@@ -26,12 +26,16 @@ A \code{\linkS4class{gbRecord}} or \code{\linkS4class{gbRecordList}}
 object.
 }
 \description{
+## CURRENTLY BROKEN ##
+}
+\details{
 Retrieve genomes in GenBank format directly from NCBI's
-\href{ftp://ftp.ncbi.nih.gov/genomes/}{Genomes FTP site}.
+\href{ftp://ftp.ncbi.nih.gov/genomes/refseq/}{Genomes/RefSeq FTP site}.
 }
 \examples{
 \dontrun{
-gbk <- genomeRecordFromNCBI("Bacteria/Chlamydia_muridarum", verbose = TRUE)
+gbk <- genomeRecordFromNCBI(which = "bacteria/Chlamydia_muridarum", verbose = TRUE)
 
 }
 }
+\keyword{internal}

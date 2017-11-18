@@ -38,9 +38,9 @@ For a description of the GenBank format see
 \examples{
 \dontrun{
 load(system.file("extdata", "marine_metagenome.rda", package = "biofiles"))
-write.GenBank(x, file = "data/marine_metagenome.gbk")
+write.GenBank(x, file = "data/marine_metagenome.gb")
 
 ## write selected features to file.
-write.GenBank(x["CDS"], file = "data/marine_metagenome_cds.gbk", header = FALSE, sequence = FALSE)
+write.GenBank(x["CDS"], file = "data/marine_metagenome_cds.gb", header = FALSE, sequence = FALSE)
 }
 }
