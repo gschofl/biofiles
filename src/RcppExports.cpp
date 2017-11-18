@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // gbFeature
 SEXP gbFeature(std::vector<std::string> feature, std::string accession, int id);
-RcppExport SEXP biofiles_gbFeature(SEXP featureSEXP, SEXP accessionSEXP, SEXP idSEXP) {
+RcppExport SEXP _biofiles_gbFeature(SEXP featureSEXP, SEXP accessionSEXP, SEXP idSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +20,7 @@ END_RCPP
 }
 // gbLocation
 SEXP gbLocation(std::string gb_base_span, std::string accession);
-RcppExport SEXP biofiles_gbLocation(SEXP gb_base_spanSEXP, SEXP accessionSEXP) {
+RcppExport SEXP _biofiles_gbLocation(SEXP gb_base_spanSEXP, SEXP accessionSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -29,4 +29,15 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(gbLocation(gb_base_span, accession));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_biofiles_gbFeature", (DL_FUNC) &_biofiles_gbFeature, 3},
+    {"_biofiles_gbLocation", (DL_FUNC) &_biofiles_gbLocation, 2},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_biofiles(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

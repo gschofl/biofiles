@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 gbFeature <- function(feature, accession = "", id = 0L) {
-    .Call('biofiles_gbFeature', PACKAGE = 'biofiles', feature, accession, id)
+    .Call('_biofiles_gbFeature', PACKAGE = 'biofiles', feature, accession, id)
 }
 
 gbLocation <- function(gb_base_span, accession = "") {
-    .Call('biofiles_gbLocation', PACKAGE = 'biofiles', gb_base_span, accession)
+    .Call('_biofiles_gbLocation', PACKAGE = 'biofiles', gb_base_span, accession)
 }
 

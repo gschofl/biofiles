@@ -10,7 +10,7 @@
 \alias{ranges,gbRecordList-method}
 \title{Extract features as \code{"\linkS4class{GRanges}"} objects.}
 \usage{
-ranges(x, ...)
+ranges(x, use.names = TRUE, use.mcols = FALSE, ...)
 
 \S4method{ranges}{gbFeature}(x, include = "none", exclude = "",
   join = FALSE)
@@ -27,6 +27,10 @@ ranges(x, ...)
 \arguments{
 \item{x}{A \code{\linkS4class{gbFeature}}, \code{\linkS4class{gbFeatureTable}},
 \code{\linkS4class{gbRecord}}, or \code{\linkS4class{gbRecordList}} object.}
+
+\item{use.names}{Not used.}
+
+\item{use.mcols}{Not used.}
 
 \item{...}{Further arguments passed to methods.}
 

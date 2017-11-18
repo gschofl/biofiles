@@ -475,13 +475,15 @@ get_compounds <- function(x) {
   }
 }
 
-#' @importFrom Biostrings DNAStringSet AAStringSet BStringSet
 .seq_access <- function(x) {
   seq <- .sequence(x)
   if (length(seq) == 0) {
     return(seq)
   }
-  SEQFUN <- match.fun(class(seq))
+  SEQFUN <- switch(class(seq),
+                   "DNAStringSet" = Biostrings::DNAStringSet,
+                   "AAStringSet"  = Biostrings::AAStringSet,
+                   "BStringSet"   = Biostrings::BStringSet)
   if (is(x, "gbFeature")) {
     seq <- merge_seq(seq, x, SEQFUN)
   } else if (is(x, "gbFeatureTable")) {

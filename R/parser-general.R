@@ -130,7 +130,9 @@ make_progress_bar <- function(n) {
 parse_features <- function(x, seqinfo) {
   feature_start <- which(substr(x, 6, 6) != " ")
   fl <- ixsplit(x, feature_start)
-  mc_cores <- floor(parallel::detectCores()*0.75)
+  mc_cores <- ifelse(Sys.info()['sysname'] == "Windows",
+                     1,
+                     floor(parallel::detectCores()*0.75))
   id <- seq_along(feature_start)
   ftbl <- parallel::mcmapply(
     gbFeature, feature = fl, id = id,
@@ -166,7 +168,9 @@ join_seq <- function(seq, acc, src = c("gbk", "embl")) {
                     gbk  = Partial('substr', start = 11, stop = 75),
                     embl = Partial('substr', start = 6, stop = 70)
   )
-  mc_cores <- floor(parallel::detectCores()*0.75)
+  mc_cores <- ifelse(Sys.info()['sysname'] == "Windows",
+                     1,
+                     floor(parallel::detectCores()*0.75))
   s <- unlist(parallel::mclapply(seq, function(x) {
     paste0(strsplit(.substr(x), ' ')[[1L]], collapse = '')
   }, mc.cores = mc_cores))
