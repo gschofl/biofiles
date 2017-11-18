@@ -10,10 +10,6 @@
   
   This is a new submission.
   
-* Possibly mis-spelled words in DESCRIPTION
-
-  These are spelled correctly.
-
 * checking installed package size ... NOTE
 
   This is all compiled code in the libs/ directory.

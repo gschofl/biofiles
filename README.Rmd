@@ -15,7 +15,6 @@ knitr::opts_chunk$set(
 ```
 [![Travis-CI Build Status](https://travis-ci.org/gschofl/biofiles.svg?branch=master)](https://travis-ci.org/gschofl/biofiles)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/gschofl/biofiles?branch=master&svg=true)](https://ci.appveyor.com/project/gschofl/biofiles)
-[![Coverage Status](https://img.shields.io/codecov/c/github/gschofl/biofiles/master.svg)](https://codecov.io/github/gschofl/biofiles?branch=master)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/biofiles)](https://cran.r-project.org/package=biofiles)
 
 # biofiles - an interface to GenBank/GenPept files in R
