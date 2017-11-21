@@ -1,3 +1,7 @@
+This is a resubmission adding a requested link
+to the GenBank file format definition to the
+Description text. 
+
 ## Test environments
 * local ubuntu 16.04 install, R 3.4.2
 * win-builder (devel and release)
