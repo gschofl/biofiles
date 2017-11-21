@@ -1,6 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Travis-CI Build Status](https://travis-ci.org/gschofl/biofiles.svg?branch=master)](https://travis-ci.org/gschofl/biofiles) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/gschofl/biofiles?branch=master&svg=true)](https://ci.appveyor.com/project/gschofl/biofiles) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/biofiles)](https://cran.r-project.org/package=biofiles)
+[![Travis-CI Build Status](https://travis-ci.org/gschofl/biofiles.svg?branch=master)](https://travis-ci.org/gschofl/biofiles) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/gschofl/biofiles?branch=master&svg=true)](https://ci.appveyor.com/project/gschofl/biofiles) [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/biofiles)](http://cran.r-project.org/web/packages/biofiles/index.html) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/biofiles)](https://cran.r-project.org/package=biofiles)
 
 biofiles - an interface to GenBank/GenPept files in R
 =====================================================
@@ -10,14 +10,18 @@ biofiles provides interfacing to GenBank/GenPept or Embl flat file records. It i
 Installation
 ------------
 
-You can install biofiles from github with:
+Install the latest stable release of the `biofiles` package from CRAN:
+
+``` r
+install.packages("biofiles")
+```
+
+Install the development version from `github` using the `devtools` package.
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("gschofl/biofiles")
 ```
-
-It depends on a C++11 compatible compiler.
 
 Basic functionality
 -------------------
