@@ -94,16 +94,21 @@ gbk_header <- function(x) {
 
   ## KEYWORDS (Mandatory)
   key_line <- x[gbk_idx[gbk_kwd == "KEYWORDS"]]
-  keywords <- sub("KEYWORDS    ", "", key_line)
+  keywords <- sub("KEYWORDS[[:blank:]]*", "", key_line)
 
   ## SOURCE with ORGANISM and the complete lineage (Mandatory)
   src_idx <- which(gbk_kwd == 'SOURCE')
-  source_lines <- x[seq.int(gbk_idx[src_idx], gbk_idx[src_idx + 1] - 1)]                  
-  source <- sub("SOURCE      ", "", source_lines[1L])
-  organism <- sub("  ORGANISM  ", "", source_lines[2L])
-  taxonomy <- collapse(gsub("^ +", "", source_lines[-c(1L, 2L)]), ' ')
+  source_lines <- 
+    x[
+      seq.int(
+        gbk_idx[src_idx],
+        (gbk_idx[src_idx + 1] - 1) %|na|% length(x)
+      )]                  
+  source <- sub("SOURCE[[:blank:]]*", "", source_lines[1L])
+  organism <- sub("  ORGANISM[[:blank:]]*", "", source_lines[2L])
+  taxonomy <- collapse(gsub("^[[:blank:]]+", "", source_lines[-c(1L, 2L)]), ' ')
 
-  ## REFERENCES (Mandatory?)
+  ## REFERENCES (Optional)
   if (length(ref_idx <- which(gbk_kwd == "REFERENCE")) > 0L) {
     ref_lines <-
       x[

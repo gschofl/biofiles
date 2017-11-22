@@ -1,7 +1,7 @@
 Package: biofiles
 Type: Package
 Title: An Interface for GenBank/GenPept Flat Files
-Version: 1.0.0
+Version: 1.0.0.9000
 Author: Gerhard Schöfl [aut, cre]
 Maintainer: Gerhard Schöfl <gerhard.schofl@gmail.com>
 Description: Parse GenBank/GenPept records <https://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html>
