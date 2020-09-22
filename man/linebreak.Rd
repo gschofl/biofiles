@@ -4,8 +4,15 @@
 \alias{linebreak}
 \title{Format paragraphs}
 \usage{
-linebreak(s, width = getOption("width") - 2, indent = 0, offset = 0,
-  split = " ", FORCE = FALSE, FULL_FORCE = FALSE)
+linebreak(
+  s,
+  width = getOption("width") - 2,
+  indent = 0,
+  offset = 0,
+  split = " ",
+  FORCE = FALSE,
+  FULL_FORCE = FALSE
+)
 }
 \arguments{
 \item{s}{a character vector.}

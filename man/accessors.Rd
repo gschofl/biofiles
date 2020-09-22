@@ -2,7 +2,6 @@
 % Please edit documentation in R/all-generics.R, R/gbHeader-class.R,
 %   R/gbLocation-class.R, R/gbFeature-class.R, R/gbFeatureTable-class.R,
 %   R/gbRecord-class.R, R/gbRecordList-class.R
-\docType{methods}
 \name{getLocus}
 \alias{getLocus}
 \alias{getLength}

@@ -4,7 +4,6 @@
 \name{gbLocus-class}
 \alias{gbLocus-class}
 \alias{.gbLocus}
-\alias{gbLocus-class}
 \title{Generator object for the \code{"gbLocus"} reference class}
 \arguments{
 \item{...}{List of arguments (see NOTE)}

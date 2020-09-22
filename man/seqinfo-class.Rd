@@ -4,7 +4,6 @@
 \name{seqinfo-class}
 \alias{seqinfo-class}
 \alias{seqinfo}
-\alias{seqinfo-class}
 \title{Generator object for the \code{"seqinfo"} reference class}
 \arguments{
 \item{...}{List of arguments; must be named arguments

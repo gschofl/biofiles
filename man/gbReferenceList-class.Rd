@@ -4,7 +4,6 @@
 \name{gbReferenceList-class}
 \alias{gbReferenceList-class}
 \alias{.gbReferenceList}
-\alias{gbReferenceList-class}
 \title{Generator object for the \code{"gbReferenceList"} reference class}
 \arguments{
 \item{...}{List of arguments}

@@ -4,7 +4,6 @@
 \name{gbHeader-class}
 \alias{gbHeader-class}
 \alias{.gbHeader}
-\alias{gbHeader-class}
 \title{Generator object for the \code{"gbHeader"} reference class}
 \arguments{
 \item{...}{List of arguments; must be named arguments

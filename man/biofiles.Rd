@@ -3,7 +3,6 @@
 \docType{package}
 \name{biofiles}
 \alias{biofiles}
-\alias{biofiles-package}
 \title{\emph{biofiles} is an R package for interfacing with GenBank or
 Embl flat file records.}
 \description{

@@ -8,8 +8,7 @@
 \usage{
 upstream(query, subject, n = 5, include_key = "all", exclude_key = "none")
 
-downstream(query, subject, n = 5, include_key = "all",
-  exclude_key = "none")
+downstream(query, subject, n = 5, include_key = "all", exclude_key = "none")
 
 flanking(query, subject, n = 5, include_key = "all", exclude_key = "none")
 }

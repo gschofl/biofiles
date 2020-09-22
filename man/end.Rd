@@ -2,7 +2,6 @@
 % Please edit documentation in R/all-generics.R, R/gbLocation-class.R,
 %   R/gbFeature-class.R, R/gbFeatureTable-class.R, R/gbRecord-class.R,
 %   R/gbRecordList-class.R
-\docType{methods}
 \name{end}
 \alias{end}
 \alias{end<-}
