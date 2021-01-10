@@ -43,7 +43,7 @@ setMethod("write.GenBank", "gbFeatureTable",
       seqw <- ifelse(i <  n_lines, i*60, seq@ranges@width)
       seqs <- XVector::toString(XVector::subseq(seq, 1 + (i - 1)*60, seqw))
       nnn <- seq(1, nnncc <- nchar(seqs), by = 10) 
-      s[i] <- paste0(substring(seqs, nnn, c(nnn[-1]-1, nnncc)), collapse = " ")[[1]], collapse = " ")     
+      s[i] <- paste0(substring(seqs, nnn, c(nnn[-1]-1, nnncc)), collapse = " ")
     }
     s <- sprintf("%+9s %s", lineno, s)
     cat("\nORIGIN", file = file, sep = "\n", append = TRUE)
