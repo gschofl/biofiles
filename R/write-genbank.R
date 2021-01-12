@@ -8,7 +8,8 @@ setMethod("write.GenBank", "gbRecord",
 
 #' @export
 #' @rdname write.GenBank-methods
-setMethod("write.GenBank", "gbFeatureTable", 
+setMethod("write.GenBank", "gb
+tureTable", 
           function (x, file, header = TRUE, sequence = TRUE, append = FALSE) {
             x <- as(x, "gbRecord")
             .writeGenBank(x = x, file = file, header = header, sequence = sequence,
@@ -23,7 +24,7 @@ setMethod("write.GenBank", "gbFeatureTable",
     header(x)$write(file = file, append = append, sep = "")
   }
   
-  cat("FEATURES:            Location/Qualifiers:\n", file = file, append = TRUE)
+  cat("FEATURES            Location/Qualifiers\n", file = file, append = TRUE)
   f <- lapply(.features(x), show_gbFeature, write_to_file = TRUE)
   cat(paste0(f, collapse = "\n"), file = file, append = TRUE)
 
